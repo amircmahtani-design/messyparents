@@ -22,7 +22,7 @@
   --hand:"Patrick Hand", "Comic Sans MS", cursive;
   --body:"Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --wrap:1180px;
+  --wrap:980px;
   --label:min(226px, 24vw);
   --radius:16px;
 }
@@ -218,8 +218,8 @@ h3{font-size:1.3rem}
 
 /* --- Footer -------------------------------------------------------------- */
 
-.site-foot{margin-top:clamp(28px,4vw,48px);border-top:1.5px solid var(--line-soft);
-  padding:16px 0 22px}
+.site-foot{margin-top:clamp(22px,3vw,32px);border-top:1.5px solid var(--line-soft);
+  padding:12px 0 16px}
 .foot-note{margin:0;font-size:.85rem;color:var(--ink-50);
   display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
@@ -291,56 +291,56 @@ h3{font-size:1.3rem}
    the filter rows and the band all fit in one view. */
 @media (min-width:961px){
   /* --- header ------------------------------------------------------- */
-  .head-inner{padding:14px 0 0}
-  .brand img{width:clamp(170px,17vw,212px)}
-  .nav{font-size:1.28rem;gap:clamp(22px,3.2vw,42px)}
-  .btn-ghost{font-size:1.12rem;padding:9px 24px}
+  .head-inner{padding:12px 0 0}
+  .brand img{width:clamp(150px,16vw,180px)}
+  .nav{font-size:1.16rem;gap:clamp(16px,2.4vw,28px)}
+  .btn-ghost{font-size:1.02rem;padding:8px 18px}
 
-  /* --- hero: 600 / 60 / 520 inside the 1180 container ---------------- */
+  /* --- hero: 573 / 26 / 380 inside the 980 container ----------------- */
   .hero{padding:0}
-  .hero-grid{grid-template-columns:minmax(0,690fr) minmax(0,450fr);
-    gap:clamp(24px,3.4vw,40px);align-items:start}
-  .hero-copy{padding-top:clamp(18px,3vw,38px)}
-  .hero h1{font-size:clamp(2.05rem,3.9vw,48px);line-height:1.12;margin-bottom:16px}
-  .hero .lede{font-size:1.12rem;max-width:34ch}
+  .hero-grid{grid-template-columns:minmax(0,573fr) minmax(0,380fr);
+    gap:clamp(18px,2.6vw,26px);align-items:start}
+  .hero-copy{padding-top:clamp(12px,2vw,22px)}
+  .hero h1{font-size:clamp(1.9rem,4.1vw,40px);line-height:1.12;margin-bottom:13px}
+  .hero .lede{font-size:1.04rem;max-width:33ch}
   .hero-art{margin-top:0;justify-content:flex-end;align-items:flex-start}
-  .hero-art img{width:100%;max-width:470px;height:auto;max-height:none;
+  .hero-art img{width:100%;max-width:390px;height:auto;max-height:none;
     object-position:right center}
 
-  /* --- search: 570 x 64, button 120 x 50 ----------------------------- */
-  .search{width:min(570px,100%);max-width:none;height:64px;margin-top:26px;
-    padding:0 7px 0 22px;gap:13px}
-  .search input{font-size:1.06rem;padding:0}
-  .search button{width:120px;height:50px;padding:0;font-size:1.02rem;flex:0 0 auto}
+  /* --- search ------------------------------------------------------- */
+  .search{width:min(520px,100%);max-width:none;height:60px;margin-top:22px;
+    padding:0 6px 0 20px;gap:11px}
+  .search input{font-size:1rem;padding:0}
+  .search button{width:112px;height:47px;padding:0;font-size:.98rem;flex:0 0 auto}
 
-  /* --- discovery rows ------------------------------------------------ */
-  .rows{padding-top:38px}
-  .row{grid-template-columns:min(205px,21vw) minmax(0,1fr);gap:0;
-    padding:0;margin-bottom:24px}
-  .row > .eyebrow{padding-top:11px;font-size:1.42rem}
-  .step{font-size:1.15em;margin-right:14px}
-  .pills{gap:11px}
-  .pill{height:46px;padding:0 12px;font-size:.88rem}
-  .pill svg,.pill img{width:25px;height:25px}
+  /* --- discovery rows: compact, grouped by their headings ------------ */
+  .rows{padding-top:28px}
+  .row{grid-template-columns:min(150px,16vw) minmax(0,1fr);gap:0;
+    padding:0;margin-bottom:18px}
+  .row > .eyebrow{padding-top:8px;font-size:1.16rem;line-height:1.2}
+  .step{font-size:1.15em;margin-right:11px}
+  .pills{gap:8px}
+  .pill{height:42px;padding:0 8px;font-size:.8rem}
+  .pill svg,.pill img{width:21px;height:21px}
 
-  /* --- popular guides: 3 x ~370 x 140, gap 28 ------------------------ */
-  .row--stack{margin-top:42px;padding-top:0;margin-bottom:0}
-  .row--stack > .eyebrow{font-size:1.5rem;margin-bottom:18px;padding-top:0}
-  .card-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
-  .card{min-height:140px;padding:20px 24px;gap:18px;align-items:center}
-  .card-icon{width:64px;height:64px}
-  .card h3{font-size:1.42rem;line-height:1.2;margin-bottom:8px}
-  .card-meta{font-size:.92rem}
+  /* --- popular guides: 3 narrower, slightly taller cards ------------- */
+  .row--stack{margin-top:30px;padding-top:0;margin-bottom:0}
+  .row--stack > .eyebrow{font-size:1.4rem;margin-bottom:15px;padding-top:0}
+  .card-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+  .card{min-height:152px;padding:18px 20px;gap:15px;align-items:center}
+  .card-icon{width:58px;height:58px}
+  .card h3{font-size:1.3rem;line-height:1.2;margin-bottom:7px}
+  .card-meta{font-size:.86rem}
 
-  /* --- banner: 1110 x 118, short and fat ----------------------------- */
-  .band{width:1110px;max-width:calc(100% - 80px);height:118px;
-    margin:26px auto 0;border-radius:22px;
-    padding:0 44px 0 min(300px,26%);
+  /* --- banner: 900 x 110, short and chunky --------------------------- */
+  .band{width:900px;max-width:calc(100% - 40px);height:110px;
+    margin:24px auto 0;border-radius:22px;
+    padding:0 32px 0 min(262px,29%);
     display:flex;align-items:center;justify-content:center;
     box-shadow:0 2px 10px rgba(11,98,196,.07)}
-  .band p{font-size:clamp(1.9rem,3.4vw,42px)}
-  .band-art{left:clamp(24px,6%,70px)}
-  .band-art img{height:166px}
+  .band p{font-size:clamp(1.7rem,3.3vw,38px)}
+  .band-art{left:clamp(14px,3%,30px)}
+  .band-art img{height:174px}
 }
 
 @media (max-width:960px){
