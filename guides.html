@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>All guides — The Messy Parents Collection</title>
 <meta name="description" content="Search every guide on feeding, sleeping, development, health and parent sanity.">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/navicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/navicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -16,8 +17,9 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection" width="820" height="452"></a>
     <nav class="nav" id="nav">
+      <a href="index.html">Home</a>
       <a href="guides.html" aria-current="page">Guides</a>
       <a href="about.html">About Us</a>
       <a href="books.html">Our Books</a>
@@ -32,30 +34,27 @@
     <h1>All the guides</h1>
     <p>Search it, or scroll it. Every one is a three-minute read.</p>
     <form class="search" id="searchForm" role="search">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       <input type="search" id="q" name="q" aria-label="Search the guides" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
       <button type="submit">Search</button>
     </form>
   </section>
 
-  <section class="filters wrap" aria-label="Filter guides">
-    <div class="filter-row">
-      <p class="eyebrow">Topic</p>
+  <section class="rows wrap" aria-label="Filter guides">
+    <div class="row">
+      <p class="eyebrow">Browse by topic</p>
       <div class="pills" id="topicPills"></div>
     </div>
-    <div class="filter-row">
-      <p class="eyebrow">Age</p>
+    <div class="row">
+      <p class="eyebrow">How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
-  </section>
-
-  <section class="results wrap">
-    <div class="results-head">
-      <h2 id="resultsTitle">Every guide</h2>
-      <span class="results-count" id="resultsCount"></span>
-      <button class="link-reset" id="resetBtn" hidden>Clear filters</button>
+    <div class="row row--cards">
+      <p class="eyebrow" id="resultsTitle">Every guide</p>
+      <div class="card-grid" id="grid"></div>
+      <p class="row-note"><span id="resultsCount"></span>
+        <button class="link-reset" id="resetBtn" hidden>Clear filters</button></p>
     </div>
-    <div class="card-grid" id="grid"></div>
   </section>
 
 </main>
@@ -63,9 +62,12 @@
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot-grid">
-      <div>
-        <h4>The Messy Parents Collection</h4>
-        <p style="color:var(--ink-70);margin:0;max-width:38ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+      <div class="foot-brand">
+        <img src="assets/img/navicon.png" alt="" aria-hidden="true" width="56" height="57">
+        <div>
+          <h4>The Messy Parents Collection</h4>
+          <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+        </div>
       </div>
       <div>
         <h4>Guides</h4>
@@ -80,6 +82,7 @@
       <div>
         <h4>More</h4>
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="guides.html">Browse all guides</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="books.html">Our Books</a></li>
@@ -99,9 +102,7 @@
 <script>
 (function(){
   const params = new URLSearchParams(location.search);
-  let topic = params.get("topic");
-  let age = params.get("age");
-  let q = params.get("q") || "";
+  let topic = params.get("topic"), age = params.get("age"), q = params.get("q") || "";
 
   const grid = document.getElementById("grid");
   const title = document.getElementById("resultsTitle");
@@ -125,7 +126,7 @@
     const list = GUIDES.filter(g =>
       (!topic || g.topic === topic) && (!age || g.ages.includes(age)) && matches(g, q));
     const filtered = topic || age || q;
-    title.textContent = q ? `Results for \u201c${q}\u201d` : (filtered ? "Matching guides" : "Every guide");
+    title.textContent = q ? "Search results" : (filtered ? "Matching guides" : "Every guide");
     count.textContent = `${list.length} guide${list.length===1?"":"s"}`;
     reset.hidden = !filtered;
     grid.innerHTML = list.length ? list.map(cardHTML).join("")
@@ -142,11 +143,8 @@
     render();
   });
 
-  document.getElementById("searchForm").addEventListener("submit", e => {
-    e.preventDefault(); q = input.value.trim(); render();
-  });
+  document.getElementById("searchForm").addEventListener("submit", e => { e.preventDefault(); q = input.value.trim(); render(); });
   input.addEventListener("input", () => { q = input.value.trim(); render(); });
-
   reset.addEventListener("click", () => {
     topic = age = null; q = ""; input.value = "";
     document.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed","false"));

@@ -4,14 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Messy Parents Collection — short answers for long nights</title>
-<meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane, from parents learning the ropes just like you.">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="The Messy Parents Collection">
-<meta property="og:description" content="Parenting is messy. Finding answers shouldn't be.">
-<meta property="og:image" content="assets/img/family.png">
+<meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<link rel="icon" href="assets/img/navicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/navicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -19,8 +17,9 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection" width="820" height="452"></a>
     <nav class="nav" id="nav">
+      <a href="index.html" aria-current="page">Home</a>
       <a href="guides.html">Guides</a>
       <a href="about.html">About Us</a>
       <a href="books.html">Our Books</a>
@@ -31,14 +30,13 @@
 </header>
 
 <main id="main">
-
   <section class="hero wrap">
     <div class="hero-grid">
-      <div class="rise">
-        <h1>Parenting is messy.<br>Finding answers shouldn't be.</h1>
-        <p class="lede">Quick, reassuring guides from parents learning the ropes — just like you.</p>
+      <div class="hero-copy rise">
+        <h1>Parenting is messy.<br>Finding answers shouldn&rsquo;t be.</h1>
+        <p class="lede">Quick, reassuring guides from parents learning the ropes &mdash; just like you.</p>
         <form class="search" action="guides.html" method="get" role="search">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
           <input type="search" name="q" aria-label="Search the guides" placeholder="What do you need help with?">
           <button type="submit">Search</button>
         </form>
@@ -49,29 +47,30 @@
     </div>
   </section>
 
-  <section class="filters wrap" aria-label="Filter guides">
-    <div class="filter-row">
+  <section class="rows wrap" aria-label="Find a guide">
+    <div class="row">
       <p class="eyebrow">Browse by topic</p>
       <div class="pills" id="topicPills"></div>
     </div>
-    <div class="filter-row">
+    <div class="row">
       <p class="eyebrow">How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
-  </section>
-
-  <section class="results wrap">
-    <div class="results-head">
-      <h2 id="resultsTitle">Popular guides</h2>
-      <span class="results-count" id="resultsCount"></span>
-      <button class="link-reset" id="resetBtn" hidden>Clear filters</button>
+    <div class="row row--cards">
+      <p class="eyebrow" id="resultsTitle">Popular guides</p>
+      <div class="card-grid" id="grid"></div>
+      <p class="row-note"><span id="resultsCount"></span>
+        <button class="link-reset" id="resetBtn" hidden>Clear filters</button></p>
     </div>
-    <div class="card-grid" id="grid"></div>
   </section>
 
   <section class="wrap">
     <div class="band">
-      <img class="band-art" src="assets/img/papa-bust.png" alt="" aria-hidden="true">
+      <span class="band-art" aria-hidden="true">
+        <img class="a-papa" src="assets/img/papa-bust.png" alt="">
+        <img class="a-mama" src="assets/img/mama-bust.png" alt="">
+        <svg class="a-heart" viewBox="0 0 24 24" fill="#ff4500" stroke="#211d18" stroke-width="1.4"><path d="M12 21S3 15 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21Z"/></svg>
+      </span>
       <div>
         <p>Short answers for long nights.</p>
         <p class="band-sub">Every guide is a three-minute read, written to be understood at 3am.</p>
@@ -84,9 +83,12 @@
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot-grid">
-      <div>
-        <h4>The Messy Parents Collection</h4>
-        <p style="color:var(--ink-70);margin:0;max-width:38ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+      <div class="foot-brand">
+        <img src="assets/img/navicon.png" alt="" aria-hidden="true" width="56" height="57">
+        <div>
+          <h4>The Messy Parents Collection</h4>
+          <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+        </div>
       </div>
       <div>
         <h4>Guides</h4>
@@ -101,6 +103,7 @@
       <div>
         <h4>More</h4>
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="guides.html">Browse all guides</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="books.html">Our Books</a></li>
@@ -108,42 +111,38 @@
       </div>
     </div>
     <div class="foot-note">
-      <span>© <span id="year">2026</span> The Messy Parents Collection</span>
+      <span>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
       <span>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
     </div>
   </div>
 </footer>
 
 <script src="assets/js/guides.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+
 <script>
 (function(){
   const grid = document.getElementById("grid");
-  const topicWrap = document.getElementById("topicPills");
-  const ageWrap = document.getElementById("agePills");
   const title = document.getElementById("resultsTitle");
   const count = document.getElementById("resultsCount");
   const reset = document.getElementById("resetBtn");
-
   let topic = null, age = null;
 
-  topicWrap.innerHTML = TOPICS.map(t =>
+  document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
     `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
-  ageWrap.innerHTML = AGES.map(a =>
+  document.getElementById("agePills").innerHTML = AGES.map(a =>
     `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="false">${a}</button>`).join("");
 
   function render(){
-    let list = GUIDES.filter(g =>
-      (!topic || g.topic === topic) && (!age || g.ages.includes(age)));
-
     const filtered = topic || age;
-    if(!filtered) list = GUIDES.filter(g => g.featured);
+    let list = filtered
+      ? GUIDES.filter(g => (!topic || g.topic === topic) && (!age || g.ages.includes(age)))
+      : GUIDES.filter(g => g.featured);
 
     title.textContent = filtered ? "Matching guides" : "Popular guides";
     count.textContent = filtered ? `${list.length} guide${list.length === 1 ? "" : "s"}` : "";
     reset.hidden = !filtered;
-
-    grid.innerHTML = list.length
-      ? list.map(cardHTML).join("")
+    grid.innerHTML = list.length ? list.map(cardHTML).join("")
       : `<div class="empty"><p><strong>Nothing matches that combination yet.</strong></p>
          <p>Try a wider age range, or <a href="guides.html">browse all guides</a>.</p></div>`;
   }
@@ -164,7 +163,6 @@
     render();
   });
 
-  document.getElementById("year").textContent = new Date().getFullYear();
   render();
 })();
 </script>

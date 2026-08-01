@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide — The Messy Parents Collection</title>
 <meta name="description" content="A three-minute guide from The Messy Parents Collection.">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/navicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/navicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -16,8 +17,9 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection" width="820" height="452"></a>
     <nav class="nav" id="nav">
+      <a href="index.html">Home</a>
       <a href="guides.html" aria-current="page">Guides</a>
       <a href="about.html">About Us</a>
       <a href="books.html">Our Books</a>
@@ -36,9 +38,12 @@
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot-grid">
-      <div>
-        <h4>The Messy Parents Collection</h4>
-        <p style="color:var(--ink-70);margin:0;max-width:38ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+      <div class="foot-brand">
+        <img src="assets/img/navicon.png" alt="" aria-hidden="true" width="56" height="57">
+        <div>
+          <h4>The Messy Parents Collection</h4>
+          <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+        </div>
       </div>
       <div>
         <h4>Guides</h4>
@@ -53,6 +58,7 @@
       <div>
         <h4>More</h4>
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="guides.html">Browse all guides</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="books.html">Our Books</a></li>
@@ -79,7 +85,7 @@
     document.title = "Guide not found — The Messy Parents Collection";
     el.innerHTML = `<h1>We can't find that one</h1>
       <p class="lede">The link may be old, or the guide may have been renamed.</p>
-      <p><a href="guides.html">Browse all guides</a></p>`;
+      <p style="margin-top:14px"><a href="guides.html">Browse all guides</a></p>`;
     return;
   }
 
@@ -103,10 +109,10 @@
       <span>${g.read} min read</span>
     </p>
     <div class="article-body">
-      <p class="lede" style="max-width:none;font-size:1.16rem">${g.summary}</p>
+      <p class="lede" style="font-size:1.12rem">${g.summary}</p>
       ${g.body}
       ${callout}
-      <p style="font-size:.92rem;color:var(--ink-50);border-top:1px solid var(--line-soft);padding-top:16px;margin-top:34px">
+      <p style="font-size:.9rem;color:var(--ink-50);border-top:1px solid var(--line-soft);padding-top:16px;margin-top:32px">
         Written by parents, not doctors. This is general information, not medical advice &mdash;
         if something worries you about your own baby, speak to your doctor, midwife or health visitor.
         Trust your instinct: it is good data.</p>
