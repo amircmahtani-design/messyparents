@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feeding — Messy Parents Collection</title>
+<meta name="description" content="Milk, solids and weaning for first-time parents — month by month from newborn to two years.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-tab="feeding">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href="index.html">
+      <span class="logo-mark">M</span>
+      <span class="logo-text"><b>Messy Parents</b><span>Collection</span></span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-label="Menu">Menu</button>
+    <nav class="tabs" id="site-nav" aria-label="Sections"></nav>
+    <button class="search-btn" id="search-btn" aria-label="Search">Search <kbd>⌘K</kbd></button>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div class="page-head" id="page-head"></div>
+    <div class="layout">
+      <aside class="rail" id="rail" aria-label="Jump to age"></aside>
+      <div id="tab-content"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-row">
+      <span>© <span id="year"></span> Messy Parents Collection</span>
+      <span><a href="feeding.html">Feeding</a> · <a href="sleeping.html">Sleeping</a> · <a href="development.html">Development</a> · <a href="health.html">Health</a></span>
+    </div>
+    <p class="disclaimer">This site shares general information for first-time parents. It is not medical advice
+      and does not replace your midwife, health visitor, paediatrician or doctor. If you are worried about your
+      baby, contact a healthcare professional.</p>
+  </div>
+</footer>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="search-panel">
+    <input id="search-input" type="search" placeholder="Search every section…" autocomplete="off">
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="data/content.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
