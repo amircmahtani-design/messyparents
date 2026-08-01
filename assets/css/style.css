@@ -61,6 +61,7 @@ a:hover{text-decoration:underline}
 
 h1,h2,h3,h4{font-family:var(--display);font-weight:700;line-height:1.14;margin:0}
 h1{font-size:clamp(2.15rem,4.4vw,3.4rem);letter-spacing:-.005em}
+.hl{display:block}
 h2{font-size:clamp(1.6rem,2.8vw,2.2rem)}
 h3{font-size:1.3rem}
 
@@ -259,8 +260,14 @@ h3{font-size:1.3rem}
 
 /* --- Page bits ----------------------------------------------------------- */
 
-.page-head{padding:clamp(14px,2.6vw,30px) 0 4px;max-width:46ch;text-align:left}
-.page-head p{color:var(--ink-70);font-size:1.05rem;margin:10px 0 0}
+.page-head{padding:clamp(12px,2.2vw,24px) 0 0;max-width:none;text-align:left}
+.page-head p{font-family:var(--hand);color:var(--ink-70);
+  font-size:clamp(1.16rem,1.5vw,1.34rem);line-height:1.35;
+  max-width:44ch;margin:8px 0 0}
+/* the intro already provides the breathing room — don't stack another gap on top */
+.page-head + .rows{padding-top:clamp(14px,1.8vw,22px)}
+.rows > .row--stack:first-child{margin-top:0}
+.rows > .row--stack + .row--stack{margin-top:clamp(24px,3vw,34px)}
 
 .prose{width:min(100%,660px)}
 .prose p{margin:0 0 16px}
@@ -302,7 +309,7 @@ h3{font-size:1.3rem}
     gap:clamp(20px,3vw,30px);align-items:start}
   .hero-copy{padding-top:clamp(14px,2.2vw,26px)}
   .hero h1{font-size:clamp(2rem,4.05vw,44px);line-height:1.12;margin-bottom:14px}
-  .hero .lede{font-size:1.08rem;max-width:34ch}
+  .hero .lede{font-size:1.08rem;max-width:44ch}
   .hero-art{margin-top:0;justify-content:flex-end;align-items:flex-start}
   .hero-art img{width:100%;max-width:430px;height:auto;max-height:none;
     object-position:right center}
@@ -344,13 +351,18 @@ h3{font-size:1.3rem}
 }
 
 @media (max-width:960px){
+  .hl{display:inline}
   .hero-grid{grid-template-columns:1fr;gap:8px}
   .hero-art{order:-1;max-width:460px;margin-inline:auto;margin-top:0}
   .hero h1 br{display:none}
   .hero .lede{max-width:none}
   .search{max-width:none}
-  .row{grid-template-columns:1fr;gap:6px}
+  .row{grid-template-columns:1fr;gap:8px}
   .row > .eyebrow{padding-top:0}
+  /* tidy two-column chip grid instead of a ragged wrap */
+  .pills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .pill{width:100%;justify-content:flex-start;height:46px;padding:0 14px;font-size:.95rem}
+  .pill--age{justify-content:center}
   .row-note{grid-column:1}
   .rows-hint{padding-left:0}
   .split{grid-template-columns:1fr}
@@ -358,6 +370,9 @@ h3{font-size:1.3rem}
 }
 
 @media (max-width:760px){
+  .search{height:56px;padding:0 5px 0 16px;gap:8px}
+  .search input{font-size:1rem;min-width:0}
+  .search button{width:auto;height:44px;padding:0 18px;font-size:.95rem}
   .nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;
     gap:0;background:var(--cream-soft);border-bottom:1.6px solid var(--line-soft);
     padding:6px 18px 14px}
@@ -369,9 +384,12 @@ h3{font-size:1.3rem}
   .head-inner{position:relative;gap:12px}
   .btn-ghost{display:none}
   .brand{margin-right:auto}
-  .band{text-align:center;padding:64px 20px 16px}
-  .band-art{position:static;transform:none;display:block;margin:0 auto -46px}
-  .band-art img{height:104px;margin-inline:auto}
+  /* couple sits above the banner, overlapping its top edge */
+  .band{position:relative;display:block;width:auto;max-width:none;height:auto;
+    margin:78px 0 0;padding:76px 20px 22px;text-align:center}
+  .band-art{position:absolute;left:50%;top:0;transform:translate(-50%,-60%);margin:0}
+  .band-art img{height:132px;width:auto}
+  .band p{font-size:1.65rem;line-height:1.2}
   .book{grid-template-columns:1fr;gap:6px}
 }
 

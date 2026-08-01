@@ -34,8 +34,8 @@
   <section class="hero wrap">
     <div class="hero-grid">
       <div class="hero-copy rise">
-        <h1>Parenting is messy.<br>Finding answers shouldn&rsquo;t be.</h1>
-        <p class="lede">Quick, reassuring guides from parents learning the ropes &mdash; just like you.</p>
+        <h1><span class="hl">Parenting is messy.</span> <span class="hl">Finding answers shouldn&rsquo;t be.</span></h1>
+        <p class="lede">The things you&rsquo;re googling at 3am, answered in three minutes &mdash; by parents who were googling them last week.</p>
         <form class="search" id="heroSearch" role="search">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
           <input type="search" id="heroQ" name="q" autocomplete="off" aria-label="Search the guides" aria-controls="grid" placeholder="What do you need help with?">
@@ -159,6 +159,15 @@
   });
 
   render(false);
+
+  // the long placeholder gets cut off on phones
+  const setPlaceholder = () => {
+    input.placeholder = window.innerWidth < 620
+      ? "Search the guides\u2026"
+      : "What do you need help with?";
+  };
+  setPlaceholder();
+  window.addEventListener("resize", setPlaceholder);
 })();
 </script>
 </body>
