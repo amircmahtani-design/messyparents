@@ -473,6 +473,73 @@ const GUIDES = [
 }
 ];
 
+
+/* --- Search ranking -------------------------------------------------------
+   Scores a guide against a query. Whole-word title hits beat partial ones,
+   and guides matching more of the typed words rank higher — so results
+   sharpen as you keep typing rather than just shrinking. */
+
+const _plain = g => (g._text || (g._text = g.body.replace(/<[^>]+>/g, " ").toLowerCase()));
+const _esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/* "naps" should still find "nap"; "feeding" should still find "feed" */
+function _stems(t){
+  const out = [t];
+  if(t.length > 4 && /(ies)$/.test(t)) out.push(t.slice(0,-3) + "y");
+  if(t.length > 4 && /(es|ed)$/.test(t)) out.push(t.slice(0,-2));
+  if(t.length > 3 && /s$/.test(t)) out.push(t.slice(0,-1));
+  if(t.length > 5 && /ing$/.test(t)) out.push(t.slice(0,-3));
+  return out;
+}
+
+function _termScore(term, title, summary, topic, body){
+  const word = new RegExp("\\b" + _esc(term) + "\\b");
+  const pre  = new RegExp("\\b" + _esc(term));
+  let s = 0;
+  if(word.test(title))        s += 20;
+  else if(pre.test(title))    s += 10;
+  else if(title.includes(term)) s += 4;
+
+  if(word.test(summary))      s += 7;
+  else if(summary.includes(term)) s += 3;
+
+  if(topic.includes(term))    s += 4;
+
+  if(word.test(body))         s += 2;
+  else if(body.includes(term)) s += 1;
+  return s;
+}
+
+function searchScore(g, query){
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if(!terms.length) return 1;
+
+  const title = g.title.toLowerCase();
+  const summary = g.summary.toLowerCase();
+  const topic = topicById(g.topic).label.toLowerCase();
+  const body = _plain(g);
+
+  let total = 0, matched = 0;
+  for(const t of terms){
+    let best = 0;
+    for(const v of _stems(t)) best = Math.max(best, _termScore(v, title, summary, topic, body));
+    if(best > 0){ matched++; total += best; }
+  }
+  if(!matched) return 0;
+  return total * Math.pow(matched / terms.length, 2);   // reward matching more of the query
+}
+
+function searchGuides(query, opts){
+  const {topic=null, age=null} = opts || {};
+  return GUIDES
+    .map(g => ({g, score: searchScore(g, query)}))
+    .filter(x => x.score > 0
+      && (!topic || x.g.topic === topic)
+      && (!age || x.g.ages.includes(age)))
+    .sort((a,b) => b.score - a.score || a.g.title.localeCompare(b.g.title))
+    .map(x => x.g);
+}
+
 /* --- Shared rendering ---------------------------------------------------- */
 
 const iconFor = g => ICONS[g.topic] || ICONS.feeding;

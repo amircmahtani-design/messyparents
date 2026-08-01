@@ -36,35 +36,44 @@
       <div class="hero-copy rise">
         <h1>Parenting is messy.<br>Finding answers shouldn&rsquo;t be.</h1>
         <p class="lede">Quick, reassuring guides from parents learning the ropes &mdash; just like you.</p>
-        <form class="search" action="guides.html" method="get" role="search">
+        <form class="search" id="heroSearch" role="search">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-          <input type="search" name="q" aria-label="Search the guides" placeholder="What do you need help with?">
+          <input type="search" id="heroQ" name="q" autocomplete="off" aria-label="Search the guides" aria-controls="grid" placeholder="What do you need help with?">
           <button type="submit">Search</button>
         </form>
       </div>
       <div class="hero-art rise">
-        <img src="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="748">
+        <img src="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747">
       </div>
     </div>
   </section>
 
   <section class="rows wrap" aria-label="Find a guide">
     <div class="row">
-      <p class="eyebrow">Browse by topic</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">1</span>Browse by topic</p>
       <div class="pills" id="topicPills"></div>
     </div>
     <div class="row">
-      <p class="eyebrow">How old is your little one?</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
       <div class="pills" id="agePills"></div>
+    </div>
+    <p class="rows-hint" id="idleHint">Pick a topic, an age, or type in the search box &mdash; matching guides appear right here.</p>
+    <div class="row row--cards" id="resultsRow" hidden>
+      <p class="eyebrow"><span class="step" aria-hidden="true">3</span><span id="resultsTitle">Matching guides</span></p>
+      <div class="card-grid" id="grid" aria-live="polite"></div>
+      <p class="row-note">
+        <span class="hint" id="resultsHint"></span>
+        <a class="link-reset" id="seeAll" href="guides.html" hidden>See all</a>
+        <button class="link-reset" id="resetBtn">Clear filters</button>
+      </p>
     </div>
   </section>
 
   <section class="wrap">
     <div class="band">
       <span class="band-art" aria-hidden="true">
-        <img class="a-papa" src="assets/img/papa-bust.webp" alt="">
-        <img class="a-mama" src="assets/img/mama-bust.webp" alt="">
-        <svg class="a-heart" viewBox="0 0 24 24" fill="#ff4500" stroke="#211d18" stroke-width="1.4"><path d="M12 21S3 15 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21Z"/></svg>
+        <img src="assets/img/couple.webp" alt="" width="430" height="300">
+        <svg class="a-heart" viewBox="0 0 24 24" fill="#ff4500" stroke="#211d18" stroke-width="1.5"><path d="M12 21S3 15 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21Z"/></svg>
       </span>
       <div>
         <p>Short answers for long nights.</p>
@@ -118,10 +127,76 @@
 
 <script>
 (function(){
+  const CAP = 4;
+  const rowsHint=document.getElementById("idleHint"), resultsRow=document.getElementById("resultsRow"),
+        grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),
+        hint=document.getElementById("resultsHint"), reset=document.getElementById("resetBtn"),
+        more=document.getElementById("seeAll"), form=document.getElementById("heroSearch"),
+        input=document.getElementById("heroQ");
+  let topic=null, age=null, q="";
+
   document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
-    `<a class="pill" href="guides.html?topic=${t.id}">${t.icon}<span>${t.label}</span></a>`).join("");
+    `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
   document.getElementById("agePills").innerHTML = AGES.map(a =>
-    `<a class="pill pill--age" href="guides.html?age=${encodeURIComponent(a)}">${a}</a>`).join("");
+    `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="false">${a}</button>`).join("");
+
+  function describe(n){
+    const bits = [];
+    if(q) bits.push("\u201c" + q + "\u201d");
+    if(topic) bits.push(topicById(topic).label);
+    if(age) bits.push(age);
+    return n + " guide" + (n===1?"":"s") + " for " + bits.join(", ");
+  }
+
+  function render(flash){
+    const active = q || topic || age;
+    resultsRow.hidden = !active;
+    rowsHint.hidden = !!active;
+    if(!active) return;
+
+    const list = searchGuides(q, {topic, age});
+    const shown = list.slice(0, CAP);
+    title.textContent = q ? "Closest matches" : "Matching guides";
+    hint.textContent = describe(list.length);
+
+    if(list.length > CAP){
+      const pr = new URLSearchParams();
+      if(q) pr.set("q", q);
+      if(topic) pr.set("topic", topic);
+      if(age) pr.set("age", age);
+      more.href = "guides.html?" + pr.toString();
+      more.textContent = "See all " + list.length + " \u2192";
+      more.hidden = false;
+    } else { more.hidden = true; }
+
+    grid.innerHTML = shown.length ? shown.map(cardHTML).join("")
+      : `<div class="empty"><p><strong>Nothing matches that yet.</strong></p>
+         <p>Try a single word, or <a href="guides.html">browse all guides</a>.</p></div>`;
+
+    if(flash){ grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated"); }
+  }
+
+  document.addEventListener("click", e => {
+    const btn = e.target.closest(".pill");
+    if(!btn) return;
+    if(btn.dataset.topic) topic = (topic===btn.dataset.topic) ? null : btn.dataset.topic;
+    if(btn.dataset.age)   age   = (age===btn.dataset.age)     ? null : btn.dataset.age;
+    document.querySelectorAll("[data-topic]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.topic===topic)));
+    document.querySelectorAll("[data-age]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.age===age)));
+    render(true);
+  });
+
+  input.addEventListener("input", () => { q = input.value.trim(); render(true); });
+  form.addEventListener("submit", e => { e.preventDefault(); q = input.value.trim(); render(true); });
+
+  reset.addEventListener("click", () => {
+    topic = age = null; q = ""; input.value = "";
+    document.querySelectorAll(".pill").forEach(b=>b.setAttribute("aria-pressed","false"));
+    render(false);
+    input.focus();
+  });
+
+  render(false);
 })();
 </script>
 </body>

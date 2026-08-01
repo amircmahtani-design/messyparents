@@ -22,7 +22,8 @@ Static site. No build step, no dependencies, no terminal needed.
 | `guides.html` | Browse all, with search. Accepts `?topic=`, `?age=`, `?q=` |
 | `guide.html` | Reads one guide via `?id=` |
 | `about.html`, `books.html`, `404.html` | Static pages |
-| `assets/js/guides.js` | **All the content lives here** |
+| `popular.html` | Most-read guides, plus one per topic |
+| `assets/js/guides.js` | **All the content lives here**, plus the search ranking |
 | `assets/css/style.css` | All styling |
 | `assets/img/` | Logo, family illustration, papa (backgrounds removed) |
 
@@ -52,3 +53,15 @@ That's it — the home page, browse page, search and related-links all pick it u
 
 - Fonts load from Google Fonts (Gaegu, Patrick Hand, Nunito). If you'd rather self-host, drop the files in `assets/fonts/` and swap the `<link>` in each page.
 - Every health guide carries a red-flag box and a footer line making clear this isn't medical advice. Worth keeping if you add more.
+
+## How the home page filter works
+
+Steps 1 and 2 (topic and age pills) and the search box all feed the same
+results list in step 3. Search is ranked, not just filtered: a word in a
+guide's title scores far higher than the same word buried in the body, and
+guides matching more of the typed words rank above ones matching fewer — so
+results sharpen as you type. Simple stemming means "naps" still finds "nap".
+
+The home page shows the top 4 and links to the full list; the Guides page
+shows everything. To change that cap, edit `CAP` at the top of the inline
+script in `index.html`.

@@ -43,15 +43,15 @@
 
   <section class="rows wrap" aria-label="Filter guides">
     <div class="row">
-      <p class="eyebrow">Browse by topic</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">1</span>Browse by topic</p>
       <div class="pills" id="topicPills"></div>
     </div>
     <div class="row">
-      <p class="eyebrow">How old is your little one?</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
     <div class="row row--cards">
-      <p class="eyebrow" id="resultsTitle">Every guide</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">3</span><span id="resultsTitle">Every guide</span></p>
       <div class="card-grid" id="grid"></div>
       <p class="row-note"><span id="resultsCount"></span>
         <button class="link-reset" id="resetBtn" hidden>Clear filters</button></p>
@@ -115,21 +115,15 @@
   document.getElementById("agePills").innerHTML = AGES.map(a =>
     `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="${a===age}">${a}</button>`).join("");
 
-  function matches(g, needle){
-    if(!needle) return true;
-    const hay=(g.title+" "+g.summary+" "+topicById(g.topic).label+" "+g.body).toLowerCase();
-    return needle.toLowerCase().split(/\s+/).filter(Boolean).every(w => hay.includes(w));
-  }
-
   function render(){
-    const list = GUIDES.filter(g =>
-      (!topic || g.topic===topic) && (!age || g.ages.includes(age)) && matches(g,q));
-    const filtered = topic || age || q;
-    title.textContent = q ? "Search results" : (filtered ? "Matching guides" : "Every guide");
-    count.textContent = `${list.length} guide${list.length===1?"":"s"}`;
-    reset.hidden = !filtered;
+    const active = topic || age || q;
+    const list = active ? searchGuides(q, {topic, age}) : GUIDES.slice();
+    title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Every guide");
+    count.textContent = list.length + " guide" + (list.length===1?"":"s");
+    reset.hidden = !active;
     grid.innerHTML = list.length ? list.map(cardHTML).join("")
       : `<div class="empty"><p><strong>No guides match that yet.</strong></p><p>Try a single word, or clear the filters and scroll.</p></div>`;
+    grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated");
   }
 
   document.addEventListener("click", e => {
