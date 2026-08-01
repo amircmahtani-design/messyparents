@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Our books — The Messy Parents Collection</title>
-<meta name="description" content="The Ari &amp; Papa books: honest, short chapters on the first two years.">
+<title>Popular guides — The Messy Parents Collection</title>
+<meta name="description" content="The parenting questions we get asked most.">
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,10 +20,10 @@
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
       <a href="index.html">Home</a>
-      <a href="popular.html">Popular</a>
+      <a href="popular.html" aria-current="page">Popular</a>
       <a href="guides.html">Guides</a>
       <a href="about.html">About Us</a>
-      <a href="books.html" aria-current="page">Our Books</a>
+      <a href="books.html">Our Books</a>
     </nav>
     <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
     <a class="btn-ghost" href="guides.html">Browse all</a>
@@ -32,29 +32,22 @@
 
 <main id="main">
   <section class="wrap page-head">
-    <h1>Our books</h1>
-    <p>The guides, gathered up and made properly readable &mdash; for the nights when you would rather hold paper than a phone.</p>
+    <h1>Popular guides</h1>
+    <p>The questions we get asked most, and the ones we googled most ourselves.</p>
   </section>
 
-  <section class="wrap" style="max-width:820px;margin-top:24px">
-    <div class="book"><div class="book-num">01</div><div>
-      <h3>Ari &amp; Papa: The First Hundred Nights</h3>
-      <p>The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves
-      marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed.</p>
-      <span class="status status--out">Out now</span></div></div>
+  <section class="rows wrap">
+    <div class="row row--cards">
+      <p class="eyebrow">Most read</p>
+      <div class="card-grid" id="featured"></div>
+    </div>
+    <div class="row row--cards">
+      <p class="eyebrow">One from each topic</p>
+      <div class="card-grid" id="byTopic"></div>
+    </div>
+  </section>
 
-    <div class="book"><div class="book-num">02</div><div>
-      <h3>Ari &amp; Papa: Everyone Says It Gets Easier</h3>
-      <p>Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the
-      arrival of opinions. Includes the complete list of things we blamed on teething.</p>
-      <span class="status">Coming soon</span></div></div>
-
-    <div class="book"><div class="book-num">03</div><div>
-      <h3>The Messy Parents Handbook</h3>
-      <p>Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast.
-      Designed to live next to the changing table and get covered in something.</p>
-      <span class="status">In progress</span></div></div>
-
+  <section class="wrap">
     <div class="band">
       <span class="band-art" aria-hidden="true">
         <img class="a-papa" src="assets/img/papa-bust.webp" alt="">
@@ -62,8 +55,8 @@
         <svg class="a-heart" viewBox="0 0 24 24" fill="#ff4500" stroke="#211d18" stroke-width="1.4"><path d="M12 21S3 15 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21Z"/></svg>
       </span>
       <div>
-        <p>Read the guides first.</p>
-        <p class="band-sub">Everything in the books starts life here, free, at three minutes a piece. <a href="guides.html">Browse all guides</a>.</p>
+        <p>Can't see your question?</p>
+        <p class="band-sub">There are more where these came from. <a href="guides.html">Browse all guides</a>.</p>
       </div>
     </div>
   </section>
@@ -110,5 +103,14 @@
 <script src="assets/js/guides.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
+<script>
+(function(){
+  const feat = GUIDES.filter(g => g.featured);
+  document.getElementById("featured").innerHTML = feat.map(cardHTML).join("");
+  const seen = new Set(feat.map(g => g.id));
+  const one = TOPICS.map(t => GUIDES.find(g => g.topic === t.id && !seen.has(g.id))).filter(Boolean);
+  document.getElementById("byTopic").innerHTML = one.map(cardHTML).join("");
+})();
+</script>
 </body>
 </html>

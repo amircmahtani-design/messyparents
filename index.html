@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Messy Parents Collection — short answers for long nights</title>
 <meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
-<link rel="icon" href="assets/img/navicon.png" type="image/png">
-<link rel="apple-touch-icon" href="assets/img/navicon.png">
+<link rel="icon" href="assets/img/navicon.webp" type="image/webp">
+<link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,9 +17,10 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection" width="820" height="452"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
       <a href="index.html" aria-current="page">Home</a>
+      <a href="popular.html">Popular</a>
       <a href="guides.html">Guides</a>
       <a href="about.html">About Us</a>
       <a href="books.html">Our Books</a>
@@ -42,7 +43,7 @@
         </form>
       </div>
       <div class="hero-art rise">
-        <img src="assets/img/family.png" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1100" height="823">
+        <img src="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="748">
       </div>
     </div>
   </section>
@@ -56,24 +57,18 @@
       <p class="eyebrow">How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
-    <div class="row row--cards">
-      <p class="eyebrow" id="resultsTitle">Popular guides</p>
-      <div class="card-grid" id="grid"></div>
-      <p class="row-note"><span id="resultsCount"></span>
-        <button class="link-reset" id="resetBtn" hidden>Clear filters</button></p>
-    </div>
   </section>
 
   <section class="wrap">
     <div class="band">
       <span class="band-art" aria-hidden="true">
-        <img class="a-papa" src="assets/img/papa-bust.png" alt="">
-        <img class="a-mama" src="assets/img/mama-bust.png" alt="">
+        <img class="a-papa" src="assets/img/papa-bust.webp" alt="">
+        <img class="a-mama" src="assets/img/mama-bust.webp" alt="">
         <svg class="a-heart" viewBox="0 0 24 24" fill="#ff4500" stroke="#211d18" stroke-width="1.4"><path d="M12 21S3 15 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21Z"/></svg>
       </span>
       <div>
         <p>Short answers for long nights.</p>
-        <p class="band-sub">Every guide is a three-minute read, written to be understood at 3am.</p>
+        <p class="band-sub">Every guide is a three-minute read. <a href="popular.html">See the popular ones</a>.</p>
       </div>
     </div>
   </section>
@@ -84,7 +79,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <img src="assets/img/navicon.png" alt="" aria-hidden="true" width="56" height="57">
+        <img src="assets/img/navicon.webp" alt="" aria-hidden="true" width="56" height="58">
         <div>
           <h4>The Messy Parents Collection</h4>
           <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
@@ -104,6 +99,7 @@
         <h4>More</h4>
         <ul>
           <li><a href="index.html">Home</a></li>
+          <li><a href="popular.html">Popular guides</a></li>
           <li><a href="guides.html">Browse all guides</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="books.html">Our Books</a></li>
@@ -122,48 +118,10 @@
 
 <script>
 (function(){
-  const grid = document.getElementById("grid");
-  const title = document.getElementById("resultsTitle");
-  const count = document.getElementById("resultsCount");
-  const reset = document.getElementById("resetBtn");
-  let topic = null, age = null;
-
   document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
-    `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
+    `<a class="pill" href="guides.html?topic=${t.id}">${t.icon}<span>${t.label}</span></a>`).join("");
   document.getElementById("agePills").innerHTML = AGES.map(a =>
-    `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="false">${a}</button>`).join("");
-
-  function render(){
-    const filtered = topic || age;
-    let list = filtered
-      ? GUIDES.filter(g => (!topic || g.topic === topic) && (!age || g.ages.includes(age)))
-      : GUIDES.filter(g => g.featured);
-
-    title.textContent = filtered ? "Matching guides" : "Popular guides";
-    count.textContent = filtered ? `${list.length} guide${list.length === 1 ? "" : "s"}` : "";
-    reset.hidden = !filtered;
-    grid.innerHTML = list.length ? list.map(cardHTML).join("")
-      : `<div class="empty"><p><strong>Nothing matches that combination yet.</strong></p>
-         <p>Try a wider age range, or <a href="guides.html">browse all guides</a>.</p></div>`;
-  }
-
-  document.addEventListener("click", e => {
-    const btn = e.target.closest(".pill");
-    if(!btn) return;
-    if(btn.dataset.topic) topic = (topic === btn.dataset.topic) ? null : btn.dataset.topic;
-    if(btn.dataset.age)   age   = (age   === btn.dataset.age)   ? null : btn.dataset.age;
-    document.querySelectorAll("[data-topic]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === topic)));
-    document.querySelectorAll("[data-age]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.age === age)));
-    render();
-  });
-
-  reset.addEventListener("click", () => {
-    topic = age = null;
-    document.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed","false"));
-    render();
-  });
-
-  render();
+    `<a class="pill pill--age" href="guides.html?age=${encodeURIComponent(a)}">${a}</a>`).join("");
 })();
 </script>
 </body>

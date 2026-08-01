@@ -6,20 +6,19 @@
 const AGES = ["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"];
 
 const ICONS = {
-  bottle:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h8v5h-8z" fill="#ffcc33"/><path d="M18 11h12v3H18z" fill="#f4ead6"/><rect x="16" y="14" width="16" height="28" rx="7" fill="#dce9f8"/><path d="M20 22h8M20 28h8"/></svg>`,
-  moon:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 30A14 14 0 0 1 18 16a13 13 0 0 1 1-5 15 15 0 1 0 18 18 13 13 0 0 1-5 1Z" fill="#ffcc33"/><path d="M33 10v5M30.5 12.5h5" stroke-width="2"/></svg>`,
-  blocks:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linejoin="round"><rect x="7" y="26" width="15" height="15" rx="3" fill="#dce9f8"/><rect x="26" y="26" width="15" height="15" rx="3" fill="#ffcc33"/><rect x="16.5" y="8" width="15" height="15" rx="3" fill="#8fbc8f"/></svg>`,
-  cross:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linejoin="round"><rect x="7" y="12" width="34" height="27" rx="5" fill="#8fbc8f"/><path d="M24 19v13M17.5 25.5h13" stroke-width="3.4" stroke-linecap="round"/><path d="M18 12V9a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/></svg>`,
-  heart:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linejoin="round"><path d="M24 40S7 30 7 18.5A8.5 8.5 0 0 1 24 14a8.5 8.5 0 0 1 17 4.5C41 30 24 40 24 40Z" fill="#ff4500"/></svg>`,
-  baby:`<svg viewBox="0 0 48 48" fill="none" stroke="#23201c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="25" r="15" fill="#f8e2cf"/><path d="M17 22.5c1.5-1.5 3.5-1.5 5 0M26 22.5c1.5-1.5 3.5-1.5 5 0M19 31c3 2.5 7 2.5 10 0"/><path d="M14 12c3 2 6 2 9 0" /></svg>`
+  feeding:     `<img src="assets/img/icons/feeding.webp" alt="" aria-hidden="true">`,
+  sleeping:    `<img src="assets/img/icons/sleeping.webp" alt="" aria-hidden="true">`,
+  development: `<img src="assets/img/icons/development.webp" alt="" aria-hidden="true">`,
+  health:      `<img src="assets/img/icons/health.webp" alt="" aria-hidden="true">`,
+  sanity:      `<img src="assets/img/icons/sanity.webp" alt="" aria-hidden="true">`
 };
 
 const TOPICS = [
-  {id:"feeding",     label:"Feeding",      icon:ICONS.bottle},
-  {id:"sleeping",    label:"Sleeping",     icon:ICONS.moon},
-  {id:"development", label:"Development",  icon:ICONS.blocks},
-  {id:"health",      label:"Health",       icon:ICONS.cross},
-  {id:"sanity",      label:"Parent Sanity",icon:ICONS.heart}
+  {id:"feeding",     label:"Feeding",       icon:ICONS.feeding},
+  {id:"sleeping",    label:"Sleeping",      icon:ICONS.sleeping},
+  {id:"development", label:"Development",   icon:ICONS.development},
+  {id:"health",      label:"Health",        icon:ICONS.health},
+  {id:"sanity",      label:"Parent Sanity", icon:ICONS.sanity}
 ];
 
 const topicById = id => TOPICS.find(t => t.id === id) || TOPICS[0];
@@ -476,7 +475,7 @@ const GUIDES = [
 
 /* --- Shared rendering ---------------------------------------------------- */
 
-const iconFor = g => ICONS[g.icon] || ICONS.baby;
+const iconFor = g => ICONS[g.topic] || ICONS.feeding;
 
 function cardHTML(g){
   return `<a class="card" href="guide.html?id=${g.id}">

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide — The Messy Parents Collection</title>
 <meta name="description" content="A three-minute guide from The Messy Parents Collection.">
-<link rel="icon" href="assets/img/navicon.png" type="image/png">
-<link rel="apple-touch-icon" href="assets/img/navicon.png">
+<link rel="icon" href="assets/img/navicon.webp" type="image/webp">
+<link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,9 +17,10 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.png" alt="The Messy Parents Collection" width="820" height="452"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
       <a href="index.html">Home</a>
+      <a href="popular.html">Popular</a>
       <a href="guides.html" aria-current="page">Guides</a>
       <a href="about.html">About Us</a>
       <a href="books.html">Our Books</a>
@@ -39,7 +40,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <img src="assets/img/navicon.png" alt="" aria-hidden="true" width="56" height="57">
+        <img src="assets/img/navicon.webp" alt="" aria-hidden="true" width="56" height="58">
         <div>
           <h4>The Messy Parents Collection</h4>
           <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
@@ -59,6 +60,7 @@
         <h4>More</h4>
         <ul>
           <li><a href="index.html">Home</a></li>
+          <li><a href="popular.html">Popular guides</a></li>
           <li><a href="guides.html">Browse all guides</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="books.html">Our Books</a></li>
@@ -80,7 +82,6 @@
   const id = new URLSearchParams(location.search).get("id");
   const g = id && guideById(id);
   const el = document.getElementById("article");
-
   if(!g){
     document.title = "Guide not found — The Messy Parents Collection";
     el.innerHTML = `<h1>We can't find that one</h1>
@@ -88,24 +89,20 @@
       <p style="margin-top:14px"><a href="guides.html">Browse all guides</a></p>`;
     return;
   }
-
   document.title = g.title + " — The Messy Parents Collection";
   const t = topicById(g.topic);
-
   const callout = g.callout ? `<div class="callout"><h3>${g.callout.title}</h3><ul>${
-    g.callout.items.map(i => `<li>${i}</li>`).join("")}</ul></div>` : "";
-
-  const related = (g.related || []).map(guideById).filter(Boolean);
-  const relatedHTML = related.length ? `<section class="related"><h2>Read next</h2>
-    <div class="card-grid">${related.map(cardHTML).join("")}</div></section>` : "";
-
+    g.callout.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>` : "";
+  const rel = (g.related||[]).map(guideById).filter(Boolean);
+  const relHTML = rel.length ? `<section class="related"><h2>Read next</h2>
+    <div class="card-grid">${rel.map(cardHTML).join("")}</div></section>` : "";
   el.innerHTML = `
     <p class="crumb"><a href="index.html">Home</a> <span>&rsaquo;</span>
       <a href="guides.html?topic=${g.topic}">${t.label}</a> <span>&rsaquo;</span> <span>${g.title}</span></p>
     <h1>${g.title}</h1>
     <p class="article-meta">
       <span class="tag tag--topic">${t.label}</span>
-      ${g.ages.map(a => `<span class="tag">${a}</span>`).join("")}
+      ${g.ages.map(a=>`<span class="tag">${a}</span>`).join("")}
       <span>${g.read} min read</span>
     </p>
     <div class="article-body">
@@ -117,7 +114,7 @@
         if something worries you about your own baby, speak to your doctor, midwife or health visitor.
         Trust your instinct: it is good data.</p>
     </div>
-    ${relatedHTML}`;
+    ${relHTML}`;
 })();
 </script>
 </body>
