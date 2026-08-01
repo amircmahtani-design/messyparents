@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Messy Parents Collection — short answers for long nights</title>
-<meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<title>Page not found — The Messy Parents Collection</title>
+<meta name="description" content="Page not found.">
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,7 @@
   <div class="wrap head-inner">
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
-      <a href="index.html" aria-current="page">Home</a>
+      <a href="index.html">Home</a>
       <a href="popular.html">Popular</a>
       <a href="guides.html">Guides</a>
       <a href="about.html">About Us</a>
@@ -31,52 +31,13 @@
 </header>
 
 <main id="main">
-  <section class="hero wrap">
-    <div class="hero-grid">
-      <div class="hero-copy rise">
-        <h1>Parenting is messy.<br>Finding answers shouldn&rsquo;t be.</h1>
-        <p class="lede">Quick, reassuring guides from parents learning the ropes &mdash; just like you.</p>
-        <form class="search" id="heroSearch" role="search">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-          <input type="search" id="heroQ" name="q" autocomplete="off" aria-label="Search the guides" aria-controls="grid" placeholder="What do you need help with?">
-          <button type="submit">Search</button>
-        </form>
-      </div>
-      <div class="hero-art rise">
-        <img src="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747">
-      </div>
-    </div>
+  <section class="wrap page-head" style="padding-top:44px">
+    <h1>That page has wandered off</h1>
+    <p>Much like everyone&rsquo;s sleep schedule. Try the <a href="guides.html">guides</a>, or head <a href="index.html">home</a>.</p>
   </section>
-
-  <section class="rows wrap" aria-label="Find a guide">
-    <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">1</span>Browse by topic</p>
-      <div class="pills" id="topicPills"></div>
-    </div>
-    <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
-      <div class="pills" id="agePills"></div>
-    </div>
-    <div class="row row--cards" id="resultsRow">
-      <p class="eyebrow"><span id="resultsTitle">Popular guides</span></p>
-      <div class="card-grid" id="grid" aria-live="polite"></div>
-      <p class="row-note">
-        <span class="hint" id="resultsHint">Pick a topic, an age, or type in the search box &mdash; these update as you go.</span>
-        <a class="link-reset" id="seeAll" href="guides.html" hidden>See all</a>
-        <button class="link-reset" id="resetBtn" hidden>Clear filters</button>
-      </p>
-    </div>
+  <section class="wrap" style="margin-top:20px">
+    <img src="assets/img/ari.webp" alt="" aria-hidden="true" style="width:190px">
   </section>
-
-  <section class="wrap">
-    <div class="band">
-      <span class="band-art" aria-hidden="true">
-        <img src="assets/img/couple.webp" alt="" width="520" height="392">
-      </span>
-      <p>Short answers for long nights.</p>
-    </div>
-  </section>
-
 </main>
 
 <footer class="site-foot">
@@ -120,76 +81,5 @@
 <script src="assets/js/guides.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
-<script>
-(function(){
-  const CAP = 4;
-  const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),
-        hint=document.getElementById("resultsHint"), reset=document.getElementById("resetBtn"),
-        more=document.getElementById("seeAll"), form=document.getElementById("heroSearch"),
-        input=document.getElementById("heroQ");
-  let topic=null, age=null, q="";
-
-  document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
-    `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
-  document.getElementById("agePills").innerHTML = AGES.map(a =>
-    `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="false">${a}</button>`).join("");
-
-  function describe(n){
-    const bits = [];
-    if(q) bits.push("\u201c" + q + "\u201d");
-    if(topic) bits.push(topicById(topic).label);
-    if(age) bits.push(age);
-    return n + " guide" + (n===1?"":"s") + " for " + bits.join(", ");
-  }
-
-  function render(flash){
-    const active = q || topic || age;
-    const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
-    const shown = list.slice(0, CAP);
-    title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Popular guides");
-    reset.hidden = !active;
-    hint.textContent = active ? describe(list.length)
-      : "Pick a topic, an age, or type in the search box \u2014 these update as you go.";
-
-    if(list.length > CAP){
-      const pr = new URLSearchParams();
-      if(q) pr.set("q", q);
-      if(topic) pr.set("topic", topic);
-      if(age) pr.set("age", age);
-      more.href = "guides.html?" + pr.toString();
-      more.textContent = "See all " + list.length + " \u2192";
-      more.hidden = false;
-    } else { more.hidden = true; }
-
-    grid.innerHTML = shown.length ? shown.map(cardHTML).join("")
-      : `<div class="empty"><p><strong>Nothing matches that yet.</strong></p>
-         <p>Try a single word, or <a href="guides.html">browse all guides</a>.</p></div>`;
-
-    if(flash){ grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated"); }
-  }
-
-  document.addEventListener("click", e => {
-    const btn = e.target.closest(".pill");
-    if(!btn) return;
-    if(btn.dataset.topic) topic = (topic===btn.dataset.topic) ? null : btn.dataset.topic;
-    if(btn.dataset.age)   age   = (age===btn.dataset.age)     ? null : btn.dataset.age;
-    document.querySelectorAll("[data-topic]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.topic===topic)));
-    document.querySelectorAll("[data-age]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.age===age)));
-    render(true);
-  });
-
-  input.addEventListener("input", () => { q = input.value.trim(); render(true); });
-  form.addEventListener("submit", e => { e.preventDefault(); q = input.value.trim(); render(true); });
-
-  reset.addEventListener("click", () => {
-    topic = age = null; q = ""; input.value = "";
-    document.querySelectorAll(".pill").forEach(b=>b.setAttribute("aria-pressed","false"));
-    render(false);
-    input.focus();
-  });
-
-  render(false);
-})();
-</script>
 </body>
 </html>

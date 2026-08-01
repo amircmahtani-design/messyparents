@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Popular guides — The Messy Parents Collection</title>
-<meta name="description" content="The parenting questions we get asked most.">
+<title>About us — The Messy Parents Collection</title>
+<meta name="description" content="Short, reassuring parenting guides written by two very tired parents.">
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,9 +20,9 @@
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
       <a href="index.html">Home</a>
-      <a href="popular.html" aria-current="page">Popular</a>
+      <a href="popular.html">Popular</a>
       <a href="guides.html">Guides</a>
-      <a href="about.html">About Us</a>
+      <a href="about.html" aria-current="page">About Us</a>
       <a href="books.html">Our Books</a>
     </nav>
     <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
@@ -32,31 +32,34 @@
 
 <main id="main">
   <section class="wrap page-head">
-    <h1>Popular guides</h1>
-    <p>The questions we get asked most, and the ones we googled most ourselves.</p>
+    <h1>About us</h1>
+    <p>We are not experts. That is rather the point.</p>
   </section>
 
-  <section class="rows wrap">
-    <div class="row row--cards">
-      <p class="eyebrow">Most read</p>
-      <div class="card-grid" id="featured"></div>
+  <section class="wrap split" style="margin-top:22px">
+    <div class="prose">
+      <p>The Messy Parents Collection started at 3am, on a phone, one-handed, while googling a question that had a
+      forty-minute answer when what was needed was a forty-second one.</p>
+      <p>Every parenting resource we found was either a wall of citations or a stranger on a forum shouting in capitals.
+      Neither is much use when you are holding a baby who has been crying for an hour and you cannot remember whether
+      you have eaten today.</p>
+      <h2>What we do</h2>
+      <p>We write short guides on the questions that come up over and over in the first two years: feeding, sleeping,
+      development, health, and the state of the adults in the room. Each one takes about three minutes to read.
+      Each one is written to be understood by someone who has slept for four hours.</p>
+      <p>Where something needs a doctor, we say so plainly and early, with a clear list of what to watch for.
+      We would rather send you to a professional unnecessarily than have you sit at home wondering.</p>
+      <h2>Who we are</h2>
+      <p>Ari &amp; Papa &mdash; one baby, two very tired adults, one sofa that has seen things. We write what we wish
+      someone had handed us in week two, checked against current guidance from national health services and paediatric
+      bodies, and stripped of everything that made us feel worse.</p>
+      <h2>What we are not</h2>
+      <p>We are not doctors, midwives, health visitors or paediatricians. Nothing here replaces advice from someone who
+      can actually see your baby. If your instinct says something is wrong, act on it &mdash; that instinct is
+      genuinely good information, and no one who does this professionally will mind you asking.</p>
+      <p><a href="guides.html">Start with the guides</a>, or come back at 3am. We will be here. We will be awake.</p>
     </div>
-    <div class="row row--cards">
-      <p class="eyebrow">One from each topic</p>
-      <div class="card-grid" id="byTopic"></div>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="band">
-      <span class="band-art" aria-hidden="true">
-        <img src="assets/img/couple.webp" alt="" width="520" height="392">
-      </span>
-      <div>
-        <p>Can't see your question?</p>
-        <p class="band-sub">There are more where these came from. <a href="guides.html">Browse all guides</a>.</p>
-      </div>
-    </div>
+    <img src="assets/img/papa.webp" alt="An extremely tired father holding a mug of coffee and a bottle">
   </section>
 </main>
 
@@ -101,14 +104,5 @@
 <script src="assets/js/guides.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
-<script>
-(function(){
-  const feat = GUIDES.filter(g => g.featured);
-  document.getElementById("featured").innerHTML = feat.map(cardHTML).join("");
-  const seen = new Set(feat.map(g => g.id));
-  const one = TOPICS.map(t => GUIDES.find(g => g.topic === t.id && !seen.has(g.id))).filter(Boolean);
-  document.getElementById("byTopic").innerHTML = one.map(cardHTML).join("");
-})();
-</script>
 </body>
 </html>

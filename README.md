@@ -1,67 +1,112 @@
-# The Messy Parents Collection
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our books — The Messy Parents Collection</title>
+<meta name="description" content="The Ari &amp; Papa books: honest, short chapters on the first two years.">
+<link rel="icon" href="assets/img/navicon.webp" type="image/webp">
+<link rel="apple-touch-icon" href="assets/img/navicon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
 
-Static site. No build step, no dependencies, no terminal needed.
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Home</a>
+      <a href="popular.html">Popular</a>
+      <a href="guides.html">Guides</a>
+      <a href="about.html">About Us</a>
+      <a href="books.html" aria-current="page">Our Books</a>
+    </nav>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="btn-ghost" href="guides.html">Browse all</a>
+  </div>
+</header>
 
-## Upload to GitHub
+<main id="main">
+  <section class="wrap page-head">
+    <h1>Our books</h1>
+    <p>The guides, gathered up and made properly readable &mdash; for the nights when you would rather hold paper than a phone.</p>
+  </section>
 
-1. New repo → **Add file → Upload files**
-2. Drag in *everything* in this folder, keeping the `assets` folder structure intact.
-3. Commit.
+  <section class="wrap" style="max-width:820px;margin-top:24px">
+    <div class="book"><div class="book-num">01</div><div>
+      <h3>Ari &amp; Papa: The First Hundred Nights</h3>
+      <p>The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves
+      marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed.</p>
+      <span class="status status--out">Out now</span></div></div>
 
-## Publish
+    <div class="book"><div class="book-num">02</div><div>
+      <h3>Ari &amp; Papa: Everyone Says It Gets Easier</h3>
+      <p>Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the
+      arrival of opinions. Includes the complete list of things we blamed on teething.</p>
+      <span class="status">Coming soon</span></div></div>
 
-**GitHub Pages:** Settings → Pages → Source: `main`, folder `/ (root)`.
+    <div class="book"><div class="book-num">03</div><div>
+      <h3>The Messy Parents Handbook</h3>
+      <p>Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast.
+      Designed to live next to the changing table and get covered in something.</p>
+      <span class="status">In progress</span></div></div>
 
-**Netlify:** New site from Git → pick the repo → build command: *(leave empty)*, publish directory: `/`.
+    <div class="band">
+      <span class="band-art" aria-hidden="true">
+        <img src="assets/img/couple.webp" alt="" width="520" height="392">
+      </span>
+      <div>
+        <p>Read the guides first.</p>
+        <p class="band-sub">Everything in the books starts life here, free, at three minutes a piece. <a href="guides.html">Browse all guides</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
 
-## Files
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="assets/img/navicon.webp" alt="" aria-hidden="true" width="56" height="58">
+        <div>
+          <h4>The Messy Parents Collection</h4>
+          <p style="color:var(--ink-70);margin:0;max-width:34ch">Tales and guides from learning the ropes as newbie parents. Written by Ari &amp; Papa.</p>
+        </div>
+      </div>
+      <div>
+        <h4>Guides</h4>
+        <ul>
+          <li><a href="guides.html?topic=feeding">Feeding</a></li>
+          <li><a href="guides.html?topic=sleeping">Sleeping</a></li>
+          <li><a href="guides.html?topic=development">Development</a></li>
+          <li><a href="guides.html?topic=health">Health</a></li>
+          <li><a href="guides.html?topic=sanity">Parent Sanity</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>More</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="popular.html">Popular guides</a></li>
+          <li><a href="guides.html">Browse all guides</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="books.html">Our Books</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
+      <span>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
+    </div>
+  </div>
+</footer>
 
-| File | What it is |
-|---|---|
-| `index.html` | Home. Topic + age pills filter the guide list live. |
-| `guides.html` | Browse all, with search. Accepts `?topic=`, `?age=`, `?q=` |
-| `guide.html` | Reads one guide via `?id=` |
-| `about.html`, `books.html`, `404.html` | Static pages |
-| `popular.html` | Most-read guides, plus one per topic |
-| `assets/js/guides.js` | **All the content lives here**, plus the search ranking |
-| `assets/css/style.css` | All styling |
-| `assets/img/` | Logo, family illustration, papa (backgrounds removed) |
+<script src="assets/js/guides.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
-## Adding a guide
-
-Open `assets/js/guides.js`, copy any block inside `GUIDES = [ ... ]`, change the fields:
-
-```js
-{
-  id:"unique-url-slug",        // becomes guide.html?id=unique-url-slug
-  topic:"feeding",             // feeding | sleeping | development | health | sanity
-  icon:"bottle",               // bottle | moon | blocks | cross | heart | baby
-  featured:true,               // true = shows in "Popular guides" on the home page
-  title:"...",
-  ages:["4–6 months"],         // must match the strings in AGES exactly
-  read:3,
-  summary:"One line under the title.",
-  body:`<p>HTML goes here.</p>`,
-  callout:{title:"Call your doctor if", items:["...","..."]},   // or null
-  related:["some-other-id"]
-}
-```
-
-That's it — the home page, browse page, search and related-links all pick it up automatically.
-
-## Notes
-
-- Fonts load from Google Fonts (Gaegu, Patrick Hand, Nunito). If you'd rather self-host, drop the files in `assets/fonts/` and swap the `<link>` in each page.
-- Every health guide carries a red-flag box and a footer line making clear this isn't medical advice. Worth keeping if you add more.
-
-## How the home page filter works
-
-Steps 1 and 2 (topic and age pills) and the search box all feed the same
-results list in step 3. Search is ranked, not just filtered: a word in a
-guide's title scores far higher than the same word buried in the body, and
-guides matching more of the typed words rank above ones matching fewer — so
-results sharpen as you type. Simple stemming means "naps" still finds "nap".
-
-The home page shows the top 4 and links to the full list; the Guides page
-shows everything. To change that cap, edit `CAP` at the top of the inline
-script in `index.html`.
+</body>
+</html>
