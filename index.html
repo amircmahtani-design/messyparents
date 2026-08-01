@@ -57,14 +57,13 @@
       <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
-    <p class="rows-hint" id="idleHint">Pick a topic, an age, or type in the search box &mdash; matching guides appear right here.</p>
-    <div class="row row--cards" id="resultsRow" hidden>
-      <p class="eyebrow"><span class="step" aria-hidden="true">3</span><span id="resultsTitle">Matching guides</span></p>
+    <div class="row row--cards" id="resultsRow">
+      <p class="eyebrow"><span id="resultsTitle">Popular guides</span></p>
       <div class="card-grid" id="grid" aria-live="polite"></div>
       <p class="row-note">
-        <span class="hint" id="resultsHint"></span>
+        <span class="hint" id="resultsHint">Pick a topic, an age, or type in the search box &mdash; these update as you go.</span>
         <a class="link-reset" id="seeAll" href="guides.html" hidden>See all</a>
-        <button class="link-reset" id="resetBtn">Clear filters</button>
+        <button class="link-reset" id="resetBtn" hidden>Clear filters</button>
       </p>
     </div>
   </section>
@@ -74,10 +73,7 @@
       <span class="band-art" aria-hidden="true">
         <img src="assets/img/couple.webp" alt="" width="520" height="392">
       </span>
-      <div>
-        <p>Short answers for long nights.</p>
-        <p class="band-sub">Every guide is a three-minute read. <a href="popular.html">See the popular ones</a>.</p>
-      </div>
+      <p>Short answers for long nights.</p>
     </div>
   </section>
 
@@ -127,8 +123,7 @@
 <script>
 (function(){
   const CAP = 4;
-  const rowsHint=document.getElementById("idleHint"), resultsRow=document.getElementById("resultsRow"),
-        grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),
+  const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),
         hint=document.getElementById("resultsHint"), reset=document.getElementById("resetBtn"),
         more=document.getElementById("seeAll"), form=document.getElementById("heroSearch"),
         input=document.getElementById("heroQ");
@@ -149,14 +144,12 @@
 
   function render(flash){
     const active = q || topic || age;
-    resultsRow.hidden = !active;
-    rowsHint.hidden = !!active;
-    if(!active) return;
-
-    const list = searchGuides(q, {topic, age});
+    const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
     const shown = list.slice(0, CAP);
-    title.textContent = q ? "Closest matches" : "Matching guides";
-    hint.textContent = describe(list.length);
+    title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Popular guides");
+    reset.hidden = !active;
+    hint.textContent = active ? describe(list.length)
+      : "Pick a topic, an age, or type in the search box \u2014 these update as you go.";
 
     if(list.length > CAP){
       const pr = new URLSearchParams();

@@ -568,8 +568,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   if(head){
-    const onScroll = () => head.classList.toggle("is-stuck", window.scrollY > 4);
-    onScroll();
-    window.addEventListener("scroll", onScroll, {passive:true});
+    const setH = () => document.documentElement.style
+      .setProperty("--head-h", head.offsetHeight + "px");
+    setH();
+    window.addEventListener("resize", setH);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(setH);
   }
 });
