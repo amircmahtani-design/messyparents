@@ -67,7 +67,8 @@ MPCStore.ready = (async function () {
 MPCStore.ABOUT_DEFAULTS = {
   hero:   "assets/img/papa.webp",
   middle: "assets/img/mama.webp",
-  bottom: "assets/img/family.webp"
+  who:    "assets/img/family.webp",
+  notare: "assets/img/couple.webp"
 };
 
 /* Swap an image's source with NO flash of the old/default picture: the image
@@ -115,7 +116,7 @@ function applyAboutArt(sec, config, fallback) {
   }
 }
 
-/* Apply the whole About page (three illustration slots + positioning). */
+/* Apply the whole About page (four illustration slots + positioning). */
 function applyAboutPage(pg) {
   pg = pg || {};
   const D = MPCStore.ABOUT_DEFAULTS;
@@ -128,13 +129,13 @@ function applyAboutPage(pg) {
   // Middle.
   applyAboutArt(document.querySelector('.about-section[data-illus="middle"]'), pg.middle, D.middle);
 
-  // Bottom — attaches to whichever section the editor chose.
-  const target = (pg.bottom && pg.bottom.target) || "who";
-  const chosen = document.querySelector('.about-section[data-section="' + target + '"]');
-  document.querySelectorAll('.about-section[data-illus="bottom"]').forEach(function (sec) {
-    if (sec === chosen) applyAboutArt(sec, pg.bottom, D.bottom);
-    else sec.classList.remove("has-art");   // the other section stays text-only
-  });
+  // "Who we are" and "What we are not" now each have their own slot. Fall back
+  // to the old single "bottom" slot (with its target) for previously-saved data.
+  const legacy = pg.bottom, legacyTarget = (legacy && legacy.target) || "who";
+  const whoCfg    = pg.who    || (legacyTarget === "who"    ? legacy : null);
+  const notareCfg = pg.notare || (legacyTarget === "notare" ? legacy : null);
+  applyAboutArt(document.querySelector('.about-section[data-illus="who"]'),    whoCfg,    D.who);
+  applyAboutArt(document.querySelector('.about-section[data-illus="notare"]'), notareCfg, D.notare);
 }
 
 /* Apply an editable page image (and optional title/subtitle) once data is

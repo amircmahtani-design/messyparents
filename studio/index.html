@@ -281,9 +281,10 @@ const PAGE_SLOTS = {
   popular: [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   guides:  [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   about: [
-    { key:"hero",   label:"Hero Illustration",   help:"Appears beside “About us” and the subtitle.", pos:true },
-    { key:"middle", label:"Middle Illustration", help:"Appears beside the “What we do” section.",     pos:true },
-    { key:"bottom", label:"Bottom Illustration", help:"Appears beside “Who we are” or “What we are not”.", pos:true, target:true }
+    { key:"hero",   label:"Hero Illustration",     help:"Appears beside “About us” and the subtitle.", pos:true, align:"right" },
+    { key:"middle", label:"Middle Illustration",   help:"Appears beside the “What we do” section.",     pos:true, align:"left"  },
+    { key:"who",    label:"“Who we are” Illustration",      help:"Appears beside the “Who we are” section.",      pos:true, align:"right" },
+    { key:"notare", label:"“What we are not” Illustration", help:"Appears beside the “What we are not” section.", pos:true, align:"left"  }
   ]
 };
 /* Default artwork per About slot (studio-relative paths for the thumbnails).
@@ -291,7 +292,8 @@ const PAGE_SLOTS = {
 const ABOUT_DEFAULTS = {
   hero:   "../assets/img/papa.webp",
   middle: "../assets/img/mama.webp",
-  bottom: "../assets/img/family.webp"
+  who:    "../assets/img/family.webp",
+  notare: "../assets/img/couple.webp"
 };
 const WIDTHS = ["small","medium","large"];
 
@@ -475,9 +477,8 @@ function slotDefault(id, key){
 /* Build one illustration-slot card. */
 function slotCardHTML(id, s){
   const c = state.pageDraft.slots[s.key] || {};
-  const width = c.width || "medium", align = c.align || (s.key==="middle" ? "left" : "right");
+  const width = c.width || "medium", align = c.align || s.align || "right";
   const maxw = parseInt(c.maxw,10) || 0;
-  const target = c.target || "who";
   return `<div class="col-card slot" data-slot="${s.key}" ${s.pos?"":"data-nopos"}>
     <span class="tag">🖼 ${s.label}</span>
     <p class="slot-help">${s.help}</p>
@@ -499,12 +500,6 @@ function slotCardHTML(id, s){
               <option value="right" ${align==="right"?"selected":""}>Right</option>
             </select>
           </label>
-          ${s.target?`<label>Place beside
-            <select data-ctl="target">
-              <option value="who" ${target==="who"?"selected":""}>Who we are</option>
-              <option value="notare" ${target==="notare"?"selected":""}>What we are not</option>
-            </select>
-          </label>`:""}
         </div>
         <label class="slot-maxw">Max width: <span class="maxw-val" data-maxlbl>${maxw?maxw+"px":"auto"}</span>
           <input type="range" data-ctl="maxw" min="0" max="560" step="10" value="${maxw}">
@@ -532,9 +527,8 @@ function draftPageData(){
     (PAGE_SLOTS.about).forEach(s=>{
       const c=state.pageDraft.slots[s.key]||{};
       const o={ image:c.image||"", width:c.width||"medium",
-                align:c.align||(s.key==="middle"?"left":"right") };
+                align:c.align||s.align||"right" };
       const mw=parseInt(c.maxw,10)||0; if(mw) o.maxw=mw;
-      if(s.target) o.target=c.target||"who";
       data[s.key]=o;
     });
   }else{
@@ -570,12 +564,18 @@ function selectPage(id){
     : "Edit the text and the illustration that sits beside this page’s title.";
   $("#p_title").value = d.title!=null ? d.title : p.title;
   $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
-  // seed the per-slot draft from saved data
+  // seed the per-slot draft from saved data (with fall-back for the old single
+  // "bottom" slot, which is now split into "who" / "what we are not").
   state.pageDraft = { slots:{} };
+  const legacyBottom = d.bottom, legacyTarget = (d.bottom && d.bottom.target) || "who";
   (PAGE_SLOTS[id]||[]).forEach(s=>{
-    state.pageDraft.slots[s.key] = id==="about"
-      ? Object.assign({}, d[s.key])
-      : { image: d.image || "" };
+    let cfg;
+    if(id!=="about") cfg = { image: d.image || "" };
+    else if(d[s.key]) cfg = Object.assign({}, d[s.key]);
+    else if((s.key==="who"||s.key==="notare") && legacyBottom && legacyTarget===s.key) cfg = Object.assign({}, legacyBottom);
+    else cfg = {};
+    delete cfg.target;   // no longer used
+    state.pageDraft.slots[s.key] = cfg;
   });
   renderSlots(id);
   $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";

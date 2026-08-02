@@ -354,16 +354,16 @@ html.illus-ready .page-hero-art img{opacity:1}
 .about-section.has-art[data-pos="left"] .about-art{order:1}
 .about-section.has-art[data-pos="left"] .about-copy{justify-self:end}
 
-/* The hero art aligns to the top so it sits beside the title, not the middle. */
-.about-hero.has-art{align-items:start}
-.about-hero .about-art{align-items:flex-start;margin-top:4px}
+/* The hero art sits centred against the copy so it covers the middle of the
+   paragraphs rather than floating up by the title. */
+.about-hero.has-art{align-items:center}
+.about-hero .about-art{align-items:center;margin-top:0}
 .about-hero h1{margin:0}
-/* Subtitle → first paragraph: a single, deliberate ~44px gap (kills the
-   giant empty space the old layout left after the subtitle). */
+/* Subtitle → first paragraph: a tidy, modest gap (no big empty space). */
 .about-sub{font-family:var(--hand);color:var(--ink-70);
   font-size:clamp(1.18rem,1.6vw,1.42rem);line-height:1.35;max-width:44ch;
   margin:12px 0 0}
-.about-hero .prose{margin-top:clamp(32px,4vw,46px)}
+.about-hero .prose{margin-top:clamp(16px,2.2vw,26px)}
 
 /* Art SIZE (Studio: Small / Medium / Large) — sets the column width and a
    sensible max so a small image never balloons on a wide screen. */
