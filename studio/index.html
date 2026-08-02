@@ -225,22 +225,38 @@ async function generateIllustration(){
   const g = draftGuide();
   const refs = await loadRefs();
   if(!refs.length){ msg.textContent = "No references found — add images to assets/img/refs/ and list them in manifest.json."; return; }
-  btn.disabled = true; msg.textContent = "Generating… (20–40s)";
+  btn.disabled = true; msg.textContent = "Starting… image generation runs in the background (~30–60s).";
+  const prompt = buildPrompt(g, $("#f_scene").value);
+  const { fs, db } = state.fb;
+  const jobRef = fs.doc(db, "illustration_jobs", g.id);
+
+  let done = false;
+  const unsub = fs.onSnapshot(jobRef, snap => {
+    const d = snap.data(); if(!d) return;
+    if(d.status === "done"){
+      done = true; unsub();
+      $("#f_hero").value = d.url; pushPreview();
+      msg.textContent = "Done ✓ — click Save to keep it."; btn.disabled = false;
+    } else if(d.status === "error"){
+      done = true; unsub();
+      msg.textContent = "Failed: " + (d.error || "generation error"); btn.disabled = false;
+    } else {
+      msg.textContent = "Working… please wait.";
+    }
+  });
+
   try{
-    const prompt = buildPrompt(g, $("#f_scene").value);
-    const r = await fetch("/.netlify/functions/generate-illustration", {
+    await fetch("/.netlify/functions/generate-illustration-background", {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ prompt, refs, size: "1536x1024" })
+      body: JSON.stringify({ guideId: g.id, prompt, refs })
     });
-    const raw = await r.text();
-    let j = null; try { j = JSON.parse(raw); } catch(_) {}
-    if(!r.ok || !j || !j.b64) throw new Error((j && j.error) || ("HTTP " + r.status + " — " + raw.slice(0, 180)));
-    msg.textContent = "Uploading…";
-    $("#f_hero").value = await uploadHero(g.id, j.b64);
-    pushPreview();
-    msg.textContent = "Done ✓ — click Save to keep it.";
-  }catch(e){ msg.textContent = "Failed: " + (e.message || e); }
-  finally{ btn.disabled = false; }
+  }catch(e){
+    if(!done){ unsub(); msg.textContent = "Failed to start: " + (e.message || e); btn.disabled = false; }
+  }
+
+  setTimeout(() => {
+    if(!done){ unsub(); msg.textContent = "Timed out waiting (2 min). Check the Netlify background-function log."; btn.disabled = false; }
+  }, 150000);
 }
 async function importAll(){
   const {fs, db} = state.fb;
