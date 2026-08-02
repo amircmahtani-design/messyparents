@@ -10,9 +10,7 @@
 
    Get this from: Firebase console → Project settings → General → Your apps.
    ========================================================================== */
-window.FIREBASE_CONFIG = null;
 
-/* Example (fill and uncomment):
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyAGHZgw1Thl82LTJTUcpceQXa-Fjwzdn_E",
   authDomain: "messy-parents.firebaseapp.com",
@@ -21,4 +19,3 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "678138643116",
   appId: "1:678138643116:web:ff1fb9b63e207893715509"
 };
-*/
