@@ -126,23 +126,9 @@
         </div>
 
         <div class="field" id="genWrap">
-          <label>AI illustration <span class="hint">— persistent character sessions keep the look consistent</span></label>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-            <span class="hint">Characters:</span>
-            <select id="f_session" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px">
-              <option value="family">Family (Mama, Papa &amp; Ari)</option>
-              <option value="mama">Mama only</option>
-              <option value="papa">Papa only</option>
-              <option value="ari">Ari only</option>
-              <option value="mama-ari">Mama &amp; Ari</option>
-              <option value="papa-ari">Papa &amp; Ari</option>
-            </select>
-          </div>
-          <textarea id="f_scene" rows="2" placeholder="Pose / action / props (optional — defaults to the guide's title &amp; topic)"></textarea>
-          <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button id="genBtn" class="btn" type="button">✨ Generate illustration</button>
-            <span id="genMsg" class="hint"></span>
-          </div>
+          <label>Hero image <span class="hint">— upload a picture from your computer (PNG with transparency works best)</span></label>
+          <input id="f_upload" type="file" accept="image/*" style="font-family:inherit;font-size:14px">
+          <div style="margin-top:8px"><span id="genMsg" class="hint"></span></div>
         </div>
 
         <div class="col-card">
@@ -295,7 +281,16 @@ async function generateIllustration(){
     if(!done){ unsub(); msg.textContent = "Still generating after 5 min — reopen this guide in a moment and it should be ready."; btn.disabled = false; }
   }, 300000);
 }
-/* ---- Character Manager ---- */
+/* ---- Upload a hero image from the computer ---- */
+async function uploadFile(id, file){
+  const { storage, st } = state.fb;
+  const ext = (((file.name||"img").split(".").pop()) || "png").toLowerCase().replace(/[^a-z0-9]/g,"") || "png";
+  const sref = storage.ref(st, "guides/" + id + "-" + Date.now() + "." + ext);
+  await storage.uploadBytes(sref, file, { contentType: file.type || "image/png" });
+  return await storage.getDownloadURL(sref);
+}
+
+/* ---- Character Manager (retained but unused) ---- */
 const CHAR_KEYS = ["family","mama","papa","ari","mama-ari","papa-ari"];
 async function refreshChars(){
   const { fs, db } = state.fb;
@@ -450,7 +445,7 @@ function showApp(user){
   $("#loginView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
-  if(MODE === "firebase"){ $("#seedBtn").classList.remove("hidden"); $("#charBtn").classList.remove("hidden"); }
+  if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
@@ -486,13 +481,16 @@ async function boot(){
     }catch(e){ alert("Import failed: " + (e.message || e)); btn.textContent = old; }
     finally{ btn.disabled = false; }
   });
-  $("#genBtn").addEventListener("click", generateIllustration);
-  $("#charBtn").addEventListener("click", () => { $("#charModal").classList.remove("hidden"); refreshChars(); });
-  $("#charClose").addEventListener("click", () => $("#charModal").classList.add("hidden"));
-  $("#charModal").addEventListener("click", e => { if(e.target.id === "charModal") $("#charModal").classList.add("hidden"); });
-  $("#charList").addEventListener("click", e => {
-    const b = e.target.closest("[data-reset]"); if(!b) return;
-    if(confirm("Reset the “" + b.dataset.reset + "” session? The canon will be re-established from your reference images on the next generation.")) resetChar(b.dataset.reset);
+  $("#f_upload").addEventListener("change", async e => {
+    const file = e.target.files && e.target.files[0]; if(!file) return;
+    const g = draftGuide(); const msg = $("#genMsg");
+    msg.textContent = "Uploading…";
+    try{
+      const url = await uploadFile(g.id, file);
+      $("#f_hero").value = url; pushPreview();
+      msg.textContent = "Uploaded ✓ — click Save to keep it.";
+    }catch(err){ msg.textContent = "Upload failed: " + (err.message || err); }
+    finally{ e.target.value = ""; }
   });
   auth.onAuthStateChanged(a, async user => {
     if(user){ state.guides = await loadGuides(); showApp(user); }
