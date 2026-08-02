@@ -25,7 +25,7 @@ const topicById = id => TOPICS.find(t => t.id === id) || TOPICS[0];
 
 /* --- The guides --------------------------------------------------------- */
 
-const GUIDES = [
+var GUIDES = [
 {
   id:"drinking-less-milk", topic:"feeding", icon:"bottle", featured:true,
   title:"Why is my baby drinking less milk?",
