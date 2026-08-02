@@ -69,17 +69,19 @@
   </div>
 </footer>
 
+<script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/guides.js"></script>
+<script src="assets/js/mpc-store.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
 <script>
-(function(){
+MPCStore.ready.then(function(){
   const feat = GUIDES.filter(g => g.featured);
   document.getElementById("featured").innerHTML = feat.map(cardHTML).join("");
   const seen = new Set(feat.map(g => g.id));
   const one = TOPICS.map(t => GUIDES.find(g => g.topic === t.id && !seen.has(g.id))).filter(Boolean);
   document.getElementById("byTopic").innerHTML = one.map(cardHTML).join("");
-})();
+});
 </script>
 </body>
 </html>

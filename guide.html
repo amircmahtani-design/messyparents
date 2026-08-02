@@ -115,23 +115,14 @@
   </div>
 </footer>
 
+<script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/guides.js"></script>
+<script src="assets/js/mpc-store.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
 <script>
 (function(){
-  const id = new URLSearchParams(location.search).get("id");
-  const g = id && guideById(id);
   const el = document.getElementById("article");
-  if(!g){
-    document.title = "Guide not found — The Messy Parents Collection";
-    el.innerHTML = `<h1>We can't find that one</h1>
-      <p class="lede">The link may be old, or the guide may have been renamed.</p>
-      <p style="margin-top:14px"><a href="guides.html">Browse all guides</a></p>`;
-    return;
-  }
-  document.title = g.title + " — The Messy Parents Collection";
-  const t = topicById(g.topic);
 
   /* ---- Approved template (uses g.panel) ------------------------------- */
   const BADGE = {
@@ -152,7 +143,7 @@
 
   function panelMarkup(title, p, iconHTML, summaryFallback){
     p = p || {};
-    const eyebrow = p.eyebrow || (t && t.label) || "";
+    const eyebrow = p.eyebrow || "";
     const bandArt = p.band || "assets/img/couple.webp";
     const heroHTML = p.hero
       ? `<div class="g-art"><img src="${p.hero}" alt="${p.heroAlt || title || ""}"></div>`
@@ -179,45 +170,59 @@
         if something worries you about your own baby, speak to your doctor, midwife or health visitor. Your instinct is good data.</p>
     </div>`;
   }
-  function renderPanel(p){ el.className = ""; el.innerHTML = panelMarkup(g.title, p, iconFor(g), g.summary); }
-
-  /* Live-preview hook used by the Studio (same-origin iframe) */
+  /* Live-preview hook used by the Studio (same-origin iframe) — always available */
   window.__renderPreview = function(draft){
     el.className = "";
-    const icon = (typeof ICONS !== "undefined" && draft && ICONS[draft.topic]) ? ICONS[draft.topic] : (g ? iconFor(g) : "");
+    const icon = (window.ICONS && draft && ICONS[draft.topic]) ? ICONS[draft.topic] : "";
     el.innerHTML = panelMarkup(draft && draft.title, draft && draft.panel, icon, draft && draft.summary);
   };
 
-  /* ---- Fallback: original article (for guides not yet converted) ------- */
-  function renderArticle(){
-    el.className = "article wrap";
-    const callout = g.callout ? `<div class="callout"><h3>${g.callout.title}</h3><ul>${
-      g.callout.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>` : "";
-    const rel = (g.related||[]).map(guideById).filter(Boolean);
-    const relHTML = rel.length ? `<section class="related"><h2>Read next</h2>
-      <div class="card-grid">${rel.map(cardHTML).join("")}</div></section>` : "";
-    el.innerHTML = `<div class="article-inner">
-      <p class="crumb"><a href="index.html">Home</a> <span>&rsaquo;</span>
-        <a href="guides.html?topic=${g.topic}">${t.label}</a> <span>&rsaquo;</span> <span>${g.title}</span></p>
-      <h1>${g.title}</h1>
-      <p class="article-meta">
-        <span class="tag tag--topic">${t.label}</span>
-        ${g.ages.map(a=>`<span class="tag">${a}</span>`).join("")}
-        <span>${g.read} min read</span>
-      </p>
-      <div class="article-body">
-        <p class="lede" style="font-size:1.12rem">${g.summary}</p>
-        ${g.body}
-        ${callout}
-        <p style="font-size:.9rem;color:var(--ink-50);border-top:1px solid var(--line-soft);padding-top:16px;margin-top:32px">
-          Written by parents, not doctors. This is general information, not medical advice &mdash;
-          if something worries you about your own baby, speak to your doctor, midwife or health visitor.
-          Trust your instinct: it is good data.</p>
-      </div>
-      ${relHTML}</div>`;
-  }
+  /* ---- Render the real guide once the data (Firestore or bundled) is ready */
+  MPCStore.ready.then(function(){
+    const id = new URLSearchParams(location.search).get("id");
+    const g = id && guideById(id);
+    if(!g){
+      document.title = "Guide not found — The Messy Parents Collection";
+      el.innerHTML = `<h1>We can't find that one</h1>
+        <p class="lede">The link may be old, or the guide may have been renamed.</p>
+        <p style="margin-top:14px"><a href="guides.html">Browse all guides</a></p>`;
+      return;
+    }
+    document.title = g.title + " — The Messy Parents Collection";
+    const t = topicById(g.topic);
 
-  if(g.panel) renderPanel(g.panel); else renderArticle();
+    function renderPanel(p){ el.className = ""; el.innerHTML = panelMarkup(g.title, p, iconFor(g), g.summary); }
+
+    function renderArticle(){
+      el.className = "article wrap";
+      const callout = g.callout ? `<div class="callout"><h3>${g.callout.title}</h3><ul>${
+        g.callout.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>` : "";
+      const rel = (g.related||[]).map(guideById).filter(Boolean);
+      const relHTML = rel.length ? `<section class="related"><h2>Read next</h2>
+        <div class="card-grid">${rel.map(cardHTML).join("")}</div></section>` : "";
+      el.innerHTML = `<div class="article-inner">
+        <p class="crumb"><a href="index.html">Home</a> <span>&rsaquo;</span>
+          <a href="guides.html?topic=${g.topic}">${t.label}</a> <span>&rsaquo;</span> <span>${g.title}</span></p>
+        <h1>${g.title}</h1>
+        <p class="article-meta">
+          <span class="tag tag--topic">${t.label}</span>
+          ${g.ages.map(a=>`<span class="tag">${a}</span>`).join("")}
+          <span>${g.read} min read</span>
+        </p>
+        <div class="article-body">
+          <p class="lede" style="font-size:1.12rem">${g.summary}</p>
+          ${g.body}
+          ${callout}
+          <p style="font-size:.9rem;color:var(--ink-50);border-top:1px solid var(--line-soft);padding-top:16px;margin-top:32px">
+            Written by parents, not doctors. This is general information, not medical advice &mdash;
+            if something worries you about your own baby, speak to your doctor, midwife or health visitor.
+            Trust your instinct: it is good data.</p>
+        </div>
+        ${relHTML}</div>`;
+    }
+
+    if(g.panel) renderPanel(g.panel); else renderArticle();
+  });
 })();
 </script>
 </body>
