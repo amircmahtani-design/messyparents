@@ -38,13 +38,12 @@
     -webkit-text-stroke:.8px var(--g-ink);letter-spacing:.4px;width:100%;max-width:none;
   }
   .gpanel .g-art{
-    border-radius:14px;overflow:hidden;aspect-ratio:4/3;
-    width:100%;justify-self:end;
-    background:linear-gradient(160deg,#f7efdd,#e7d9bd);
-    border:1.5px solid #d8c9a6;display:block;
+    border-radius:14px;aspect-ratio:4/3;
+    width:100%;justify-self:end;display:block;
   }
-  .gpanel .g-art img{width:100%;height:100%;object-fit:cover;display:block}
-  .gpanel .g-art--ph{display:grid;place-items:center;text-align:center;border:2px dashed #c3b183}
+  .gpanel .g-art img{width:100%;height:100%;object-fit:contain;display:block}
+  .gpanel .g-art--ph{display:grid;place-items:center;text-align:center;overflow:hidden;
+    background:linear-gradient(160deg,#f7efdd,#e7d9bd);border:2px dashed #c3b183}
   .gpanel .g-art--ph span{font-family:"Nunito",sans-serif;font-weight:800;color:#a4926a;font-size:15px;line-height:1.5;letter-spacing:.02em}
   .gpanel .g-art--ph small{display:block;font-weight:700;font-size:12px;opacity:.85}
   .gpanel .g-cols{

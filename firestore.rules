@@ -9,11 +9,18 @@ service cloud.firestore {
         && request.auth.token.email == "amircmahtani@gmail.com";
     }
 
-    // Illustration jobs: the signed-in admin reads status; only the server
-    // (Firebase Admin SDK, which bypasses these rules) writes them.
+    // Illustration jobs: the admin reads status; only the server (admin SDK) writes.
     match /illustration_jobs/{id} {
       allow read: if request.auth != null;
       allow write: if false;
+    }
+
+    // Character sessions (the Character Manager): admin reads + can reset a session;
+    // the server (admin SDK, which bypasses rules) does the normal writes.
+    match /character_sessions/{key} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.token.email == "amircmahtani@gmail.com";
     }
   }
 }

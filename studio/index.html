@@ -85,6 +85,7 @@
   <span id="modeBadge" class="badge">…</span>
   <span class="spacer"></span>
   <span id="who" class="who"></span>
+  <button id="charBtn" class="btn ghost hidden" title="View and reset the persistent character sessions">Characters</button>
   <button id="seedBtn" class="btn ghost hidden" title="Copy the 16 built-in guides into Firestore (one-time)">Import site guides</button>
   <button id="signout" class="btn ghost hidden">Sign out</button>
 </div>
@@ -125,8 +126,17 @@
         </div>
 
         <div class="field" id="genWrap">
-          <label>AI illustration <span class="hint">— draws a hero image from your reference sheets</span></label>
-          <textarea id="f_scene" rows="2" placeholder="What the picture should show (optional — defaults to the guide's title & topic)"></textarea>
+          <label>AI illustration <span class="hint">— persistent character sessions keep the look consistent</span></label>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+            <span class="hint">Characters:</span>
+            <select id="f_session" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px">
+              <option value="family">Family (Mama, Papa &amp; Ari)</option>
+              <option value="mama">Mama only</option>
+              <option value="papa">Papa only</option>
+              <option value="ari">Ari only</option>
+            </select>
+          </div>
+          <textarea id="f_scene" rows="2" placeholder="Pose / action / props (optional — defaults to the guide's title &amp; topic)"></textarea>
           <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button id="genBtn" class="btn" type="button">✨ Generate illustration</button>
             <span id="genMsg" class="hint"></span>
@@ -168,6 +178,18 @@
   </div>
 </div>
 
+<!-- Character Manager -->
+<div id="charModal" class="hidden" style="position:fixed;inset:0;background:rgba(20,25,33,.45);display:grid;place-items:center;z-index:50">
+  <div style="background:#fff;border-radius:14px;max-width:560px;width:92%;max-height:85vh;overflow:auto;padding:22px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <h2 style="margin:0;font-size:18px;flex:1">Character sessions</h2>
+      <button id="charClose" class="btn ghost">Close</button>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 14px">Each character keeps a persistent illustration session so the look stays consistent across every guide. If a character starts drifting, reset its session — the canon is re-established from your reference images on the next generation.</p>
+    <div id="charList"></div>
+  </div>
+</div>
+
 <script type="module">
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
@@ -203,15 +225,26 @@ async function loadRefs(){
     return (j.references || []).map(n => location.origin + "/assets/img/refs/" + n);
   }catch(e){ return []; }
 }
+/* ---- CHARACTER BIBLE ---------------------------------------------------
+   Edit these descriptions to match your art exactly — the closer the words,
+   the more consistent the results. This is sent WITH your reference images. */
+const STYLE_BIBLE =
+  "Hand-drawn children's-book illustration: ink outlines with soft watercolour fill, " +
+  "warm muted cosy palette, cream paper-toned background, gentle lived-in humour. " +
+  "Match the reference images exactly for style, line weight and colour.";
+const CHARACTER_BIBLE =
+  "MAMA: woman with auburn/brown wavy hair in a loose messy bun, light-blue ribbed knit sweater, " +
+  "blue jeans, rosy cheeks, warm friendly face. " +
+  "PAPA: man with black tousled hair and a full black beard, grey hoodie, blue jeans, kind tired eyes. " +
+  "ARI: chubby baby with wispy blonde hair, big rosy cheeks and a wide open-mouth smile, " +
+  "white floral-print sleeveless romper, often a little gold paper crown. " +
+  "Keep every character's face, hair, proportions and clothing colours identical to the references.";
+
 function buildPrompt(g, scene){
   const what = (scene && scene.trim()) || (g.title + " — " + ((g.panel && g.panel.eyebrow) || ""));
-  return [
-    "Warm, hand-drawn children's-book style illustration that EXACTLY matches the art style, linework, colour palette and character designs in the reference images provided.",
-    "The recurring family — Mama, Papa and baby Ari — must look identical to the references: same faces, hair, proportions and clothing.",
-    "Scene to draw: " + what + ".",
-    "One clear, gently funny family moment. Warm paper-toned background, soft cosy palette.",
-    "Absolutely NO text, letters, words, captions or logos anywhere in the image."
-  ].join(" ");
+  return STYLE_BIBLE + " " + CHARACTER_BIBLE +
+    " Draw ONE clear, gently funny family moment for a parenting guide about: " + what + "." +
+    " Plenty of white space. Absolutely NO text, letters, words, captions, numbers or logos anywhere in the image.";
 }
 async function uploadHero(id, b64){
   const { storage, st } = state.fb;
@@ -223,21 +256,20 @@ async function uploadHero(id, b64){
 async function generateIllustration(){
   const btn = $("#genBtn"), msg = $("#genMsg");
   const g = draftGuide();
-  const refs = await loadRefs();
-  if(!refs.length){ msg.textContent = "No references found — add images to assets/img/refs/ and list them in manifest.json."; return; }
-  btn.disabled = true; msg.textContent = "Starting… generation runs in the background (can take 2–4 minutes).";
-  const prompt = buildPrompt(g, $("#f_scene").value);
+  const sessionKey = ($("#f_session") && $("#f_session").value) || "family";
+  const scene = ($("#f_scene").value.trim()) || (g.title + " — " + ((g.panel && g.panel.eyebrow) || ""));
+  const refsBase = location.origin + "/assets/img/refs";
+  btn.disabled = true; msg.textContent = "Starting… " + sessionKey + " session (can take a few minutes).";
   const { fs, db } = state.fb;
   const jobRef = fs.doc(db, "illustration_jobs", g.id);
 
   let done = false, sawWorking = false, first = true;
   const unsub = fs.onSnapshot(jobRef, snap => {
     const d = snap.data();
-    // On attach, ignore any leftover result from a previous run.
-    if(first){ first = false; if(!d || d.status !== "working") return; }
+    if(first){ first = false; if(!d || d.status !== "working") return; }   // ignore leftover result on attach
     if(!d) return;
-    if(d.status === "working"){ sawWorking = true; msg.textContent = "Working… drawing your illustration (a couple of minutes)."; return; }
-    if(!sawWorking) return;                 // only accept a result from THIS run
+    if(d.status === "working"){ sawWorking = true; msg.textContent = "Working… drawing + consistency pass (a couple of minutes)."; return; }
+    if(!sawWorking) return;
     if(d.status === "done"){
       done = true; unsub();
       $("#f_hero").value = d.url; pushPreview();
@@ -251,7 +283,7 @@ async function generateIllustration(){
   try{
     await fetch("/.netlify/functions/generate-illustration-background", {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ guideId: g.id, prompt, refs })
+      body: JSON.stringify({ guideId: g.id, sessionKey, scene, refsBase })
     });
   }catch(e){
     if(!done){ unsub(); msg.textContent = "Failed to start: " + (e.message || e); btn.disabled = false; }
@@ -261,6 +293,36 @@ async function generateIllustration(){
     if(!done){ unsub(); msg.textContent = "Still generating after 5 min — reopen this guide in a moment and it should be ready."; btn.disabled = false; }
   }, 300000);
 }
+/* ---- Character Manager ---- */
+const CHAR_KEYS = ["family","mama","papa","ari"];
+async function refreshChars(){
+  const { fs, db } = state.fb;
+  const rows = await Promise.all(CHAR_KEYS.map(async k => {
+    let d = {};
+    try{ const s = await fs.getDoc(fs.doc(db,"character_sessions",k)); d = s.exists() ? s.data() : {}; }catch(e){}
+    return { k, d };
+  }));
+  $("#charList").innerHTML = rows.map(({k,d}) => {
+    const est = !!(d.established && d.response_id);
+    const thumb = d.last_url
+      ? `<img src="${d.last_url}" style="width:64px;height:64px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#faf6ec">`
+      : `<div style="width:64px;height:64px;border:1px dashed var(--line);border-radius:8px"></div>`;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)">
+      ${thumb}
+      <div style="flex:1">
+        <div style="font-weight:700;text-transform:capitalize">${k}</div>
+        <div style="font-size:12px;color:var(--muted)">${est ? "Established ✓ — session active" : "Not established — canon is set on the next generate"}</div>
+      </div>
+      <button class="btn ghost" data-reset="${k}" ${est?"":"disabled"}>Reset</button>
+    </div>`;
+  }).join("");
+}
+async function resetChar(k){
+  const { fs, db } = state.fb;
+  await fs.setDoc(fs.doc(db,"character_sessions",k), { established:false, response_id:null, updated:Date.now() }, { merge:true });
+  refreshChars();
+}
+
 async function importAll(){
   const {fs, db} = state.fb;
   const src = (window.GUIDES || []);
@@ -386,7 +448,7 @@ function showApp(user){
   $("#loginView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
-  if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
+  if(MODE === "firebase"){ $("#seedBtn").classList.remove("hidden"); $("#charBtn").classList.remove("hidden"); }
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
@@ -423,6 +485,13 @@ async function boot(){
     finally{ btn.disabled = false; }
   });
   $("#genBtn").addEventListener("click", generateIllustration);
+  $("#charBtn").addEventListener("click", () => { $("#charModal").classList.remove("hidden"); refreshChars(); });
+  $("#charClose").addEventListener("click", () => $("#charModal").classList.add("hidden"));
+  $("#charModal").addEventListener("click", e => { if(e.target.id === "charModal") $("#charModal").classList.add("hidden"); });
+  $("#charList").addEventListener("click", e => {
+    const b = e.target.closest("[data-reset]"); if(!b) return;
+    if(confirm("Reset the “" + b.dataset.reset + "” session? The canon will be re-established from your reference images on the next generation.")) resetChar(b.dataset.reset);
+  });
   auth.onAuthStateChanged(a, async user => {
     if(user){ state.guides = await loadGuides(); showApp(user); }
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
