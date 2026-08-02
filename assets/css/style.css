@@ -76,26 +76,24 @@ h3{font-size:1.3rem}
 
 .site-head{position:relative;z-index:5;background:transparent;border:0}
 
-.head-inner{display:flex;align-items:center;gap:20px;padding:10px 0}
+.head-inner{display:grid;grid-template-columns:auto 1fr;align-items:center;
+  column-gap:clamp(32px,6vw,90px);padding:10px 0}
 
 .brand{flex:0 0 auto;display:block;transition:transform .18s ease}
-.brand img{width:clamp(146px,15vw,200px);height:auto}
+.brand img{width:clamp(216px,17vw,300px);height:auto}
 .brand:hover{text-decoration:none;transform:rotate(-1.5deg)}
 
-.nav{display:flex;gap:clamp(16px,2.6vw,38px);margin-inline:auto;
-  font-family:var(--hand);font-size:1.22rem}
-.nav a{color:var(--ink);padding:4px 2px;position:relative}
+.nav{display:flex;align-items:center;justify-content:space-between;
+  width:100%;max-width:840px;justify-self:end;
+  font-family:var(--hand);font-size:clamp(1.18rem,1.3vw,1.42rem)}
+.nav a{color:var(--ink);padding:12px 12px;position:relative;white-space:nowrap}
 .nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.5px;
   background:var(--blue);border-radius:2px;transform:scaleX(0);transform-origin:left;
   transition:transform .2s ease}
 .nav a:hover,.nav a[aria-current="page"]{text-decoration:none;color:var(--blue)}
 .nav a:hover::after,.nav a[aria-current="page"]::after{transform:scaleX(1)}
 
-.btn-ghost{flex:0 0 auto;font-family:var(--hand);font-size:1.1rem;
-  border:1.6px solid var(--line);border-radius:999px;padding:7px 20px;
-  background:transparent;color:var(--ink);cursor:pointer;
-  transition:background .18s ease,color .18s ease}
-.btn-ghost:hover{background:var(--ink);color:var(--cream);text-decoration:none}
+.btn-ghost{display:none}
 
 .nav-toggle{display:none}
 
@@ -299,10 +297,10 @@ h3{font-size:1.3rem}
    the filter rows and the band all fit in one view. */
 @media (min-width:961px){
   /* --- header ------------------------------------------------------- */
-  .head-inner{padding:13px 0 0}
-  .brand img{width:clamp(158px,16vw,196px)}
-  .nav{font-size:1.22rem;gap:clamp(18px,2.8vw,34px)}
-  .btn-ghost{font-size:1.07rem;padding:8px 21px}
+  .head-inner{padding:12px 0 2px}
+  .brand img{width:clamp(230px,17vw,300px)}
+  .nav{font-size:clamp(1.24rem,1.35vw,1.44rem);max-width:840px}
+  .nav a{padding:13px 12px}
 
   /* --- hero: 631 / 30 / 419 inside the 1080 container ---------------- */
   .hero{padding:0}
@@ -382,9 +380,9 @@ h3{font-size:1.3rem}
   .nav-toggle{display:inline-flex;align-items:center;order:3;font-family:var(--hand);
     font-size:1.05rem;border:1.6px solid var(--line);border-radius:999px;padding:7px 15px;
     background:transparent;cursor:pointer;color:var(--ink)}
-  .head-inner{position:relative;gap:12px}
-  .btn-ghost{display:none}
+  .head-inner{display:flex;align-items:center;position:relative;gap:12px}
   .brand{margin-right:auto}
+  .brand img{width:clamp(180px,42vw,230px)}
   /* couple sits above the banner, overlapping its top edge */
   .band{position:relative;display:block;width:auto;max-width:none;height:auto;
     margin:78px 0 0;padding:76px 20px 22px;text-align:center}
