@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About us — The Messy Parents Collection</title>
 <meta name="description" content="Short, reassuring parenting guides written by two very tired parents.">
+<script>
+  /* Mark that JS is on so the illustrations can be held hidden until the correct
+     (saved) image is applied — no flash of the old/default picture. A short
+     fallback reveals them anyway if the data layer is slow or unavailable. */
+  document.documentElement.className += " js";
+  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 2000);
+</script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,41 +36,91 @@
   </div>
 </header>
 
-<main id="main">
-  <section class="wrap page-hero">
-    <div class="page-hero-copy">
+<!-- =====================================================================
+     ABOUT PAGE
+     The page is a list of reusable <section class="about-section"> blocks.
+     Each block is:  copy (heading + body)  +  an optional illustration.
+
+       data-illus="hero|middle|bottom"  – which Studio slot fills the art
+       data-pos="right|left"            – which side the art sits on
+       class="has-art"                  – present when the art is showing
+       class="art-medium"               – art size (art-small/medium/large)
+
+     To add another illustrated section later, copy one .about-section block,
+     give it a new data-illus name, and wire that name up in Studio + mpc-store.
+     Nothing else on the page needs to change.
+     ===================================================================== -->
+<main id="main" class="about">
+
+  <!-- HERO — text left, illustration right -->
+  <section class="wrap about-section about-hero has-art art-medium" data-illus="hero" data-pos="right">
+    <div class="about-copy">
       <h1 data-page-title>About us</h1>
-      <p data-page-subtitle>We are not experts. That is rather the point.</p>
+      <p class="about-sub" data-page-subtitle>We are not experts. That is rather the point.</p>
+      <div class="prose">
+        <p>The Messy Parents Collection started at 3am, on a phone, one-handed, while googling a question that had a
+        forty-minute answer when what was needed was a forty-second one.</p>
+        <p>Every parenting resource we found was either a wall of citations or a stranger on a forum shouting in capitals.
+        Neither is much use when you are holding a baby who has been crying for an hour and you cannot remember whether
+        you have eaten today.</p>
+      </div>
     </div>
-    <div class="page-hero-art">
-      <img id="pageHeroImg" src="assets/img/papa.webp" alt="An extremely tired father holding a mug of coffee and a bottle" width="400" height="500">
-    </div>
+    <figure class="about-art" data-slot="hero">
+      <img id="pageHeroImg" data-illus-img="hero" src="assets/img/papa.webp"
+           alt="An extremely tired father holding a mug of coffee and a bottle" width="400" height="500">
+    </figure>
   </section>
 
-  <section class="wrap" style="margin-top:20px">
-    <div class="prose">
-      <p>The Messy Parents Collection started at 3am, on a phone, one-handed, while googling a question that had a
-      forty-minute answer when what was needed was a forty-second one.</p>
-      <p>Every parenting resource we found was either a wall of citations or a stranger on a forum shouting in capitals.
-      Neither is much use when you are holding a baby who has been crying for an hour and you cannot remember whether
-      you have eaten today.</p>
-      <h2>What we do</h2>
-      <p>We write short guides on the questions that come up over and over in the first two years: feeding, sleeping,
-      development, health, and the state of the adults in the room. Each one takes about three minutes to read.
-      Each one is written to be understood by someone who has slept for four hours.</p>
-      <p>Where something needs a doctor, we say so plainly and early, with a clear list of what to watch for.
-      We would rather send you to a professional unnecessarily than have you sit at home wondering.</p>
-      <h2>Who we are</h2>
-      <p>Ari &amp; Papa &mdash; one baby, two very tired adults, one sofa that has seen things. We write what we wish
-      someone had handed us in week two, checked against current guidance from national health services and paediatric
-      bodies, and stripped of everything that made us feel worse.</p>
-      <h2>What we are not</h2>
-      <p>We are not doctors, midwives, health visitors or paediatricians. Nothing here replaces advice from someone who
-      can actually see your baby. If your instinct says something is wrong, act on it &mdash; that instinct is
-      genuinely good information, and no one who does this professionally will mind you asking.</p>
-      <p><a href="guides.html">Start with the guides</a>, or come back at 3am. We will be here. We will be awake.</p>
+  <!-- WHAT WE DO — illustration left, text right -->
+  <section class="wrap about-section has-art art-medium" data-illus="middle" data-pos="left">
+    <div class="about-copy">
+      <div class="prose">
+        <h2>What we do</h2>
+        <p>We write short guides on the questions that come up over and over in the first two years: feeding, sleeping,
+        development, health, and the state of the adults in the room. Each one takes about three minutes to read.
+        Each one is written to be understood by someone who has slept for four hours.</p>
+        <p>Where something needs a doctor, we say so plainly and early, with a clear list of what to watch for.
+        We would rather send you to a professional unnecessarily than have you sit at home wondering.</p>
+      </div>
     </div>
+    <figure class="about-art" data-slot="middle">
+      <img data-illus-img="middle" src="assets/img/mama.webp"
+           alt="A tired but cheerful mother" width="400" height="500">
+    </figure>
   </section>
+
+  <!-- WHO WE ARE — text left, illustration right (default bottom slot target) -->
+  <section class="wrap about-section has-art art-medium" data-section="who" data-illus="bottom" data-pos="right">
+    <div class="about-copy">
+      <div class="prose">
+        <h2>Who we are</h2>
+        <p>Ari &amp; Papa &mdash; one baby, two very tired adults, one sofa that has seen things. We write what we wish
+        someone had handed us in week two, checked against current guidance from national health services and paediatric
+        bodies, and stripped of everything that made us feel worse.</p>
+      </div>
+    </div>
+    <figure class="about-art" data-slot="bottom">
+      <img data-illus-img="bottom" src="assets/img/family.webp"
+           alt="A happy, well-loved family" width="1000" height="747">
+    </figure>
+  </section>
+
+  <!-- WHAT WE ARE NOT — text only by default; can host the bottom slot instead -->
+  <section class="wrap about-section" data-section="notare" data-illus="bottom" data-pos="right">
+    <div class="about-copy">
+      <div class="prose">
+        <h2>What we are not</h2>
+        <p>We are not doctors, midwives, health visitors or paediatricians. Nothing here replaces advice from someone who
+        can actually see your baby. If your instinct says something is wrong, act on it &mdash; that instinct is
+        genuinely good information, and no one who does this professionally will mind you asking.</p>
+        <p><a href="guides.html">Start with the guides</a>, or come back at 3am. We will be here. We will be awake.</p>
+      </div>
+    </div>
+    <figure class="about-art" data-slot="bottom">
+      <img data-illus-img="bottom" src="" alt="" width="1000" height="747">
+    </figure>
+  </section>
+
 </main>
 
 <footer class="site-foot">

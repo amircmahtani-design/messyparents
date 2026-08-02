@@ -47,13 +47,81 @@ MPCStore.ready = (async function () {
   return window.GUIDES;
 })();
 
+/* Default illustrations for the About page's three slots. Used when a slot has
+   no saved image (or was reset to default in Studio). */
+MPCStore.ABOUT_DEFAULTS = {
+  hero:   "assets/img/papa.webp",
+  middle: "assets/img/mama.webp",
+  bottom: "assets/img/family.webp"
+};
+
+/* Apply an editable slot's image + positioning to one .about-section.
+   config = { image, width:"small|medium|large", align:"left|right", maxw:Number } */
+function applyAboutArt(sec, config, fallback) {
+  if (!sec) return;
+  const c = config || {};
+  const img = sec.querySelector("[data-illus-img]");
+  const src = c.image || fallback;
+  if (src && img) {
+    // Only reveal once the correct source is set, so the previously-shown
+    // (default/old) image never flashes before the chosen one loads in.
+    if (img.getAttribute("src") !== src) { img.classList.remove("ready"); img.setAttribute("src", src); }
+    img.classList.add("ready");
+    sec.classList.add("has-art");
+  } else {
+    sec.classList.remove("has-art");
+  }
+  // size (Small / Medium / Large)
+  sec.classList.remove("art-small", "art-medium", "art-large");
+  sec.classList.add("art-" + (c.width || "medium"));
+  // side (Left / Right)
+  if (c.align === "left" || c.align === "right") sec.setAttribute("data-pos", c.align);
+  // optional exact max width
+  if (img) {
+    const mw = parseInt(c.maxw, 10);
+    if (mw > 0) img.style.setProperty("--art-max", mw + "px");
+    else img.style.removeProperty("--art-max");
+  }
+}
+
+/* Apply the whole About page (three illustration slots + positioning). */
+function applyAboutPage(pg) {
+  pg = pg || {};
+  const D = MPCStore.ABOUT_DEFAULTS;
+
+  // Hero (backward compatible with the old single "image" field).
+  const heroCfg = Object.assign({}, pg.hero);
+  if (!heroCfg.image && pg.image) heroCfg.image = pg.image;
+  applyAboutArt(document.querySelector('.about-section[data-illus="hero"]'), heroCfg, D.hero);
+
+  // Middle.
+  applyAboutArt(document.querySelector('.about-section[data-illus="middle"]'), pg.middle, D.middle);
+
+  // Bottom — attaches to whichever section the editor chose.
+  const target = (pg.bottom && pg.bottom.target) || "who";
+  const chosen = document.querySelector('.about-section[data-section="' + target + '"]');
+  document.querySelectorAll('.about-section[data-illus="bottom"]').forEach(function (sec) {
+    if (sec === chosen) applyAboutArt(sec, pg.bottom, D.bottom);
+    else sec.classList.remove("has-art");   // the other section stays text-only
+  });
+
+  document.documentElement.classList.add("illus-ready");
+}
+
 /* Apply an editable page image (and optional title/subtitle) once data is
    ready. Falls back to whatever is already in the markup. Safe on any page. */
 MPCStore.applyPage = function (pageId) {
   const pg = (window.MPC_PAGES || {})[pageId];
+
+  // The About page supports multiple illustration slots — run its richer
+  // apply even when there is no saved data yet (so the defaults settle in).
+  if (pageId === "about" && document.querySelector(".about")) {
+    applyAboutPage(pg || {});
+  }
+
   if (!pg) return;
   const img = document.getElementById("pageHeroImg");
-  if (img && pg.image) img.src = pg.image;
+  if (img && pg.image && pageId !== "about") img.src = pg.image;
   if (pg.title) { const h = document.querySelector("[data-page-title]"); if (h) h.textContent = pg.title; }
   if (pg.subtitle) { const s = document.querySelector("[data-page-subtitle]"); if (s) s.textContent = pg.subtitle; }
 };

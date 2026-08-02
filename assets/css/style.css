@@ -265,35 +265,124 @@ h3{font-size:1.3rem}
   max-width:44ch;margin:8px 0 0}
 
 /* Page hero: title + subtitle on the left, an editable illustration on the
-   right. Shared by Popular / Guides / About so the images stay consistent. */
+   right. Shared by Popular / Guides so the images stay consistent.
+   The art sits in a FIXED-HEIGHT box, top-aligned to the title, so the
+   illustration lands in the same spot on every page even though each page's
+   heading and subtitle are different lengths. */
 .page-hero{display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);
-  align-items:center;column-gap:clamp(10px,1.4vw,18px);
+  align-items:start;column-gap:clamp(10px,1.4vw,18px);
   padding:clamp(10px,2vw,22px) 0 0}
 .page-hero .page-hero-copy{min-width:0}
 .page-hero h1{margin:0}
 .page-hero p{font-family:var(--hand);color:var(--ink-70);
   font-size:clamp(1.16rem,1.5vw,1.34rem);line-height:1.35;max-width:46ch;margin:8px 0 0}
-/* Illustration hugs the left of its column (pulled toward the title) */
-.page-hero-art{display:flex;justify-content:flex-start;align-items:center;min-width:0}
-.page-hero-art img{width:100%;max-width:470px;max-height:340px;height:auto;
-  object-fit:contain;display:block;transform:translateX(-55px)}
+/* Consistent art box: same height + top alignment across pages so the picture
+   never jumps around when you move between Popular and Guides. */
+.page-hero-art{display:flex;justify-content:flex-start;align-items:flex-start;min-width:0;
+  height:clamp(210px,25vw,320px);margin-top:6px}
+.page-hero-art img{width:100%;height:100%;max-width:460px;
+  object-fit:contain;object-position:left top;display:block;transform:translateX(-26px)}
 @media (max-width:820px){
   .page-hero{grid-template-columns:1fr;gap:10px}
-  .page-hero-art{order:-1;max-width:360px;margin-inline:auto;justify-content:center}
-  .page-hero-art img{max-height:260px;transform:none}
+  .page-hero-art{order:-1;height:auto;max-width:360px;margin:0 auto;justify-content:center}
+  .page-hero-art img{height:auto;max-height:260px;transform:none;object-position:center}
 }
 /* the intro already provides the breathing room — don't stack another gap on top */
 .page-head + .rows{padding-top:clamp(14px,1.8vw,22px)}
 .rows > .row--stack:first-child{margin-top:0}
 .rows > .row--stack + .row--stack{margin-top:clamp(24px,3vw,34px)}
 
-.prose{width:min(100%,680px)}
 /* Hand-drawn body copy so the About story matches the brand voice (not the
    plain Nunito sans it used before). Slightly larger for comfortable reading. */
+.prose{width:100%;max-width:100%}
+.prose > :first-child{margin-top:0}
+.prose > :last-child{margin-bottom:0}
 .prose p{font-family:var(--hand);font-size:1.28rem;line-height:1.5;
-  color:var(--ink-80,var(--ink-70));margin:0 0 15px}
+  color:var(--ink-80,var(--ink-70));margin:0 0 16px}
 .prose p a{font-family:var(--hand)}
-.prose h2{margin:30px 0 8px}
+.prose h2{margin:0 0 12px}
+
+/* =========================================================================
+   ABOUT PAGE — reusable illustrated sections
+   Each .about-section is one "AboutSection component": a column of copy and an
+   optional illustration. Layout, spacing, art size and art side are all driven
+   by classes / data-attributes that Studio sets, so the page reads like a
+   beautifully illustrated children's book with the art beside the words —
+   never interrupting them.
+   ------------------------------------------------------------------------- */
+.about{--about-gap:clamp(38px,6vw,72px);   /* space between sections            */
+       --about-text:740px;                 /* readable measure for the copy     */
+       --art-col:38%}                       /* art column width (art-* overrides) */
+
+/* Single-column by default (text only). Becomes two-column when it has art. */
+.about-section{padding:0;margin:0}
+.about-section + .about-section{margin-top:var(--about-gap)}
+.about-section .about-copy{min-width:0;max-width:var(--about-text)}
+.about-section .prose{max-width:var(--about-text)}
+
+/* The illustration lives in a figure with its own dedicated column. */
+.about-art{margin:0;min-width:0;display:flex;align-items:flex-start;justify-content:center}
+.about-art img{width:100%;height:auto;object-fit:contain;display:block;
+  max-height:clamp(300px,34vw,430px);
+  filter:drop-shadow(0 12px 18px rgba(33,29,24,.10))}
+/* Anti-flash: when JS is on, keep the art hidden until the correct source is
+   applied (per-image .ready, or the global .illus-ready fallback). Without JS
+   the images show normally so the page still works. */
+html.js .about-art img{opacity:0;transition:opacity .2s ease}
+html.js .about-art img.ready,
+html.illus-ready .about-art img{opacity:1}
+/* Hide the art figure until it actually has an image (empty slots collapse). */
+.about-section:not(.has-art) .about-art{display:none}
+
+/* Two-column layout when an illustration is present. Text keeps its readable
+   width and the art takes its own column — the text never flows under it. */
+.about-section.has-art{display:grid;align-items:center;
+  column-gap:clamp(26px,4.5vw,64px);row-gap:20px;
+  grid-template-columns:minmax(0,1fr) minmax(0,var(--art-col))}
+.about-section.has-art .about-copy{max-width:var(--about-text);justify-self:start}
+/* data-pos="left" puts the illustration on the left, copy on the right */
+.about-section.has-art[data-pos="left"]{grid-template-columns:minmax(0,var(--art-col)) minmax(0,1fr)}
+.about-section.has-art[data-pos="left"] .about-copy{order:2}
+.about-section.has-art[data-pos="left"] .about-art{order:1}
+.about-section.has-art[data-pos="left"] .about-copy{justify-self:end}
+
+/* The hero art aligns to the top so it sits beside the title, not the middle. */
+.about-hero.has-art{align-items:start}
+.about-hero .about-art{align-items:flex-start;margin-top:4px}
+.about-hero h1{margin:0}
+/* Subtitle → first paragraph: a single, deliberate ~44px gap (kills the
+   giant empty space the old layout left after the subtitle). */
+.about-sub{font-family:var(--hand);color:var(--ink-70);
+  font-size:clamp(1.18rem,1.6vw,1.42rem);line-height:1.35;max-width:44ch;
+  margin:12px 0 0}
+.about-hero .prose{margin-top:clamp(32px,4vw,46px)}
+
+/* Art SIZE (Studio: Small / Medium / Large) — sets the column width and a
+   sensible max so a small image never balloons on a wide screen. */
+.about-section.art-small{--art-col:28%}
+.about-section.art-medium{--art-col:38%}
+.about-section.art-large{--art-col:46%}
+.about-section.art-small  .about-art img{max-width:260px}
+.about-section.art-medium .about-art img{max-width:360px}
+.about-section.art-large  .about-art img{max-width:460px}
+/* Optional max-width override (Studio slider) via inline --art-max. */
+.about-art img{max-width:var(--art-max, none)}
+
+@media (max-width:820px){
+  .about{--about-gap:clamp(30px,7vw,44px)}
+  /* Stack cleanly: copy first, illustration below, both full width. */
+  .about-section.has-art,
+  .about-section.has-art[data-pos="left"]{grid-template-columns:1fr;row-gap:18px}
+  .about-section.has-art .about-copy,
+  .about-section.has-art[data-pos="left"] .about-copy{order:1;justify-self:stretch;max-width:none}
+  .about-section.has-art .about-art,
+  .about-section.has-art[data-pos="left"] .about-art{order:2;justify-content:center}
+  .about-art img,
+  .about-section.art-small .about-art img,
+  .about-section.art-medium .about-art img,
+  .about-section.art-large .about-art img{max-width:min(340px,80%);margin-inline:auto}
+  .about-hero .prose{margin-top:clamp(22px,5vw,32px)}
+}
 
 .split{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.75fr);
   gap:clamp(22px,4vw,50px);align-items:center}

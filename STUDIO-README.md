@@ -15,6 +15,31 @@ You can use Local preview right now: run a static server in this folder
 
 ---
 
+## Editing page illustrations (Popular / Guides / About)
+
+Pick a page from the **Pages** list at the top of the sidebar to edit its title,
+subtitle and illustrations with a live preview.
+
+**About** exposes three illustration slots, each with its own controls:
+
+| Slot | Where it appears | Controls |
+|------|------------------|----------|
+| **Hero** | beside “About us” + subtitle | Upload/replace, Reset, Crop, Width (Small/Medium/Large), Side (Left/Right), Max-width |
+| **Middle** | beside “What we do” | same |
+| **Bottom** | beside “Who we are” **or** “What we are not” (your choice via *Place beside*) | same, plus *Place beside* |
+
+Uploading always opens the cropper so you can frame the picture; the thumbnail and
+live preview then show **only** the new image (no leftover of the old one). *Reset*
+returns a slot to its default artwork. Nothing here needs code.
+
+**Adding another illustrated section later:** the About page is built from reusable
+`<section class="about-section">` blocks (see the comment at the top of `about.html`).
+Copy one block, give it a new `data-illus` name, then register that name in
+`PAGE_SLOTS.about` in `studio/index.html` and in `applyAboutPage()` in
+`assets/js/mpc-store.js`. That's the whole wiring.
+
+---
+
 ## Going live on Firebase (one-time setup)
 
 **1. Create the project & services** (Firebase console)

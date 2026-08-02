@@ -78,6 +78,19 @@
   .pageimg-thumb{width:170px;height:132px;object-fit:contain;border:1px solid var(--line);
     border-radius:10px;background:#faf6ec;flex:none}
 
+  /* illustration slots */
+  .slot .tag{background:#eef3f9;color:var(--brand-d)}
+  .slot .slot-help{color:var(--muted);font-size:12px;margin:-4px 0 10px}
+  .slot-controls{display:flex;flex-wrap:wrap;gap:12px 16px;margin-top:12px}
+  .slot-controls label,.slot-maxw{display:flex;flex-direction:column;gap:4px;
+    font-size:12px;font-weight:800;color:#41505f}
+  .slot-controls select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;
+    font-family:inherit;font-size:13.5px;background:#fff;color:var(--ink)}
+  .slot-maxw{margin-top:12px;max-width:280px}
+  .slot-maxw input[type=range]{width:100%}
+  .slot-maxw .maxw-val{font-weight:700;color:var(--muted)}
+  .slot[data-nopos] .slot-controls,.slot[data-nopos] .slot-maxw{display:none}
+
   /* crop modal */
   .cropback{position:fixed;inset:0;background:rgba(20,25,33,.55);display:grid;place-items:center;z-index:60}
   .cropcard{background:#fff;border-radius:14px;max-width:600px;width:94%;padding:20px}
@@ -134,10 +147,10 @@
   <div class="layout3">
     <div class="work">
       <div id="empty" class="empty">Select a guide from the left to edit it.</div>
-      <!-- PAGE EDITOR (Popular / Guides / About hero image + text) -->
+      <!-- PAGE EDITOR (Popular / Guides / About text + illustration slots) -->
       <div id="pageEditor" class="editor hidden">
         <h2 style="margin:0 0 4px;font-size:19px" id="p_heading">Page</h2>
-        <p class="field hint" style="margin:0 0 16px">Edit the illustration and text that sit beside this page’s title.</p>
+        <p class="field hint" style="margin:0 0 16px" id="p_intro">Edit the text and illustrations for this page.</p>
         <div class="field">
           <label>Title</label>
           <input id="p_title" type="text">
@@ -146,19 +159,9 @@
           <label>Subtitle</label>
           <textarea id="p_subtitle" rows="2"></textarea>
         </div>
-        <div class="field">
-          <label>Illustration <span class="hint">— sits beside the title. Upload opens a cropper so you can frame it.</span></label>
-          <div class="pageimg-row">
-            <img id="p_preview" class="pageimg-thumb" alt="Current page image">
-            <div>
-              <input id="p_upload" type="file" accept="image/*" class="hidden">
-              <button id="p_uploadBtn" class="btn" type="button">Upload / replace image…</button>
-              <button id="p_clear" class="btn ghost" type="button" style="margin-left:6px">Reset to default</button>
-              <div class="hint" id="p_msg" style="margin-top:8px"></div>
-            </div>
-          </div>
-          <input id="p_image" type="hidden">
-        </div>
+        <!-- One .slot card per illustration; built by renderSlots() -->
+        <div id="p_slots"></div>
+        <input id="p_upload" type="file" accept="image/*" class="hidden">
         <div class="actions">
           <button id="p_save" class="btn primary" type="button">Save</button>
           <span id="p_savemsg" class="msg"></span>
@@ -253,7 +256,7 @@
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, pagesData: {} };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, pagesData: {}, pageDraft: { slots:{} }, uploadKey: null };
 
 /* Editable public pages + their default images and target crop sizes.
    The crop "w/h" is the exported pixel size; the label tells the user how
@@ -271,6 +274,26 @@ const PAGES = [
 ];
 const GUIDE_HERO = { w:1120, h:620, label:"Guide illustration — fills a 560 × 310 space beside the title. Transparent PNGs look best." };
 const PAGE_HERO  = { w:880,  h:680, label:"Page illustration — fills a 440 × 340 space beside the title. Transparent PNGs look best." };
+
+/* Which illustration slots each page exposes. About has three; the others keep
+   a single hero image (stored in the legacy top-level "image" field). */
+const PAGE_SLOTS = {
+  popular: [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
+  guides:  [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
+  about: [
+    { key:"hero",   label:"Hero Illustration",   help:"Appears beside “About us” and the subtitle.", pos:true },
+    { key:"middle", label:"Middle Illustration", help:"Appears beside the “What we do” section.",     pos:true },
+    { key:"bottom", label:"Bottom Illustration", help:"Appears beside “Who we are” or “What we are not”.", pos:true, target:true }
+  ]
+};
+/* Default artwork per About slot (studio-relative paths for the thumbnails).
+   Kept in sync with MPCStore.ABOUT_DEFAULTS on the public side. */
+const ABOUT_DEFAULTS = {
+  hero:   "../assets/img/papa.webp",
+  middle: "../assets/img/mama.webp",
+  bottom: "../assets/img/family.webp"
+};
+const WIDTHS = ["small","medium","large"];
 
 /* ---------- backend ---------- */
 async function initFirebase(){
@@ -444,6 +467,96 @@ function renderPageList(){
   $("#pageList").innerHTML = PAGES.map(p =>
     `<button class="gitem ${state.currentPage===p.id?"active":""}" data-page="${p.id}">${p.label}</button>`).join("");
 }
+function slotDefault(id, key){
+  if(id==="about") return ABOUT_DEFAULTS[key] || "";
+  const p=PAGES.find(x=>x.id===id); return p ? p.default : "";
+}
+
+/* Build one illustration-slot card. */
+function slotCardHTML(id, s){
+  const c = state.pageDraft.slots[s.key] || {};
+  const width = c.width || "medium", align = c.align || (s.key==="middle" ? "left" : "right");
+  const maxw = parseInt(c.maxw,10) || 0;
+  const target = c.target || "who";
+  return `<div class="col-card slot" data-slot="${s.key}" ${s.pos?"":"data-nopos"}>
+    <span class="tag">🖼 ${s.label}</span>
+    <p class="slot-help">${s.help}</p>
+    <div class="pageimg-row">
+      <img class="pageimg-thumb" data-thumb alt="${s.label} preview">
+      <div style="flex:1;min-width:0">
+        <button class="btn" data-act="upload" type="button">Upload / replace…</button>
+        <button class="btn ghost" data-act="reset" type="button" style="margin-left:6px">Reset</button>
+        <div class="hint" data-msg style="margin-top:8px"></div>
+        <div class="slot-controls">
+          <label>Image width
+            <select data-ctl="width">
+              ${WIDTHS.map(w=>`<option value="${w}" ${w===width?"selected":""}>${w[0].toUpperCase()+w.slice(1)}</option>`).join("")}
+            </select>
+          </label>
+          <label>Image side
+            <select data-ctl="align">
+              <option value="left" ${align==="left"?"selected":""}>Left</option>
+              <option value="right" ${align==="right"?"selected":""}>Right</option>
+            </select>
+          </label>
+          ${s.target?`<label>Place beside
+            <select data-ctl="target">
+              <option value="who" ${target==="who"?"selected":""}>Who we are</option>
+              <option value="notare" ${target==="notare"?"selected":""}>What we are not</option>
+            </select>
+          </label>`:""}
+        </div>
+        <label class="slot-maxw">Max width: <span class="maxw-val" data-maxlbl>${maxw?maxw+"px":"auto"}</span>
+          <input type="range" data-ctl="maxw" min="0" max="560" step="10" value="${maxw}">
+        </label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSlots(id){
+  const slots = PAGE_SLOTS[id] || [];
+  $("#p_slots").innerHTML = slots.map(s=>slotCardHTML(id, s)).join("");
+  slots.forEach(s=>{
+    const card = $(`.slot[data-slot="${s.key}"]`);
+    const c = state.pageDraft.slots[s.key] || {};
+    card.querySelector("[data-thumb]").src = c.image || slotDefault(id, s.key);
+  });
+}
+
+/* Turn the current form into the exact object we store in Firestore. */
+function draftPageData(){
+  const id=state.currentPage;
+  const data={ title:$("#p_title").value.trim(), subtitle:$("#p_subtitle").value.trim() };
+  if(id==="about"){
+    (PAGE_SLOTS.about).forEach(s=>{
+      const c=state.pageDraft.slots[s.key]||{};
+      const o={ image:c.image||"", width:c.width||"medium",
+                align:c.align||(s.key==="middle"?"left":"right") };
+      const mw=parseInt(c.maxw,10)||0; if(mw) o.maxw=mw;
+      if(s.target) o.target=c.target||"who";
+      data[s.key]=o;
+    });
+  }else{
+    const c=state.pageDraft.slots.hero||{};
+    data.image = c.image||"";   // legacy single-image field for popular/guides
+  }
+  return data;
+}
+
+let pvPageReady=false;
+/* Live preview: apply the current draft straight into the iframe (no reload,
+   so the new image replaces the old one instantly with no flash of the old). */
+function pushPagePreview(){
+  if(!pvPageReady) return;
+  const win=$("#pv").contentWindow;
+  try{
+    win.MPC_PAGES = win.MPC_PAGES || {};
+    win.MPC_PAGES[state.currentPage] = draftPageData();
+    win.MPCStore.applyPage(state.currentPage);
+  }catch(e){/* iframe not ready / cross-origin — ignore */}
+}
+
 function selectPage(id){
   const p=PAGES.find(x=>x.id===id); if(!p) return;
   state.current=null; state.currentPage=id;
@@ -452,28 +565,41 @@ function selectPage(id){
   $("#pageEditor").classList.remove("hidden");
   const d=state.pagesData[id]||{};
   $("#p_heading").textContent = p.title;
+  $("#p_intro").textContent = id==="about"
+    ? "Edit the text and the three illustrations. Each picture has its own space beside the words."
+    : "Edit the text and the illustration that sits beside this page’s title.";
   $("#p_title").value = d.title!=null ? d.title : p.title;
   $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
-  $("#p_image").value = d.image || "";
-  $("#p_preview").src = d.image || p.default;
-  $("#p_msg").textContent=""; $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";
+  // seed the per-slot draft from saved data
+  state.pageDraft = { slots:{} };
+  (PAGE_SLOTS[id]||[]).forEach(s=>{
+    state.pageDraft.slots[s.key] = id==="about"
+      ? Object.assign({}, d[s.key])
+      : { image: d.image || "" };
+  });
+  renderSlots(id);
+  $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";
   $("#pvId").textContent = "· " + id;
-  const pv=$("#pv"); pvReady=false; pv.onload=null; pv.src = "../" + id + ".html";
+  const pv=$("#pv"); pvPageReady=false;
+  pv.onload=()=>{ pvPageReady=true; pushPagePreview(); };
+  pv.src = "../" + id + ".html";
   renderPageList(); renderList($("#q").value);
 }
+
 async function savePage(){
   const id=state.currentPage; if(!id) return;
   const btn=$("#p_save"), msg=$("#p_savemsg");
   if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Page editing needs Firebase mode."; return; }
   btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
   try{
-    const data={ title:$("#p_title").value.trim(), subtitle:$("#p_subtitle").value.trim() };
-    const img=$("#p_image").value.trim(); if(img) data.image=img;
+    const data=draftPageData();
     const {fs, db}=state.fb;
-    await fs.setDoc(fs.doc(db,"pages",id), data, {merge:true});
-    state.pagesData[id]=Object.assign({}, state.pagesData[id], data);
+    // Full overwrite (not merge) so a Reset or a moved bottom slot actually
+    // clears the old value instead of leaving a stale image behind.
+    await fs.setDoc(fs.doc(db,"pages",id), data);
+    state.pagesData[id]=data;
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
-    $("#pv").src="../"+id+".html?_="+Date.now();
+    pushPagePreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 }
@@ -609,6 +735,7 @@ function selectGuide(id){
 /* events */
 document.addEventListener("input", e => {
   if(e.target.closest("#editor")) schedulePreview();
+  else if(e.target.id === "p_title" || e.target.id === "p_subtitle") pushPagePreview();
   else if(e.target.id === "q") renderList(e.target.value);
 });
 document.addEventListener("click", e => {
@@ -617,24 +744,54 @@ document.addEventListener("click", e => {
   if(it.dataset.page) selectPage(it.dataset.page);
   else if(it.dataset.id) selectGuide(it.dataset.id);
 });
-$("#p_uploadBtn").addEventListener("click", () => $("#p_upload").click());
-$("#p_clear").addEventListener("click", () => {
-  const p=PAGES.find(x=>x.id===state.currentPage); if(!p) return;
-  $("#p_image").value=""; $("#p_preview").src=p.default;
-  $("#p_msg").textContent="Will reset to the default image on Save.";
-});
 $("#p_save").addEventListener("click", savePage);
+
+/* Slot buttons: Upload / replace + Reset (delegated so it works for every
+   slot the page renders). */
+$("#p_slots").addEventListener("click", e => {
+  const btn=e.target.closest("[data-act]"); if(!btn) return;
+  const card=btn.closest(".slot"), key=card.dataset.slot, msg=card.querySelector("[data-msg]");
+  if(btn.dataset.act==="upload"){
+    state.uploadKey=key; $("#p_upload").click();
+  }else if(btn.dataset.act==="reset"){
+    const c=state.pageDraft.slots[key]||(state.pageDraft.slots[key]={});
+    c.image="";
+    card.querySelector("[data-thumb]").src=slotDefault(state.currentPage,key);
+    msg.textContent="Reset to the default illustration — Save to keep it.";
+    pushPagePreview();
+  }
+});
+
+/* Slot positioning controls (width / side / target / max-width). */
+$("#p_slots").addEventListener("input", e => {
+  const ctl=e.target.closest("[data-ctl]"); if(!ctl) return;
+  const card=ctl.closest(".slot"), key=card.dataset.slot;
+  const c=state.pageDraft.slots[key]||(state.pageDraft.slots[key]={});
+  if(ctl.dataset.ctl==="maxw"){
+    c.maxw=parseInt(ctl.value,10)||0;
+    card.querySelector("[data-maxlbl]").textContent=c.maxw?c.maxw+"px":"auto";
+  }else{
+    c[ctl.dataset.ctl]=ctl.value;
+  }
+  pushPagePreview();
+});
+
+/* One shared file input; state.uploadKey remembers which slot asked for it. */
 $("#p_upload").addEventListener("change", async e => {
-  const file=e.target.files && e.target.files[0]; e.target.value=""; if(!file) return;
-  const msg=$("#p_msg");
+  const file=e.target.files && e.target.files[0]; e.target.value="";
+  const key=state.uploadKey; if(!file||!key) return;
+  const card=$(`.slot[data-slot="${key}"]`), msg=card && card.querySelector("[data-msg]");
   try{
     const blob=await openCropper(file, PAGE_HERO);       // cropper works in any mode
-    if(MODE!=="firebase"){ msg.textContent="Cropped ✓ — saving page images needs Firebase mode."; return; }
-    msg.textContent="Uploading…";
-    const url=await uploadImage("pages", state.currentPage, blob, "png");
-    $("#p_image").value=url; $("#p_preview").src=url;
-    msg.textContent="Uploaded ✓ — click Save to keep it.";
-  }catch(err){ if(err.message!=="cancelled") msg.textContent="Upload failed: "+(err.message||err); }
+    if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving page images needs Firebase mode."; return; }
+    if(msg) msg.textContent="Uploading…";
+    const url=await uploadImage("pages", state.currentPage+"-"+key, blob, "png");
+    const c=state.pageDraft.slots[key]||(state.pageDraft.slots[key]={});
+    c.image=url;
+    card.querySelector("[data-thumb]").src=url;   // thumbnail now shows ONLY the new image
+    if(msg) msg.textContent="Uploaded ✓ — click Save to keep it.";
+    pushPagePreview();
+  }catch(err){ if(err.message!=="cancelled" && msg) msg.textContent="Upload failed: "+(err.message||err); }
 });
 $("#save").addEventListener("click", async () => {
   const btn = $("#save"), msg = $("#msg");
