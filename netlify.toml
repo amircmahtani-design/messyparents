@@ -1,4 +1,8 @@
-# Static site — no build step. Netlify just publishes the repo root.
+# Static site — no build step. Netlify publishes the repo root and serves the function.
 [build]
   publish = "."
   command = "echo 'no build needed'"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
