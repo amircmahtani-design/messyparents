@@ -276,16 +276,18 @@ h3{font-size:1.3rem}
 .page-hero h1{margin:0}
 .page-hero p{font-family:var(--hand);color:var(--ink-70);
   font-size:clamp(1.16rem,1.5vw,1.34rem);line-height:1.35;max-width:46ch;margin:8px 0 0}
-/* Consistent art box: same height + top alignment across pages so the picture
-   never jumps around when you move between Popular and Guides. */
+/* Top-aligned art with a consistent max size, so the picture lands in the same
+   spot across pages WITHOUT reserving empty vertical space below a short copy
+   column (which otherwise leaves a gap above the results when searching). */
 .page-hero-art{display:flex;justify-content:flex-start;align-items:flex-start;min-width:0;
-  height:clamp(210px,25vw,320px);margin-top:6px}
-.page-hero-art img{width:100%;height:100%;max-width:460px;
+  margin-top:6px}
+.page-hero-art img{width:100%;height:auto;max-width:460px;
+  max-height:clamp(230px,25vw,310px);
   object-fit:contain;object-position:left top;display:block;transform:translateX(-26px)}
 @media (max-width:820px){
   .page-hero{grid-template-columns:1fr;gap:10px}
-  .page-hero-art{order:-1;height:auto;max-width:360px;margin:0 auto;justify-content:center}
-  .page-hero-art img{height:auto;max-height:260px;transform:none;object-position:center}
+  .page-hero-art{order:-1;max-width:360px;margin:0 auto;justify-content:center}
+  .page-hero-art img{max-height:260px;transform:none;object-position:center}
 }
 /* the intro already provides the breathing room — don't stack another gap on top */
 .page-head + .rows{padding-top:clamp(14px,1.8vw,22px)}
@@ -314,8 +316,10 @@ h3{font-size:1.3rem}
        --about-text:740px;                 /* readable measure for the copy     */
        --art-col:38%}                       /* art column width (art-* overrides) */
 
-/* Single-column by default (text only). Becomes two-column when it has art. */
-.about-section{padding:0;margin:0}
+/* Single-column by default (text only). Becomes two-column when it has art.
+   NB: keep margin-inline:auto (from .wrap) so each section stays centred — only
+   set the vertical rhythm here, never a blanket margin:0. */
+.about-section{padding:0;margin-inline:auto}
 .about-section + .about-section{margin-top:var(--about-gap)}
 .about-section .about-copy{min-width:0;max-width:var(--about-text)}
 .about-section .prose{max-width:var(--about-text)}

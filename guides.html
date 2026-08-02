@@ -16,6 +16,13 @@
   .rows.searching{display:flex;flex-direction:column}
   .rows.searching #resultsRow{order:-1;margin-bottom:8px}
   .rows.searching .row:not(#resultsRow){order:1}
+
+  /* While actively searching, collapse the hero illustration so the matches
+     come right up under the search bar instead of leaving a big empty gap. */
+  body.searching-active .page-hero{grid-template-columns:1fr;padding-bottom:0}
+  body.searching-active .page-hero-art{display:none}
+  body.searching-active .rows{padding-top:8px}
+  @media (min-width:961px){ body.searching-active .rows{padding-top:12px} }
 </style>
 </head>
 <body>
@@ -102,6 +109,7 @@ MPCStore.ready.then(function(){
   function render(){
     const active = topic || age || q;
     document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
+    document.body.classList.toggle("searching-active", !!q);              // collapse the hero art while searching
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.slice();
     title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Every guide");
     count.textContent = list.length + " guide" + (list.length===1?"":"s");
