@@ -134,6 +134,8 @@
               <option value="mama">Mama only</option>
               <option value="papa">Papa only</option>
               <option value="ari">Ari only</option>
+              <option value="mama-ari">Mama &amp; Ari</option>
+              <option value="papa-ari">Papa &amp; Ari</option>
             </select>
           </div>
           <textarea id="f_scene" rows="2" placeholder="Pose / action / props (optional — defaults to the guide's title &amp; topic)"></textarea>
@@ -294,7 +296,7 @@ async function generateIllustration(){
   }, 300000);
 }
 /* ---- Character Manager ---- */
-const CHAR_KEYS = ["family","mama","papa","ari"];
+const CHAR_KEYS = ["family","mama","papa","ari","mama-ari","papa-ari"];
 async function refreshChars(){
   const { fs, db } = state.fb;
   const rows = await Promise.all(CHAR_KEYS.map(async k => {
