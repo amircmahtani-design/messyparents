@@ -358,7 +358,7 @@ html.illus-ready .page-hero-art img{opacity:1}
    paragraphs rather than floating up by the title. */
 .about-hero.has-art{align-items:start;
     padding-top:20px}
-.about-hero .about-art{align-items:center;margin-top:0}
+.about-hero .about-art{align-items:center;margin-top:20px;margin-left:-40px}
 .about-hero h1{margin:0}
 /* Subtitle → first paragraph: a tidy, modest gap (no big empty space). */
 .about-sub{font-family:var(--hand);color:var(--ink-70);
