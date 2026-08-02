@@ -553,12 +553,12 @@ html.illus-ready .page-hero-art img{opacity:1}
 .book-cover-empty span{font-family:var(--display);font-weight:700;font-size:1.02rem;
   line-height:1.2;color:var(--blue-dark)}
 
-.book-body{padding:14px 15px 17px;display:flex;flex-direction:column;gap:8px}
-.book-card h3{font-family:var(--display);font-size:1.1rem;line-height:1.2;margin:0}
-/* The small summary box the parent fills in Studio. */
-.book-summary{margin:0;font-size:.9rem;line-height:1.45;color:var(--ink-70);
-  background:var(--cream-soft);border:1.4px solid var(--line-soft);
-  border-radius:12px;padding:10px 12px}
+.book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px}
+.book-card h3{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:0}
+/* Summary in the site's handwritten font — no box, so it reads like a warm
+   note under the cover rather than a form field. */
+.book-summary{margin:2px 0 0;font-family:var(--hand);font-size:1.13rem;
+  line-height:1.4;color:var(--ink-70)}
 .book-card .status{align-self:flex-start;font-size:.7rem;font-weight:800;
   letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 11px;
   background:var(--yellow);color:#4a3a00}
