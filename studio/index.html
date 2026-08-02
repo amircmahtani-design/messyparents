@@ -124,6 +124,15 @@
           <input id="f_hero" type="text" placeholder="assets/img/guides/xxxx.webp">
         </div>
 
+        <div class="field" id="genWrap">
+          <label>AI illustration <span class="hint">— draws a hero image from your reference sheets</span></label>
+          <textarea id="f_scene" rows="2" placeholder="What the picture should show (optional — defaults to the guide's title & topic)"></textarea>
+          <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button id="genBtn" class="btn" type="button">✨ Generate illustration</button>
+            <span id="genMsg" class="hint"></span>
+          </div>
+        </div>
+
         <div class="col-card">
           <span class="tag ok">✓ Green column</span>
           <div class="field"><label>Heading</label><input id="f_n_title" type="text"></div>
@@ -168,13 +177,14 @@ const state = { guides: [], current: null, orig: null, fb: null };
 /* ---------- backend ---------- */
 async function initFirebase(){
   const V = "10.12.2";
-  const [{initializeApp}, fs, auth] = await Promise.all([
+  const [{initializeApp}, fs, auth, storage] = await Promise.all([
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
-    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`)
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-storage.js`)
   ]);
   const app = initializeApp(CFG);
-  state.fb = { fs, auth, db: fs.getFirestore(app), a: auth.getAuth(app) };
+  state.fb = { fs, auth, storage, db: fs.getFirestore(app), a: auth.getAuth(app), st: storage.getStorage(app) };
 }
 async function loadGuides(){
   if(MODE === "firebase"){
@@ -185,6 +195,51 @@ async function loadGuides(){
     return arr;
   }
   return (window.GUIDES || []).map(g => JSON.parse(JSON.stringify(g)));
+}
+async function loadRefs(){
+  try{
+    const r = await fetch("../assets/img/refs/manifest.json", { cache: "no-store" });
+    const j = await r.json();
+    return (j.references || []).map(n => location.origin + "/assets/img/refs/" + n);
+  }catch(e){ return []; }
+}
+function buildPrompt(g, scene){
+  const what = (scene && scene.trim()) || (g.title + " — " + ((g.panel && g.panel.eyebrow) || ""));
+  return [
+    "Warm, hand-drawn children's-book style illustration that EXACTLY matches the art style, linework, colour palette and character designs in the reference images provided.",
+    "The recurring family — Mama, Papa and baby Ari — must look identical to the references: same faces, hair, proportions and clothing.",
+    "Scene to draw: " + what + ".",
+    "One clear, gently funny family moment. Warm paper-toned background, soft cosy palette.",
+    "Absolutely NO text, letters, words, captions or logos anywhere in the image."
+  ].join(" ");
+}
+async function uploadHero(id, b64){
+  const { storage, st } = state.fb;
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const sref = storage.ref(st, "guides/" + id + "-" + Date.now() + ".png");
+  await storage.uploadBytes(sref, bytes, { contentType: "image/png" });
+  return await storage.getDownloadURL(sref);
+}
+async function generateIllustration(){
+  const btn = $("#genBtn"), msg = $("#genMsg");
+  const g = draftGuide();
+  const refs = await loadRefs();
+  if(!refs.length){ msg.textContent = "No references found — add images to assets/img/refs/ and list them in manifest.json."; return; }
+  btn.disabled = true; msg.textContent = "Generating… (20–40s)";
+  try{
+    const prompt = buildPrompt(g, $("#f_scene").value);
+    const r = await fetch("/.netlify/functions/generate-illustration", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prompt, refs, size: "1536x1024" })
+    });
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.error || "Generation failed.");
+    msg.textContent = "Uploading…";
+    $("#f_hero").value = await uploadHero(g.id, j.b64);
+    pushPreview();
+    msg.textContent = "Done ✓ — click Save to keep it.";
+  }catch(e){ msg.textContent = "Failed: " + (e.message || e); }
+  finally{ btn.disabled = false; }
 }
 async function importAll(){
   const {fs, db} = state.fb;
@@ -321,6 +376,7 @@ async function boot(){
   const badge = $("#modeBadge");
   if(MODE === "local"){
     badge.textContent = "Local preview"; badge.classList.add("local");
+    const gw = $("#genWrap"); if(gw) gw.classList.add("hidden");   // AI gen needs Firebase mode
     state.guides = await loadGuides();
     showApp(null);
     return;
@@ -346,6 +402,7 @@ async function boot(){
     }catch(e){ alert("Import failed: " + (e.message || e)); btn.textContent = old; }
     finally{ btn.disabled = false; }
   });
+  $("#genBtn").addEventListener("click", generateIllustration);
   auth.onAuthStateChanged(a, async user => {
     if(user){ state.guides = await loadGuides(); showApp(user); }
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
