@@ -244,7 +244,10 @@
 
   /* ---- Render the real guide once the data (Firestore or bundled) is ready */
   MPCStore.ready.then(function(){
-    const id = new URLSearchParams(location.search).get("id");
+    const params = new URLSearchParams(location.search);
+    // Studio "new guide" preview: leave whatever __renderPreview drew.
+    if(params.get("draft")) return;
+    const id = params.get("id");
     const g = id && guideById(id);
     if(!g){
       document.title = "Guide not found — The Messy Parents Collection";

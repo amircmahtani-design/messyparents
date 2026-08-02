@@ -15,10 +15,33 @@ You can use Local preview right now: run a static server in this folder
 
 ---
 
-## Editing page illustrations (Popular / Guides / About)
+## Adding & deleting guides
+
+Click **+ New** next to *Guides* in the sidebar to create a guide. Fill in the
+title, the one-line summary, the three columns and the quick-answer box, then
+**Save**. The id (and its `/guide.html?id=…` link) is generated from the title.
+
+**Automatic placement.** New guides start with **Place automatically by content**
+ticked: as you type, Studio reads the title and text and drops the guide under the
+best-matching topic (Feeding, Sleeping, Development, Health, Parent Sanity) — the
+little hint shows where it landed. To choose yourself, **untick** that box and pick
+from the Topic dropdown; that manual choice always wins. Existing guides keep the
+topic they already have (they are never re-placed unless you tick the box).
+
+*How the guess works:* each built-in topic has a keyword list; a custom topic you
+add in **Topics** is matched on the words in its own name. It is a helpful default,
+not magic — if it guesses “Travel” when you meant “Feeding”, just override it.
+
+**Delete** removes a guide (with a confirm). In Firebase mode it deletes the
+Firestore document; in Local preview it re-downloads `guides.json` without it.
+
+---
+
+## Editing page illustrations (Home / Popular / Guides / About)
 
 Pick a page from the **Pages** list at the top of the sidebar to edit its title,
-subtitle and illustrations with a live preview.
+subtitle and illustrations with a live preview. **Home** exposes just the big hero
+illustration at the top of the homepage (Upload/replace + Reset).
 
 **About** exposes four illustration slots, each with its own controls:
 

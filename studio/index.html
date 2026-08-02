@@ -44,6 +44,18 @@
   .side .search{padding:12px}
   .side .search input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px}
   .grp{padding:6px 12px 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .grp-guides{display:flex;align-items:center;justify-content:space-between;padding-top:12px}
+  .btn-new{padding:3px 9px;font-size:12px;border-radius:7px;text-transform:none;letter-spacing:0}
+  /* auto-place topic row */
+  .auto-line{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#41505f;margin:0 0 8px}
+  .auto-line input[type=checkbox]{width:auto;margin:0}
+  .auto-line .hint{font-weight:600;color:var(--brand-d)}
+  .meta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+  .meta-row .field{flex:1;min-width:120px}
+  .check-field{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#41505f;margin-bottom:16px}
+  .check-field input[type=checkbox]{width:auto;margin:0}
+  .btn.danger{margin-left:auto;color:var(--danger);border-color:#e7c9c9}
+  .btn.danger:hover{background:#fbeaea;border-color:var(--danger)}
   .gitem{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 14px;font-size:14px;color:var(--ink);border-left:3px solid transparent}
   .gitem:hover{background:#f2f5f8}
   .gitem.active{background:#eaf1f8;border-left-color:var(--brand);font-weight:700}
@@ -143,6 +155,9 @@
     <div id="pageList"></div>
     <div class="grp">Site</div>
     <div id="siteList"></div>
+    <div class="grp grp-guides">Guides
+      <button id="addGuideBtn" class="btn ghost btn-new" type="button" title="Create a new guide">+ New</button>
+    </div>
     <div class="search"><input id="q" type="search" placeholder="Search guides…" autocomplete="off"></div>
     <div id="list"></div>
   </aside>
@@ -202,7 +217,11 @@
       <div id="editor" class="editor hidden">
         <div class="field">
           <label>Title</label>
-          <input id="f_title" type="text">
+          <input id="f_title" type="text" placeholder="e.g. Why won’t my baby nap?">
+        </div>
+        <div class="field">
+          <label>Summary <span class="hint">— the one-line answer shown on cards and at the top of the guide</span></label>
+          <textarea id="f_summary" rows="2" placeholder="A calm, one-sentence reassurance."></textarea>
         </div>
         <div class="field">
           <label>Eyebrow <span class="hint">— e.g. “Feeding • 4–9 months”</span></label>
@@ -210,7 +229,19 @@
         </div>
         <div class="field">
           <label>Topic <span class="hint">— which “Browse by topic” pill this guide appears under</span></label>
+          <label class="auto-line">
+            <input id="f_autoTopic" type="checkbox">
+            Place automatically by content
+            <span class="hint" id="f_autoHint"></span>
+          </label>
           <select id="f_topic"></select>
+        </div>
+        <div class="meta-row">
+          <label class="check-field"><input id="f_featured" type="checkbox"> Feature on the homepage</label>
+          <div class="field" style="max-width:150px">
+            <label>Read time <span class="hint">— minutes</span></label>
+            <input id="f_read" type="number" min="1" max="30" step="1" value="3">
+          </div>
         </div>
         <div class="field">
           <label>Hero image path <span class="hint">— leave blank to show the illustration placeholder</span></label>
@@ -248,6 +279,7 @@
           <button id="save" class="btn primary">Save</button>
           <button id="revert" class="btn ghost">Revert</button>
           <span id="msg" class="msg"></span>
+          <button id="deleteGuide" class="btn danger" type="button">Delete</button>
         </div>
       </div>
     </div>
@@ -295,7 +327,7 @@ const state = { guides: [], current: null, orig: null, fb: null, currentPage: nu
 
 /* small helpers for the Topics / Books managers */
 const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const slugify = s => String(s||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const slugify = s => String(s||"").toLowerCase().trim().replace(/['’]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
 const isImg = v => /^(https?:|data:|\.?\/|assets\/)/i.test(v||"") || /\.(webp|png|jpe?g|svg|gif)$/i.test(v||"");
 /* icons stored as a site-root path need "../" to load from inside /studio/ */
 const studioIconSrc = v => !isImg(v) ? "" : (/^(https?:|data:)/i.test(v) ? v : "../" + String(v).replace(/^\.?\//,""));
@@ -768,8 +800,12 @@ const itemsToLines = a => (a||[]).join("\n");
 function fillForm(g){
   const p = g.panel || {};
   $("#f_title").value = g.title || "";
+  $("#f_summary").value = g.summary || "";
   $("#f_eyebrow").value = p.eyebrow || "";
   $("#f_topic").innerHTML = topicOptionsHTML(g.topic);
+  $("#f_featured").checked = !!g.featured;
+  $("#f_read").value = g.read || 3;
+  $("#f_autoTopic").checked = !!g.autoTopic;
   $("#f_hero").value = p.hero || "";
   $("#f_n_title").value = (p.normal&&p.normal.title) || "";
   $("#f_n_items").value = itemsToLines(p.normal&&p.normal.items);
@@ -778,12 +814,19 @@ function fillForm(g){
   $("#f_h_title").value = (p.helped&&p.helped.title) || "";
   $("#f_h_items").value = itemsToLines(p.helped&&p.helped.items);
   $("#f_quick").value = p.quick || "";
+  refreshAutoTopic();
 }
 
 function draftGuide(){
   const g = JSON.parse(JSON.stringify(state.orig));
   g.title = $("#f_title").value;
+  g.summary = $("#f_summary").value.trim();
+  g.autoTopic = $("#f_autoTopic").checked;
   const tsel = $("#f_topic"); if(tsel && tsel.value) g.topic = tsel.value;
+  g.featured = $("#f_featured").checked;
+  const r = parseInt($("#f_read").value, 10); g.read = (r > 0 ? r : 3);
+  if(!Array.isArray(g.ages)) g.ages = [];
+  if(typeof g.body !== "string") g.body = "";
   g.panel = g.panel || {};
   g.panel.eyebrow = $("#f_eyebrow").value;
   const hero = $("#f_hero").value.trim();
@@ -793,6 +836,116 @@ function draftGuide(){
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
   g.panel.quick  = $("#f_quick").value;
   return g;
+}
+
+/* ---------------------------------------------------------------------------
+   Auto-categorisation: guess which topic a guide belongs under from its words.
+   Keyword lists cover the five built-in topics; any custom topic falls back to
+   matching words from its own name. The studio suggests a topic (and, in
+   "Place automatically" mode, applies it live) — you can always override by
+   unticking the box and choosing from the dropdown.
+   ------------------------------------------------------------------------- */
+const TOPIC_KEYWORDS = {
+  feeding: ["feed","feeding","fed","milk","bottle","bottles","breast","breastfeed","breastfeeding","formula","latch","nurse","nursing","solid","solids","wean","weaning","puree","purees","spoon","hungry","appetite","teat","teats","burp","burping","reflux","spit","posset","colic","eat","eating","snack","snacks","drink","drinking","dream feed","cluster feed","expressing","pump","pumping"],
+  sleeping: ["sleep","sleeping","asleep","nap","naps","napping","night","nights","wake","waking","woke","wakeful","bedtime","bed","drowsy","cot","crib","swaddle","swaddling","regression","settle","settling","overtired","wake window","wake windows","self-settle","rock","rocking","dummy","pacifier","white noise","routine","early waking","catnap","catnaps","night waking"],
+  development: ["milestone","milestones","crawl","crawling","roll","rolling","sit","sitting","stand","standing","walk","walking","cruise","cruising","word","words","talk","talking","speech","speak","speaking","babble","babbling","gesture","point","pointing","play","playing","motor","grasp","reach","reaching","tummy time","develop","development","learning","learn","skill","skills","first steps","language"],
+  health: ["fever","temperature","rash","rashes","cough","coughing","cold","colds","congestion","sick","ill","illness","vomit","vomiting","diarrhoea","diarrhea","doctor","gp","medicine","medication","teething","teeth","tooth","thrush","nappy rash","poorly","symptom","symptoms","infection","virus","snot","mucus","constipation","allergy","allergies","eczema","dehydration","dehydrated","urine","weight","jaundice","earache","chesty"],
+  sanity: ["overwhelmed","touched out","touched-out","relationship","relationships","partner","spouse","marriage","mental","anxiety","anxious","depression","guilt","guilty","self-care","selfcare","burnout","burn out","visitor","visitors","boundaries","boundary","alone","resentment","lonely","loneliness","cope","coping","stress","stressed","identity","rage","overstimulated","respite","support","exhausted","exhaustion","sanity","mum guilt","overwhelm"]
+};
+function _escRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+/* keywords for one topic: the curated list for a built-in, or words from the
+   topic's own id/label for a custom topic the user added. */
+function topicKeywords(t){
+  if(TOPIC_KEYWORDS[t.id]) return TOPIC_KEYWORDS[t.id];
+  const words = (t.id + " " + (t.label || "")).toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2);
+  return Array.from(new Set(words));
+}
+/* Score every current topic against the guide's words; title hits count triple.
+   Returns { topic, score } for the best match (topic is null if nothing hit). */
+function classifyTopic(title, rest){
+  const titleHay = " " + String(title || "").toLowerCase() + " ";
+  const restHay  = " " + String(rest  || "").toLowerCase() + " ";
+  let best = null, bestScore = 0;
+  topicList().forEach(t => {
+    let score = 0;
+    topicKeywords(t).forEach(kw => {
+      const re = new RegExp("\\b" + _escRe(kw.toLowerCase()) + "\\b", "g");
+      score += (titleHay.match(re) || []).length * 3 + (restHay.match(re) || []).length;
+    });
+    if(score > bestScore){ bestScore = score; best = t.id; }
+  });
+  return { topic: best, score: bestScore };
+}
+/* All the free text we classify from (everything except the topic itself). */
+function guideText(){
+  return [$("#f_summary").value, $("#f_eyebrow").value,
+    $("#f_n_title").value, $("#f_n_items").value,
+    $("#f_w_title").value, $("#f_w_items").value,
+    $("#f_h_title").value, $("#f_h_items").value,
+    $("#f_quick").value].join(" ");
+}
+/* Recompute the suggestion. In auto mode we apply it to the (disabled)
+   dropdown and show where it landed; otherwise we just show it as advice. */
+function refreshAutoTopic(){
+  const auto = $("#f_autoTopic"); if(!auto) return;
+  const sel = $("#f_topic"), hint = $("#f_autoHint");
+  const on = auto.checked;
+  sel.disabled = on;
+  const sug = classifyTopic($("#f_title").value, guideText());
+  if(on){
+    if(sug.topic){ sel.value = sug.topic; hint.textContent = "→ placed in " + topicLabel(sug.topic); }
+    else hint.textContent = "→ add a few words and I’ll place it";
+  }else{
+    hint.textContent = sug.topic ? "suggested: " + topicLabel(sug.topic) : "";
+  }
+}
+
+/* ---- Create / delete guides ---- */
+function uniqueGuideId(base){
+  let id = base || "guide", n = 2;
+  while(state.guides.some(g => g.id === id)) id = base + "-" + (n++);
+  return id;
+}
+function blankGuide(){
+  return {
+    id: "", topic: (topicList()[0] && topicList()[0].id) || "feeding",
+    featured: false, autoTopic: true, title: "", ages: [], read: 3,
+    summary: "", body: "",
+    panel: {
+      eyebrow: "",
+      normal: { title: "Usually normal",     items: [] },
+      warn:   { title: "Call your doctor if", items: [] },
+      helped: { title: "What helped us",      items: [] },
+      quick: ""
+    }
+  };
+}
+function addGuide(){
+  state.current = null; state.currentPage = null; state.currentSection = null;
+  state.isNew = true; state.orig = blankGuide();
+  showPanel("editor"); renderPageList(); renderSiteList(); renderList($("#q").value);
+  $("#pvId").textContent = "· new guide";
+  $("#msg").className = "msg"; $("#msg").textContent = "New guide — fill it in and Save.";
+  $("#deleteGuide").textContent = "Discard";
+  fillForm(state.orig);
+  pvReady = false;
+  const pv = $("#pv");
+  pv.onload = () => { pvReady = true; pushPreview(); };
+  pv.src = "../guide.html?draft=1";
+  $("#f_title").focus();
+}
+async function deleteGuideById(id){
+  if(MODE === "firebase"){
+    const { fs, db } = state.fb;
+    await fs.deleteDoc(fs.doc(db, "guides", id));
+  }
+  const i = state.guides.findIndex(g => g.id === id);
+  if(i >= 0) state.guides.splice(i, 1);
+  if(MODE !== "firebase"){
+    const blob = new Blob([JSON.stringify(state.guides, null, 2)], { type:"application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "guides.json"; a.click(); URL.revokeObjectURL(a.href);
+  }
 }
 
 let pvReady = false, pvTimer = null;
@@ -806,11 +959,13 @@ function schedulePreview(){ clearTimeout(pvTimer); pvTimer = setTimeout(pushPrev
 function selectGuide(id){
   const g = state.guides.find(x => x.id === id);
   if(!g) return;
-  state.current = id; state.orig = g; state.currentPage = null; state.currentSection = null;
+  state.current = id; state.orig = g; state.isNew = false;
+  state.currentPage = null; state.currentSection = null;
   showPanel("editor"); renderSiteList();
   renderPageList();
   $("#pvId").textContent = "· " + id;
   $("#msg").textContent = "";
+  $("#deleteGuide").textContent = "Delete";
   fillForm(g);
   renderList($("#q").value);
   pvReady = false;
@@ -821,9 +976,29 @@ function selectGuide(id){
 
 /* events */
 document.addEventListener("input", e => {
-  if(e.target.closest("#editor")) schedulePreview();
+  if(e.target.closest("#editor")){ refreshAutoTopic(); schedulePreview(); }
   else if(e.target.id === "p_title" || e.target.id === "p_subtitle") pushPagePreview();
   else if(e.target.id === "q") renderList(e.target.value);
+});
+$("#addGuideBtn").addEventListener("click", addGuide);
+$("#f_autoTopic").addEventListener("change", () => { refreshAutoTopic(); schedulePreview(); });
+$("#f_topic").addEventListener("change", schedulePreview);
+$("#deleteGuide").addEventListener("click", async () => {
+  if(state.isNew){
+    state.orig = null; state.isNew = false;
+    showPanel("empty"); renderList($("#q").value);
+    $("#empty").textContent = "Select a guide from the left to edit it.";
+    return;
+  }
+  const g = state.orig; if(!g || !g.id) return;
+  if(!confirm(`Delete “${g.title || g.id}”?\n\nThis removes the guide from the site. This can’t be undone.`)) return;
+  const msg = $("#msg"); msg.className = "msg"; msg.textContent = "Deleting…";
+  try{
+    await deleteGuideById(g.id);
+    state.current = null; state.orig = null;
+    showPanel("empty"); renderList($("#q").value);
+    $("#empty").textContent = "Guide deleted.";
+  }catch(err){ msg.className = "msg err"; msg.textContent = "Delete failed: " + (err.message || err); }
 });
 document.addEventListener("click", e => {
   const it = e.target.closest(".gitem");
@@ -884,12 +1059,35 @@ $("#p_upload").addEventListener("change", async e => {
 });
 $("#save").addEventListener("click", async () => {
   const btn = $("#save"), msg = $("#msg");
+  // A new guide needs a title (we build its id/URL from it).
+  if(state.isNew && !$("#f_title").value.trim()){
+    msg.className = "msg err"; msg.textContent = "Give the guide a title first.";
+    $("#f_title").focus(); return;
+  }
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
   try{
     const g = draftGuide();
+    const isNew = state.isNew;
+    if(isNew){
+      g.id = uniqueGuideId(slugify(g.title));
+      const maxOrder = state.guides.reduce((m,x)=>Math.max(m, x.order||0), 0);
+      g.order = maxOrder + 1;
+    }
     const note = await saveGuide(g);
     state.orig = g;
-    const i = state.guides.findIndex(x=>x.id===g.id); if(i>=0) state.guides[i]=g;
+    if(isNew){
+      state.guides.push(g);
+      state.current = g.id; state.isNew = false;
+      $("#pvId").textContent = "· " + g.id;
+      $("#deleteGuide").textContent = "Delete";
+      // Re-point the preview at the now-real guide.
+      pvReady = false;
+      const pv = $("#pv");
+      pv.onload = () => { pvReady = true; pushPreview(); };
+      pv.src = `../guide.html?id=${encodeURIComponent(g.id)}`;
+    }else{
+      const i = state.guides.findIndex(x=>x.id===g.id); if(i>=0) state.guides[i]=g;
+    }
     renderList($("#q").value);
     msg.className = "msg ok"; msg.textContent = note;
   }catch(err){ msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message||err); }
