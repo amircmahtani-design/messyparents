@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v=7">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -66,7 +66,7 @@
       </div>
     </div>
     <figure class="about-art" data-slot="hero">
-      <img id="pageHeroImg" data-illus-img="hero" src="assets/img/papa.webp"
+      <img id="pageHeroImg" data-illus-img="hero" data-default="assets/img/papa.webp"
            alt="An extremely tired father holding a mug of coffee and a bottle" width="400" height="500">
     </figure>
   </section>
@@ -84,7 +84,7 @@
       </div>
     </div>
     <figure class="about-art" data-slot="middle">
-      <img data-illus-img="middle" src="assets/img/mama.webp"
+      <img data-illus-img="middle" data-default="assets/img/mama.webp"
            alt="A tired but cheerful mother" width="400" height="500">
     </figure>
   </section>
@@ -100,7 +100,7 @@
       </div>
     </div>
     <figure class="about-art" data-slot="who">
-      <img data-illus-img="who" src="assets/img/family.webp"
+      <img data-illus-img="who" data-default="assets/img/family.webp"
            alt="A happy, well-loved family" width="1000" height="747">
     </figure>
   </section>
@@ -117,7 +117,7 @@
       </div>
     </div>
     <figure class="about-art" data-slot="notare">
-      <img data-illus-img="notare" src="assets/img/couple.webp"
+      <img data-illus-img="notare" data-default="assets/img/couple.webp"
            alt="Two tired but happy parents" width="520" height="392">
     </figure>
   </section>
@@ -134,8 +134,8 @@
 </footer>
 
 <script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/guides.js"></script>
-<script src="assets/js/mpc-store.js"></script>
+<script src="assets/js/guides.js?v=7"></script>
+<script src="assets/js/mpc-store.js?v=7"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 <script>MPCStore.pagesReady.then(function(){ MPCStore.applyPage("about"); });</script>
 

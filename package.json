@@ -4,10 +4,18 @@
   "version": "1.0.0",
   "description": "Seed/admin tooling for The Messy Parents Collection guides.",
   "scripts": {
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "serve": "node tests/static-server.js",
+    "test": "playwright test",
+    "test:report": "playwright show-report test-results/html",
+    "audit": "playwright test && node -e \"process.stdout.write(require('fs').readFileSync('test-results/audit-report.md','utf8'))\"",
+    "audit:standalone": "node tests/run-audit.js"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0",
     "pngjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
   }
 }

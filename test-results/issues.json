@@ -1,0 +1,226 @@
+{
+  "generated": "2026-08-02T12:19:28.420Z",
+  "totals": {
+    "error": 0,
+    "warn": 2,
+    "info": 34
+  },
+  "issues": [
+    {
+      "severity": "warn",
+      "page": "guides.html @desktop",
+      "type": "overlap",
+      "detail": "search bar overlaps hero image by 8×62px"
+    },
+    {
+      "severity": "warn",
+      "page": "popular.html @desktop",
+      "type": "overlap",
+      "detail": "search bar overlaps hero image by 8×62px"
+    },
+    {
+      "severity": "info",
+      "page": "404.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "404.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @desktop",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "about.html @mobile",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "books.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "books.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @desktop",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "guide.html?id=drinking-less-milk @mobile",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @desktop",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "guides.html @mobile",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @desktop",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "index.html @mobile",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @desktop",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @desktop",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @mobile",
+      "type": "console-error",
+      "detail": "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "severity": "info",
+      "page": "popular.html @mobile",
+      "type": "network",
+      "detail": "404 http://localhost:4173/assets/js/firebase-config.js"
+    }
+  ]
+}

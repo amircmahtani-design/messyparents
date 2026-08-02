@@ -148,11 +148,13 @@ MPCStore.applyPage = function (pageId) {
     // so the defaults settle in without flashing).
     applyAboutPage(pg || {});
   } else {
-    // Popular / Guides: a single hero image. Reveal the default straight away
-    // when there's no override; swap-then-reveal (no flash) when there is one.
+    // Popular / Guides: a single hero image. The <img> ships with NO src (only
+    // a data-default), so the browser never paints an old/default picture before
+    // we pick the right one here — custom if saved, otherwise the default.
     const img = document.getElementById("pageHeroImg");
     if (img) {
-      if (pg && pg.image) setImageSource(img, pg.image);
+      const src = (pg && pg.image) || img.getAttribute("data-default");
+      if (src) setImageSource(img, src);
       else img.classList.add("ready");
     }
   }
