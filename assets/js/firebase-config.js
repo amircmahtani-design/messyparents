@@ -14,11 +14,11 @@ window.FIREBASE_CONFIG = null;
 
 /* Example (fill and uncomment):
 window.FIREBASE_CONFIG = {
-  apiKey: "AIza…",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "0000000000",
-  appId: "1:0000000000:web:abcdef"
+  apiKey: "AIzaSyAGHZgw1Thl82LTJTUcpceQXa-Fjwzdn_E",
+  authDomain: "messy-parents.firebaseapp.com",
+  projectId: "messy-parents",
+  storageBucket: "messy-parents.firebasestorage.app",
+  messagingSenderId: "678138643116",
+  appId: "1:678138643116:web:ff1fb9b63e207893715509"
 };
 */
