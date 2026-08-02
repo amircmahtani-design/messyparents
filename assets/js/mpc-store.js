@@ -55,6 +55,25 @@ MPCStore.ABOUT_DEFAULTS = {
   bottom: "assets/img/family.webp"
 };
 
+/* Swap an image's source with NO flash of the old/default picture: the image
+   stays hidden (CSS opacity 0 while .ready is absent) until the *new* file has
+   actually finished loading, then we reveal it. If the source is unchanged (or
+   already cached) we reveal straight away. */
+function setImageSource(img, src) {
+  if (!img || !src) return;
+  const current = img.getAttribute("src") || "";
+  if (current === src) {
+    if (img.complete && img.naturalWidth > 0) img.classList.add("ready");
+    else img.addEventListener("load", function(){ img.classList.add("ready"); }, { once: true });
+    return;
+  }
+  img.classList.remove("ready");                 // hide until the new one is in
+  img.addEventListener("load",  function(){ img.classList.add("ready"); }, { once: true });
+  img.addEventListener("error", function(){ img.classList.add("ready"); }, { once: true });
+  img.setAttribute("src", src);
+  if (img.complete && img.naturalWidth > 0) img.classList.add("ready");   // was cached
+}
+
 /* Apply an editable slot's image + positioning to one .about-section.
    config = { image, width:"small|medium|large", align:"left|right", maxw:Number } */
 function applyAboutArt(sec, config, fallback) {
@@ -63,10 +82,7 @@ function applyAboutArt(sec, config, fallback) {
   const img = sec.querySelector("[data-illus-img]");
   const src = c.image || fallback;
   if (src && img) {
-    // Only reveal once the correct source is set, so the previously-shown
-    // (default/old) image never flashes before the chosen one loads in.
-    if (img.getAttribute("src") !== src) { img.classList.remove("ready"); img.setAttribute("src", src); }
-    img.classList.add("ready");
+    setImageSource(img, src);   // reveals only once the chosen image has loaded
     sec.classList.add("has-art");
   } else {
     sec.classList.remove("has-art");
@@ -104,24 +120,29 @@ function applyAboutPage(pg) {
     if (sec === chosen) applyAboutArt(sec, pg.bottom, D.bottom);
     else sec.classList.remove("has-art");   // the other section stays text-only
   });
-
-  document.documentElement.classList.add("illus-ready");
 }
 
 /* Apply an editable page image (and optional title/subtitle) once data is
    ready. Falls back to whatever is already in the markup. Safe on any page. */
 MPCStore.applyPage = function (pageId) {
-  const pg = (window.MPC_PAGES || {})[pageId];
+  const pg = (window.MPC_PAGES || {})[pageId] || null;
 
-  // The About page supports multiple illustration slots — run its richer
-  // apply even when there is no saved data yet (so the defaults settle in).
   if (pageId === "about" && document.querySelector(".about")) {
+    // The About page has its own three-slot apply (runs even with no saved data
+    // so the defaults settle in without flashing).
     applyAboutPage(pg || {});
+  } else {
+    // Popular / Guides: a single hero image. Reveal the default straight away
+    // when there's no override; swap-then-reveal (no flash) when there is one.
+    const img = document.getElementById("pageHeroImg");
+    if (img) {
+      if (pg && pg.image) setImageSource(img, pg.image);
+      else img.classList.add("ready");
+    }
   }
 
-  if (!pg) return;
-  const img = document.getElementById("pageHeroImg");
-  if (img && pg.image && pageId !== "about") img.src = pg.image;
-  if (pg.title) { const h = document.querySelector("[data-page-title]"); if (h) h.textContent = pg.title; }
-  if (pg.subtitle) { const s = document.querySelector("[data-page-subtitle]"); if (s) s.textContent = pg.subtitle; }
+  if (pg) {
+    if (pg.title) { const h = document.querySelector("[data-page-title]"); if (h) h.textContent = pg.title; }
+    if (pg.subtitle) { const s = document.querySelector("[data-page-subtitle]"); if (s) s.textContent = pg.subtitle; }
+  }
 };

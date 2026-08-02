@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>All guides — The Messy Parents Collection</title>
 <meta name="description" content="Search every guide on feeding, sleeping, development, health and parent sanity.">
+<script>
+  /* Hold the hero illustration hidden until the correct (saved) image loads, so
+     an old/default picture never flashes before the uploaded one. */
+  document.documentElement.className += " js";
+  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 4000);
+</script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">

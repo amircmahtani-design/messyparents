@@ -329,12 +329,16 @@ h3{font-size:1.3rem}
 .about-art img{width:100%;height:auto;object-fit:contain;display:block;
   max-height:clamp(300px,34vw,430px);
   filter:drop-shadow(0 12px 18px rgba(33,29,24,.10))}
-/* Anti-flash: when JS is on, keep the art hidden until the correct source is
-   applied (per-image .ready, or the global .illus-ready fallback). Without JS
-   the images show normally so the page still works. */
-html.js .about-art img{opacity:0;transition:opacity .2s ease}
+/* Anti-flash: when JS is on, keep the editable illustrations hidden until the
+   CHOSEN image has actually loaded (per-image .ready), so the old/default
+   picture never flashes before the uploaded one. .illus-ready is a timed
+   safety net. Without JS the images show normally so the page still works. */
+html.js .about-art img,
+html.js .page-hero-art img{opacity:0;transition:opacity .2s ease}
 html.js .about-art img.ready,
-html.illus-ready .about-art img{opacity:1}
+html.js .page-hero-art img.ready,
+html.illus-ready .about-art img,
+html.illus-ready .page-hero-art img{opacity:1}
 /* Hide the art figure until it actually has an image (empty slots collapse). */
 .about-section:not(.has-art) .about-art{display:none}
 
