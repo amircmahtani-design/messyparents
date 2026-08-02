@@ -2,14 +2,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Guides: readable by the public site, writable only by a signed-in admin.
+    // Guides: public to read, writable only by the signed-in admin.
     match /guides/{id} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.token.email == "amircmahtani@gmail.com";
+    }
 
-      // Tighter option — restrict writes to a specific admin account:
-      // allow write: if request.auth != null
-      //   && request.auth.token.email == "you@example.com";
+    // Illustration jobs: the signed-in admin reads status; only the server
+    // (Firebase Admin SDK, which bypasses these rules) writes them.
+    match /illustration_jobs/{id} {
+      allow read: if request.auth != null;
+      allow write: if false;
     }
   }
 }
