@@ -31,8 +31,8 @@
   .gpanel .g-eyebrow img{width:24px;height:24px;object-fit:contain;display:block}
   /* Compact, article-first hero: text sets the height, illustration is capped. */
   .gpanel .g-hero{
-    display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
-    column-gap:48px;align-items:center;margin:12px 0 22px;
+    display:grid;grid-template-columns:minmax(0,0.86fr) minmax(0,1.14fr);
+    column-gap:20px;align-items:center;margin:12px 0 20px;
   }
   .gpanel .g-copy{min-width:0}
   .gpanel .g-hero > *{min-width:0}
@@ -44,17 +44,18 @@
   /* Illustration sits centred in its column (balanced whitespace), nudged
      slightly left — NOT jammed against the far-right edge. */
   .gpanel .g-art{
-    width:100%;display:flex;justify-content:center;align-items:center;
+    width:100%;display:flex;justify-content:flex-start;align-items:center;
   }
-  /* Illustration height is CAPPED so it never dictates page height. Presets below. */
-  .gpanel .g-art img{max-width:560px;width:100%;max-height:310px;height:auto;
-    object-fit:contain;display:block;transform:translateX(-16px)}
-  .gpanel .g-art--ph{width:100%;max-width:560px;height:310px;border-radius:14px;display:grid;place-items:center;text-align:center;overflow:hidden;
-    background:linear-gradient(160deg,#f7efdd,#e7d9bd);border:2px dashed #c3b183;transform:translateX(-16px)}
-  .gpanel.g--compact .g-art img{max-height:300px}
-  .gpanel.g--compact .g-art--ph{height:300px}
-  .gpanel.g--visual .g-art img{max-height:360px}
-  .gpanel.g--visual .g-art--ph{height:360px}
+  /* Illustration is pulled left toward the title (fills the empty gap) and
+     capped in height so it never dictates page height. Presets below. */
+  .gpanel .g-art img{max-width:530px;width:100%;max-height:285px;height:auto;
+    object-fit:contain;display:block;transform:translateX(-40px)}
+  .gpanel .g-art--ph{width:100%;max-width:530px;height:285px;border-radius:14px;display:grid;place-items:center;text-align:center;overflow:hidden;
+    background:linear-gradient(160deg,#f7efdd,#e7d9bd);border:2px dashed #c3b183;transform:translateX(-40px)}
+  .gpanel.g--compact .g-art img{max-height:270px}
+  .gpanel.g--compact .g-art--ph{height:270px}
+  .gpanel.g--visual .g-art img{max-height:340px}
+  .gpanel.g--visual .g-art--ph{height:340px}
   .gpanel .g-art--ph span{font-family:"Nunito",sans-serif;font-weight:800;color:#a4926a;font-size:15px;line-height:1.5;letter-spacing:.02em}
   .gpanel .g-art--ph small{display:block;font-weight:700;font-size:12px;opacity:.85}
   .gpanel .g-cols{
@@ -71,20 +72,23 @@
   .gpanel .g-col li{color:var(--g-ink-soft);margin-bottom:9px;padding-left:22px;position:relative}
   .gpanel .g-col li::before{content:"•";position:absolute;left:3px;top:-1px;color:#a08a5f;font-size:22px;line-height:1.4}
   .gpanel .g-col p{font-size:20px;line-height:1.45;color:var(--g-ink-soft);margin:0}
-  .gpanel .g-bandwrap{margin-top:22px}
+  .gpanel .g-bandwrap{margin-top:16px}
   .gpanel .g-band{
-    display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;
+    position:relative;overflow:visible;
+    display:grid;grid-template-columns:auto 1fr;align-items:center;gap:22px;
     background:var(--g-band);border:2px solid var(--g-band-line);border-radius:14px;
-    padding:16px 26px;min-height:110px;font-size:22px;line-height:1.4;
+    padding:13px 210px 13px 26px;min-height:80px;font-size:22px;line-height:1.4;
   }
   .gpanel .g-band b{font-weight:400;-webkit-text-stroke:.5px var(--g-ink)}
   .gpanel .g-band-text{min-width:0}
   .gpanel .g-note{width:108px;height:90px;transform:rotate(-6deg);display:block;flex:none}
-  .gpanel .g-couple{width:150px;flex:none}
-  .gpanel .g-couple img{width:100%;border-radius:10px;display:block}
+  /* Ari & Papa hug pops UP out of the blue box (anchored to the bottom, taller
+     than the band so their heads break the top edge). */
+  .gpanel .g-couple{position:absolute;right:26px;bottom:-2px;width:184px}
+  .gpanel .g-couple img{width:100%;display:block}
   .gpanel .g-disclaimer{
     font-family:"Nunito",sans-serif;font-size:13.5px;color:#8a7a63;
-    margin:18px 2px 0;line-height:1.5;
+    margin:12px 2px 0;line-height:1.5;
   }
   /* Tablet: keep two-column hero, trim the image and gaps. */
   @media (max-width:1024px) and (min-width:821px){
@@ -103,7 +107,7 @@
     .gpanel .g-col + .g-col{border-left:0;border-top:1px solid rgba(80,60,35,.25);padding-top:18px}
     .gpanel .g-band{grid-template-columns:1fr;gap:12px;justify-items:center;text-align:center;padding:16px 18px;min-height:0}
     .gpanel .g-note{display:none}
-    .gpanel .g-couple{width:120px}
+    .gpanel .g-couple{position:static;width:120px;margin:0 auto}
   }
 </style>
 </head>
@@ -163,9 +167,13 @@
     const avail = window.innerHeight - headH - 16;          // small breathing room
     const natural = panel.scrollHeight;
     if(natural > avail && avail > 0){
-      const scale = Math.max(0.5, avail / natural);          // floor so text never vanishes
-      panel.style.transform = "scale(" + scale + ")";
-      el.style.height = Math.ceil(natural * scale) + "px";
+      const scale = avail / natural;
+      if(scale >= 0.8){                                        // gentle fit — never shrink past ~20%
+        panel.style.transform = "scale(" + scale + ")";
+        el.style.height = Math.ceil(natural * scale) + "px";
+      }
+      // if it would shrink more than ~18%, leave full size and let the page
+      // scroll a little instead of making everything tiny.
     }
   }
   function scheduleFit(){
