@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Generated guide illustrations: public to read, admin-only to write.
+    match /guides/{file=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+
+      // Tighter option — restrict writes to your admin email:
+      // allow write: if request.auth != null
+      //   && request.auth.token.email == "you@example.com";
+    }
+  }
+}
