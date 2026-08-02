@@ -12,6 +12,12 @@
 window.MPCStore = { guides: [], pages: {}, source: "bundled" };
 window.MPC_PAGES = window.MPC_PAGES || {};   // per-page settings (image/title/subtitle)
 
+/* pagesReady resolves as soon as the (tiny) per-page settings are in — WITHOUT
+   waiting for the whole guides collection to load. Pages use it to apply their
+   hero images fast, so the illustrations appear quickly. */
+let _resolvePages;
+MPCStore.pagesReady = new Promise(r => { _resolvePages = r; });
+
 MPCStore.ready = (async function () {
   const cfg = window.FIREBASE_CONFIG;
   if (cfg && cfg.projectId) {
@@ -23,7 +29,21 @@ MPCStore.ready = (async function () {
       ]);
       const app = initializeApp(cfg);
       const db = fs.getFirestore(app);
-      const snap = await fs.getDocs(fs.collection(db, "guides"));
+
+      // Fire BOTH reads at once. Resolve page settings the moment they land
+      // (don't block them behind the larger guides read).
+      const guidesP = fs.getDocs(fs.collection(db, "guides"));
+      const pagesP  = fs.getDocs(fs.collection(db, "pages"));
+
+      pagesP.then(psnap => {
+        const pages = {};
+        psnap.forEach(d => (pages[d.id] = d.data()));
+        window.MPC_PAGES = pages;
+        MPCStore.pages = pages;
+      }).catch(() => { /* pages collection is optional */ })
+        .finally(() => _resolvePages());
+
+      const snap = await guidesP;
       const arr = [];
       snap.forEach(d => arr.push(d.data()));
       if (arr.length) {
@@ -31,17 +51,12 @@ MPCStore.ready = (async function () {
         window.GUIDES = arr;               // swap bundled data for live data
         MPCStore.source = "firestore";
       }
-      // Per-page settings (hero images / optional title + subtitle overrides)
-      try {
-        const psnap = await fs.getDocs(fs.collection(db, "pages"));
-        const pages = {};
-        psnap.forEach(d => (pages[d.id] = d.data()));
-        window.MPC_PAGES = pages;
-        MPCStore.pages = pages;
-      } catch (e) { /* pages collection is optional */ }
     } catch (e) {
       console.warn("[MPC] Firestore load failed — using bundled guides.", e);
+      _resolvePages();
     }
+  } else {
+    _resolvePages();                       // local/preview mode: nothing to wait for
   }
   MPCStore.guides = window.GUIDES;
   return window.GUIDES;

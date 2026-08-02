@@ -9,7 +9,7 @@
   /* Hold the hero illustration hidden until the correct (saved) image loads, so
      an old/default picture never flashes before the uploaded one. */
   document.documentElement.className += " js";
-  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 4000);
+  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 1500);
 </script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
@@ -98,8 +98,10 @@
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
 <script>
+// Apply the hero image + title fast (doesn't need the full guides list).
+MPCStore.pagesReady.then(function(){ MPCStore.applyPage("guides"); });
+
 MPCStore.ready.then(function(){
-  MPCStore.applyPage("guides");
   const params = new URLSearchParams(location.search);
   let topic = params.get("topic"), age = params.get("age"), q = params.get("q") || "";
   const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),

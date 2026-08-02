@@ -10,7 +10,7 @@
      (saved) image is applied — no flash of the old/default picture. A short
      fallback reveals them anyway if the data layer is slow or unavailable. */
   document.documentElement.className += " js";
-  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 4000);
+  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 1500);
 </script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
@@ -136,7 +136,7 @@
 <script src="assets/js/guides.js"></script>
 <script src="assets/js/mpc-store.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-<script>MPCStore.ready.then(function(){ MPCStore.applyPage("about"); });</script>
+<script>MPCStore.pagesReady.then(function(){ MPCStore.applyPage("about"); });</script>
 
 </body>
 </html>
