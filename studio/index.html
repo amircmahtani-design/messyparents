@@ -225,14 +225,19 @@ async function generateIllustration(){
   const g = draftGuide();
   const refs = await loadRefs();
   if(!refs.length){ msg.textContent = "No references found — add images to assets/img/refs/ and list them in manifest.json."; return; }
-  btn.disabled = true; msg.textContent = "Starting… image generation runs in the background (~30–60s).";
+  btn.disabled = true; msg.textContent = "Starting… generation runs in the background (can take 2–4 minutes).";
   const prompt = buildPrompt(g, $("#f_scene").value);
   const { fs, db } = state.fb;
   const jobRef = fs.doc(db, "illustration_jobs", g.id);
 
-  let done = false;
+  let done = false, sawWorking = false, first = true;
   const unsub = fs.onSnapshot(jobRef, snap => {
-    const d = snap.data(); if(!d) return;
+    const d = snap.data();
+    // On attach, ignore any leftover result from a previous run.
+    if(first){ first = false; if(!d || d.status !== "working") return; }
+    if(!d) return;
+    if(d.status === "working"){ sawWorking = true; msg.textContent = "Working… drawing your illustration (a couple of minutes)."; return; }
+    if(!sawWorking) return;                 // only accept a result from THIS run
     if(d.status === "done"){
       done = true; unsub();
       $("#f_hero").value = d.url; pushPreview();
@@ -240,8 +245,6 @@ async function generateIllustration(){
     } else if(d.status === "error"){
       done = true; unsub();
       msg.textContent = "Failed: " + (d.error || "generation error"); btn.disabled = false;
-    } else {
-      msg.textContent = "Working… please wait.";
     }
   });
 
@@ -255,8 +258,8 @@ async function generateIllustration(){
   }
 
   setTimeout(() => {
-    if(!done){ unsub(); msg.textContent = "Timed out waiting (2 min). Check the Netlify background-function log."; btn.disabled = false; }
-  }, 150000);
+    if(!done){ unsub(); msg.textContent = "Still generating after 5 min — reopen this guide in a moment and it should be ready."; btn.disabled = false; }
+  }, 300000);
 }
 async function importAll(){
   const {fs, db} = state.fb;
