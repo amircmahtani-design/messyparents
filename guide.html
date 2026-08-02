@@ -18,7 +18,7 @@
     --g-band:#c9dced; --g-band-line:#a9c4dc; --g-rule:#cdbf9f;
     color:var(--g-ink);
     font-family:"Patrick Hand","Poppins",ui-rounded,system-ui,sans-serif;
-    max-width:1120px;margin:0 auto;padding:8px 4px 20px;
+    max-width:100%;margin:0;padding:8px 0 24px;
   }
   .gpanel .g-eyebrow{
     font-family:"Nunito",sans-serif;font-weight:800;color:var(--g-blue);
@@ -41,6 +41,9 @@
     border:1.5px solid #d8c9a6;display:block;
   }
   .gpanel .g-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .gpanel .g-art--ph{display:grid;place-items:center;text-align:center;border:2px dashed #c3b183}
+  .gpanel .g-art--ph span{font-family:"Nunito",sans-serif;font-weight:800;color:#a4926a;font-size:15px;line-height:1.5;letter-spacing:.02em}
+  .gpanel .g-art--ph small{display:block;font-weight:700;font-size:12px;opacity:.85}
   .gpanel .g-cols{
     display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:30px;gap:0;
   }
@@ -50,8 +53,9 @@
   .gpanel .g-colhead{display:flex;align-items:flex-start;gap:11px;margin-bottom:12px}
   .gpanel .g-colhead h2{font-size:24px;font-weight:400;margin:0;line-height:1.05}
   .gpanel .g-badge{flex:none;margin-top:1px}
-  .gpanel .g-col ul{list-style:none;margin:0;padding:0;font-size:20px;line-height:1.5}
-  .gpanel .g-col li{color:var(--g-ink-soft);margin-bottom:5px}
+  .gpanel .g-col ul{list-style:none;margin:0;padding:0;font-size:20px;line-height:1.45}
+  .gpanel .g-col li{color:var(--g-ink-soft);margin-bottom:9px;padding-left:22px;position:relative}
+  .gpanel .g-col li::before{content:"•";position:absolute;left:3px;top:-1px;color:#a08a5f;font-size:22px;line-height:1.4}
   .gpanel .g-col p{font-size:20px;line-height:1.45;color:var(--g-ink-soft);margin:0}
   .gpanel .g-bandwrap{position:relative;margin-top:36px}
   .gpanel .g-band{
@@ -97,7 +101,7 @@
 
 <main id="main">
   <article class="article wrap">
-    <div class="article-inner" id="article"></div>
+    <div id="article"></div>
   </article>
 </main>
 
@@ -145,15 +149,18 @@
       <h2>${block.title}</h2></div>${body}</div>`;
   }
 
-  function renderPanel(p){
-    const eyebrow = p.eyebrow || t.label;
-    const heroArt = p.hero || "assets/img/family.webp";
+  function panelMarkup(title, p, iconHTML, summaryFallback){
+    p = p || {};
+    const eyebrow = p.eyebrow || (t && t.label) || "";
     const bandArt = p.band || "assets/img/couple.webp";
-    el.innerHTML = `<div class="gpanel">
-      <p class="g-eyebrow">${iconFor(g)}<span>${eyebrow}</span></p>
+    const heroHTML = p.hero
+      ? `<div class="g-art"><img src="${p.hero}" alt="${p.heroAlt || title || ""}"></div>`
+      : `<div class="g-art g-art--ph"><span>Illustration<small>generated for this guide</small></span></div>`;
+    return `<div class="gpanel">
+      <p class="g-eyebrow">${iconHTML || ""}<span>${eyebrow}</span></p>
       <div class="g-hero">
-        <div><h1>${g.title}</h1></div>
-        <div class="g-art"><img src="${heroArt}" alt="A Messy Parents family scene"></div>
+        <div><h1>${title || ""}</h1></div>
+        ${heroHTML}
       </div>
       <div class="g-cols">
         ${col("ok", p.normal)}
@@ -162,16 +169,25 @@
       </div>
       <div class="g-bandwrap">
         ${NOTE}
-        <div class="g-band"><span><b>The quick answer:</b> ${p.quick || g.summary}</span></div>
+        <div class="g-band"><span><b>The quick answer:</b> ${p.quick || summaryFallback || ""}</span></div>
         <div class="g-couple"><img src="${bandArt}" alt=""></div>
       </div>
       <p class="g-disclaimer">Written by parents, not doctors. General information, not medical advice &mdash;
         if something worries you about your own baby, speak to your doctor, midwife or health visitor. Your instinct is good data.</p>
     </div>`;
   }
+  function renderPanel(p){ el.className = ""; el.innerHTML = panelMarkup(g.title, p, iconFor(g), g.summary); }
+
+  /* Live-preview hook used by the Studio (same-origin iframe) */
+  window.__renderPreview = function(draft){
+    el.className = "";
+    const icon = (typeof ICONS !== "undefined" && draft && ICONS[draft.topic]) ? ICONS[draft.topic] : (g ? iconFor(g) : "");
+    el.innerHTML = panelMarkup(draft && draft.title, draft && draft.panel, icon, draft && draft.summary);
+  };
 
   /* ---- Fallback: original article (for guides not yet converted) ------- */
   function renderArticle(){
+    el.className = "article-inner";
     const callout = g.callout ? `<div class="callout"><h3>${g.callout.title}</h3><ul>${
       g.callout.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>` : "";
     const rel = (g.related||[]).map(guideById).filter(Boolean);

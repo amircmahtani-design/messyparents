@@ -491,6 +491,22 @@ const GUIDES = [
     "Diarrhoea, vomiting, or a rash on the body",
     "Refusing all feeds, or unusually drowsy and hard to rouse",
     "Pulling at one ear with distress — often an ear infection, not teeth"]},
+  panel:{
+    eyebrow:"Health • 4–18 months",
+    normal:{title:"Usually teething",items:[
+      "Heavy drooling, and a dribble rash on the chin","Chewing everything, with intent",
+      "Red, swollen gums; sometimes a white ridge","Grumpiness and broken sleep for a day or two",
+      "A slightly raised temperature — below 38°C"]},
+    warn:{title:"Call your doctor if",items:[
+      "38°C or above (any age under 3 months: seek care straight away)",
+      "Diarrhoea, vomiting, or a rash on the body","Refusing all feeds, or unusually drowsy and hard to rouse",
+      "Pulling at one ear with distress — often an ear infection, not teeth"]},
+    helped:{title:"What helped us",items:[
+      "Something cold and firm to chew (chilled, not frozen)","Firm gum pressure with a clean finger",
+      "Barrier cream on the chin for dribble rash","Correct-dose infant pain relief if they're in real pain — ask a pharmacist",
+      "Skip amber necklaces and unregulated gels"]},
+    quick:"Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere."
+  },
   related:["first-fever","drinking-less-milk"]
 },
 {
@@ -519,6 +535,24 @@ const GUIDES = [
     "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
     "A fit or seizure, cold mottled hands and feet, or fewer than four wet nappies in a day",
     "Fever lasting more than 5 days, or your own instinct that something is badly wrong — that instinct is good data"]},
+  panel:{
+    eyebrow:"Health • 0–24 months",
+    normal:{title:"The basics",items:[
+      "Fever is the immune system working, not the illness itself",
+      "Watch the baby, not the number — how they look between spikes matters most",
+      "Take it under the arm with a digital thermometer (forehead strips aren't reliable)",
+      "Report what it said and how you took it — don't add a correction"]},
+    warn:{title:"Seek urgent medical care if",items:[
+      "Under 3 months with a temperature of 38°C or above",
+      "A rash that doesn't fade under a pressed glass",
+      "Trouble breathing, grunting, or drawing in under the ribs",
+      "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
+      "A seizure, cold mottled hands and feet, or fewer than 4 wet nappies a day"]},
+    helped:{title:"Managing at home",items:[
+      "Fluids often, in small amounts — milk counts","One light layer; don't wrap up or sponge with cold water",
+      "Infant paracetamol (from 2 months, over 4kg) or ibuprofen (from 3 months, over 5kg) for discomfort — check the packet"]},
+    quick:"The number matters far less than your baby's age and how they look between temperature spikes."
+  },
   related:["teething","nappy-rash"]
 },
 {
@@ -544,6 +578,22 @@ const GUIDES = [
     "Blisters, open sores, pus, or bleeding",
     "Rash spreading beyond the nappy area, or with fever",
     "Your baby seems in significant pain"]},
+  panel:{
+    eyebrow:"Health • 0–18 months",
+    normal:{title:"Usually just irritation",items:[
+      "Contact irritation from skin, moisture and friction",
+      "Sits on the raised skin, spares the deep creases",
+      "Clears in two or three days with good barrier care"]},
+    warn:{title:"Get it looked at if",items:[
+      "No improvement after 3 days of barrier care, or it's getting worse",
+      "Blisters, open sores, pus, or bleeding","Spreading beyond the nappy area, or with a fever",
+      "Your baby seems in significant pain"]},
+    helped:{title:"What helped us",items:[
+      "Change more often, especially after a dirty nappy","Water or fragrance-free wipes; pat dry, don't rub",
+      "A thick barrier cream as a visible layer, not rubbed in","Nappy-free time on a towel — air beats any cream",
+      "In the creases with satellite spots? Likely thrush — needs an antifungal"]},
+    quick:"Ordinary rash improves in two or three days. If it's spreading, spotty or in the skin creases, it's probably thrush."
+  },
   related:["first-fever","teething"]
 },
 {
@@ -568,6 +618,23 @@ const GUIDES = [
     "The feeling is constant, rather than arriving at the end of long days",
     "You feel persistently low, numb, anxious, or disconnected from your baby",
     "You're having thoughts of harming yourself or your baby — contact your doctor or a crisis line today; this is treatable and you will be taken seriously, not judged"]},
+  panel:{
+    eyebrow:"Parent Sanity • 0–24 months",
+    normal:{title:"What's going on",items:[
+      "Constant contact with no gaps is a real sensory load",
+      "Load without recovery becomes intolerance — it's your nervous system, not your feelings",
+      "Extremely common, and not a verdict on how much you love anyone"]},
+    warn:{title:"Reach out for support if",items:[
+      "The feeling is constant, not just at the end of long days",
+      "You feel persistently low, numb, anxious, or disconnected from your baby",
+      "Any thoughts of harming yourself or your baby — contact your doctor or a crisis line today; you'll be taken seriously, not judged"]},
+    helped:{title:"What helped us",items:[
+      "Twenty minutes of no contact, daily, defended like an appointment",
+      "Hand over completely — leave the room","Say it out loud early: \"I'm touched out, it's not about you\"",
+      "Change the contact, not just the amount (carrier facing out, side-by-side play)",
+      "Cut other input — noise and screens add to the same load"]},
+    quick:"Wanting your body back for twenty minutes doesn't make you a bad parent. It makes you a mammal."
+  },
   related:["splitting-nights","visitors"]
 },
 {
@@ -591,6 +658,23 @@ const GUIDES = [
 <li>Review it weekly, out loud, in daylight.</li>
 </ul>`,
   callout:null,
+  panel:{
+    eyebrow:"Parent Sanity • 0–9 months",
+    normal:{title:"Why shifts win",items:[
+      "Two people at 40% function worse than one at 80%",
+      "Four unbroken hours restores you more than seven broken ones",
+      "Even breastfeeding: the other person does everything but the feed"]},
+    warn:{title:"Rules that stop it collapsing",items:[
+      "Swap which shift each person takes, or resentment builds fast",
+      "No scorekeeping after 10pm — nothing decided at 3am is fair or true",
+      "Review it weekly, out loud, in daylight"]},
+    helped:{title:"What helped us",items:[
+      "Split the night in two: one covers till ~2am, the other after",
+      "Off-duty person sleeps elsewhere with earplugs — genuinely off",
+      "One expressed bottle buys the first four-hour block",
+      "Alone? Shifts mean daytime — ask someone to hold the baby 90 minutes"]},
+    quick:"Both of you half-sleeping is worse than one of you sleeping properly. Shifts beat solidarity."
+  },
   related:["touched-out","day-night-confusion"]
 },
 {
@@ -617,6 +701,23 @@ const GUIDES = [
 </ul>
 <div class="quiet">The person who is offended by a boundary in week two has forgotten week two. You won't.</div>`,
   callout:null,
+  panel:{
+    eyebrow:"Parent Sanity • 0–3 months",
+    normal:{title:"Agree it in advance",items:[
+      "Decide the rules before anyone's at the door",
+      "How long visits run, which days are closed, who holds the baby",
+      "Written in a message thread beats remembering in the moment"]},
+    warn:{title:"Non-negotiables you're allowed",items:[
+      "Nobody unwell — \"just a cold\" isn't a small thing for a newborn",
+      "Hands washed; no kissing the baby's face or hands",
+      "Wake a sleeping baby and you lose holding rights — cheerfully but firmly"]},
+    helped:{title:"Scripts that work",items:[
+      "\"We'd love to see you — can you do Thursday 2–3?\" A window, not an open door",
+      "\"Not doing visitors this week, but we'd love a photo\"",
+      "\"She's due a feed, so I'm taking her\" — no explanation follows",
+      "\"If you're coming, could you bring dinner and put a wash on?\""]},
+    quick:"Decide the rules before you're standing in the doorway holding a baby and a wet muslin."
+  },
   related:["touched-out","splitting-nights"]
 }
 ];
