@@ -198,7 +198,8 @@ async function importAll(){
 async function saveGuide(guide){
   if(MODE === "firebase"){
     const {fs, db} = state.fb;
-    await fs.setDoc(fs.doc(db, "guides", guide.id), guide);
+    const clean = JSON.parse(JSON.stringify(guide));   // drops any undefined fields
+    await fs.setDoc(fs.doc(db, "guides", guide.id), clean);
     return "Saved to Firestore — live on the site.";
   }
   // local preview mode: offer the updated data as a download
@@ -248,7 +249,8 @@ function draftGuide(){
   g.title = $("#f_title").value;
   g.panel = g.panel || {};
   g.panel.eyebrow = $("#f_eyebrow").value;
-  g.panel.hero = $("#f_hero").value.trim() || undefined;
+  const hero = $("#f_hero").value.trim();
+  if(hero) g.panel.hero = hero; else delete g.panel.hero;
   g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
   g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
