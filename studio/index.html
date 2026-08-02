@@ -232,8 +232,9 @@ async function generateIllustration(){
       method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ prompt, refs, size: "1536x1024" })
     });
-    const j = await r.json();
-    if(!r.ok) throw new Error(j.error || "Generation failed.");
+    const raw = await r.text();
+    let j = null; try { j = JSON.parse(raw); } catch(_) {}
+    if(!r.ok || !j || !j.b64) throw new Error((j && j.error) || ("HTTP " + r.status + " — " + raw.slice(0, 180)));
     msg.textContent = "Uploading…";
     $("#f_hero").value = await uploadHero(g.id, j.b64);
     pushPreview();
