@@ -359,10 +359,10 @@ html.illus-ready .page-hero-art img{opacity:1}
 .about-hero.has-art{align-items:start;
     padding-top:20px;
                    }
-.about-hero .about-art{align-items:center;margin-top:20px;margin-left:-40px;
+.about-hero .about-art{align-items:center;margin-top:30px;margin-left:-80px;
                       }
 .about-hero .about-art img{
-    transform:scale(1.15);
+    transform:scale(1.30);
    }
 .about-hero h1{margin:0}
 /* Subtitle → first paragraph: a tidy, modest gap (no big empty space). */
