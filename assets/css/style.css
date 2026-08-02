@@ -396,6 +396,14 @@ html.illus-ready .page-hero-art img{opacity:1}
   .about-section.art-medium .about-art img,
   .about-section.art-large .about-art img{max-width:min(340px,80%);margin-inline:auto}
   .about-hero .prose{margin-top:clamp(22px,5vw,32px)}
+  /* The hero art nudge above (negative left margin, top offset, 1.3x scale) is
+     deliberate on desktop but throws the picture off-centre and lets it overlap
+     the next section on a phone. Neutralise it here only. */
+  .about-hero .about-art{margin-top:0;margin-left:0;justify-content:center}
+  .about-hero .about-art img{transform:none}
+  /* Drop the height cap so the portrait art keeps its proportions instead of
+     being letterboxed inside a shorter box by object-fit:contain. */
+  .about-art img{max-height:none}
 }
 
 .split{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.75fr);
