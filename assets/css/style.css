@@ -356,7 +356,8 @@ html.illus-ready .page-hero-art img{opacity:1}
 
 /* The hero art sits centred against the copy so it covers the middle of the
    paragraphs rather than floating up by the title. */
-.about-hero.has-art{align-items:center}
+.about-hero.has-art{align-items:start;
+    padding-top:40px}
 .about-hero .about-art{align-items:center;margin-top:0}
 .about-hero h1{margin:0}
 /* Subtitle → first paragraph: a tidy, modest gap (no big empty space). */
