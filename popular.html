@@ -30,9 +30,14 @@
 </header>
 
 <main id="main">
-  <section class="wrap page-head">
-    <h1>Popular guides</h1>
-    <p>The questions we get asked most, and the ones we googled most ourselves.</p>
+  <section class="wrap page-hero">
+    <div class="page-hero-copy">
+      <h1 data-page-title>Popular guides</h1>
+      <p data-page-subtitle>The questions we get asked most, and the ones we googled most ourselves.</p>
+    </div>
+    <div class="page-hero-art">
+      <img id="pageHeroImg" src="assets/img/family.webp" alt="A happy, well-loved family" width="1000" height="747">
+    </div>
   </section>
 
   <section class="rows wrap">
@@ -75,6 +80,7 @@
 
 <script>
 MPCStore.ready.then(function(){
+  MPCStore.applyPage("popular");
   const feat = GUIDES.filter(g => g.featured);
   document.getElementById("featured").innerHTML = feat.map(cardHTML).join("");
   const seen = new Set(feat.map(g => g.id));

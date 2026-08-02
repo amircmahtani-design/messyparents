@@ -9,6 +9,14 @@ service cloud.firestore {
         && request.auth.token.email == "amircmahtani@gmail.com";
     }
 
+    // Pages: per-page hero image + optional title/subtitle. Public read,
+    // writable only by the signed-in admin (same as guides).
+    match /pages/{id} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "amircmahtani@gmail.com";
+    }
+
     // Illustration jobs: the admin reads status; only the server (admin SDK) writes.
     match /illustration_jobs/{id} {
       allow read: if request.auth != null;

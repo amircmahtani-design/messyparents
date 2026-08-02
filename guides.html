@@ -36,14 +36,19 @@
 </header>
 
 <main id="main">
-  <section class="wrap page-head">
-    <h1>All the guides</h1>
-    <p>Search it, or scroll it. Every one is a three-minute read.</p>
+  <section class="wrap page-hero">
+    <div class="page-hero-copy">
+      <h1 data-page-title>All the guides</h1>
+      <p data-page-subtitle>Search it, or scroll it. Every one is a three-minute read.</p>
     <form class="search" id="searchForm" role="search">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       <input type="search" id="q" name="q" aria-label="Search the guides" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
       <button type="submit">Search</button>
     </form>
+    </div>
+    <div class="page-hero-art">
+      <img id="pageHeroImg" src="assets/img/couple.webp" alt="Two tired but happy parents" width="520" height="392">
+    </div>
   </section>
 
   <section class="rows wrap" aria-label="Filter guides">
@@ -81,6 +86,7 @@
 
 <script>
 MPCStore.ready.then(function(){
+  MPCStore.applyPage("guides");
   const params = new URLSearchParams(location.search);
   let topic = params.get("topic"), age = params.get("age"), q = params.get("q") || "";
   const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),

@@ -9,7 +9,8 @@
    guides.js) is swapped to the Firestore data so every existing function
    (searchGuides, cardHTML, guideById…) keeps working unchanged.
    ========================================================================== */
-window.MPCStore = { guides: [], source: "bundled" };
+window.MPCStore = { guides: [], pages: {}, source: "bundled" };
+window.MPC_PAGES = window.MPC_PAGES || {};   // per-page settings (image/title/subtitle)
 
 MPCStore.ready = (async function () {
   const cfg = window.FIREBASE_CONFIG;
@@ -30,6 +31,14 @@ MPCStore.ready = (async function () {
         window.GUIDES = arr;               // swap bundled data for live data
         MPCStore.source = "firestore";
       }
+      // Per-page settings (hero images / optional title + subtitle overrides)
+      try {
+        const psnap = await fs.getDocs(fs.collection(db, "pages"));
+        const pages = {};
+        psnap.forEach(d => (pages[d.id] = d.data()));
+        window.MPC_PAGES = pages;
+        MPCStore.pages = pages;
+      } catch (e) { /* pages collection is optional */ }
     } catch (e) {
       console.warn("[MPC] Firestore load failed — using bundled guides.", e);
     }
@@ -37,3 +46,14 @@ MPCStore.ready = (async function () {
   MPCStore.guides = window.GUIDES;
   return window.GUIDES;
 })();
+
+/* Apply an editable page image (and optional title/subtitle) once data is
+   ready. Falls back to whatever is already in the markup. Safe on any page. */
+MPCStore.applyPage = function (pageId) {
+  const pg = (window.MPC_PAGES || {})[pageId];
+  if (!pg) return;
+  const img = document.getElementById("pageHeroImg");
+  if (img && pg.image) img.src = pg.image;
+  if (pg.title) { const h = document.querySelector("[data-page-title]"); if (h) h.textContent = pg.title; }
+  if (pg.subtitle) { const s = document.querySelector("[data-page-subtitle]"); if (s) s.textContent = pg.subtitle; }
+};

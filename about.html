@@ -30,12 +30,17 @@
 </header>
 
 <main id="main">
-  <section class="wrap page-head">
-    <h1>About us</h1>
-    <p>We are not experts. That is rather the point.</p>
+  <section class="wrap page-hero">
+    <div class="page-hero-copy">
+      <h1 data-page-title>About us</h1>
+      <p data-page-subtitle>We are not experts. That is rather the point.</p>
+    </div>
+    <div class="page-hero-art">
+      <img id="pageHeroImg" src="assets/img/papa.webp" alt="An extremely tired father holding a mug of coffee and a bottle" width="400" height="500">
+    </div>
   </section>
 
-  <section class="wrap split" style="margin-top:22px">
+  <section class="wrap" style="margin-top:20px">
     <div class="prose">
       <p>The Messy Parents Collection started at 3am, on a phone, one-handed, while googling a question that had a
       forty-minute answer when what was needed was a forty-second one.</p>
@@ -58,7 +63,6 @@
       genuinely good information, and no one who does this professionally will mind you asking.</p>
       <p><a href="guides.html">Start with the guides</a>, or come back at 3am. We will be here. We will be awake.</p>
     </div>
-    <img src="assets/img/papa.webp" alt="An extremely tired father holding a mug of coffee and a bottle">
   </section>
 </main>
 
@@ -71,8 +75,11 @@
   </div>
 </footer>
 
+<script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/guides.js"></script>
+<script src="assets/js/mpc-store.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script>MPCStore.ready.then(function(){ MPCStore.applyPage("about"); });</script>
 
 </body>
 </html>

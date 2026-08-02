@@ -72,6 +72,27 @@
   .preview iframe{flex:1;border:0;width:100%;background:#efe3cb}
   .layout3{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,42%)}
   @media(max-width:1100px){.layout3{grid-template-columns:1fr}.preview{display:none}}
+
+  /* page editor */
+  .pageimg-row{display:flex;gap:14px;align-items:flex-start;margin-top:4px}
+  .pageimg-thumb{width:170px;height:132px;object-fit:contain;border:1px solid var(--line);
+    border-radius:10px;background:#faf6ec;flex:none}
+
+  /* crop modal */
+  .cropback{position:fixed;inset:0;background:rgba(20,25,33,.55);display:grid;place-items:center;z-index:60}
+  .cropcard{background:#fff;border-radius:14px;max-width:600px;width:94%;padding:20px}
+  .crophead{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .crophead h2{margin:0;font-size:18px;flex:1}
+  .crophint{color:var(--muted);font-size:13px;margin:0 0 12px}
+  .cropstage{margin:0 auto 14px;position:relative;overflow:hidden;border-radius:10px;
+    background-image:linear-gradient(45deg,#e9edf1 25%,transparent 25%),linear-gradient(-45deg,#e9edf1 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e9edf1 75%),linear-gradient(-45deg,transparent 75%,#e9edf1 75%);
+    background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0;
+    box-shadow:0 0 0 2px var(--brand) inset;cursor:grab;touch-action:none;user-select:none}
+  .cropstage:active{cursor:grabbing}
+  .cropimg{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none;max-width:none;display:block}
+  .croprow{display:flex;align-items:center;gap:12px}
+  .croprow label{font-size:13px;font-weight:700;color:#41505f}
+  .croprow input[type=range]{flex:1}
 </style>
 </head>
 <body>
@@ -105,12 +126,45 @@
 <!-- APP -->
 <div id="appView" class="app hidden">
   <aside class="side">
+    <div class="grp">Pages</div>
+    <div id="pageList"></div>
     <div class="search"><input id="q" type="search" placeholder="Search guides…" autocomplete="off"></div>
     <div id="list"></div>
   </aside>
   <div class="layout3">
     <div class="work">
       <div id="empty" class="empty">Select a guide from the left to edit it.</div>
+      <!-- PAGE EDITOR (Popular / Guides / About hero image + text) -->
+      <div id="pageEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px" id="p_heading">Page</h2>
+        <p class="field hint" style="margin:0 0 16px">Edit the illustration and text that sit beside this page’s title.</p>
+        <div class="field">
+          <label>Title</label>
+          <input id="p_title" type="text">
+        </div>
+        <div class="field">
+          <label>Subtitle</label>
+          <textarea id="p_subtitle" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Illustration <span class="hint">— sits beside the title. Upload opens a cropper so you can frame it.</span></label>
+          <div class="pageimg-row">
+            <img id="p_preview" class="pageimg-thumb" alt="Current page image">
+            <div>
+              <input id="p_upload" type="file" accept="image/*" class="hidden">
+              <button id="p_uploadBtn" class="btn" type="button">Upload / replace image…</button>
+              <button id="p_clear" class="btn ghost" type="button" style="margin-left:6px">Reset to default</button>
+              <div class="hint" id="p_msg" style="margin-top:8px"></div>
+            </div>
+          </div>
+          <input id="p_image" type="hidden">
+        </div>
+        <div class="actions">
+          <button id="p_save" class="btn primary" type="button">Save</button>
+          <span id="p_savemsg" class="msg"></span>
+        </div>
+      </div>
+
       <div id="editor" class="editor hidden">
         <div class="field">
           <label>Title</label>
@@ -178,11 +232,45 @@
   </div>
 </div>
 
+<!-- Crop tool -->
+<div id="cropModal" class="cropback hidden">
+  <div class="cropcard">
+    <div class="crophead">
+      <h2>Position &amp; crop</h2>
+      <button id="cropCancel" class="btn ghost" type="button">Cancel</button>
+    </div>
+    <p class="crophint" id="cropHint"></p>
+    <div id="cropStage" class="cropstage"><img id="cropImg" class="cropimg" alt=""></div>
+    <div class="croprow">
+      <label for="cropZoom">Zoom</label>
+      <input id="cropZoom" type="range" min="0.5" max="4" step="0.01" value="1">
+      <button id="cropUse" class="btn primary" type="button">Use image</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, pagesData: {} };
+
+/* Editable public pages + their default images and target crop sizes.
+   The crop "w/h" is the exported pixel size; the label tells the user how
+   much space the image will fill on the live page. */
+const PAGES = [
+  { id:"popular", label:"Popular", title:"Popular guides",
+    subtitle:"The questions we get asked most, and the ones we googled most ourselves.",
+    default:"../assets/img/family.webp" },
+  { id:"guides", label:"Guides", title:"All the guides",
+    subtitle:"Search it, or scroll it. Every one is a three-minute read.",
+    default:"../assets/img/couple.webp" },
+  { id:"about", label:"About", title:"About us",
+    subtitle:"We are not experts. That is rather the point.",
+    default:"../assets/img/papa.webp" }
+];
+const GUIDE_HERO = { w:1120, h:620, label:"Guide illustration — fills a 560 × 310 space beside the title. Transparent PNGs look best." };
+const PAGE_HERO  = { w:880,  h:680, label:"Page illustration — fills a 440 × 340 space beside the title. Transparent PNGs look best." };
 
 /* ---------- backend ---------- */
 async function initFirebase(){
@@ -281,13 +369,113 @@ async function generateIllustration(){
     if(!done){ unsub(); msg.textContent = "Still generating after 5 min — reopen this guide in a moment and it should be ready."; btn.disabled = false; }
   }, 300000);
 }
-/* ---- Upload a hero image from the computer ---- */
-async function uploadFile(id, file){
+/* ---- Upload an image blob/file to Storage ---- */
+async function uploadImage(prefix, id, blob, ext){
   const { storage, st } = state.fb;
-  const ext = (((file.name||"img").split(".").pop()) || "png").toLowerCase().replace(/[^a-z0-9]/g,"") || "png";
-  const sref = storage.ref(st, "guides/" + id + "-" + Date.now() + "." + ext);
-  await storage.uploadBytes(sref, file, { contentType: file.type || "image/png" });
+  ext = (ext || "png").toLowerCase().replace(/[^a-z0-9]/g,"") || "png";
+  const sref = storage.ref(st, prefix + "/" + id + "-" + Date.now() + "." + ext);
+  await storage.uploadBytes(sref, blob, { contentType: blob.type || "image/" + ext });
   return await storage.getDownloadURL(sref);
+}
+
+/* ---- Built-in crop tool -----------------------------------------------
+   Shows the exact frame the image will fill; drag to reposition, slider to
+   zoom. Exports a PNG at the target size, preserving transparency. Returns a
+   Promise<Blob>; rejects with Error("cancelled") if the user backs out. */
+function openCropper(file, target){
+  return new Promise((resolve, reject) => {
+    const modal=$("#cropModal"), stage=$("#cropStage"), imgEl=$("#cropImg"), zoom=$("#cropZoom");
+    $("#cropHint").textContent = target.label;
+    const maxW=520, maxH=380, ar=target.w/target.h;
+    let fw=maxW, fh=fw/ar; if(fh>maxH){ fh=maxH; fw=fh*ar; }
+    fw=Math.round(fw); fh=Math.round(fh);
+    stage.style.width=fw+"px"; stage.style.height=fh+"px";
+
+    const url=URL.createObjectURL(file), im=new Image();
+    function cleanup(){ modal.classList.add("hidden"); URL.revokeObjectURL(url);
+      window.removeEventListener("pointermove",move); window.removeEventListener("pointerup",up);
+      stage.onpointerdown=null; zoom.oninput=null; $("#cropUse").onclick=null; $("#cropCancel").onclick=null; }
+
+    let s=1, tx=0, ty=0, sBase=1, dragging=false, lx=0, ly=0;
+    function apply(){ imgEl.style.transform="translate("+tx+"px,"+ty+"px) scale("+s+")"; }
+    function down(e){ dragging=true; lx=e.clientX; ly=e.clientY; }
+    function move(e){ if(!dragging) return; tx+=e.clientX-lx; ty+=e.clientY-ly; lx=e.clientX; ly=e.clientY; apply(); }
+    function up(){ dragging=false; }
+
+    im.onload=()=>{
+      const iw=im.naturalWidth, ih=im.naturalHeight;
+      imgEl.src=url; imgEl.style.width=iw+"px"; imgEl.style.height=ih+"px";
+      sBase=Math.min(fw/iw, fh/ih);            // "1" on the slider = whole image visible
+      s=sBase; tx=(fw-iw*s)/2; ty=(fh-ih*s)/2; zoom.value="1"; apply();
+
+      zoom.oninput=()=>{
+        const s1=sBase*parseFloat(zoom.value);
+        const cx=(fw/2-tx)/s, cy=(fh/2-ty)/s;   // keep the frame centre fixed while zooming
+        s=s1; tx=fw/2-cx*s; ty=fh/2-cy*s; apply();
+      };
+      stage.onpointerdown=down;
+      window.addEventListener("pointermove",move);
+      window.addEventListener("pointerup",up);
+
+      $("#cropUse").onclick=()=>{
+        const c=document.createElement("canvas"); c.width=target.w; c.height=target.h;
+        const ctx=c.getContext("2d");
+        ctx.drawImage(im, -tx/s, -ty/s, fw/s, fh/s, 0, 0, target.w, target.h);
+        c.toBlob(b=>{ cleanup(); b ? resolve(b) : reject(new Error("Could not process image")); }, "image/png");
+      };
+      $("#cropCancel").onclick=()=>{ cleanup(); reject(new Error("cancelled")); };
+    };
+    im.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error("Could not read that image")); };
+    im.src=url;
+    modal.classList.remove("hidden");
+  });
+}
+
+/* ---- Editable pages ---- */
+async function loadPages(){
+  if(MODE!=="firebase") return {};
+  try{
+    const {fs, db}=state.fb;
+    const snap=await fs.getDocs(fs.collection(db,"pages"));
+    const o={}; snap.forEach(d=>o[d.id]=d.data()); return o;
+  }catch(e){ return {}; }
+}
+function renderPageList(){
+  $("#pageList").innerHTML = PAGES.map(p =>
+    `<button class="gitem ${state.currentPage===p.id?"active":""}" data-page="${p.id}">${p.label}</button>`).join("");
+}
+function selectPage(id){
+  const p=PAGES.find(x=>x.id===id); if(!p) return;
+  state.current=null; state.currentPage=id;
+  $("#empty").classList.add("hidden");
+  $("#editor").classList.add("hidden");
+  $("#pageEditor").classList.remove("hidden");
+  const d=state.pagesData[id]||{};
+  $("#p_heading").textContent = p.title;
+  $("#p_title").value = d.title!=null ? d.title : p.title;
+  $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
+  $("#p_image").value = d.image || "";
+  $("#p_preview").src = d.image || p.default;
+  $("#p_msg").textContent=""; $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";
+  $("#pvId").textContent = "· " + id;
+  const pv=$("#pv"); pvReady=false; pv.onload=null; pv.src = "../" + id + ".html";
+  renderPageList(); renderList($("#q").value);
+}
+async function savePage(){
+  const id=state.currentPage; if(!id) return;
+  const btn=$("#p_save"), msg=$("#p_savemsg");
+  if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Page editing needs Firebase mode."; return; }
+  btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
+  try{
+    const data={ title:$("#p_title").value.trim(), subtitle:$("#p_subtitle").value.trim() };
+    const img=$("#p_image").value.trim(); if(img) data.image=img;
+    const {fs, db}=state.fb;
+    await fs.setDoc(fs.doc(db,"pages",id), data, {merge:true});
+    state.pagesData[id]=Object.assign({}, state.pagesData[id], data);
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    $("#pv").src="../"+id+".html?_="+Date.now();
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
 }
 
 /* ---- Character Manager (retained but unused) ---- */
@@ -403,9 +591,11 @@ function schedulePreview(){ clearTimeout(pvTimer); pvTimer = setTimeout(pushPrev
 function selectGuide(id){
   const g = state.guides.find(x => x.id === id);
   if(!g) return;
-  state.current = id; state.orig = g;
+  state.current = id; state.orig = g; state.currentPage = null;
   $("#empty").classList.add("hidden");
+  $("#pageEditor").classList.add("hidden");
   $("#editor").classList.remove("hidden");
+  renderPageList();
   $("#pvId").textContent = "· " + id;
   $("#msg").textContent = "";
   fillForm(g);
@@ -423,7 +613,28 @@ document.addEventListener("input", e => {
 });
 document.addEventListener("click", e => {
   const it = e.target.closest(".gitem");
-  if(it) selectGuide(it.dataset.id);
+  if(!it) return;
+  if(it.dataset.page) selectPage(it.dataset.page);
+  else if(it.dataset.id) selectGuide(it.dataset.id);
+});
+$("#p_uploadBtn").addEventListener("click", () => $("#p_upload").click());
+$("#p_clear").addEventListener("click", () => {
+  const p=PAGES.find(x=>x.id===state.currentPage); if(!p) return;
+  $("#p_image").value=""; $("#p_preview").src=p.default;
+  $("#p_msg").textContent="Will reset to the default image on Save.";
+});
+$("#p_save").addEventListener("click", savePage);
+$("#p_upload").addEventListener("change", async e => {
+  const file=e.target.files && e.target.files[0]; e.target.value=""; if(!file) return;
+  const msg=$("#p_msg");
+  try{
+    const blob=await openCropper(file, PAGE_HERO);       // cropper works in any mode
+    if(MODE!=="firebase"){ msg.textContent="Cropped ✓ — saving page images needs Firebase mode."; return; }
+    msg.textContent="Uploading…";
+    const url=await uploadImage("pages", state.currentPage, blob, "png");
+    $("#p_image").value=url; $("#p_preview").src=url;
+    msg.textContent="Uploaded ✓ — click Save to keep it.";
+  }catch(err){ if(err.message!=="cancelled") msg.textContent="Upload failed: "+(err.message||err); }
 });
 $("#save").addEventListener("click", async () => {
   const btn = $("#save"), msg = $("#msg");
@@ -446,6 +657,7 @@ function showApp(user){
   $("#appView").classList.remove("hidden");
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
   if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
+  renderPageList();
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
@@ -482,18 +694,18 @@ async function boot(){
     finally{ btn.disabled = false; }
   });
   $("#f_upload").addEventListener("change", async e => {
-    const file = e.target.files && e.target.files[0]; if(!file) return;
+    const file = e.target.files && e.target.files[0]; e.target.value = ""; if(!file) return;
     const g = draftGuide(); const msg = $("#genMsg");
-    msg.textContent = "Uploading…";
     try{
-      const url = await uploadFile(g.id, file);
+      const blob = await openCropper(file, GUIDE_HERO);
+      msg.textContent = "Uploading…";
+      const url = await uploadImage("guides", g.id, blob, "png");
       $("#f_hero").value = url; pushPreview();
       msg.textContent = "Uploaded ✓ — click Save to keep it.";
-    }catch(err){ msg.textContent = "Upload failed: " + (err.message || err); }
-    finally{ e.target.value = ""; }
+    }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
   });
   auth.onAuthStateChanged(a, async user => {
-    if(user){ state.guides = await loadGuides(); showApp(user); }
+    if(user){ state.guides = await loadGuides(); state.pagesData = await loadPages(); showApp(user); }
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
   });
 }
