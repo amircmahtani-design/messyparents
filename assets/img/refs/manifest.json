@@ -1,0 +1,9 @@
+{
+  "_comment": "List the reference image filenames you put in this folder (assets/img/refs/). The illustrator sends these to OpenAI as the look it must match. Use clear character + style sheets. PNG or JPG.",
+  "references": [
+    "mama.png",
+    "papa.png",
+    "ari.png",
+    "style.png"
+  ]
+}
