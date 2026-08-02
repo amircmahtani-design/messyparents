@@ -1,0 +1,131 @@
+/* ==========================================================================
+   The Messy Parents Collection — content + shared UI
+   Add a new guide: copy a block in GUIDES and change the fields.
+   ========================================================================== */
+
+const AGES = ["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"];
+
+const ICONS = {
+  feeding:     `<img src="assets/img/icons/feeding.webp" alt="" aria-hidden="true">`,
+  sleeping:    `<img src="assets/img/icons/sleeping.webp" alt="" aria-hidden="true">`,
+  development: `<img src="assets/img/icons/development.webp" alt="" aria-hidden="true">`,
+  health:      `<img src="assets/img/icons/health.webp" alt="" aria-hidden="true">`,
+  sanity:      `<img src="assets/img/icons/sanity.webp" alt="" aria-hidden="true">`
+};
+
+const TOPICS = [
+  {id:"feeding",     label:"Feeding",       icon:ICONS.feeding},
+  {id:"sleeping",    label:"Sleeping",      icon:ICONS.sleeping},
+  {id:"development", label:"Development",   icon:ICONS.development},
+  {id:"health",      label:"Health",        icon:ICONS.health},
+  {id:"sanity",      label:"Parent Sanity", icon:ICONS.sanity}
+];
+
+const topicById = id => TOPICS.find(t => t.id === id) || TOPICS[0];
+
+/* --- The guides --------------------------------------------------------- */
+
+const GUIDES = /*__GUIDES__*/[];
+
+
+/* --- Search ranking -------------------------------------------------------
+   Scores a guide against a query. Whole-word title hits beat partial ones,
+   and guides matching more of the typed words rank higher — so results
+   sharpen as you keep typing rather than just shrinking. */
+
+const _plain = g => (g._text || (g._text = g.body.replace(/<[^>]+>/g, " ").toLowerCase()));
+const _esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/* "naps" should still find "nap"; "feeding" should still find "feed" */
+function _stems(t){
+  const out = [t];
+  if(t.length > 4 && /(ies)$/.test(t)) out.push(t.slice(0,-3) + "y");
+  if(t.length > 4 && /(es|ed)$/.test(t)) out.push(t.slice(0,-2));
+  if(t.length > 3 && /s$/.test(t)) out.push(t.slice(0,-1));
+  if(t.length > 5 && /ing$/.test(t)) out.push(t.slice(0,-3));
+  return out;
+}
+
+function _termScore(term, title, summary, topic, body){
+  const word = new RegExp("\\b" + _esc(term) + "\\b");
+  const pre  = new RegExp("\\b" + _esc(term));
+  let s = 0;
+  if(word.test(title))        s += 20;
+  else if(pre.test(title))    s += 10;
+  else if(title.includes(term)) s += 4;
+
+  if(word.test(summary))      s += 7;
+  else if(summary.includes(term)) s += 3;
+
+  if(topic.includes(term))    s += 4;
+
+  if(word.test(body))         s += 2;
+  else if(body.includes(term)) s += 1;
+  return s;
+}
+
+function searchScore(g, query){
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if(!terms.length) return 1;
+
+  const title = g.title.toLowerCase();
+  const summary = g.summary.toLowerCase();
+  const topic = topicById(g.topic).label.toLowerCase();
+  const body = _plain(g);
+
+  let total = 0, matched = 0;
+  for(const t of terms){
+    let best = 0;
+    for(const v of _stems(t)) best = Math.max(best, _termScore(v, title, summary, topic, body));
+    if(best > 0){ matched++; total += best; }
+  }
+  if(!matched) return 0;
+  return total * Math.pow(matched / terms.length, 2);   // reward matching more of the query
+}
+
+function searchGuides(query, opts){
+  const {topic=null, age=null} = opts || {};
+  return GUIDES
+    .map(g => ({g, score: searchScore(g, query)}))
+    .filter(x => x.score > 0
+      && (!topic || x.g.topic === topic)
+      && (!age || x.g.ages.includes(age)))
+    .sort((a,b) => b.score - a.score || a.g.title.localeCompare(b.g.title))
+    .map(x => x.g);
+}
+
+/* --- Shared rendering ---------------------------------------------------- */
+
+const iconFor = g => ICONS[g.topic] || ICONS.feeding;
+
+function cardHTML(g){
+  return `<a class="card" href="guide.html?id=${g.id}">
+    <div class="card-icon" aria-hidden="true">${iconFor(g)}</div>
+    <div class="card-text">
+      <h3>${g.title}</h3>
+      <p class="card-meta"><span class="topic">${topicById(g.topic).label}</span><span class="dot">•</span><span>${g.read} min read</span></p>
+    </div>
+  </a>`;
+}
+
+function guideById(id){ return GUIDES.find(g => g.id === id); }
+
+/* header: mobile nav + stuck border */
+document.addEventListener("DOMContentLoaded", () => {
+  const head = document.querySelector(".site-head");
+  const toggle = document.querySelector(".nav-toggle");
+  const nav = document.querySelector(".nav");
+  if(toggle && nav){
+    toggle.addEventListener("click", () => {
+      const open = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+  }
+  if(head){
+    const setH = () => document.documentElement.style
+      .setProperty("--head-h", head.offsetHeight + "px");
+    setH();
+    window.addEventListener("resize", setH);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(setH);
+  }
+});

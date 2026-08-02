@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio — The Messy Parents Collection</title>
+<link rel="icon" href="../assets/img/navicon.webp" type="image/webp">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f5f7;--panel:#fff;--line:#e3e6ea;--ink:#1f2733;--muted:#6b7684;--brand:#3f6fa3;--brand-d:#335c88;--ok:#3f7a2f;--danger:#c0392b}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:"Nunito",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+  button{font-family:inherit;cursor:pointer}
+  .hidden{display:none!important}
+
+  /* top bar */
+  .top{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .top .logo{font-weight:800;letter-spacing:.02em}
+  .top .logo b{color:var(--brand)}
+  .badge{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:#eef3f9;color:var(--brand-d)}
+  .badge.local{background:#fff3e0;color:#b9770f}
+  .top .spacer{flex:1}
+  .top .who{font-size:13px;color:var(--muted)}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:9px;font-weight:700;font-size:14px}
+  .btn:hover{border-color:#c9ced6}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.primary:hover{background:var(--brand-d)}
+  .btn.ghost{background:transparent}
+  .btn[disabled]{opacity:.5;cursor:default}
+
+  /* login */
+  .login{max-width:380px;margin:9vh auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px}
+  .login h1{margin:0 0 4px;font-size:22px}
+  .login p{margin:0 0 18px;color:var(--muted);font-size:14px}
+  .login label{display:block;font-size:13px;font-weight:700;margin:12px 0 5px}
+  .login input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:inherit}
+  .login .err{color:var(--danger);font-size:13px;margin-top:12px;min-height:16px}
+  .login .btn{width:100%;margin-top:18px;justify-content:center;text-align:center}
+
+  /* app layout */
+  .app{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 57px)}
+  .side{border-right:1px solid var(--line);background:var(--panel);overflow:auto}
+  .side .search{padding:12px}
+  .side .search input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px}
+  .grp{padding:6px 12px 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .gitem{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 14px;font-size:14px;color:var(--ink);border-left:3px solid transparent}
+  .gitem:hover{background:#f2f5f8}
+  .gitem.active{background:#eaf1f8;border-left-color:var(--brand);font-weight:700}
+
+  .work{overflow:auto;padding:20px 22px 60px}
+  .editor{max-width:620px}
+  .empty{color:var(--muted);padding:40px;text-align:center}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12.5px;font-weight:800;color:#41505f;margin-bottom:6px;letter-spacing:.01em}
+  .field .hint{font-weight:600;color:var(--muted);font-size:11.5px}
+  .field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14.5px;color:var(--ink);background:#fff}
+  .field textarea{resize:vertical;line-height:1.5}
+  .col-card{border:1px solid var(--line);border-radius:12px;padding:14px 14px 4px;margin-bottom:16px;background:#fbfcfd}
+  .col-card .tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+  .tag.ok{background:#e8f5e3;color:#3f7a2f}
+  .tag.warn{background:#fdeede;color:#c9761f}
+  .tag.tip{background:#fdf6d8;color:#a98b13}
+  .actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(244,245,247,0),var(--bg) 30%);padding:16px 0 4px;display:flex;gap:10px;align-items:center}
+  .actions .msg{font-size:13px;font-weight:700}
+  .actions .msg.ok{color:var(--ok)}
+  .actions .msg.err{color:var(--danger)}
+
+  /* preview */
+  .preview{border-left:1px solid var(--line);background:#efe3cb;display:flex;flex-direction:column}
+  .preview .pv-bar{padding:8px 14px;font-size:12px;font-weight:800;color:#8a7a55;background:#f3ecdb;border-bottom:1px solid #e0d3b4;display:flex;align-items:center;gap:8px}
+  .preview iframe{flex:1;border:0;width:100%;background:#efe3cb}
+  .layout3{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,42%)}
+  @media(max-width:1100px){.layout3{grid-template-columns:1fr}.preview{display:none}}
+</style>
+</head>
+<body>
+
+<!-- data + config for local/preview mode -->
+<script src="../assets/js/firebase-config.js"></script>
+<script src="../assets/js/guides.js"></script>
+
+<div class="top">
+  <span class="logo">MPC <b>Studio</b></span>
+  <span id="modeBadge" class="badge">…</span>
+  <span class="spacer"></span>
+  <span id="who" class="who"></span>
+  <button id="signout" class="btn ghost hidden">Sign out</button>
+</div>
+
+<!-- LOGIN (firebase mode only) -->
+<section id="loginView" class="login hidden">
+  <h1>Studio sign in</h1>
+  <p>Sign in with your Firebase admin account to edit the guides.</p>
+  <label for="email">Email</label>
+  <input id="email" type="email" autocomplete="username">
+  <label for="pw">Password</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <div class="err" id="loginErr"></div>
+  <button id="loginBtn" class="btn primary">Sign in</button>
+</section>
+
+<!-- APP -->
+<div id="appView" class="app hidden">
+  <aside class="side">
+    <div class="search"><input id="q" type="search" placeholder="Search guides…" autocomplete="off"></div>
+    <div id="list"></div>
+  </aside>
+  <div class="layout3">
+    <div class="work">
+      <div id="empty" class="empty">Select a guide from the left to edit it.</div>
+      <div id="editor" class="editor hidden">
+        <div class="field">
+          <label>Title</label>
+          <input id="f_title" type="text">
+        </div>
+        <div class="field">
+          <label>Eyebrow <span class="hint">— e.g. “Feeding • 4–9 months”</span></label>
+          <input id="f_eyebrow" type="text">
+        </div>
+        <div class="field">
+          <label>Hero image path <span class="hint">— leave blank to show the illustration placeholder</span></label>
+          <input id="f_hero" type="text" placeholder="assets/img/guides/xxxx.webp">
+        </div>
+
+        <div class="col-card">
+          <span class="tag ok">✓ Green column</span>
+          <div class="field"><label>Heading</label><input id="f_n_title" type="text"></div>
+          <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_n_items" rows="5"></textarea></div>
+        </div>
+        <div class="col-card">
+          <span class="tag warn">⚠ Amber column</span>
+          <div class="field"><label>Heading</label><input id="f_w_title" type="text"></div>
+          <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_w_items" rows="5"></textarea></div>
+        </div>
+        <div class="col-card">
+          <span class="tag tip">💡 Yellow column</span>
+          <div class="field"><label>Heading</label><input id="f_h_title" type="text"></div>
+          <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_h_items" rows="5"></textarea></div>
+        </div>
+
+        <div class="field">
+          <label>The quick answer box</label>
+          <textarea id="f_quick" rows="3"></textarea>
+        </div>
+
+        <div class="actions">
+          <button id="save" class="btn primary">Save</button>
+          <button id="revert" class="btn ghost">Revert</button>
+          <span id="msg" class="msg"></span>
+        </div>
+      </div>
+    </div>
+    <div class="preview">
+      <div class="pv-bar">Live preview <span id="pvId"></span></div>
+      <iframe id="pv" title="Live preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
+const MODE = CFG ? "firebase" : "local";
+const $ = s => document.querySelector(s);
+const state = { guides: [], current: null, orig: null, fb: null };
+
+/* ---------- backend ---------- */
+async function initFirebase(){
+  const V = "10.12.2";
+  const [{initializeApp}, fs, auth] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`)
+  ]);
+  const app = initializeApp(CFG);
+  state.fb = { fs, auth, db: fs.getFirestore(app), a: auth.getAuth(app) };
+}
+async function loadGuides(){
+  if(MODE === "firebase"){
+    const {fs, db} = state.fb;
+    const snap = await fs.getDocs(fs.collection(db, "guides"));
+    const arr = []; snap.forEach(d => arr.push(d.data()));
+    arr.sort((a,b)=>(a.order??0)-(b.order??0) || String(a.title).localeCompare(b.title));
+    return arr;
+  }
+  return (window.GUIDES || []).map(g => JSON.parse(JSON.stringify(g)));
+}
+async function saveGuide(guide){
+  if(MODE === "firebase"){
+    const {fs, db} = state.fb;
+    await fs.setDoc(fs.doc(db, "guides", guide.id), guide);
+    return "Saved to Firestore — live on the site.";
+  }
+  // local preview mode: offer the updated data as a download
+  const i = state.guides.findIndex(g => g.id === guide.id);
+  if(i>=0) state.guides[i] = guide;
+  const blob = new Blob([JSON.stringify(state.guides, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "guides.json"; a.click(); URL.revokeObjectURL(a.href);
+  return "Local mode — downloaded guides.json (Firebase mode saves live).";
+}
+
+/* ---------- ui ---------- */
+const topicLabel = t => (window.topicById ? window.topicById(t).label : t);
+
+function renderList(filter=""){
+  const f = filter.trim().toLowerCase();
+  const items = state.guides.filter(g => !f || g.title.toLowerCase().includes(f) || topicLabel(g.topic).toLowerCase().includes(f));
+  const byTopic = {};
+  items.forEach(g => (byTopic[g.topic] = byTopic[g.topic] || []).push(g));
+  const order = ["feeding","sleeping","development","health","sanity"];
+  const topics = Object.keys(byTopic).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  $("#list").innerHTML = topics.map(t =>
+    `<div class="grp">${topicLabel(t)}</div>` +
+    byTopic[t].map(g => `<button class="gitem ${state.current===g.id?"active":""}" data-id="${g.id}">${g.title}</button>`).join("")
+  ).join("");
+}
+
+const linesToItems = s => s.split(/\n/).map(x=>x.trim()).filter(Boolean);
+const itemsToLines = a => (a||[]).join("\n");
+
+function fillForm(g){
+  const p = g.panel || {};
+  $("#f_title").value = g.title || "";
+  $("#f_eyebrow").value = p.eyebrow || "";
+  $("#f_hero").value = p.hero || "";
+  $("#f_n_title").value = (p.normal&&p.normal.title) || "";
+  $("#f_n_items").value = itemsToLines(p.normal&&p.normal.items);
+  $("#f_w_title").value = (p.warn&&p.warn.title) || "";
+  $("#f_w_items").value = itemsToLines(p.warn&&p.warn.items);
+  $("#f_h_title").value = (p.helped&&p.helped.title) || "";
+  $("#f_h_items").value = itemsToLines(p.helped&&p.helped.items);
+  $("#f_quick").value = p.quick || "";
+}
+
+function draftGuide(){
+  const g = JSON.parse(JSON.stringify(state.orig));
+  g.title = $("#f_title").value;
+  g.panel = g.panel || {};
+  g.panel.eyebrow = $("#f_eyebrow").value;
+  g.panel.hero = $("#f_hero").value.trim() || undefined;
+  g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
+  g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
+  g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
+  g.panel.quick  = $("#f_quick").value;
+  return g;
+}
+
+let pvReady = false, pvTimer = null;
+function pushPreview(){
+  if(!pvReady) return;
+  const g = draftGuide();
+  try{ $("#pv").contentWindow.__renderPreview({ title:g.title, topic:g.topic, summary:g.summary, panel:g.panel }); }catch(e){}
+}
+function schedulePreview(){ clearTimeout(pvTimer); pvTimer = setTimeout(pushPreview, 120); }
+
+function selectGuide(id){
+  const g = state.guides.find(x => x.id === id);
+  if(!g) return;
+  state.current = id; state.orig = g;
+  $("#empty").classList.add("hidden");
+  $("#editor").classList.remove("hidden");
+  $("#pvId").textContent = "· " + id;
+  $("#msg").textContent = "";
+  fillForm(g);
+  renderList($("#q").value);
+  pvReady = false;
+  const pv = $("#pv");
+  pv.onload = () => { pvReady = true; pushPreview(); };
+  pv.src = `../guide.html?id=${encodeURIComponent(id)}`;
+}
+
+/* events */
+document.addEventListener("input", e => {
+  if(e.target.closest("#editor")) schedulePreview();
+  else if(e.target.id === "q") renderList(e.target.value);
+});
+document.addEventListener("click", e => {
+  const it = e.target.closest(".gitem");
+  if(it) selectGuide(it.dataset.id);
+});
+$("#save").addEventListener("click", async () => {
+  const btn = $("#save"), msg = $("#msg");
+  btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+  try{
+    const g = draftGuide();
+    const note = await saveGuide(g);
+    state.orig = g;
+    const i = state.guides.findIndex(x=>x.id===g.id); if(i>=0) state.guides[i]=g;
+    renderList($("#q").value);
+    msg.className = "msg ok"; msg.textContent = note;
+  }catch(err){ msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message||err); }
+  finally{ btn.disabled = false; }
+});
+$("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.orig); pushPreview(); $("#msg").textContent=""; } });
+
+/* ---------- boot ---------- */
+function showApp(user){
+  $("#loginView").classList.add("hidden");
+  $("#appView").classList.remove("hidden");
+  if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
+  renderList();
+  if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
+}
+async function boot(){
+  const badge = $("#modeBadge");
+  if(MODE === "local"){
+    badge.textContent = "Local preview"; badge.classList.add("local");
+    state.guides = await loadGuides();
+    showApp(null);
+    return;
+  }
+  badge.textContent = "Firebase · live";
+  await initFirebase();
+  const { auth, a } = state.fb;
+  $("#loginBtn").addEventListener("click", async () => {
+    $("#loginErr").textContent = "";
+    try{ await auth.signInWithEmailAndPassword(a, $("#email").value.trim(), $("#pw").value); }
+    catch(err){ $("#loginErr").textContent = err.message || "Sign-in failed."; }
+  });
+  $("#signout").addEventListener("click", () => auth.signOut(a));
+  auth.onAuthStateChanged(a, async user => {
+    if(user){ state.guides = await loadGuides(); showApp(user); }
+    else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
+  });
+}
+boot();
+</script>
+</body>
+</html>

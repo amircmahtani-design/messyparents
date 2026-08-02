@@ -805,6 +805,16 @@ function cardHTML(g){
 
 function guideById(id){ return GUIDES.find(g => g.id === id); }
 
+/* Expose data + helpers for the Studio and data layer (non-breaking:
+   pages still use the lexical globals; this just mirrors them on window). */
+try{
+  if(typeof window !== "undefined"){
+    window.GUIDES = GUIDES; window.AGES = AGES; window.TOPICS = TOPICS;
+    window.ICONS = ICONS; window.topicById = topicById;
+    window.guideById = guideById; window.cardHTML = cardHTML;
+  }
+}catch(e){}
+
 /* header: mobile nav + stuck border */
 document.addEventListener("DOMContentLoaded", () => {
   const head = document.querySelector(".site-head");
