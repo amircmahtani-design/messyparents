@@ -141,6 +141,8 @@
   <aside class="side">
     <div class="grp">Pages</div>
     <div id="pageList"></div>
+    <div class="grp">Site</div>
+    <div id="siteList"></div>
     <div class="search"><input id="q" type="search" placeholder="Search guides…" autocomplete="off"></div>
     <div id="list"></div>
   </aside>
@@ -168,6 +170,35 @@
         </div>
       </div>
 
+      <!-- TOPICS MANAGER: the "Browse by topic" pills on Home + Guides -->
+      <div id="topicsEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px">Browse topics</h2>
+        <p class="field hint" style="margin:0 0 16px">These are the “Browse by topic” pills on the Home and Guides pages. Add a topic, give it an emoji (or upload a little icon), then tag guides with it in the guide editor. Reorder with the arrows. Adding more is fine — the pills wrap neatly onto a second line.</p>
+        <div id="topicRows"></div>
+        <button id="addTopic" class="btn" type="button" style="margin-top:6px">+ Add topic</button>
+        <input id="topicIconUpload" type="file" accept="image/*" class="hidden">
+        <div class="actions">
+          <button id="saveTopics" class="btn primary" type="button">Save</button>
+          <span id="topicsMsg" class="msg"></span>
+        </div>
+      </div>
+
+      <!-- BOOKS MANAGER: the Our Books page (cover on top, summary below) -->
+      <div id="booksEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px">Our Books</h2>
+        <p class="field hint" style="margin:0 0 16px">Each book shows its cover on top with a short summary underneath. Upload a cover, write the summary, set the status. Reorder with the arrows.</p>
+        <datalist id="bookStatusList">
+          <option value="Out now"></option><option value="Coming soon"></option><option value="In progress"></option>
+        </datalist>
+        <div id="bookRows"></div>
+        <button id="addBook" class="btn" type="button" style="margin-top:6px">+ Add book</button>
+        <input id="bookCoverUpload" type="file" accept="image/*" class="hidden">
+        <div class="actions">
+          <button id="saveBooks" class="btn primary" type="button">Save</button>
+          <span id="booksMsg" class="msg"></span>
+        </div>
+      </div>
+
       <div id="editor" class="editor hidden">
         <div class="field">
           <label>Title</label>
@@ -176,6 +207,10 @@
         <div class="field">
           <label>Eyebrow <span class="hint">— e.g. “Feeding • 4–9 months”</span></label>
           <input id="f_eyebrow" type="text">
+        </div>
+        <div class="field">
+          <label>Topic <span class="hint">— which “Browse by topic” pill this guide appears under</span></label>
+          <select id="f_topic"></select>
         </div>
         <div class="field">
           <label>Hero image path <span class="hint">— leave blank to show the illustration placeholder</span></label>
@@ -256,7 +291,34 @@
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, pagesData: {}, pageDraft: { slots:{} }, uploadKey: null };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{} }, uploadKey: null, topics: [], booksList: [], topicUploadIndex: null, bookUploadIndex: null };
+
+/* small helpers for the Topics / Books managers */
+const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const slugify = s => String(s||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const isImg = v => /^(https?:|data:|\.?\/|assets\/)/i.test(v||"") || /\.(webp|png|jpe?g|svg|gif)$/i.test(v||"");
+/* icons stored as a site-root path need "../" to load from inside /studio/ */
+const studioIconSrc = v => !isImg(v) ? "" : (/^(https?:|data:)/i.test(v) ? v : "../" + String(v).replace(/^\.?\//,""));
+
+/* The topics the site ships with — used to seed the editor the first time
+   (before anything is saved) so all the existing pills are there to edit. */
+const BUILTIN_TOPICS = [
+  { id:"feeding",     label:"Feeding",       icon:"assets/img/icons/feeding.webp" },
+  { id:"sleeping",    label:"Sleeping",      icon:"assets/img/icons/sleeping.webp" },
+  { id:"development", label:"Development",   icon:"assets/img/icons/development.webp" },
+  { id:"health",      label:"Health",        icon:"assets/img/icons/health.webp" },
+  { id:"sanity",      label:"Parent Sanity", icon:"assets/img/icons/sanity.webp" }
+];
+const BUILTIN_BOOKS = [
+  { title:"Ari & Papa: The First Hundred Nights", status:"Out now", cover:"",
+    summary:"The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed." },
+  { title:"Ari & Papa: Everyone Says It Gets Easier", status:"Coming soon", cover:"",
+    summary:"Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething." },
+  { title:"The Messy Parents Handbook", status:"In progress", cover:"",
+    summary:"Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something." }
+];
+const TOPIC_ICON = { w:120, h:120, label:"Topic icon — a small square. A transparent PNG works best." };
+const BOOK_COVER  = { w:600, h:900, label:"Book cover — portrait (2:3). Fills the top of the card." };
 
 /* Editable public pages + their default images and target crop sizes.
    The crop "w/h" is the exported pixel size; the label tells the user how
@@ -553,10 +615,8 @@ function pushPagePreview(){
 
 function selectPage(id){
   const p=PAGES.find(x=>x.id===id); if(!p) return;
-  state.current=null; state.currentPage=id;
-  $("#empty").classList.add("hidden");
-  $("#editor").classList.add("hidden");
-  $("#pageEditor").classList.remove("hidden");
+  state.current=null; state.currentPage=id; state.currentSection=null;
+  showPanel("pageEditor"); renderSiteList();
   const d=state.pagesData[id]||{};
   $("#p_heading").textContent = p.title;
   $("#p_intro").textContent = id==="about"
@@ -660,15 +720,26 @@ async function saveGuide(guide){
 }
 
 /* ---------- ui ---------- */
-const topicLabel = t => (window.topicById ? window.topicById(t).label : t);
+/* the working topic list (saved topics, or the built-ins before anything is saved) */
+const topicList = () => (state.topics && state.topics.length) ? state.topics : BUILTIN_TOPICS;
+const topicLabel = t => {
+  const f = topicList().find(x => x.id === t);
+  return f ? f.label : (window.topicById ? window.topicById(t).label : t);
+};
+/* <option>s for the guide editor's Topic dropdown */
+function topicOptionsHTML(sel){
+  return topicList().map(t =>
+    `<option value="${escS(t.id)}" ${t.id===sel?"selected":""}>${escS(t.label)}</option>`).join("");
+}
 
 function renderList(filter=""){
   const f = filter.trim().toLowerCase();
   const items = state.guides.filter(g => !f || g.title.toLowerCase().includes(f) || topicLabel(g.topic).toLowerCase().includes(f));
   const byTopic = {};
   items.forEach(g => (byTopic[g.topic] = byTopic[g.topic] || []).push(g));
-  const order = ["feeding","sleeping","development","health","sanity"];
-  const topics = Object.keys(byTopic).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  const order = topicList().map(t => t.id);
+  const rank = a => { const i = order.indexOf(a); return i < 0 ? 99 : i; };
+  const topics = Object.keys(byTopic).sort((a,b)=>rank(a)-rank(b));
   $("#list").innerHTML = topics.map(t =>
     `<div class="grp">${topicLabel(t)}</div>` +
     byTopic[t].map(g => `<button class="gitem ${state.current===g.id?"active":""}" data-id="${g.id}">${g.title}</button>`).join("")
@@ -682,6 +753,7 @@ function fillForm(g){
   const p = g.panel || {};
   $("#f_title").value = g.title || "";
   $("#f_eyebrow").value = p.eyebrow || "";
+  $("#f_topic").innerHTML = topicOptionsHTML(g.topic);
   $("#f_hero").value = p.hero || "";
   $("#f_n_title").value = (p.normal&&p.normal.title) || "";
   $("#f_n_items").value = itemsToLines(p.normal&&p.normal.items);
@@ -695,6 +767,7 @@ function fillForm(g){
 function draftGuide(){
   const g = JSON.parse(JSON.stringify(state.orig));
   g.title = $("#f_title").value;
+  const tsel = $("#f_topic"); if(tsel && tsel.value) g.topic = tsel.value;
   g.panel = g.panel || {};
   g.panel.eyebrow = $("#f_eyebrow").value;
   const hero = $("#f_hero").value.trim();
@@ -717,10 +790,8 @@ function schedulePreview(){ clearTimeout(pvTimer); pvTimer = setTimeout(pushPrev
 function selectGuide(id){
   const g = state.guides.find(x => x.id === id);
   if(!g) return;
-  state.current = id; state.orig = g; state.currentPage = null;
-  $("#empty").classList.add("hidden");
-  $("#pageEditor").classList.add("hidden");
-  $("#editor").classList.remove("hidden");
+  state.current = id; state.orig = g; state.currentPage = null; state.currentSection = null;
+  showPanel("editor"); renderSiteList();
   renderPageList();
   $("#pvId").textContent = "· " + id;
   $("#msg").textContent = "";
@@ -742,6 +813,7 @@ document.addEventListener("click", e => {
   const it = e.target.closest(".gitem");
   if(!it) return;
   if(it.dataset.page) selectPage(it.dataset.page);
+  else if(it.dataset.section) selectSection(it.dataset.section);
   else if(it.dataset.id) selectGuide(it.dataset.id);
 });
 $("#p_save").addEventListener("click", savePage);
@@ -808,6 +880,204 @@ $("#save").addEventListener("click", async () => {
 });
 $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.orig); pushPreview(); $("#msg").textContent=""; } });
 
+/* ========================================================================
+   SITE SECTIONS — Topics manager + Books manager
+   ====================================================================== */
+function showPanel(which){
+  ["empty","pageEditor","editor","topicsEditor","booksEditor"].forEach(id=>{
+    const el=$("#"+id); if(el) el.classList.toggle("hidden", id!==which);
+  });
+}
+function renderSiteList(){
+  const cur=state.currentSection;
+  $("#siteList").innerHTML =
+    `<button class="gitem ${cur==="topics"?"active":""}" data-section="topics">Topics</button>` +
+    `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Our Books</button>`;
+}
+function selectSection(which){
+  state.current=null; state.currentPage=null; state.currentSection=which;
+  showPanel(which==="topics" ? "topicsEditor" : "booksEditor");
+  $("#pvId").textContent = "· " + which;
+  if(which==="topics") renderTopicRows(); else renderBookRows();
+  renderPageList(); renderSiteList(); renderList($("#q").value);
+}
+
+/* Load the editable topics + books from Firestore (seeding the built-ins the
+   first time, so nothing starts empty). */
+async function loadMeta(){
+  if(MODE!=="firebase"){
+    state.topics = BUILTIN_TOPICS.map(x=>({...x}));
+    state.booksList = BUILTIN_BOOKS.map(x=>({...x}));
+    return;
+  }
+  const {fs, db}=state.fb;
+  try{
+    const t=await fs.getDoc(fs.doc(db,"meta","topics"));
+    const items = t.exists() && Array.isArray(t.data().items) ? t.data().items : null;
+    state.topics = (items && items.length) ? items.map(x=>({...x})) : BUILTIN_TOPICS.map(x=>({...x}));
+  }catch(e){ state.topics = BUILTIN_TOPICS.map(x=>({...x})); }
+  try{
+    const b=await fs.getDoc(fs.doc(db,"meta","books"));
+    const items = b.exists() && Array.isArray(b.data().items) ? b.data().items : null;
+    state.booksList = items ? items.map(x=>({...x})) : BUILTIN_BOOKS.map(x=>({...x}));
+  }catch(e){ state.booksList = BUILTIN_BOOKS.map(x=>({...x})); }
+}
+
+/* ---- Topics ---- */
+function topicIconPreview(v){
+  if(isImg(v)) return `<img src="${studioIconSrc(v)}" alt="" style="width:26px;height:26px;object-fit:contain">`;
+  return `<span style="font-size:20px;line-height:1">${escS(v||"📌")}</span>`;
+}
+function renderTopicRows(){
+  const rows = (state.topics||[]).map((t,i)=>{
+    const emoji = isImg(t.icon) ? "" : (t.icon||"");
+    return `<div class="col-card trow" data-i="${i}">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span data-ico style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center">${topicIconPreview(t.icon)}</span>
+        <input data-f="label" type="text" placeholder="Topic name" value="${escS(t.label||"")}" style="flex:1;min-width:120px">
+        <input data-f="emoji" type="text" maxlength="4" placeholder="🙂" value="${escS(emoji)}" style="width:60px;text-align:center" title="Emoji for this topic">
+        <span style="display:flex;gap:4px">
+          <button class="btn ghost" data-act="up" type="button" title="Move up">↑</button>
+          <button class="btn ghost" data-act="down" type="button" title="Move down">↓</button>
+          <button class="btn ghost" data-act="remove" type="button" title="Remove">✕</button>
+        </span>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn ghost" data-act="upload" type="button">Upload icon image…</button>
+        <button class="btn ghost" data-act="useemoji" type="button">Use emoji instead</button>
+        <span class="hint" data-tmsg></span>
+      </div>
+    </div>`;
+  }).join("");
+  $("#topicRows").innerHTML = rows || `<p class="hint">No topics yet — add one below.</p>`;
+}
+$("#topicRows").addEventListener("input", e=>{
+  const row=e.target.closest(".trow"); if(!row) return;
+  const i=+row.dataset.i, t=state.topics[i]; if(!t) return;
+  const f=e.target.dataset.f;
+  if(f==="label") t.label=e.target.value;
+  else if(f==="emoji"){
+    const v=e.target.value;
+    if(v) t.icon=v; else if(!isImg(t.icon)) t.icon="";
+    row.querySelector("[data-ico]").innerHTML=topicIconPreview(t.icon);
+  }
+});
+$("#topicRows").addEventListener("click", e=>{
+  const btn=e.target.closest("[data-act]"); if(!btn) return;
+  const row=btn.closest(".trow"), i=+row.dataset.i, act=btn.dataset.act, T=state.topics;
+  if(act==="remove"){ T.splice(i,1); renderTopicRows(); }
+  else if(act==="up" && i>0){ [T[i-1],T[i]]=[T[i],T[i-1]]; renderTopicRows(); }
+  else if(act==="down" && i<T.length-1){ [T[i+1],T[i]]=[T[i],T[i+1]]; renderTopicRows(); }
+  else if(act==="useemoji"){ const em=row.querySelector('[data-f="emoji"]').value; T[i].icon=em||""; renderTopicRows(); }
+  else if(act==="upload"){ state.topicUploadIndex=i; $("#topicIconUpload").click(); }
+});
+$("#addTopic").addEventListener("click", ()=>{ state.topics.push({id:"",label:"",icon:"🙂"}); renderTopicRows(); });
+$("#topicIconUpload").addEventListener("change", async e=>{
+  const file=e.target.files&&e.target.files[0]; e.target.value=""; const i=state.topicUploadIndex; if(!file||i==null) return;
+  const row=$(`.trow[data-i="${i}"]`), msg=row&&row.querySelector("[data-tmsg]");
+  try{
+    const blob=await openCropper(file, TOPIC_ICON);
+    if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving needs Firebase mode."; return; }
+    if(msg) msg.textContent="Uploading…";
+    const url=await uploadImage("icons","topic-"+(state.topics[i].id||slugify(state.topics[i].label)||i), blob, "png");
+    state.topics[i].icon=url; renderTopicRows();
+  }catch(err){ if(err.message!=="cancelled" && msg) msg.textContent="Upload failed: "+(err.message||err); }
+});
+$("#saveTopics").addEventListener("click", async ()=>{
+  const btn=$("#saveTopics"), msg=$("#topicsMsg");
+  if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Editing topics needs Firebase mode."; return; }
+  const seen={}, items=[];
+  for(const t of state.topics){
+    const label=(t.label||"").trim(); if(!label) continue;
+    let id=(t.id||"").trim() || slugify(label); if(!id) id=slugify(label);
+    let base=id, n=2; while(seen[id]) id=base+"-"+(n++); seen[id]=1;
+    items.push({ id, label, icon:(t.icon==null?"":String(t.icon)).trim() });
+  }
+  if(!items.length){ msg.className="msg err"; msg.textContent="Add at least one topic (with a name)."; return; }
+  btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
+  try{
+    const {fs,db}=state.fb;
+    await fs.setDoc(fs.doc(db,"meta","topics"), { items, updated:Date.now() });
+    state.topics=items.map(x=>({...x})); renderTopicRows();
+    if(state.current) $("#f_topic").innerHTML=topicOptionsHTML(state.orig&&state.orig.topic);
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
+});
+
+/* ---- Books ---- */
+function bookCoverThumb(c){
+  return c
+    ? `<img src="${escS(c)}" alt="" style="width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`
+    : `<div style="width:100%;aspect-ratio:2/3;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;text-align:center;padding:6px">No cover</div>`;
+}
+function renderBookRows(){
+  const rows=(state.booksList||[]).map((b,i)=>`
+    <div class="col-card brow" data-i="${i}">
+      <div style="display:flex;gap:12px">
+        <div style="flex:0 0 84px;width:84px">
+          <div data-cover>${bookCoverThumb(b.cover)}</div>
+          <button class="btn ghost" data-act="cover" type="button" style="width:100%;margin-top:6px;font-size:12px">Cover…</button>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="field"><label>Title</label><input data-f="title" type="text" value="${escS(b.title||"")}"></div>
+          <div class="field"><label>Summary</label><textarea data-f="summary" rows="3">${escS(b.summary||"")}</textarea></div>
+          <div class="field"><label>Status</label><input data-f="status" type="text" list="bookStatusList" placeholder="Out now / Coming soon / In progress" value="${escS(b.status||"")}"></div>
+          <div style="display:flex;gap:4px;justify-content:flex-end">
+            <button class="btn ghost" data-act="up" type="button" title="Move up">↑</button>
+            <button class="btn ghost" data-act="down" type="button" title="Move down">↓</button>
+            <button class="btn ghost" data-act="remove" type="button">Remove</button>
+          </div>
+          <span class="hint" data-bmsg></span>
+        </div>
+      </div>
+    </div>`).join("");
+  $("#bookRows").innerHTML = rows || `<p class="hint">No books yet — add one below.</p>`;
+}
+$("#bookRows").addEventListener("input", e=>{
+  const row=e.target.closest(".brow"); if(!row) return;
+  const i=+row.dataset.i, b=state.booksList[i]; if(!b) return;
+  const f=e.target.dataset.f; if(f) b[f]=e.target.value;
+});
+$("#bookRows").addEventListener("click", e=>{
+  const btn=e.target.closest("[data-act]"); if(!btn) return;
+  const row=btn.closest(".brow"), i=+row.dataset.i, act=btn.dataset.act, B=state.booksList;
+  if(act==="remove"){ B.splice(i,1); renderBookRows(); }
+  else if(act==="up" && i>0){ [B[i-1],B[i]]=[B[i],B[i-1]]; renderBookRows(); }
+  else if(act==="down" && i<B.length-1){ [B[i+1],B[i]]=[B[i],B[i+1]]; renderBookRows(); }
+  else if(act==="cover"){ state.bookUploadIndex=i; $("#bookCoverUpload").click(); }
+});
+$("#addBook").addEventListener("click", ()=>{ state.booksList.push({title:"",summary:"",status:"",cover:""}); renderBookRows(); });
+$("#bookCoverUpload").addEventListener("change", async e=>{
+  const file=e.target.files&&e.target.files[0]; e.target.value=""; const i=state.bookUploadIndex; if(!file||i==null) return;
+  const row=$(`.brow[data-i="${i}"]`), msg=row&&row.querySelector("[data-bmsg]");
+  try{
+    const blob=await openCropper(file, BOOK_COVER);
+    if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving needs Firebase mode."; return; }
+    if(msg) msg.textContent="Uploading…";
+    const url=await uploadImage("books","cover-"+i, blob, "png");
+    state.booksList[i].cover=url;
+    if(row) row.querySelector("[data-cover]").innerHTML=bookCoverThumb(url);
+    if(msg) msg.textContent="Uploaded ✓ — click Save to keep it.";
+  }catch(err){ if(err.message!=="cancelled" && msg) msg.textContent="Upload failed: "+(err.message||err); }
+});
+$("#saveBooks").addEventListener("click", async ()=>{
+  const btn=$("#saveBooks"), msg=$("#booksMsg");
+  if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Editing books needs Firebase mode."; return; }
+  const items=(state.booksList||[]).map(b=>({
+    title:(b.title||"").trim(), summary:(b.summary||"").trim(),
+    status:(b.status||"").trim(), cover:(b.cover||"").trim()
+  })).filter(b=>b.title || b.summary || b.cover);
+  btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
+  try{
+    const {fs,db}=state.fb;
+    await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
+    state.booksList=items.map(x=>({...x})); renderBookRows();
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
+});
+
 /* ---------- boot ---------- */
 function showApp(user){
   $("#loginView").classList.add("hidden");
@@ -815,6 +1085,7 @@ function showApp(user){
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
   if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
   renderPageList();
+  renderSiteList();
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
@@ -826,6 +1097,7 @@ async function boot(){
     badge.textContent = "Local preview"; badge.classList.add("local");
     const gw = $("#genWrap"); if(gw) gw.classList.add("hidden");   // AI gen needs Firebase mode
     state.guides = await loadGuides();
+    await loadMeta();
     showApp(null);
     return;
   }
@@ -862,7 +1134,7 @@ async function boot(){
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
   });
   auth.onAuthStateChanged(a, async user => {
-    if(user){ state.guides = await loadGuides(); state.pagesData = await loadPages(); showApp(user); }
+    if(user){ state.guides = await loadGuides(); state.pagesData = await loadPages(); await loadMeta(); showApp(user); }
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
   });
 }

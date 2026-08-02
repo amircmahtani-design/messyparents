@@ -30,10 +30,12 @@ MPCStore.ready = (async function () {
       const app = initializeApp(cfg);
       const db = fs.getFirestore(app);
 
-      // Fire BOTH reads at once. Resolve page settings the moment they land
+      // Fire the reads at once. Resolve page settings the moment they land
       // (don't block them behind the larger guides read).
       const guidesP = fs.getDocs(fs.collection(db, "guides"));
       const pagesP  = fs.getDocs(fs.collection(db, "pages"));
+      const topicsP = fs.getDoc(fs.doc(db, "meta", "topics"));   // editable browse topics
+      const booksP  = fs.getDoc(fs.doc(db, "meta", "books"));    // editable Our Books list
 
       pagesP.then(psnap => {
         const pages = {};
@@ -42,6 +44,27 @@ MPCStore.ready = (async function () {
         MPCStore.pages = pages;
       }).catch(() => { /* pages collection is optional */ })
         .finally(() => _resolvePages());
+
+      // Topics: rebuild the browse pills from the saved list, if any. This
+      // mutates the shared TOPICS/ICONS globals in place, so every page that
+      // reads them (home, guides) picks up the changes with no code edits.
+      // Must finish BEFORE MPCStore.ready resolves (pages render pills then).
+      try {
+        const tsnap = await topicsP;
+        if (tsnap.exists()) {
+          const items = (tsnap.data() || {}).items;
+          if (Array.isArray(items) && items.length) applyTopics(items);
+        }
+      } catch (e) { /* meta/topics is optional — keep the bundled defaults */ }
+
+      // Books: hold the saved Our Books list for the books page to render.
+      try {
+        const bsnap = await booksP;
+        if (bsnap.exists()) {
+          const items = (bsnap.data() || {}).items;
+          if (Array.isArray(items)) MPCStore.books = items;
+        }
+      } catch (e) { /* meta/books is optional — the page falls back to defaults */ }
 
       const snap = await guidesP;
       const arr = [];
@@ -69,6 +92,90 @@ MPCStore.ABOUT_DEFAULTS = {
   middle: "assets/img/mama.webp",
   who:    "assets/img/family.webp",
   notare: "assets/img/couple.webp"
+};
+
+/* --------------------------------------------------------------------------
+   Editable TOPICS (the "Browse by topic" pills) + the Our Books list.
+   Both are managed in Studio and stored in Firestore under /meta/{topics,books}.
+   ------------------------------------------------------------------------ */
+function _escHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* Build the little icon shown inside a topic pill. An icon can be an uploaded
+   image (path / URL) OR a short emoji/text glyph — we detect which. */
+function topicIconMarkup(icon){
+  const v = (icon == null ? "" : String(icon)).trim();
+  if (!v) return '<span class="pill-ico" aria-hidden="true">📌</span>';   // 📌 fallback
+  if (/^(https?:|data:|\.?\/|assets\/)/i.test(v) || /\.(webp|png|jpe?g|svg|gif)$/i.test(v))
+    return '<img src="' + _escHtml(v) + '" alt="" aria-hidden="true">';
+  return '<span class="pill-ico" aria-hidden="true">' + _escHtml(v) + '</span>';
+}
+
+/* Replace the shared TOPICS + ICONS globals *in place* (they are the same
+   array/object the pages read, so mutating them updates the pills everywhere
+   without touching guides.js). `items` = [{ id, label, icon }]. */
+function applyTopics(items){
+  const T = window.TOPICS, I = window.ICONS;
+  if (!Array.isArray(T)) return;
+  T.length = 0;
+  if (I) Object.keys(I).forEach(k => delete I[k]);
+  items.forEach(it => {
+    if (!it || !it.id) return;
+    const id = String(it.id), mk = topicIconMarkup(it.icon);
+    T.push({ id: id, label: it.label || id, icon: mk });
+    if (I) I[id] = mk;
+  });
+  MPCStore.topics = items.slice();
+}
+MPCStore.applyTopics = applyTopics;
+
+/* Default Our Books list — shown until (or unless) a list is saved in Studio.
+   Mirrors the three books the page originally shipped with (no covers yet). */
+MPCStore.BOOK_DEFAULTS = [
+  { title:"Ari & Papa: The First Hundred Nights",
+    summary:"The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed.",
+    status:"Out now" },
+  { title:"Ari & Papa: Everyone Says It Gets Easier",
+    summary:"Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething.",
+    status:"Coming soon" },
+  { title:"The Messy Parents Handbook",
+    summary:"Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something.",
+    status:"In progress" }
+];
+MPCStore.books = null;   // filled from Firestore when a saved list exists
+
+function bookStatusClass(status){
+  return /out/i.test(status || "") ? "status--out" : "";
+}
+function bookCardHTML(b){
+  b = b || {};
+  const title   = _escHtml(b.title || "Untitled");
+  const summary = _escHtml(b.summary || "");
+  const status  = b.status
+    ? '<span class="status ' + bookStatusClass(b.status) + '">' + _escHtml(b.status) + '</span>'
+    : "";
+  const cover = b.cover
+    ? '<img src="' + _escHtml(b.cover) + '" alt="' + title + ' cover" loading="lazy">'
+    : '<div class="book-cover-empty" aria-hidden="true"><span>' + title + '</span></div>';
+  return '<article class="book-card">' +
+    '<div class="book-cover">' + cover + '</div>' +
+    '<div class="book-body">' + status +
+      '<h3>' + title + '</h3>' +
+      (summary ? '<p class="book-summary">' + summary + '</p>' : "") +
+    '</div></article>';
+}
+
+/* Render the Our Books grid into #bookGrid (or a given element id). Falls back
+   to BOOK_DEFAULTS when nothing has been saved yet. */
+MPCStore.applyBooks = function(targetId){
+  const el = document.getElementById(targetId || "bookGrid");
+  if (!el) return;
+  const items = (Array.isArray(MPCStore.books) && MPCStore.books.length)
+    ? MPCStore.books
+    : MPCStore.BOOK_DEFAULTS;
+  el.innerHTML = items.map(bookCardHTML).join("");
 };
 
 /* Swap an image's source with NO flash of the old/default picture: the image
