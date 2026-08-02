@@ -11,6 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* When the parent is searching, float the matches above the browse/age rows */
+  .rows.searching{display:flex;flex-direction:column}
+  .rows.searching #resultsRow{order:-1;margin-bottom:8px}
+  .rows.searching .row:not(#resultsRow){order:1}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -49,7 +55,7 @@
       <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
       <div class="pills" id="agePills"></div>
     </div>
-    <div class="row row--stack">
+    <div class="row row--stack" id="resultsRow">
       <p class="eyebrow"><span id="resultsTitle">Every guide</span></p>
       <div class="card-grid" id="grid"></div>
       <p class="row-note"><span id="resultsCount"></span>
@@ -89,6 +95,7 @@ MPCStore.ready.then(function(){
 
   function render(){
     const active = topic || age || q;
+    document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.slice();
     title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Every guide");
     count.textContent = list.length + " guide" + (list.length===1?"":"s");
