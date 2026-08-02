@@ -324,6 +324,9 @@ const BOOK_COVER  = { w:600, h:900, label:"Book cover — portrait (2:3). Fills 
    The crop "w/h" is the exported pixel size; the label tells the user how
    much space the image will fill on the live page. */
 const PAGES = [
+  { id:"home", label:"Home", title:"Home page",
+    subtitle:"", file:"index.html", noText:true,
+    default:"../assets/img/family.webp" },
   { id:"popular", label:"Popular", title:"Popular guides",
     subtitle:"The questions we get asked most, and the ones we googled most ourselves.",
     default:"../assets/img/family.webp" },
@@ -336,10 +339,12 @@ const PAGES = [
 ];
 const GUIDE_HERO = { w:1120, h:620, label:"Guide illustration — fills a 560 × 310 space beside the title. Transparent PNGs look best." };
 const PAGE_HERO  = { w:880,  h:680, label:"Page illustration — fills a 440 × 340 space beside the title. Transparent PNGs look best." };
+const HOME_HERO  = { w:1000, h:747, label:"Homepage illustration — fills the big space beside the headline. Transparent PNGs look best." };
 
 /* Which illustration slots each page exposes. About has three; the others keep
    a single hero image (stored in the legacy top-level "image" field). */
 const PAGE_SLOTS = {
+  home:    [{ key:"hero", label:"Hero illustration", help:"The big illustration beside the headline at the top of the homepage.", pos:false }],
   popular: [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   guides:  [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   about: [
@@ -584,6 +589,12 @@ function renderSlots(id){
 /* Turn the current form into the exact object we store in Firestore. */
 function draftPageData(){
   const id=state.currentPage;
+  const pg=PAGES.find(x=>x.id===id);
+  // Home only edits the illustration — no title/subtitle to store.
+  if(pg && pg.noText){
+    const c=state.pageDraft.slots.hero||{};
+    return { image:c.image||"" };
+  }
   const data={ title:$("#p_title").value.trim(), subtitle:$("#p_subtitle").value.trim() };
   if(id==="about"){
     (PAGE_SLOTS.about).forEach(s=>{
@@ -619,9 +630,14 @@ function selectPage(id){
   showPanel("pageEditor"); renderSiteList();
   const d=state.pagesData[id]||{};
   $("#p_heading").textContent = p.title;
-  $("#p_intro").textContent = id==="about"
-    ? "Edit the text and the three illustrations. Each picture has its own space beside the words."
-    : "Edit the text and the illustration that sits beside this page’s title.";
+  $("#p_intro").textContent = p.noText
+    ? "Replace the illustration at the top of the homepage. Upload a new picture, or reset it to the original."
+    : (id==="about"
+        ? "Edit the text and the three illustrations. Each picture has its own space beside the words."
+        : "Edit the text and the illustration that sits beside this page’s title.");
+  // Home only edits the image, so hide the title/subtitle fields for it.
+  $("#p_title").closest(".field").classList.toggle("hidden", !!p.noText);
+  $("#p_subtitle").closest(".field").classList.toggle("hidden", !!p.noText);
   $("#p_title").value = d.title!=null ? d.title : p.title;
   $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
   // seed the per-slot draft from saved data (with fall-back for the old single
@@ -642,7 +658,7 @@ function selectPage(id){
   $("#pvId").textContent = "· " + id;
   const pv=$("#pv"); pvPageReady=false;
   pv.onload=()=>{ pvPageReady=true; pushPagePreview(); };
-  pv.src = "../" + id + ".html";
+  pv.src = "../" + (p.file || (id + ".html"));
   renderPageList(); renderList($("#q").value);
 }
 
@@ -854,7 +870,8 @@ $("#p_upload").addEventListener("change", async e => {
   const key=state.uploadKey; if(!file||!key) return;
   const card=$(`.slot[data-slot="${key}"]`), msg=card && card.querySelector("[data-msg]");
   try{
-    const blob=await openCropper(file, PAGE_HERO);       // cropper works in any mode
+    const cropSize = state.currentPage==="home" ? HOME_HERO : PAGE_HERO;
+    const blob=await openCropper(file, cropSize);        // cropper works in any mode
     if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving page images needs Firebase mode."; return; }
     if(msg) msg.textContent="Uploading…";
     const url=await uploadImage("pages", state.currentPage+"-"+key, blob, "png");

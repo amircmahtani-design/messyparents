@@ -5,12 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Messy Parents Collection — short answers for long nights</title>
 <meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<script>
+  /* Hold the hero illustration hidden until the correct (saved) image loads, so
+     an old/default picture never flashes before the uploaded one. */
+  document.documentElement.className += " js";
+  setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 1500);
+</script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
 <link rel="apple-touch-icon" href="assets/img/navicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=10">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 <style>
   /* When the parent is searching, float the matches above the browse/age rows */
   .rows.searching{display:flex;flex-direction:column}
@@ -48,7 +54,7 @@
         </form>
       </div>
       <div class="hero-art rise">
-        <img src="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747">
+        <img id="pageHeroImg" data-default="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747">
       </div>
     </div>
   </section>
@@ -99,6 +105,9 @@
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
 <script>
+// Apply the editable hero image fast (doesn't need the full guides list).
+MPCStore.pagesReady.then(function(){ MPCStore.applyPage("home"); });
+
 MPCStore.ready.then(function(){
   const CAP = 4;
   const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),

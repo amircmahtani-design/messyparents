@@ -334,11 +334,14 @@ h3{font-size:1.3rem}
    picture never flashes before the uploaded one. .illus-ready is a timed
    safety net. Without JS the images show normally so the page still works. */
 html.js .about-art img,
-html.js .page-hero-art img{opacity:0;transition:opacity .2s ease}
+html.js .page-hero-art img,
+html.js .hero-art img{opacity:0;transition:opacity .2s ease}
 html.js .about-art img.ready,
 html.js .page-hero-art img.ready,
+html.js .hero-art img.ready,
 html.illus-ready .about-art img,
-html.illus-ready .page-hero-art img{opacity:1}
+html.illus-ready .page-hero-art img,
+html.illus-ready .hero-art img{opacity:1}
 /* Hide the art figure until it actually has an image (empty slots collapse). */
 .about-section:not(.has-art) .about-art{display:none}
 
