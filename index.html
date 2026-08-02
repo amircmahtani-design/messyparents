@@ -11,6 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* When the parent is searching, float the matches above the browse/age rows */
+  .rows.searching{display:flex;flex-direction:column}
+  .rows.searching #resultsRow{order:-1;margin-bottom:8px}
+  .rows.searching .row:not(#resultsRow){order:1}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -117,6 +123,7 @@ MPCStore.ready.then(function(){
 
   function render(flash){
     const active = q || topic || age;
+    document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
     const shown = list.slice(0, CAP);
     title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Popular guides");

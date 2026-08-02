@@ -20,6 +20,7 @@
    Env vars: OPENAI_API_KEY, FIREBASE_SERVICE_ACCOUNT, FIREBASE_STORAGE_BUCKET
    ========================================================================== */
 const admin = require("firebase-admin");
+const { PNG } = require("pngjs");
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -41,7 +42,9 @@ const CANON = {
             who: "the whole family — Mama, Papa and baby Ari" },
   mama:   { refs: ["mama.png"], size: "1024x1024", who: "Mama" },
   papa:   { refs: ["papa.png"], size: "1024x1024", who: "Papa" },
-  ari:    { refs: ["ari-baby.png"], size: "1024x1024", who: "baby Ari" }
+  ari:    { refs: ["ari-baby.png"], size: "1024x1024", who: "baby Ari" },
+  "mama-ari": { refs: ["mama.png", "ari-baby.png"], size: "1536x1024", who: "Mama and baby Ari" },
+  "papa-ari": { refs: ["papa.png", "ari-baby.png"], size: "1536x1024", who: "Papa and baby Ari" }
 };
 
 const LOCK_PROMPT = (who) =>
@@ -50,19 +53,35 @@ const LOCK_PROMPT = (who) =>
   "conversation you MUST reproduce the exact same characters: identical faces, hairstyles, beard, clothing, body " +
   "proportions, colours, textures and the exact hand-drawn ink + soft-watercolour illustration technique. " +
   "You may ONLY change pose, expression, action, props and composition. Never redesign a character. " +
-  "Always output on a fully transparent background — only the character(s), no scenery or backdrop unless explicitly asked. " +
+  "Always place the character(s) centred with clear margin on a SOLID BRIGHT MAGENTA background (hex #FF00FF, one flat " +
+  "colour, no gradient, no texture, no scenery). Never use magenta or hot pink anywhere on the characters themselves. " +
   "No text, letters, words, numbers or logos anywhere.";
 
 const CORRECTION_PROMPT =
   "Correct only character consistency. Do not change the composition. Do not change the poses. " +
   "Do not change the expressions. Restore the characters so they match the canonical reference images as closely " +
   "as possible — same faces, hair, beard, clothing, proportions, colours and illustration technique. " +
-  "Keep the transparent background. No text anywhere.";
+  "Keep the solid bright magenta (#FF00FF) background. No text anywhere.";
 
 function imageTool(size) {
-  return { type: "image_generation", background: "transparent", output_format: "png", size: size || "1024x1024", quality: "high" };
+  return { type: "image_generation", model: "gpt-image-1", output_format: "png", size: size || "1024x1024", quality: "high" };
 }
 function imgInput(url) { return { type: "input_image", image_url: url }; }
+async function genResponses(base, size) { return await callResponses({ ...base, tools: [imageTool(size)] }); }
+
+/* Transparency is done IN CODE (no API): the image is generated on a solid bright
+   MAGENTA background (#FF00FF), then every magenta pixel is turned transparent here.
+   Magenta never appears in the warm character palette, so it's clean and reliable. */
+function cutoutBackground(b64) {
+  const png = PNG.sync.read(Buffer.from(b64, "base64"));
+  const d = png.data;
+  const tol2 = 90 * 90;                 // generous enough to catch anti-aliased edges
+  for (let i = 0; i < d.length; i += 4) {
+    const dr = d[i] - 255, dg = d[i + 1] - 0, db = d[i + 2] - 255;
+    if (dr * dr + dg * dg + db * db <= tol2) d[i + 3] = 0;
+  }
+  return PNG.sync.write(png).toString("base64");
+}
 
 async function callResponses(payload) {
   const r = await fetch("https://api.openai.com/v1/responses", {
@@ -105,29 +124,27 @@ exports.handler = async (event) => {
     let gen;
     if (!sess.response_id) {
       // establish the permanent canon (upload references once)
-      gen = await callResponses({
+      gen = await genResponses({
         model: MODEL,
         instructions: LOCK_PROMPT(canon.who),
         input: [{ role: "user", content: [
           { type: "input_text", text:
             "These images define the permanent characters. Establish them as canon, then draw " + canon.who +
-            ": " + (scene || "a simple friendly portrait") + ". Transparent background, characters only." },
+            ": " + (scene || "a simple friendly portrait") + ". Solid bright magenta (#FF00FF) background, characters centred with margin, no scenery." },
           ...refUrls.map(imgInput)
-        ]}],
-        tools: [imageTool(canon.size)]
-      });
+        ]}]
+      }, canon.size);
     } else {
       // continue the existing illustration session — no re-upload
-      gen = await callResponses({
+      gen = await genResponses({
         model: MODEL,
         previous_response_id: sess.response_id,
         input: [{ role: "user", content: [
           { type: "input_text", text:
             "Draw the same characters again — only change pose/action/expression/props/composition: " +
-            (scene || "a new friendly moment") + ". Transparent background, characters only." }
-        ]}],
-        tools: [imageTool(canon.size)]
-      });
+            (scene || "a new friendly moment") + ". Solid bright magenta (#FF00FF) background, characters centred with margin, no scenery." }
+        ]}]
+      }, canon.size);
     }
     let img = extractImage(gen);
     let respId = gen.id;
@@ -135,18 +152,20 @@ exports.handler = async (event) => {
 
     /* ---- 2) CONSISTENCY PASS (continue from the generation, re-show canon) ---- */
     try {
-      const corr = await callResponses({
+      const corr = await genResponses({
         model: MODEL,
         previous_response_id: respId,
         input: [{ role: "user", content: [
           { type: "input_text", text: CORRECTION_PROMPT },
           ...refUrls.map(imgInput)
-        ]}],
-        tools: [imageTool(canon.size)]
-      });
+        ]}]
+      }, canon.size);
       const cimg = extractImage(corr);
       if (cimg) { img = cimg; respId = corr.id; }
     } catch (_) { /* keep the first image if correction fails */ }
+
+    /* ---- 3) make it transparent IN CODE (delete the magenta background) ---- */
+    try { img = cutoutBackground(img); } catch (_) { /* keep as-is if it fails */ }
 
     /* ---- upload + persist ---- */
     const buffer = Buffer.from(img, "base64");
