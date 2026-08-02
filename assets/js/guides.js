@@ -61,6 +61,19 @@ const GUIDES = [
     "Refusing nearly all feeds for more than 8 hours in a young baby",
     "Floppy, unusually sleepy, or hard to rouse",
     "Vomiting after most feeds, or a feed refusal alongside a fever"]},
+  panel:{
+    eyebrow:"Feeding • 4–9 months",
+    normal:{title:"Usually normal",items:[
+      "Distraction — the world got interesting","A flattening growth curve",
+      "Teething","Solids taking over","A cold or blocked nose"]},
+    warn:{title:"Call your doctor if",items:[
+      "Fewer than 4 wet nappies a day, or dark urine",
+      "Refusing nearly all feeds for 8+ hours","Floppy, very sleepy or hard to rouse",
+      "Vomiting most feeds, or refusal with a fever"]},
+    helped:{title:"What helped us",items:[
+      "Feed in a dim, quiet room","Try a dream feed","Check the teat flow","Offer, don't insist"]},
+    quick:"A dip is usually distraction, a growth plateau or teething — watch the baby and the whole week, not the daily total."
+  },
   related:["reflux-or-spit-up","starting-solids","teething"]
 },
 {
@@ -95,6 +108,20 @@ const GUIDES = [
     "Your baby seems to be in pain when laid flat",
     "Loud snoring, gasping, or long pauses in breathing during sleep",
     "Naps have collapsed alongside feeding refusal or weight concerns"]},
+  panel:{
+    eyebrow:"Sleeping • 2–9 months",
+    normal:{title:"Usually just",items:[
+      "Wake window too short (not tired) or too long (overtired)",
+      "You caught the third tired sign, not the first","Too much light in the room",
+      "A 35-minute single-cycle nap — normal at 3–6 months"]},
+    warn:{title:"Chat to your doctor or health visitor if",items:[
+      "Your baby seems in pain laid flat","Loud snoring, gasping or pauses in breathing",
+      "Naps collapse alongside feeding refusal or weight worries"]},
+    helped:{title:"What helped us",items:[
+      "Make it properly dark","Same three things, same order",
+      "Start winding down early","Continuous white noise"]},
+    quick:"Nine times out of ten it's the wake window — too short and they're not tired, too long and they're wired."
+  },
   related:["sleep-regression","early-waking","touched-out"]
 },
 {
@@ -128,6 +155,21 @@ const GUIDES = [
     "Night waking comes with fever, pulling at ears, or inconsolable crying",
     "Your baby has stopped feeding well as well as sleeping badly",
     "You are so exhausted that driving or daily tasks feel unsafe — this is a real reason to ask for help"]},
+  panel:{
+    eyebrow:"Sleeping • 2–12 months",
+    normal:{title:"Usually normal",items:[
+      "A permanent 4-month change in how they sleep",
+      "A new skill (rolling, crawling, standing) rehearsed at 2am",
+      "Teeth, or a nap transition","Separation anxiety around 8–10 months"]},
+    warn:{title:"Check in with a professional if",items:[
+      "Night waking with fever, ear-pulling or inconsolable crying",
+      "Feeding has dropped off too, not just sleep",
+      "You're so exhausted that driving feels unsafe — a real reason to ask for help"]},
+    helped:{title:"What helped us",items:[
+      "Practise the new skill in daylight","Put down drowsy but awake, sometimes",
+      "Hold the schedule","Pick one response and stick with it a week"]},
+    quick:"Usually real — and usually not just a phase, but a permanent change or a new skill breaking through. Two weeks is typical."
+  },
   related:["wont-nap","early-waking","splitting-nights"]
 },
 {
@@ -157,6 +199,21 @@ const GUIDES = [
     "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call emergency services for breathing difficulty or swelling",
     "Persistent refusal of all textures beyond around nine months",
     "Your baby has significant eczema or an existing allergy — get a plan before introducing allergens"]},
+  panel:{
+    eyebrow:"Feeding • 4–9 months",
+    normal:{title:"Where to start",items:[
+      "Around 6 months — when they can sit supported, hold their head steady and reach for food",
+      "Milk stays the main meal at first","One new food every couple of days",
+      "Purée, baby-led or a mix — all fine"]},
+    warn:{title:"Get medical advice if",items:[
+      "Hives, swelling, vomiting or wheezing after a food — call emergency services for breathing trouble or swelling",
+      "Refusing all textures beyond around 9 months",
+      "Significant eczema or an existing allergy — get a plan before allergens"]},
+    helped:{title:"What helped us",items:[
+      "Offer food after a milk feed","Introduce allergens early, at home, one at a time",
+      "Learn choking vs gagging","Expect 4g eaten and the rest worn"]},
+    quick:"One food, once a day, after a milk feed. Everything else is detail you can add later."
+  },
   related:["drinking-less-milk","reflux-or-spit-up"]
 },
 {
@@ -182,6 +239,21 @@ const GUIDES = [
     "Refusing feeds for more than 8 hours, or fewer than four wet nappies a day",
     "White patches inside the mouth that don't wipe away",
     "Refusal with fever, vomiting, or unusual sleepiness"]},
+  panel:{
+    eyebrow:"Feeding • 2–9 months",
+    normal:{title:"Usually it's",items:[
+      "Flow rate — the teat's been outgrown","Temperature — try slightly warmer",
+      "Position — more upright, or facing out","A sore mouth (teething, cold or thrush)",
+      "Who's holding it — try someone else"]},
+    warn:{title:"Call your doctor if",items:[
+      "Refusing feeds 8+ hours, or under 4 wet nappies a day",
+      "White patches inside the mouth that don't wipe off",
+      "Refusal with fever, vomiting or unusual sleepiness"]},
+    helped:{title:"What helped us",items:[
+      "Don't force — stop and retry in 20 minutes","Offer when they're sleepy",
+      "Someone else offers, in another room","From 6 months, a cup skips the fight"]},
+    quick:"Usually flow, temperature, position or a sore mouth — rarely the bottle itself."
+  },
   related:["drinking-less-milk","teething"]
 },
 {
@@ -207,6 +279,22 @@ const GUIDES = [
     "Poor weight gain, or persistent refusal to feed",
     "Arching and crying with most feeds, or blood in stools",
     "Any vomiting alongside fever or a swollen tummy"]},
+  panel:{
+    eyebrow:"Feeding • 0–6 months",
+    normal:{title:"Usually just posseting",items:[
+      "Effortless spit-up, baby unbothered, weight fine",
+      "A tablespoon looks like the whole feed — it isn't",
+      "Peaks around 4 months, eases with sitting up and solids"]},
+    warn:{title:"See a doctor if",items:[
+      "Green or yellow vomit, blood, or forceful projectile vomiting",
+      "Poor weight gain, or persistent feed refusal",
+      "Arching and crying with most feeds, or blood in stools",
+      "Vomiting with fever or a swollen tummy"]},
+    helped:{title:"What helped us",items:[
+      "Smaller feeds, more often","Upright 20–30 min after (not a car seat)",
+      "Wind partway through","Keep sleep flat on the back — reflux doesn't change that"]},
+    quick:"A happy spitter is a laundry problem. A distressed one is worth a conversation with your doctor."
+  },
   related:["drinking-less-milk","bottle-refusal"]
 },
 {
@@ -227,6 +315,19 @@ const GUIDES = [
 <p>Keep the room dark and boring until your chosen "morning" time. Don't start the day. Same low voice, same dim light, no getting up. It takes a week or two of holding the line before it moves.</p>
 <div class="quiet">Some babies are simply larks. If they wake at 5.30 cheerful and well-rested, you may be fixing a scheduling problem that only exists for you.</div>`,
   callout:null,
+  panel:{
+    eyebrow:"Sleeping • 7–24 months",
+    normal:{title:"Usually just",items:[
+      "Bedtime too late — overtired brings the wake-up earlier","Light — sunrise creeping in",
+      "Last nap too long, or too close to bedtime","Habit — 5am means lights, milk and downstairs"]},
+    warn:{title:"Worth knowing",items:[
+      "Anything before 6am is a night waking in disguise — treat it as one",
+      "A cheerful, well-rested early riser may simply be a lark"]},
+    helped:{title:"What helped us",items:[
+      "Keep the room dark and boring until your chosen 'morning'",
+      "Try bedtime 20 minutes earlier for five nights","Hold the line for a week or two"]},
+    quick:"Usually bedtime too late, nap timing or light — rarely a baby who's finished sleeping."
+  },
   related:["wont-nap","sleep-regression"]
 },
 {
@@ -250,6 +351,21 @@ const GUIDES = [
     "Your baby is very difficult to wake for feeds",
     "Fewer wet nappies than expected, or weight loss beyond the first week",
     "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"]},
+  panel:{
+    eyebrow:"Sleeping • 0–3 months",
+    normal:{title:"Usually normal",items:[
+      "Newborns have no body clock yet",
+      "The womb rocked them by day and stopped at night — that lingers",
+      "It starts sorting itself at 6–10 weeks as melatonin kicks in"]},
+    warn:{title:"Speak to a midwife or doctor if",items:[
+      "Your baby is very hard to wake for feeds",
+      "Fewer wet nappies than expected, or weight loss beyond the first week",
+      "You feel unable to cope, low or frightened — common, treatable, worth saying out loud"]},
+    helped:{title:"What helped us",items:[
+      "Morning daylight, curtains open","Loud, chatty days","Dim, dull nights",
+      "Cap day sleeps at 2–2.5 hours","Split the night into shifts"]},
+    quick:"Newborns have no body clock yet. You build it for them, with light and contrast."
+  },
   related:["splitting-nights","sleep-regression"]
 },
 {
@@ -281,6 +397,21 @@ const GUIDES = [
     "Consistently using only one side of the body, or a strongly preferred hand before 12 months",
     "Loss of a skill your baby previously had — always worth checking promptly",
     "Persistently stiff or floppy limbs"]},
+  panel:{
+    eyebrow:"Development • 4–12 months",
+    normal:{title:"Typical ranges",items:[
+      "Roll front-to-back: 3–6 months","Sit unsupported: 5–8 months",
+      "Crawl: 6–11 months — or never (bum-shuffling counts)",
+      "Pull to stand: 8–11 months","Walk: 9–18 months"]},
+    warn:{title:"Ask your doctor or health visitor if",items:[
+      "No rolling by 6 months, or not sitting with support by 9",
+      "Using only one side, or a strong hand preference before 12 months",
+      "Loss of a skill they had — check promptly","Persistently stiff or floppy limbs"]},
+    helped:{title:"What helped us",items:[
+      "Lots of floor time","Tummy time in small, frequent doses",
+      "Toys just out of reach","Skip walkers","Use corrected age if premature"]},
+    quick:"Ranges are wide and order varies. Some babies skip crawling entirely and are completely fine."
+  },
   related:["first-words","sleep-regression"]
 },
 {
@@ -311,6 +442,23 @@ const GUIDES = [
     "No words by 18 months, or no two-word phrases by around 2 years",
     "Loss of words or social skills previously present — check this promptly",
     "Doesn't startle at loud sounds or turn toward voices"]},
+  panel:{
+    eyebrow:"Development • 7–24 months",
+    normal:{title:"Roughly expect",items:[
+      "6–9 months: babbling (bababa), responds to name",
+      "9–12 months: pointing, waving, giving — the big one",
+      "12 months: a word or two, understands simple requests",
+      "18 months: 10–50 words","24 months: two-word combos"]},
+    warn:{title:"Ask for a hearing or speech check if",items:[
+      "No babbling by 9 months, or no gestures by 12",
+      "No words by 18 months, or no two-word phrases by ~2 years",
+      "Loss of words or social skills — check promptly",
+      "Doesn't startle at loud sounds or turn to voices"]},
+    helped:{title:"What helped us",items:[
+      "Narrate everything, out loud","Ask, then leave a 5-second gap",
+      "Follow their attention","Books daily","Two languages don't delay speech"]},
+    quick:"Understanding comes long before speaking, and gestures matter more than word count."
+  },
   related:["rolling-sitting-crawling","teething"]
 },
 {
