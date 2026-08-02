@@ -85,6 +85,7 @@
   <span id="modeBadge" class="badge">…</span>
   <span class="spacer"></span>
   <span id="who" class="who"></span>
+  <button id="seedBtn" class="btn ghost hidden" title="Copy the 16 built-in guides into Firestore (one-time)">Import site guides</button>
   <button id="signout" class="btn ghost hidden">Sign out</button>
 </div>
 
@@ -184,6 +185,15 @@ async function loadGuides(){
     return arr;
   }
   return (window.GUIDES || []).map(g => JSON.parse(JSON.stringify(g)));
+}
+async function importAll(){
+  const {fs, db} = state.fb;
+  const src = (window.GUIDES || []);
+  if(!src.length) throw new Error("No built-in guides found to import.");
+  const batch = fs.writeBatch(db);
+  src.forEach((g,i)=>{ const gg = JSON.parse(JSON.stringify(g)); gg.order = i; batch.set(fs.doc(db,"guides",g.id), gg); });
+  await batch.commit();
+  return src.length;
 }
 async function saveGuide(guide){
   if(MODE === "firebase"){
@@ -299,8 +309,11 @@ function showApp(user){
   $("#loginView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
+  if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
+  else if(!state.guides.length && MODE === "firebase")
+    $("#empty").innerHTML = "No guides in Firestore yet.<br><br>Click <b>“Import site guides”</b> (top right) to load all 16 in one go.";
 }
 async function boot(){
   const badge = $("#modeBadge");
@@ -319,6 +332,18 @@ async function boot(){
     catch(err){ $("#loginErr").textContent = err.message || "Sign-in failed."; }
   });
   $("#signout").addEventListener("click", () => auth.signOut(a));
+  $("#seedBtn").addEventListener("click", async () => {
+    if(!confirm("Import the 16 built-in guides into Firestore?\n\nThis overwrites any guides with the same IDs.")) return;
+    const btn = $("#seedBtn"); const old = btn.textContent; btn.disabled = true; btn.textContent = "Importing…";
+    try{
+      const n = await importAll();
+      state.guides = await loadGuides();
+      $("#empty").textContent = "Select a guide from the left to edit it.";
+      renderList(); if(state.guides[0]) selectGuide(state.guides[0].id);
+      btn.textContent = "Imported " + n + " ✓"; setTimeout(()=>{ btn.textContent = old; }, 2500);
+    }catch(e){ alert("Import failed: " + (e.message || e)); btn.textContent = old; }
+    finally{ btn.disabled = false; }
+  });
   auth.onAuthStateChanged(a, async user => {
     if(user){ state.guides = await loadGuides(); showApp(user); }
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
