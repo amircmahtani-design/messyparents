@@ -1,0 +1,4 @@
+# The public site is fine to index. The two editing surfaces are not.
+User-agent: *
+Disallow: /studio/
+Disallow: /editor/

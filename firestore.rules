@@ -25,6 +25,14 @@ service cloud.firestore {
         && request.auth.token.email == "amircmahtani@gmail.com";
     }
 
+    // The book manuscript (the Editor). Unlike everything above, this is NOT
+    // publicly readable — only the admin account can read or write it, so the
+    // book stays private even though /editor/ sits on a public host.
+    match /book/{id} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email == "amircmahtani@gmail.com";
+    }
+
     // Illustration jobs: the admin reads status; only the server (admin SDK) writes.
     match /illustration_jobs/{id} {
       allow read: if request.auth != null;

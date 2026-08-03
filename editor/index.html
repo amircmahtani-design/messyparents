@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- PRIVATE. Never linked from the site, never indexed. The manuscript lives in
+     Firestore under rules that only the admin account can read, so this page is
+     an empty shell to anyone else. -->
+<meta name="robots" content="noindex,nofollow">
+<title>MPC Editor</title>
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#20303f;--muted:#6d7d8c;--line:#dde4ea;--bg:#f4f6f8;--brand:#0b62c4;
+        --ok:#0a7d45;--err:#b3261e;--radius:9px}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Nunito",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+  header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff;
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;flex-wrap:wrap}
+  .logo{font-weight:800;font-size:17px}.logo span{color:var(--brand)}
+  .pill{font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:999px;background:#e7f0fb;color:var(--brand)}
+  .sp{margin-left:auto}
+  .btn{font-family:inherit;font-size:13px;font-weight:700;padding:7px 12px;border-radius:var(--radius);
+    border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  .btn:hover{background:#f7f9fb}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.ghost{background:transparent}
+  .btn.danger{color:var(--err);border-color:#f0c8c4}
+  .btn.sm{font-size:12px;padding:5px 9px}
+  .btn:disabled{opacity:.5;cursor:default}
+  .hidden{display:none !important}
+  .msg{font-size:12.5px;font-weight:700;color:var(--muted)}
+  .msg.ok{color:var(--ok)}.msg.err{color:var(--err)}
+
+  .gate{max-width:340px;margin:80px auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}
+  .gate h1{font-size:19px;margin:0 0 6px}
+  .gate p{font-size:13.5px;color:var(--muted);margin:0 0 16px;line-height:1.5}
+
+  .layout{display:grid;grid-template-columns:224px minmax(360px,1fr) minmax(420px,1.15fr);height:calc(100vh - 53px)}
+  aside{border-right:1px solid var(--line);background:#fff;overflow:auto;padding:8px 0 40px}
+  .grp{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+    padding:14px 14px 6px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .item{display:block;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:600;
+    padding:9px 14px;border:0;background:none;color:var(--ink);cursor:pointer}
+  .item:hover{background:#f4f7fa}
+  .item.active{background:#e7f0fb;color:var(--brand);font-weight:800}
+  .item .k{font-size:11px;color:var(--muted);font-weight:700;display:block}
+  .item.active .k{color:var(--brand)}
+
+  .work{overflow:auto;padding:18px 20px 80px}
+  .work h2{font-size:18px;margin:0 0 4px}
+  .work h3{font-size:13px;margin:0 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12.5px;font-weight:800;color:#41505f;margin-bottom:5px}
+  .field .hint{font-weight:600;color:var(--muted);font-size:11.5px}
+  .field input,.field textarea,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);
+    border-radius:var(--radius);font-family:inherit;font-size:14px;color:var(--ink);background:#fff}
+  .field textarea{resize:vertical;line-height:1.55}
+  .pagecol{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:16px;background:#fbfcfd}
+  .el{border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:10px;background:#fff}
+  .el .tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;
+    padding:3px 9px;border-radius:999px;margin-bottom:9px;background:#eef3f8;color:#41505f}
+  .rowbtns{display:flex;gap:5px;flex-wrap:wrap}
+  .thumb{width:64px;height:64px;object-fit:contain;border:1px solid var(--line);border-radius:8px;
+    background:#f7f8fa;padding:3px;flex:none}
+  .imgrow{display:flex;gap:10px;align-items:flex-start}
+  .addbar{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+
+  /* ---------- preview ---------- */
+  .pv{background:#dfe4e9;overflow:auto;padding:16px;border-left:1px solid var(--line)}
+  .pvhead{font-size:11.5px;font-weight:800;color:#5a6a78;margin:0 0 12px;display:flex;
+    align-items:center;gap:12px;flex-wrap:wrap}
+  .spread{display:flex;justify-content:center;margin:0 auto 18px;width:1152px;
+    transform-origin:top left;background:#2c4a68;padding:10px;border-radius:6px}
+  /* 6 x 9 inches at 96dpi */
+  /* The real paper. The flat colour stays as a fallback so a page is never
+     blank if the texture has not loaded yet. */
+  .page{width:576px;height:864px;background:#f7ecd2 url("../assets/img/paper.jpg") center/cover;
+    padding:54px 52px 46px;position:relative;
+    overflow:hidden;font-family:"Patrick Hand",cursive;color:#2b2622;font-size:19px;line-height:1.42}
+  .page.left{border-radius:4px 0 0 4px;box-shadow:inset -14px 0 22px -16px rgba(90,70,40,.5)}
+  .page.right{border-radius:0 4px 4px 0;box-shadow:inset 14px 0 22px -16px rgba(90,70,40,.5)}
+  .page.cover{padding:0}
+  .e-title{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;
+    font-size:38px;line-height:1.02;text-align:center;margin:0 0 6px;letter-spacing:.005em}
+  .e-title.plain{text-transform:none;text-align:left;font-size:34px;line-height:1.06}
+  .swash{display:block;width:74%;height:9px;margin:0 auto 18px;
+    background:radial-gradient(ellipse 50% 100% at 50% 0,#2f6fa8 60%,transparent 62%);opacity:.9}
+  .e-title.plain + .swash{margin-left:0}
+  .e-img{display:block;max-width:100%;margin:0 auto 14px}
+  .e-text{text-align:center;margin:0 0 14px}
+  .e-text.left{text-align:left}
+  .e-text p{margin:0 0 8px}
+  .e-note{font-family:"Nunito",sans-serif;font-size:13px;color:#6b6152;margin:14px 0 0}
+  .e-note.mid{text-align:center;font-family:"Patrick Hand",cursive;font-size:18px;color:#2b2622}
+  .box{border:2.5px solid;border-radius:14px;padding:12px 16px 13px;margin:0 0 15px;position:relative}
+  .box h4{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;font-size:19px;
+    margin:0 0 6px;letter-spacing:.02em;display:flex;align-items:center;gap:9px}
+  .box ul{margin:0;padding-left:17px}
+  .box li{margin-bottom:3px}
+  .box .plainlines p{margin:0 0 3px}
+  .box img.ic{width:30px;height:30px;object-fit:contain;flex:none}
+  .box.blue {background:#e5edf5;border-color:#7ba3cc}  .box.blue  h4{color:#2f6fa8}
+  .box.amber{background:#fdf1d8;border-color:#e3ac47}  .box.amber h4{color:#c07f1e}
+  .box.red  {background:#f9e2da;border-color:#e29078}  .box.red   h4{color:#d4553a}
+  /* A torn strip of paper, taped down at both ends. */
+  .box.tape{background:#f2e4c3;border:1px solid #e3d3ac;border-radius:2px}
+  .box.tape h4{color:#a8802c}
+  .box.tape::before,.box.tape::after{content:"";position:absolute;top:-9px;width:44px;height:19px;
+    background:rgba(226,208,166,.85);border:1px solid rgba(198,175,128,.6)}
+  .box.tape::before{left:-14px;transform:rotate(-7deg)}
+  .box.tape::after{right:-14px;transform:rotate(7deg)}
+  .toc-grp{margin:0 0 20px}
+  .toc-grp h4{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;font-size:22px;
+    margin:0 0 5px;display:flex;align-items:center;gap:11px}
+  .toc-grp.blue h4{color:#2f6fa8} .toc-grp.red h4{color:#d4553a} .toc-grp.amber h4{color:#c07f1e}
+  .toc-grp img.ic{width:44px;height:44px;object-fit:contain;flex:none}
+  .toc-grp ul{list-style:none;margin:0;padding:0 0 0 55px}
+  .toc-grp li{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+  .toc-grp .dots{flex:1;border-bottom:2px dotted #b9ac8e;transform:translateY(-4px)}
+  /* Optional logo at the top of a page. When it is off the page simply has
+     less padding, so the content starts higher — nothing is left floating. */
+  .page.haslogo{padding-top:132px}
+  .page-logo{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:124px}
+  .e-sub{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;font-size:20px;
+    text-align:center;color:#2f6fa8;letter-spacing:.03em;margin:0 0 15px;line-height:1.15}
+  /* Book One's contents: orange numbered discs, no page numbers. */
+  .numlist{list-style:none;margin:0 0 14px;padding:0}
+  .numlist li{display:flex;gap:13px;align-items:flex-start;margin-bottom:9px}
+  .numlist .n{flex:none;width:31px;height:31px;border-radius:50%;background:#e2601f;color:#fff;
+    font-family:"Baloo 2",cursive;font-weight:700;font-size:15px;line-height:31px;text-align:center}
+  .numlist .tx{padding-top:2px}
+  /* Book One's right-hand pages: a picture, a heading, a couple of lines. */
+  .iconlist{margin:0 0 14px}
+  .iconlist .it{display:flex;gap:17px;align-items:flex-start;margin-bottom:17px}
+  .iconlist .it img{width:68px;height:68px;object-fit:contain;flex:none}
+  .iconlist h4{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;
+    font-size:21px;margin:0 0 2px;line-height:1.1}
+  .iconlist .bd p{margin:0 0 1px;font-size:17px;line-height:1.34}
+  .badge{position:absolute;right:44px;bottom:34px;width:118px}
+  .badge.mid{left:50%;right:auto;transform:translateX(-50%)}
+  .cover-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .page-logo{filter:drop-shadow(0 1px 1px rgba(80,60,30,.18))}
+  .badge{filter:drop-shadow(0 1px 1px rgba(80,60,30,.18))}
+  .cover-txt{position:absolute;left:0;right:0;bottom:0;padding:40px 46px;
+    background:linear-gradient(to top,rgba(247,236,210,.96),rgba(247,236,210,0));text-align:center}
+  .cover-txt h1{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;font-size:40px;
+    line-height:1.02;margin:0 0 8px}
+  .cover-txt .sub{font-size:20px;margin:0 0 10px}
+  .cover-txt .by{font-family:"Nunito",sans-serif;font-size:13px;font-weight:800;
+    letter-spacing:.09em;text-transform:uppercase;color:#6b6152}
+  @media (max-width:1200px){ .layout{grid-template-columns:200px minmax(0,1fr)} .pv{display:none} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MPC <span>Editor</span></div>
+  <span class="pill" id="mode">connecting…</span>
+  <div class="sp"></div>
+  <span id="who" class="msg"></span>
+  <button id="exportMd" class="btn hidden" type="button">Markdown</button>
+  <button id="exportDocx" class="btn hidden" type="button">Word</button>
+  <button id="exportPdf" class="btn hidden" type="button">Print / PDF</button>
+  <button id="saveBtn" class="btn primary hidden" type="button">Save</button>
+  <span id="saveMsg" class="msg"></span>
+  <button id="signOut" class="btn ghost hidden" type="button">Sign out</button>
+</header>
+
+<div id="gate" class="gate hidden">
+  <h1>The Editor</h1>
+  <p>Sign in with your admin account. The manuscript is private — nobody else can read it, even with this link.</p>
+  <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username"></div>
+  <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"></div>
+  <button id="signIn" class="btn primary" type="button">Sign in</button>
+  <span id="gateMsg" class="msg"></span>
+</div>
+
+<!-- No ?book= in the address: offer the books rather than guessing one. -->
+<div id="picker" class="gate hidden" style="max-width:440px">
+  <h1>Which book?</h1>
+  <p>Each book keeps its own pages and its own layout. Bookmark the one you use most.</p>
+  <div id="bookList"></div>
+</div>
+
+<div id="app" class="layout hidden">
+  <aside>
+    <div class="grp">The book</div>
+    <div id="rail"></div>
+    <div class="grp">Add a spread <span id="tplName" style="font-weight:700;text-transform:none;letter-spacing:0"></span></div>
+    <div id="starters" style="padding:2px 14px 10px;display:flex;flex-direction:column;gap:6px"></div>
+  </aside>
+
+  <div class="work" id="work"></div>
+
+  <div class="pv">
+    <p class="pvhead">
+      <span>Live preview · 6 × 9 in spreads</span>
+      <label style="font-weight:700">Zoom <input id="zoom" type="range" min="25" max="70" step="5" value="38" style="vertical-align:middle"></label>
+      <label style="font-weight:700"><input id="allPages" type="checkbox"> Whole book</label>
+    </p>
+    <div id="pages"></div>
+  </div>
+</div>
+
+<input id="filePick" type="file" accept="image/*" class="hidden">
+
+<script src="../assets/js/firebase-config.js"></script>
+<script src="../assets/js/guides.js"></script>
+<script type="module">
+/* ==========================================================================
+   MPC EDITOR — the private book-authoring surface.
+
+   Same stack as Studio: one HTML file, Firebase auth, Firestore for the words,
+   Firebase Storage for the pictures. None of this is ever shown on the site.
+
+   HOW A BOOK IS PUT TOGETHER
+   --------------------------------------------------------------------------
+   A book is a cover plus a list of SPREADS. A spread is the two pages you see
+   when the book is open: { left:[...], right:[...] }.
+
+   Each page is a list of ELEMENTS, and there are only six kinds — the same six
+   the reference layouts use over and over:
+
+     title   the big hand-lettered heading, with the blue swash under it
+     image   a full-width illustration
+     text    hand-written body copy, centred by default
+     box     a rounded coloured panel (blue / amber / red) or a taped strip of
+             paper, with a heading, an optional icon, and lines
+     toc     a contents group: icon, coloured heading, entries with page numbers
+     note    a small closing line, or the Messy Parents badge
+
+   Because every page is just a list, any layout in the book can be built from
+   the same parts, and a new one never needs new code.
+   ========================================================================== */
+
+const CFG = window.FIREBASE_CONFIG || null;
+const $   = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+                   .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const uid = () => Math.random().toString(36).slice(2,9);
+const lines = s => String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+
+/* Which book this page is editing. Each book is its own Firestore document
+   under book/<id>, so they never touch each other.
+      /editor/?book=book-one   Book One  — its own layout
+      /editor/?book=book-two   Book Two onwards — the standard layout
+   With no ?book= at all you get the list of books. */
+const BOOK_ID = new URLSearchParams(location.search).get("book") || "";
+
+/* The starter spreads each layout offers. Book One's are deliberately separate
+   so there is no chance of dropping a Book Two layout into Book One. */
+const TEMPLATES = {
+  one: { label:"Book One layout", starters:[
+    ["one-contents","Contents (numbered)"], ["one-intro","Welcome / intro"],
+    ["one-chapter","Chapter"], ["blank","Blank spread"] ] },
+  standard: { label:"Book Two onwards", starters:[
+    ["chapter","Chapter spread"], ["feature","Intro / note spread"],
+    ["contents","Contents (with page numbers)"], ["blank","Blank spread"] ] }
+};
+
+/* The collection badge ships with the site. Uploading one in the Cover panel
+   overrides it; clearing that upload falls back to this. */
+const DEFAULT_BADGE = "../assets/img/mpc-logo.png";
+
+const state = { fb:null, book:null, sel:"cover", pick:null, dirty:false, template:"standard" };
+const badgeSrc = () => state.book && state.book.badge ? state.book.badge : DEFAULT_BADGE;
+
+const TONES = [["blue","Blue"],["amber","Amber"],["red","Red"],["tape","Taped paper"]];
+
+/* ---- what each "+ Add" button drops onto a page ---- */
+function newEl(kind){
+  switch(kind){
+    case "title": return { k:"title", text:"", swash:1, plain:0 };
+    case "image": return { k:"image", url:"" };
+    case "text":  return { k:"text", md:"", align:"center" };
+    case "box":   return { k:"box", tone:"blue", title:"", icon:"", body:"", bullets:1 };
+    case "toc":   return { k:"toc", tone:"blue", title:"", icon:"", entries:"" };
+    case "note":  return { k:"note", text:"", style:"small", badge:0 };
+    case "sub":   return { k:"sub", text:"" };
+    case "num":   return { k:"num", start:1, entries:"" };
+    case "icons": return { k:"icons", items:[{icon:"",title:"",body:""}] };
+  }
+}
+
+/* ---- the spreads you can start from ---- */
+/* Book One is laid out differently from the rest of the series, so its
+   starters live under "one" and everything from Book Two under "standard".
+   Both share the same element vocabulary — only the arrangement differs. */
+function newSpread(kind){
+  const s = { id:uid(), name:"New spread", left:[], right:[], logoL:0, logoR:0 };
+
+  if(kind==="one-contents"){
+    s.name = "What's inside";
+    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0},
+                {k:"sub",text:"BOOK ONE: BEFORE THE BABY ARRIVES"},
+                {k:"num",start:1,entries:""},
+                {k:"note",text:"",style:"small",badge:1} ];
+    s.right = [ {k:"num",start:11,entries:""}, {k:"image",url:""} ];
+    return s;
+  }
+  if(kind==="one-intro"){
+    s.name = "Welcome to the mess";
+    s.left  = [ {k:"title",text:"WELCOME TO THE MESS",swash:1,plain:0},
+                {k:"sub",text:"BEFORE THE BABY ARRIVES"},
+                {k:"text",md:"",align:"left"},
+                {k:"image",url:""},
+                {k:"note",text:"",style:"small",badge:1} ];
+    s.right = [ {k:"title",text:"WHAT THIS BOOK WILL DO",swash:0,plain:0},
+                {k:"icons",items:[{icon:"",title:"HELP YOU BUY LESS",body:""},
+                                  {icon:"",title:"HELP YOU SET UP",body:""},
+                                  {icon:"",title:"HELP YOU FEEL READY",body:""}]},
+                {k:"box",tone:"amber",title:"A SMALL NOTE",icon:"",body:"",bullets:0},
+                {k:"image",url:""} ];
+    return s;
+  }
+  if(kind==="one-chapter"){
+    s.name = "New chapter (Book One)";
+    s.left  = [ {k:"title",text:"TRAVEL SETUP",swash:1,plain:0},
+                {k:"sub",text:"WE THOUGHT WE NEEDED THE WHOLE HOUSE."},
+                {k:"text",md:"",align:"left"},
+                {k:"image",url:""},
+                {k:"note",text:"",style:"small",badge:1} ];
+    s.right = [ {k:"title",text:"WHAT YOU ACTUALLY NEED.",swash:0,plain:0},
+                {k:"icons",items:[{icon:"",title:"",body:""},{icon:"",title:"",body:""}]},
+                {k:"box",tone:"amber",title:"WHAT HELPED US",icon:"",body:"",bullets:0} ];
+    return s;
+  }
+
+  if(kind==="chapter"){
+    s.name = "New chapter";
+    s.left  = [ {k:"title",text:"OUR LITTLE MILK STRIKE",swash:1,plain:0},
+                {k:"image",url:""},
+                {k:"text",md:"",align:"center"},
+                {k:"box",tone:"tape",title:"What we learned:",icon:"",body:"",bullets:0} ];
+    s.right = [ {k:"box",tone:"blue", title:"What may be going on",icon:"",body:"",bullets:1},
+                {k:"box",tone:"amber",title:"What helped us",      icon:"",body:"",bullets:1},
+                {k:"box",tone:"red",  title:"Call the doctor if",  icon:"",body:"",bullets:1},
+                {k:"note",text:"Our experience, not medical advice.",style:"small",badge:1} ];
+    s.right.unshift({k:"title",text:"",swash:0,plain:1});
+  } else if(kind==="feature"){
+    s.name = "Intro / note";
+    s.left  = [ {k:"title",text:"WELCOME TO OUR MESS",swash:1,plain:0},
+                {k:"image",url:""}, {k:"text",md:"",align:"center"} ];
+    s.right = [ {k:"title",text:"A LITTLE NOTE BEFORE WE BEGIN",swash:1,plain:0},
+                {k:"box",tone:"blue", title:"What you'll find",   icon:"",body:"",bullets:0},
+                {k:"box",tone:"tape", title:"How to use this book",icon:"",body:"",bullets:0},
+                {k:"box",tone:"red",  title:"We're not doctors",  icon:"",body:"",bullets:0},
+                {k:"note",text:"You're doing better than you think.",style:"mid",badge:1} ];
+  } else if(kind==="contents"){
+    s.name = "Contents";
+    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0},
+                {k:"toc",tone:"blue",title:"Before the baby arrives",icon:"",entries:""},
+                {k:"note",text:"",style:"small",badge:1} ];
+    s.right = [ {k:"toc",tone:"red",title:"Health",icon:"",entries:""}, {k:"image",url:""} ];
+  }
+  return s;
+}
+
+function blankBook(){
+  return {
+    cover:{ image:"", title:"The Messy Parents Handbook", subtitle:"", byline:"Ari & Papa" },
+    badge:"",                       // the Messy Parents Collection logo, used by note elements
+    spreads:[ newSpread("feature") ],
+    updated:0
+  };
+}
+
+/* ==========================================================================
+   MARKDOWN — a deliberately small subset, shared by the preview and Word.
+   Blank line = new paragraph.  **bold**  *italic*
+   ========================================================================== */
+const inlineMd = s => esc(s).replace(/\*\*([^*\n]+)\*\*/g,"<strong>$1</strong>")
+                            .replace(/\*([^*\n]+)\*/g,"<em>$1</em>");
+function mdToHtml(md){
+  return String(md||"").replace(/\r\n?/g,"\n").split(/\n{2,}/)
+    .map(p=>p.trim()).filter(Boolean)
+    .map(p=>"<p>"+inlineMd(p).replace(/\n/g,"<br>")+"</p>").join("");
+}
+
+/* ==========================================================================
+   FIREBASE
+   ========================================================================== */
+async function initFirebase(){
+  const V="10.12.2";
+  const [{initializeApp}, fs, auth, storage] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-storage.js`)
+  ]);
+  const app = initializeApp(CFG);
+  state.fb = { fs, auth, storage, db: fs.getFirestore(app), a: auth.getAuth(app), st: storage.getStorage(app) };
+}
+/* The list of books, so /editor/ with no ?book= can offer them. Seeded the
+   first time with the two that exist today. */
+const DEFAULT_INDEX = [
+  { id:"book-one", title:"Book One — Before the Baby Arrives", template:"one" },
+  { id:"book-two", title:"Book Two", template:"standard" }
+];
+async function loadIndex(){
+  const {fs,db}=state.fb;
+  try{
+    const s=await fs.getDoc(fs.doc(db,"book","index"));
+    const arr = s.exists() && Array.isArray(s.data().books) ? s.data().books : null;
+    return arr && arr.length ? arr : DEFAULT_INDEX;
+  }catch(e){ return DEFAULT_INDEX; }
+}
+async function loadBook(){
+  const {fs,db}=state.fb;
+  const idx = await loadIndex();
+  const entry = idx.find(b=>b.id===BOOK_ID);
+  state.template = (entry && entry.template) || (BOOK_ID==="book-one" ? "one" : "standard");
+  try{
+    const s = await fs.getDoc(fs.doc(db,"book",BOOK_ID));
+    state.book = s.exists() ? Object.assign(blankBook(), s.data()) : blankBook();
+  }catch(e){ state.book = blankBook(); }
+  if(!Array.isArray(state.book.spreads) || !state.book.spreads.length)
+    state.book.spreads = blankBook().spreads;
+  if(entry) $("#mode").textContent = entry.title;
+}
+async function saveBook(){
+  const {fs,db}=state.fb, msg=$("#saveMsg");
+  msg.className="msg"; msg.textContent="Saving…";
+  try{
+    state.book.updated = Date.now();
+    await fs.setDoc(fs.doc(db,"book",BOOK_ID), state.book);
+    state.dirty=false; msg.className="msg ok"; msg.textContent="Saved";
+    setTimeout(()=>{ if(!state.dirty) msg.textContent=""; },2500);
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+}
+async function uploadPicture(file){
+  const {storage,st}=state.fb;
+  const ext=(file.name.split(".").pop()||"png").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const ref=storage.ref(st,"book/"+Date.now()+"-"+uid()+"."+ext);
+  await storage.uploadBytes(ref,file,{contentType:file.type||"image/"+ext});
+  return await storage.getDownloadURL(ref);
+}
+
+/* ==========================================================================
+   RAIL
+   ========================================================================== */
+function spreadById(id){ return state.book.spreads.find(s=>s.id===id); }
+function renderStarters(){
+  const tpl = TEMPLATES[state.template] || TEMPLATES.standard;
+  $("#tplName").textContent = "· " + tpl.label;
+  $("#starters").innerHTML = tpl.starters
+    .map(([k,l])=>`<button class="btn sm" data-new="${k}" type="button">+ ${l}</button>`).join("");
+}
+function renderRail(){
+  const mk=(key,label,sub)=>`<button class="item ${state.sel===key?"active":""}" data-sel="${key}">
+    ${esc(label)}${sub?`<span class="k">${esc(sub)}</span>`:""}</button>`;
+  $("#rail").innerHTML = mk("cover","Cover","front of the book") +
+    state.book.spreads.map((s,i)=>mk(s.id, s.name||"Untitled", "spread "+(i+1))).join("");
+}
+
+/* ==========================================================================
+   EDITOR PANE
+   ========================================================================== */
+function elEditor(side, i, el){
+  const head = (icon,label) =>
+    `<span class="tag">${icon} ${label}</span>
+     <div class="rowbtns" style="float:right">
+       <button class="btn sm ghost" data-act="up">↑</button>
+       <button class="btn sm ghost" data-act="down">↓</button>
+       <button class="btn sm danger" data-act="del">✕</button>
+     </div>`;
+  const wrap = inner => `<div class="el" data-el="${side}:${i}">${inner}</div>`;
+
+  if(el.k==="title") return wrap(head("🅰️","Heading")+`
+    <div class="field"><label>Words</label><input data-f="text" type="text" value="${esc(el.text)}"></div>
+    <div class="field"><label>Look</label><select data-f="plain">
+      <option value="0" ${!el.plain?"selected":""}>Big capitals, centred</option>
+      <option value="1" ${el.plain?"selected":""}>Sentence case, left — for a guide title</option>
+    </select></div>
+    <div class="field"><label>Blue underline</label><select data-f="swash">
+      <option value="1" ${el.swash?"selected":""}>Yes</option>
+      <option value="0" ${!el.swash?"selected":""}>No</option></select></div>`);
+
+  if(el.k==="image") return wrap(head("🖼","Illustration")+`
+    <div class="imgrow"><img class="thumb" src="${esc(el.url)}" alt="">
+      <div class="rowbtns"><button class="btn sm" data-act="pick">Upload / replace…</button>
+        <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
+
+  if(el.k==="text") return wrap(head("✏️","Text")+`
+    <div class="field"><label>Words <span class="hint">— blank line starts a new paragraph, **bold**, *italic*</span></label>
+      <textarea data-f="md" rows="5">${esc(el.md)}</textarea></div>
+    <div class="field"><label>Alignment</label><select data-f="align">
+      <option value="center" ${el.align!=="left"?"selected":""}>Centred</option>
+      <option value="left" ${el.align==="left"?"selected":""}>Left</option></select></div>`);
+
+  if(el.k==="box") return wrap(head("🎨","Panel")+`
+    <div class="field"><label>Heading</label><input data-f="title" type="text" value="${esc(el.title)}"></div>
+    <div class="field"><label>Colour</label><select data-f="tone">
+      ${TONES.map(([v,l])=>`<option value="${v}" ${el.tone===v?"selected":""}>${l}</option>`).join("")}
+    </select></div>
+    <div class="field"><label>Lines <span class="hint">— one per line</span></label>
+      <textarea data-f="body" rows="4">${esc(el.body)}</textarea></div>
+    <div class="field"><label>Show bullets</label><select data-f="bullets">
+      <option value="1" ${el.bullets?"selected":""}>Yes</option>
+      <option value="0" ${!el.bullets?"selected":""}>No — plain lines</option></select></div>
+    <div class="imgrow"><img class="thumb" src="${esc(el.icon)}" alt="">
+      <div class="rowbtns"><button class="btn sm" data-act="pick">Icon…</button>
+        <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
+
+  if(el.k==="toc") return wrap(head("📑","Contents group")+`
+    <div class="field"><label>Group heading</label><input data-f="title" type="text" value="${esc(el.title)}"></div>
+    <div class="field"><label>Colour</label><select data-f="tone">
+      <option value="blue" ${el.tone==="blue"?"selected":""}>Blue</option>
+      <option value="red" ${el.tone==="red"?"selected":""}>Orange</option>
+      <option value="amber" ${el.tone==="amber"?"selected":""}>Amber</option></select></div>
+    <div class="field"><label>Entries <span class="hint">— one per line, as <code>Title | 22</code></span></label>
+      <textarea data-f="entries" rows="4">${esc(el.entries)}</textarea></div>
+    <div class="imgrow"><img class="thumb" src="${esc(el.icon)}" alt="">
+      <div class="rowbtns"><button class="btn sm" data-act="pick">Icon…</button>
+        <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
+
+  if(el.k==="sub") return wrap(head("🔵","Blue subtitle")+`
+    <div class="field"><label>Words <span class="hint">— the blue capitals under the heading</span></label>
+      <input data-f="text" type="text" value="${esc(el.text)}"></div>`);
+
+  if(el.k==="num") return wrap(head("🔢","Numbered list")+`
+    <div class="field"><label>Start numbering at <span class="hint">— so a list can carry on across the page turn</span></label>
+      <input data-f="start" type="number" min="1" value="${esc(el.start)}"></div>
+    <div class="field"><label>Entries <span class="hint">— one per line</span></label>
+      <textarea data-f="entries" rows="8">${esc(el.entries)}</textarea></div>`);
+
+  if(el.k==="icons") return wrap(head("🧷","Picture list")+`
+    ${(el.items||[]).map((it,j)=>`<div class="el" data-item="${j}" style="background:#fbfcfd">
+      <div class="rowbtns" style="float:right">
+        <button class="btn sm ghost" data-act="iup">↑</button>
+        <button class="btn sm ghost" data-act="idown">↓</button>
+        <button class="btn sm danger" data-act="idel">✕</button></div>
+      <div class="field"><label>Heading</label><input data-if="title" type="text" value="${esc(it.title)}"></div>
+      <div class="field"><label>Lines <span class="hint">— one per line</span></label>
+        <textarea data-if="body" rows="3">${esc(it.body)}</textarea></div>
+      <div class="imgrow"><img class="thumb" src="${esc(it.icon)}" alt="">
+        <div class="rowbtns"><button class="btn sm" data-act="ipick">Picture…</button>
+          <button class="btn sm ghost" data-act="iclear">Clear</button></div></div>
+    </div>`).join("")}
+    <div class="addbar"><button class="btn sm" data-act="iadd">+ Another item</button></div>`);
+
+  return wrap(head("📝","Closing line")+`
+    <div class="field"><label>Words <span class="hint">— may be left empty if you only want the badge</span></label>
+      <input data-f="text" type="text" value="${esc(el.text)}"></div>
+    <div class="field"><label>Style</label><select data-f="style">
+      <option value="small" ${el.style!=="mid"?"selected":""}>Small print, left</option>
+      <option value="mid" ${el.style==="mid"?"selected":""}>Hand-written, centred</option></select></div>
+    <div class="field"><label>Messy Parents badge</label><select data-f="badge">
+      <option value="1" ${el.badge?"selected":""}>Show it in the corner</option>
+      <option value="0" ${!el.badge?"selected":""}>No badge</option></select></div>`);
+}
+
+function pageEditor(side, arr, spread){
+  const on = side==="left" ? spread.logoL : spread.logoR;
+  return `<div class="pagecol">
+    <h3>${side==="left"?"Left page":"Right page"}</h3>
+    <div class="field"><label>Collection logo at the top of this page</label>
+      <select data-logo="${side}">
+        <option value="0" ${!on?"selected":""}>No — start the content higher</option>
+        <option value="1" ${on?"selected":""}>Yes — logo at the top</option>
+      </select></div>
+    ${arr.map((el,i)=>elEditor(side,i,el)).join("") ||
+      `<p class="msg" style="margin:0 0 10px">Nothing on this page yet.</p>`}
+    <div class="addbar">
+      ${[["title","Heading"],["sub","Subtitle"],["image","Image"],["text","Text"],
+         ["icons","Picture list"],["num","Numbered list"],["box","Panel"],
+         ["toc","Contents group"],["note","Closing line"]].map(([k,l])=>
+        `<button class="btn sm" data-add="${side}:${k}">+ ${l}</button>`).join("")}
+    </div>
+  </div>`;
+}
+
+function renderWork(){
+  const w=$("#work"), b=state.book;
+  if(state.sel==="cover"){
+    w.innerHTML = `<h2>Cover</h2>
+      <p class="field hint" style="margin:0 0 14px">The picture fills the page; the words sit over the bottom of it.</p>
+      <div class="el" data-el="cover:0">
+        <span class="tag">🖼 Cover picture</span>
+        <div class="imgrow"><img class="thumb" src="${esc(b.cover.image)}" alt="">
+          <div class="rowbtns"><button class="btn sm" data-act="pick">Upload / replace…</button>
+            <button class="btn sm ghost" data-act="clear">Clear</button></div></div>
+      </div>
+      <div class="field"><label>Title</label><input data-cov="title" type="text" value="${esc(b.cover.title)}"></div>
+      <div class="field"><label>Subtitle</label><input data-cov="subtitle" type="text" value="${esc(b.cover.subtitle)}"></div>
+      <div class="field"><label>Byline</label><input data-cov="byline" type="text" value="${esc(b.cover.byline)}"></div>
+      <div class="el" data-el="badge:0" style="margin-top:18px">
+        <span class="tag">🏷 Collection badge</span>
+        <p class="field hint" style="margin:0 0 8px">The Messy Parents Collection logo — used at the top of a page when you switch it on, and in the corner whenever a closing line asks for it. The standard one is already here; upload only if this book needs a different badge.</p>
+        <div class="imgrow"><img class="thumb" src="${esc(badgeSrc())}" alt="">
+          <div class="rowbtns"><button class="btn sm" data-act="pick">Upload / replace…</button>
+            <button class="btn sm ghost" data-act="clear">Back to the standard logo</button></div></div>
+      </div>`;
+    return;
+  }
+  const s = spreadById(state.sel);
+  if(!s){ w.innerHTML = `<p class="msg">Pick something on the left.</p>`; return; }
+  w.innerHTML = `<h2>${esc(s.name||"Spread")}</h2>
+    <div class="field"><label>Spread name <span class="hint">— just for the list on the left</span></label>
+      <input data-sp="name" type="text" value="${esc(s.name||"")}"></div>
+    <div class="field"><label>Fill the right page from a site guide</label>
+      <select id="importGuide"><option value="">Choose a guide…</option>
+        ${(window.GUIDES||[]).map(g=>`<option value="${esc(g.id)}">${esc(g.title)}</option>`).join("")}
+      </select></div>
+    ${pageEditor("left", s.left, s)}
+    ${pageEditor("right", s.right, s)}
+    <div class="rowbtns" style="margin-top:6px">
+      <button class="btn sm ghost" data-act="spup">Move spread earlier</button>
+      <button class="btn sm ghost" data-act="spdown">Move spread later</button>
+      <button class="btn sm danger" data-act="delsp">Delete this spread</button>
+    </div>`;
+}
+
+/* ==========================================================================
+   PREVIEW — the pages as they will print
+   ========================================================================== */
+function elHtml(el, badge){
+  switch(el.k){
+    case "title":
+      return `<h1 class="e-title ${el.plain?"plain":""}">${esc(el.text)}</h1>` +
+             (el.swash?`<span class="swash"></span>`:"");
+    case "image":
+      return el.url?`<img class="e-img" src="${esc(el.url)}" alt="">`:"";
+    case "text":
+      return `<div class="e-text ${el.align==="left"?"left":""}">${mdToHtml(el.md)}</div>`;
+    case "box":{
+      const ls = lines(el.body);
+      const inner = el.bullets
+        ? `<ul>${ls.map(l=>`<li>${inlineMd(l)}</li>`).join("")}</ul>`
+        : `<div class="plainlines">${ls.map(l=>`<p>${inlineMd(l)}</p>`).join("")}</div>`;
+      return `<div class="box ${esc(el.tone)}">
+        <h4>${el.icon?`<img class="ic" src="${esc(el.icon)}" alt="">`:""}${esc(el.title)}</h4>
+        ${inner}</div>`;
+    }
+    case "toc":{
+      const rows = lines(el.entries).map(l=>{
+        const [t,pg] = l.split("|").map(x=>(x||"").trim());
+        return `<li><span>${esc(t)}</span><span class="dots"></span><span>${esc(pg)}</span></li>`;
+      }).join("");
+      return `<div class="toc-grp ${esc(el.tone)}">
+        <h4>${el.icon?`<img class="ic" src="${esc(el.icon)}" alt="">`:""}${esc(el.title)}</h4>
+        <ul>${rows}</ul></div>`;
+    }
+    case "sub":
+      return `<p class="e-sub">${esc(el.text)}</p>`;
+    case "num":{
+      let n = +el.start || 1;
+      return `<ul class="numlist">${lines(el.entries).map(l=>
+        `<li><span class="n">${n++}.</span><span class="tx">${inlineMd(l)}</span></li>`).join("")}</ul>`;
+    }
+    case "icons":
+      return `<div class="iconlist">${(el.items||[]).map(it=>`<div class="it">
+        ${it.icon?`<img src="${esc(it.icon)}" alt="">`:""}
+        <div><h4>${esc(it.title)}</h4><div class="bd">${
+          lines(it.body).map(l=>`<p>${inlineMd(l)}</p>`).join("")}</div></div>
+      </div>`).join("")}</div>`;
+    case "note":
+      return (el.text?`<p class="e-note ${el.style==="mid"?"mid":""}">${esc(el.text)}</p>`:"") +
+             (el.badge && badge?`<img class="badge" src="${esc(badge)}" alt="">`:"");
+  }
+  return "";
+}
+/* topLogo puts the collection badge at the head of the page. When it is off the
+   page loses that band of padding, so the words start higher up rather than
+   leaving a gap where the logo would have been. */
+function pageHtml(arr, side, badge, topLogo){
+  const logo = topLogo && badge ? `<img class="page-logo" src="${esc(badge)}" alt="">` : "";
+  return `<div class="page ${side} ${topLogo&&badge?"haslogo":""}">${logo}${
+    (arr||[]).map(el=>elHtml(el,badge)).join("")}</div>`;
+}
+function renderPreview(){
+  const b=state.book, all=$("#allPages").checked, out=[];
+  if(state.sel==="cover" || all){
+    out.push(`<div class="spread"><div class="page left cover">
+      ${b.cover.image?`<img class="cover-art" src="${esc(b.cover.image)}" alt="">`:""}
+      <div class="cover-txt"><h1>${esc(b.cover.title)}</h1>
+        ${b.cover.subtitle?`<p class="sub">${esc(b.cover.subtitle)}</p>`:""}
+        ${b.cover.byline?`<p class="by">${esc(b.cover.byline)}</p>`:""}</div>
+      </div><div class="page right"></div></div>`);
+  }
+  const list = all ? b.spreads : b.spreads.filter(s=>s.id===state.sel);
+  for(const s of list){
+    out.push(`<div class="spread">${pageHtml(s.left,"left",badgeSrc(),s.logoL)}${
+      pageHtml(s.right,"right",badgeSrc(),s.logoR)}</div>`);
+  }
+  $("#pages").innerHTML = out.join("") || `<p class="msg">Nothing to show.</p>`;
+  applyZoom();
+}
+function applyZoom(){
+  const z=(+$("#zoom").value)/100;
+  document.querySelectorAll(".spread").forEach(el=>{
+    el.style.transform=`scale(${z})`;
+    el.style.marginBottom=(18-884*(1-z))+"px";
+    el.style.marginRight=(-1172*(1-z))+"px";
+  });
+}
+
+function touch(){ state.dirty=true; $("#saveMsg").className="msg"; $("#saveMsg").textContent="Unsaved changes"; }
+function redraw(full){ if(full!==false){ renderStarters(); renderRail(); renderWork(); } renderPreview(); }
+
+/* ==========================================================================
+   EVENTS
+   ========================================================================== */
+document.addEventListener("click", e=>{
+  const nav=e.target.closest("[data-sel]");
+  if(nav){ state.sel=nav.dataset.sel; redraw(); return; }
+  const add=e.target.closest("[data-new]");
+  if(add){
+    const s=newSpread(add.dataset.new);
+    state.book.spreads.push(s); state.sel=s.id; touch(); redraw();
+  }
+});
+
+$("#work").addEventListener("click", e=>{
+  const btn=e.target.closest("[data-act],[data-add]");
+  if(!btn) return;
+  const s=spreadById(state.sel);
+
+  if(btn.dataset.add){
+    const [side,kind]=btn.dataset.add.split(":");
+    s[side].push(newEl(kind)); touch(); redraw(); return;
+  }
+  const act=btn.dataset.act;
+  if(act==="delsp"){
+    if(!confirm("Delete this spread? This cannot be undone.")) return;
+    state.book.spreads=state.book.spreads.filter(x=>x.id!==s.id);
+    state.sel="cover"; touch(); redraw(); return;
+  }
+  if(act==="spup"||act==="spdown"){
+    const arr=state.book.spreads, i=arr.indexOf(s), j=act==="spup"?i-1:i+1;
+    if(j<0||j>=arr.length) return;
+    arr.splice(j,0,arr.splice(i,1)[0]); touch(); redraw(); return;
+  }
+
+  const holder=btn.closest("[data-el]"); if(!holder) return;
+  const [side,idx]=holder.dataset.el.split(":"), i=+idx;
+
+  if(side==="cover"||side==="badge"){
+    if(act==="pick"){ state.pick={target:side}; $("#filePick").click(); }
+    if(act==="clear"){ if(side==="cover") state.book.cover.image=""; else state.book.badge=""; touch(); redraw(); }
+    return;
+  }
+  const arr=s[side], el=arr[i];
+
+  /* Picture-list items have their own row of controls. */
+  if(act && act[0]==="i"){
+    const row=btn.closest("[data-item]"), j=row?+row.dataset.item:-1;
+    const items=el.items||(el.items=[]);
+    if(act==="iadd"){ items.push({icon:"",title:"",body:""}); touch(); redraw(); return; }
+    if(act==="idel"){ items.splice(j,1); touch(); redraw(); return; }
+    if(act==="iup" && j>0){ items.splice(j-1,0,items.splice(j,1)[0]); touch(); redraw(); return; }
+    if(act==="idown" && j<items.length-1){ items.splice(j+1,0,items.splice(j,1)[0]); touch(); redraw(); return; }
+    if(act==="ipick"){ state.pick={items,j}; $("#filePick").click(); return; }
+    if(act==="iclear"){ items[j].icon=""; touch(); redraw(); return; }
+    return;
+  }
+  if(act==="pick"){ state.pick={arr,i}; $("#filePick").click(); return; }
+  if(act==="clear"){ const el=arr[i]; if("url" in el) el.url=""; else el.icon=""; touch(); redraw(); return; }
+  if(act==="del"){ arr.splice(i,1); touch(); redraw(); return; }
+  if(act==="up" && i>0){ arr.splice(i-1,0,arr.splice(i,1)[0]); touch(); redraw(); return; }
+  if(act==="down" && i<arr.length-1){ arr.splice(i+1,0,arr.splice(i,1)[0]); touch(); redraw(); return; }
+});
+
+$("#work").addEventListener("input", e=>{
+  const el=e.target, s=spreadById(state.sel);
+  if(el.dataset.cov){ state.book.cover[el.dataset.cov]=el.value; touch(); renderPreview(); return; }
+  if(el.dataset.sp){ s.name=el.value; touch(); renderRail(); return; }
+  if(el.dataset.logo){
+    if(el.dataset.logo==="left") s.logoL=+el.value; else s.logoR=+el.value;
+    touch(); renderPreview(); return;
+  }
+  if(el.dataset.if){
+    const holder=el.closest("[data-el]"), [sd,ix]=holder.dataset.el.split(":");
+    const j=+el.closest("[data-item]").dataset.item;
+    s[sd][+ix].items[j][el.dataset.if]=el.value;
+    touch(); renderPreview(); return;
+  }
+  if(!el.dataset.f) return;
+  const holder=el.closest("[data-el]"), [side,idx]=holder.dataset.el.split(":");
+  const item=s[side][+idx], f=el.dataset.f;
+  item[f] = (f==="swash"||f==="plain"||f==="bullets"||f==="badge"||f==="start") ? +el.value : el.value;
+  touch();
+  /* A dropdown that changes the shape of the card needs the panel redrawn too. */
+  if(el.tagName==="SELECT" && (f==="plain"||f==="bullets")) redraw(); else renderPreview();
+});
+
+/* Pull a guide from the site into the right-hand page. */
+$("#work").addEventListener("change", e=>{
+  if(e.target.id!=="importGuide" || !e.target.value) return;
+  const g=(window.GUIDES||[]).find(x=>x.id===e.target.value); if(!g) return;
+  const s=spreadById(state.sel), p=g.panel||{}, b=state.book;
+  const box=(src,tone)=>src?{k:"box",tone,title:src.title||"",icon:"",
+    body:(src.items||[]).join("\n"),bullets:1}:null;
+  s.right = [
+    {k:"title",text:g.title,swash:0,plain:1},
+    box(p.normal,"blue"), box(p.helped,"amber"), box(p.warn,"red"),
+    {k:"note",text:"Our experience, not medical advice.",style:"small",badge:1}
+  ].filter(Boolean);
+  if(!s.name || s.name==="New chapter" || s.name==="New spread") s.name=g.title;
+  touch(); redraw();
+});
+
+$("#filePick").addEventListener("change", async e=>{
+  const file=e.target.files&&e.target.files[0]; e.target.value="";
+  const p=state.pick; if(!file||!p) return;
+  try{
+    const url=await uploadPicture(file);
+    if(p.target==="cover") state.book.cover.image=url;
+    else if(p.target==="badge") state.book.badge=url;
+    else if(p.items) p.items[p.j].icon=url;
+    else { const el=p.arr[p.i]; if("url" in el) el.url=url; else el.icon=url; }
+    touch(); redraw();
+  }catch(err){ alert("Upload failed: "+(err.message||err)); }
+});
+
+$("#zoom").addEventListener("input", applyZoom);
+$("#allPages").addEventListener("change", renderPreview);
+$("#saveBtn").addEventListener("click", saveBook);
+window.addEventListener("beforeunload", e=>{ if(state.dirty){ e.preventDefault(); e.returnValue=""; } });
+
+/* ==========================================================================
+   EXPORTS
+   ========================================================================== */
+function download(name, blob){
+  const a=document.createElement("a"), u=URL.createObjectURL(blob);
+  a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+const bookName = () => (state.book.cover.title||"book").replace(/[^\w -]/g,"").trim()||"book";
+
+/* ---- Markdown: the portable copy, so nothing is ever locked in here ------ */
+$("#exportMd").addEventListener("click", ()=>{
+  const b=state.book, L=["# "+b.cover.title];
+  if(b.cover.subtitle) L.push("_"+b.cover.subtitle+"_");
+  if(b.cover.byline)   L.push(b.cover.byline);
+  const page = arr => (arr||[]).map(el=>{
+    if(el.k==="title") return "\n## "+el.text;
+    if(el.k==="image") return el.url?`![](${el.url})`:"";
+    if(el.k==="text")  return el.md;
+    if(el.k==="box")   return "\n### "+el.title+"\n"+lines(el.body).map(l=>"- "+l).join("\n");
+    if(el.k==="toc")   return "\n### "+el.title+"\n"+lines(el.entries)
+                         .map(l=>{const [t,p]=l.split("|");return `- ${(t||"").trim()} — ${(p||"").trim()}`;}).join("\n");
+    if(el.k==="sub")   return "\n**"+el.text+"**";
+    if(el.k==="num"){ let n=+el.start||1;
+      return lines(el.entries).map(l=>(n++)+". "+l).join("\n"); }
+    if(el.k==="icons") return (el.items||[]).map(it=>
+      "\n### "+it.title+"\n"+lines(it.body).join("\n")).join("\n");
+    if(el.k==="note")  return el.text?"\n_"+el.text+"_":"";
+    return "";
+  }).filter(Boolean).join("\n\n");
+  for(const s of b.spreads){ L.push("\n\n<!-- "+(s.name||"")+" -->"); L.push(page(s.left)); L.push(page(s.right)); }
+  download(bookName()+".md", new Blob([L.join("\n")],{type:"text/markdown"}));
+});
+
+/* ---- Print / PDF: single 6x9 pages, in order. Highest fidelity — what you
+   see in the preview is exactly what prints. ------------------------------- */
+$("#exportPdf").addEventListener("click", ()=>{
+  const b=state.book, css=document.querySelector("style").textContent;
+  const w=window.open("","_blank");
+  if(!w){ alert("Allow pop-ups for this page, then try again."); return; }
+  const pages=[`<div class="page cover">
+      ${b.cover.image?`<img class="cover-art" src="${esc(b.cover.image)}" alt="">`:""}
+      <div class="cover-txt"><h1>${esc(b.cover.title)}</h1>
+        ${b.cover.subtitle?`<p class="sub">${esc(b.cover.subtitle)}</p>`:""}
+        ${b.cover.byline?`<p class="by">${esc(b.cover.byline)}</p>`:""}</div></div>`];
+  for(const s of b.spreads){
+    pages.push(pageHtml(s.left,"",badgeSrc(),s.logoL));
+    pages.push(pageHtml(s.right,"",badgeSrc(),s.logoR));
+  }
+  /* The print window starts life at about:blank, so the paper texture and the
+     logo need an explicit base to resolve against. */
+  w.document.write(`<!doctype html><meta charset="utf-8"><base href="${location.href}">
+    <title>${esc(b.cover.title)}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>${css}
+      @page{ size:6in 9in; margin:0 }
+      body{background:#fff;margin:0}
+      .page{box-shadow:none !important;border-radius:0;page-break-after:always;margin:0}
+      .page:last-child{page-break-after:auto}
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+      *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    </style>${pages.join("")}`);
+  w.document.close();
+  w.addEventListener("load", ()=>setTimeout(()=>w.print(),800));
+});
+
+/* ---- Word (.docx): real OOXML built here with JSZip. KDP takes these
+   directly. Pictures are fetched and embedded; a failure is reported in the
+   file rather than dropped silently. --------------------------------------- */
+async function ensureJSZip(){
+  if(window.JSZip) return window.JSZip;
+  await new Promise((ok,no)=>{
+    const s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+    s.onload=ok; s.onerror=()=>no(new Error("Could not load the Word exporter"));
+    document.head.appendChild(s);
+  });
+  return window.JSZip;
+}
+const xmlEsc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+                     .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function runsXml(text){
+  const parts=[]; let rest=String(text||""), m;
+  const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/;
+  while((m=re.exec(rest))){
+    if(m.index) parts.push({t:rest.slice(0,m.index)});
+    const tok=m[0];
+    if(tok.startsWith("**")) parts.push({t:tok.slice(2,-2),b:1});
+    else parts.push({t:tok.slice(1,-1),i:1});
+    rest=rest.slice(m.index+tok.length);
+  }
+  if(rest) parts.push({t:rest});
+  return parts.map(p=>`<w:r><w:rPr>${p.b?"<w:b/>":""}${p.i?"<w:i/>":""}</w:rPr>`+
+    `<w:t xml:space="preserve">${xmlEsc(p.t)}</w:t></w:r>`).join("");
+}
+const paraXml = (style,text) => `<w:p><w:pPr><w:pStyle w:val="${style}"/></w:pPr>${runsXml(text)}</w:p>`;
+const pageBreak = () => `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+const imageXml = (rid,w,h,id) => `<w:p><w:pPr><w:pStyle w:val="Figure"/></w:pPr><w:r><w:drawing>
+  <wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${w}" cy="${h}"/>
+  <wp:docPr id="${id}" name="Picture ${id}"/>
+  <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+  <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+  <pic:nvPicPr><pic:cNvPr id="${id}" name="Picture ${id}"/><pic:cNvPicPr/></pic:nvPicPr>
+  <pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>
+  <pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${w}" cy="${h}"/></a:xfrm>
+  <a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic>
+  </a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+
+$("#exportDocx").addEventListener("click", async ()=>{
+  const btn=$("#exportDocx"), msg=$("#saveMsg");
+  btn.disabled=true; msg.className="msg"; msg.textContent="Building the Word file…";
+  try{
+    const JSZip=await ensureJSZip(), zip=new JSZip();
+    const media=[], failed=[]; let ridN=10, docId=1;
+
+    async function addImage(url){
+      const hit=media.find(m=>m.url===url); if(hit) return hit;
+      try{
+        const r=await fetch(url); if(!r.ok) throw new Error(r.status);
+        const buf=await r.arrayBuffer();
+        const dims=await new Promise(ok=>{
+          const im=new Image();
+          im.onload=()=>ok({w:im.naturalWidth,h:im.naturalHeight});
+          im.onerror=()=>ok({w:1200,h:900});
+          im.src=URL.createObjectURL(new Blob([buf]));
+        });
+        const ext=(/\.(png|jpe?g|gif|webp)/i.exec(url)||[,"png"])[1].toLowerCase();
+        const m={url,name:`image${media.length+1}.${ext==="jpg"?"jpeg":ext}`,
+                 data:buf,rid:`rId${ridN++}`,w:dims.w,h:dims.h};
+        media.push(m); return m;
+      }catch(e){ failed.push(url); return null; }
+    }
+    async function emitImage(url, maxIn){
+      const m=await addImage(url);
+      if(!m){ return paraXml("Caption","[picture could not be embedded: "+url+"]"); }
+      const w=Math.min(maxIn*914400, m.w*9525), h=Math.round(w*(m.h/m.w));
+      return imageXml(m.rid, Math.round(w), h, docId++);
+    }
+
+    let body="";
+    const b=state.book;
+    body += paraXml("Title", b.cover.title);
+    if(b.cover.subtitle) body += paraXml("Subtitle", b.cover.subtitle);
+    if(b.cover.byline)   body += paraXml("Subtitle", b.cover.byline);
+    body += pageBreak();
+
+    for(const s of b.spreads){
+      for(const side of ["left","right"]){
+        for(const el of (s[side]||[])){
+          if(el.k==="title") body += paraXml(el.plain?"Heading2":"Heading1", el.text);
+          else if(el.k==="image" && el.url) body += await emitImage(el.url, 4.5);
+          else if(el.k==="text")
+            String(el.md||"").split(/\n{2,}/).map(x=>x.trim()).filter(Boolean)
+              .forEach(p=>{ body += paraXml("Body", p.replace(/\n/g," ")); });
+          else if(el.k==="box"){
+            body += paraXml("Heading3", el.title);
+            lines(el.body).forEach(l=>{ body += paraXml(el.bullets?"Bullet":"Body", l); });
+          }
+          else if(el.k==="toc"){
+            body += paraXml("Heading3", el.title);
+            lines(el.entries).forEach(l=>{
+              const [t,pg]=l.split("|").map(x=>(x||"").trim());
+              body += paraXml("Body", t+"\t"+pg);
+            });
+          }
+          else if(el.k==="sub") body += paraXml("Heading3", el.text);
+          else if(el.k==="num"){
+            let n=+el.start||1;
+            lines(el.entries).forEach(l=>{ body += paraXml("Body", (n++)+". "+l); });
+          }
+          else if(el.k==="icons"){
+            for(const it of (el.items||[])){
+              if(it.icon) body += await emitImage(it.icon, 0.9);
+              if(it.title) body += paraXml("Heading3", it.title);
+              lines(it.body).forEach(l=>{ body += paraXml("Body", l); });
+            }
+          }
+          else if(el.k==="note" && el.text) body += paraXml("Caption", el.text);
+        }
+        body += pageBreak();
+      }
+    }
+
+    const sectPr=`<w:sectPr><w:pgSz w:w="8640" w:h="12960"/>
+      <w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080"
+               w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>`;
+
+    zip.file("[Content_Types].xml",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Default Extension="png" ContentType="image/png"/>
+<Default Extension="jpeg" ContentType="image/jpeg"/>
+<Default Extension="gif" ContentType="image/gif"/>
+<Default Extension="webp" ContentType="image/webp"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
+</Types>`);
+    zip.folder("_rels").file(".rels",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`);
+    zip.folder("word").folder("_rels").file("document.xml.rels",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+${media.map(m=>`<Relationship Id="${m.rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${m.name}"/>`).join("")}
+</Relationships>`);
+    media.forEach(m=>zip.folder("word").folder("media").file(m.name, m.data));
+
+    const st=(id,name,sz,opts)=>`<w:style w:type="paragraph" w:styleId="${id}">
+      <w:name w:val="${name}"/><w:qFormat/><w:pPr>${opts||""}</w:pPr>
+      <w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="${sz}"/></w:rPr></w:style>`;
+    zip.folder("word").file("styles.xml",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr>
+  <w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/>
+  <w:pPr><w:spacing w:after="140" w:line="300" w:lineRule="auto"/></w:pPr>
+  <w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/></w:rPr></w:style>
+${st("Title","Title",56,'<w:spacing w:after="160"/><w:jc w:val="center"/>')}
+${st("Subtitle","Subtitle",28,'<w:spacing w:after="120"/><w:jc w:val="center"/>')}
+${st("Heading1","heading 1",36,'<w:spacing w:before="240" w:after="200"/><w:jc w:val="center"/>')}
+${st("Heading2","heading 2",30,'<w:spacing w:before="200" w:after="140"/>')}
+${st("Heading3","heading 3",24,'<w:spacing w:before="180" w:after="90"/>')}
+${st("Body","Body Text",22,'<w:spacing w:after="140" w:line="300" w:lineRule="auto"/>')}
+${st("Bullet","List Bullet",22,'<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr><w:spacing w:after="80"/>')}
+${st("Quote","Quote",22,'<w:ind w:left="360" w:right="360"/><w:spacing w:before="120" w:after="160"/>')}
+${st("Caption","Caption",18,'<w:spacing w:after="160"/>')}
+${st("Figure","Figure",22,'<w:jc w:val="center"/><w:spacing w:before="120" w:after="60"/>')}
+</w:styles>`);
+    zip.folder("word").file("numbering.xml",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0">
+<w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="\u2022"/><w:lvlJc w:val="left"/>
+<w:pPr><w:ind w:left="360" w:hanging="180"/></w:pPr>
+<w:rPr><w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default"/></w:rPr>
+</w:lvl></w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>`);
+    zip.folder("word").file("document.xml",
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+ xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+<w:body>${body}${sectPr}</w:body></w:document>`);
+
+    const blob=await zip.generateAsync({type:"blob",
+      mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+    download(bookName()+".docx", blob);
+    msg.className = failed.length ? "msg err" : "msg ok";
+    msg.textContent = failed.length
+      ? `Exported, but ${failed.length} picture(s) could not be embedded — see the markers in the file.`
+      : "Word file downloaded.";
+  }catch(e){ msg.className="msg err"; msg.textContent="Export failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
+});
+
+/* ==========================================================================
+   BOOT
+   ========================================================================== */
+const CHROME=["saveBtn","signOut","exportMd","exportDocx","exportPdf"];
+(async function boot(){
+  if(!CFG){ $("#mode").textContent="no Firebase config"; $("#gate").classList.remove("hidden"); return; }
+  await initFirebase();
+  const {auth,a}=state.fb;
+  $("#mode").textContent="Firebase · private";
+  auth.onAuthStateChanged(a, async user=>{
+    if(!user){
+      $("#app").classList.add("hidden"); $("#picker").classList.add("hidden");
+      $("#gate").classList.remove("hidden");
+      CHROME.forEach(id=>$("#"+id).classList.add("hidden")); $("#who").textContent="";
+      return;
+    }
+    if(!BOOK_ID){                       // no book chosen — show the list
+      const idx=await loadIndex();
+      $("#bookList").innerHTML = idx.map(b=>
+        `<a class="btn" style="display:block;margin-bottom:8px;text-decoration:none"
+            href="?book=${encodeURIComponent(b.id)}">${esc(b.title)}
+            <span class="msg" style="font-weight:600"> · ${esc((TEMPLATES[b.template]||{}).label||"")}</span></a>`).join("");
+      $("#gate").classList.add("hidden"); $("#picker").classList.remove("hidden");
+      $("#who").textContent=user.email; $("#signOut").classList.remove("hidden");
+      $("#mode").textContent="Firebase · private";
+      return;
+    }
+    await loadBook();
+    $("#gate").classList.add("hidden"); $("#picker").classList.add("hidden");
+    $("#app").classList.remove("hidden");
+    $("#who").textContent=user.email;
+    CHROME.forEach(id=>$("#"+id).classList.remove("hidden"));
+    redraw();
+  });
+  $("#signIn").addEventListener("click", async ()=>{
+    const m=$("#gateMsg"); m.className="msg"; m.textContent="Signing in…";
+    try{ await auth.signInWithEmailAndPassword(a,$("#email").value.trim(),$("#pw").value); m.textContent=""; }
+    catch(e){ m.className="msg err"; m.textContent=e.message||String(e); }
+  });
+  $("#pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#signIn").click(); });
+  $("#signOut").addEventListener("click", ()=>{
+    if(state.dirty && !confirm("You have unsaved changes. Sign out anyway?")) return;
+    state.dirty=false; auth.signOut(a);
+  });
+})();
+</script>
+</body>
+</html>
