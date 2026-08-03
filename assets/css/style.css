@@ -1,31 +1,11 @@
+/* The palette and the fonts live in tokens.css — the one definition
+   shared by the site, the guide layout, Studio and the book Editor. */
+@import url("tokens.css");
+
 /* ==========================================================================
    The Messy Parents Collection — site styles
    ========================================================================== */
 
-:root{
-  --cream:#fbf0d3;
-  --cream-soft:#fdf8ec;
-  --card:#fdf8ec;
-  --ink:#211d18;
-  --ink-70:rgba(33,29,24,.74);
-  --ink-50:rgba(33,29,24,.52);
-  --line:rgba(33,29,24,.62);
-  --line-soft:rgba(33,29,24,.26);
-  --blue:#0b62c4;
-  --blue-dark:#084a97;
-  --blue-wash:#e7f0fb;
-  --yellow:#ffcc33;
-  --orange:#ff4500;
-  --sage:#8fbc8f;
-
-  --display:"Baloo 2", "Trebuchet MS", sans-serif;
-  --hand:"Patrick Hand", "Comic Sans MS", cursive;
-  --body:"Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  --wrap:1080px;
-  --label:min(226px, 24vw);
-  --radius:16px;
-}
 
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none !important}

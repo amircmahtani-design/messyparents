@@ -10,7 +10,9 @@
 <title>MPC Editor</title>
 <link rel="icon" href="../assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- The one definition of the palette and the fonts. -->
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#20303f;--muted:#6d7d8c;--line:#dde4ea;--bg:#f4f6f8;--brand:#0b62c4;
         --ok:#0a7d45;--err:#b3261e;--radius:9px}
@@ -71,85 +73,109 @@
   .pv{background:#dfe4e9;overflow:auto;padding:16px;border-left:1px solid var(--line)}
   .pvhead{font-size:11.5px;font-weight:800;color:#5a6a78;margin:0 0 12px;display:flex;
     align-items:center;gap:12px;flex-wrap:wrap}
+  /* A spread is two pages; the cover stands alone, so it gets its own width. */
+  .spread.solo{width:576px}
+  .spread.solo .page{border-radius:4px;box-shadow:none}
   .spread{display:flex;justify-content:center;margin:0 auto 18px;width:1152px;
-    transform-origin:top left;background:#2c4a68;padding:10px;border-radius:6px}
+    transform-origin:top left;background:var(--blue-dark);padding:10px;border-radius:6px}
   /* 6 x 9 inches at 96dpi */
   /* The real paper. The flat colour stays as a fallback so a page is never
      blank if the texture has not loaded yet. */
-  .page{width:576px;height:864px;background:#f7ecd2 url("../assets/img/paper.jpg") center/cover;
+  .page{width:576px;height:864px;background:var(--paper) url("../assets/img/paper.jpg") center/cover;
     padding:54px 52px 46px;position:relative;
-    overflow:hidden;font-family:"Patrick Hand",cursive;color:#2b2622;font-size:19px;line-height:1.42}
+    overflow:hidden;font-family:var(--hand);color:var(--ink-hand);font-size:20px;line-height:1.45}
   .page.left{border-radius:4px 0 0 4px;box-shadow:inset -14px 0 22px -16px rgba(90,70,40,.5)}
   .page.right{border-radius:0 4px 4px 0;box-shadow:inset 14px 0 22px -16px rgba(90,70,40,.5)}
   .page.cover{padding:0}
-  .e-title{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;
-    font-size:38px;line-height:1.02;text-align:center;margin:0 0 6px;letter-spacing:.005em}
-  .e-title.plain{text-transform:none;text-align:left;font-size:34px;line-height:1.06}
-  .swash{display:block;width:74%;height:9px;margin:0 auto 18px;
-    background:radial-gradient(ellipse 50% 100% at 50% 0,#2f6fa8 60%,transparent 62%);opacity:.9}
+  /* Identical to .gpanel h1 on the site: Patrick Hand at weight 400, with the
+     same .8px stroke and .4px letter-spacing that give it its weight. */
+  .e-title{font-family:var(--hand);font-weight:400;
+    text-transform:uppercase;font-size:38px;line-height:1.02;text-align:center;margin:0 0 4px;
+    letter-spacing:.4px;-webkit-text-stroke:var(--stroke-title) currentColor}
+  .e-title.sz-s{font-size:29px} .e-title.sz-l{font-size:46px}
+  .e-title.plain{text-transform:none;text-align:left;font-size:34px;line-height:1.04}
+  .swash{display:block;width:74%;height:22px;margin:-2px auto 14px;
+    background:url("../assets/img/swoosh.png") center/100% 100% no-repeat}
   .e-title.plain + .swash{margin-left:0}
   .e-img{display:block;max-width:100%;margin:0 auto 14px}
   .e-text{text-align:center;margin:0 0 14px}
   .e-text.left{text-align:left}
   .e-text p{margin:0 0 8px}
-  .e-note{font-family:"Nunito",sans-serif;font-size:13px;color:#6b6152;margin:14px 0 0}
-  .e-note.mid{text-align:center;font-family:"Patrick Hand",cursive;font-size:18px;color:#2b2622}
-  .box{border:2.5px solid;border-radius:14px;padding:12px 16px 13px;margin:0 0 15px;position:relative}
-  .box h4{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;font-size:19px;
-    margin:0 0 6px;letter-spacing:.02em;display:flex;align-items:center;gap:9px}
+  .e-note{font-family:var(--body);font-size:13px;color:var(--ink-hand-soft);margin:14px 0 0}
+  .e-note.mid{text-align:center;font-family:var(--hand);font-size:19px;color:var(--ink-hand)}
+  /* A panel is exactly as tall as its contents — no minimum, no padding left
+     over when a line is deleted. */
+  .box{border:2.5px solid;border-radius:14px;padding:10px 15px;margin:0 0 13px;position:relative}
+  .box h4{font-family:var(--hand);font-weight:400;text-transform:uppercase;font-size:17px;
+    margin:0 0 4px;letter-spacing:.01em;display:flex;align-items:center;gap:9px;line-height:1.15}
+  .box > *:last-child{margin-bottom:0}
+  .box ul:empty,.box .plainlines:empty{display:none}
+  .box h4:empty{display:none}
   .box ul{margin:0;padding-left:17px}
+  .box .plainlines{margin:0}
   .box li{margin-bottom:3px}
   .box .plainlines p{margin:0 0 3px}
   .box img.ic{width:30px;height:30px;object-fit:contain;flex:none}
-  .box.blue {background:#e5edf5;border-color:#7ba3cc}  .box.blue  h4{color:#2f6fa8}
-  .box.amber{background:#fdf1d8;border-color:#e3ac47}  .box.amber h4{color:#c07f1e}
-  .box.red  {background:#f9e2da;border-color:#e29078}  .box.red   h4{color:#d4553a}
+  .box.blue {background:var(--blue-band);border-color:var(--blue-band-line)} .box.blue  h4{color:var(--blue-ink)}
+  .box.amber{background:var(--amber-fill);border-color:var(--amber-line)} .box.amber h4{color:var(--amber-ink)}
+  .box.red  {background:var(--red-fill);border-color:var(--red-line)} .box.red   h4{color:var(--red-ink)}
   /* A torn strip of paper, taped down at both ends. */
-  .box.tape{background:#f2e4c3;border:1px solid #e3d3ac;border-radius:2px}
-  .box.tape h4{color:#a8802c}
+  .box.tape{background:var(--tape-fill);border:1px solid var(--tape-line);border-radius:2px}
+  .box.tape h4{color:var(--tape-ink)}
   .box.tape::before,.box.tape::after{content:"";position:absolute;top:-9px;width:44px;height:19px;
     background:rgba(226,208,166,.85);border:1px solid rgba(198,175,128,.6)}
   .box.tape::before{left:-14px;transform:rotate(-7deg)}
   .box.tape::after{right:-14px;transform:rotate(7deg)}
   .toc-grp{margin:0 0 20px}
-  .toc-grp h4{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;font-size:22px;
+  .toc-grp h4{font-family:var(--hand);font-weight:400;text-transform:uppercase;font-size:22px;
     margin:0 0 5px;display:flex;align-items:center;gap:11px}
-  .toc-grp.blue h4{color:#2f6fa8} .toc-grp.red h4{color:#d4553a} .toc-grp.amber h4{color:#c07f1e}
+  .toc-grp.blue h4{color:var(--blue-ink)} .toc-grp.red h4{color:var(--red-ink)} .toc-grp.amber h4{color:var(--amber-ink)}
   .toc-grp img.ic{width:44px;height:44px;object-fit:contain;flex:none}
   .toc-grp ul{list-style:none;margin:0;padding:0 0 0 55px}
   .toc-grp li{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-  .toc-grp .dots{flex:1;border-bottom:2px dotted #b9ac8e;transform:translateY(-4px)}
+  .toc-grp .dots{flex:1;border-bottom:2px dotted var(--rule-hand);transform:translateY(-4px)}
   /* Optional logo at the top of a page. When it is off the page simply has
      less padding, so the content starts higher — nothing is left floating. */
-  .page.haslogo{padding-top:132px}
-  .page-logo{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:124px}
-  .e-sub{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;font-size:20px;
-    text-align:center;color:#2f6fa8;letter-spacing:.03em;margin:0 0 15px;line-height:1.15}
+  /* The logo is its own element now: put it top or bottom, left / centre /
+     right, at whatever size. A logo at the top pushes the page's own padding
+     down to match, so nothing ever sits under it. */
+  .e-logo{position:absolute}
+  .e-logo.top{top:26px} .e-logo.bottom{bottom:30px}
+  .e-logo.al{left:52px} .e-logo.ar{right:52px}
+  .e-logo.ac{left:50%;transform:translateX(-50%)}
+  .e-sub{font-family:var(--body);font-weight:800;text-transform:uppercase;
+    letter-spacing:.15em;font-size:15px;
+    text-align:center;color:var(--blue-ink);letter-spacing:.03em;margin:0 0 15px;line-height:1.15}
   /* Book One's contents: orange numbered discs, no page numbers. */
   .numlist{list-style:none;margin:0 0 14px;padding:0}
   .numlist li{display:flex;gap:13px;align-items:flex-start;margin-bottom:9px}
-  .numlist .n{flex:none;width:31px;height:31px;border-radius:50%;background:#e2601f;color:#fff;
-    font-family:"Baloo 2",cursive;font-weight:700;font-size:15px;line-height:31px;text-align:center}
+  .numlist .n{flex:none;width:31px;height:31px;border-radius:50%;background:var(--orange-ink);color:#fff;
+    font-family:var(--hand);font-weight:400;font-size:15px;line-height:31px;text-align:center}
   .numlist .tx{padding-top:2px}
   /* Book One's right-hand pages: a picture, a heading, a couple of lines. */
   .iconlist{margin:0 0 14px}
   .iconlist .it{display:flex;gap:17px;align-items:flex-start;margin-bottom:17px}
   .iconlist .it img{width:68px;height:68px;object-fit:contain;flex:none}
-  .iconlist h4{font-family:"Baloo 2",cursive;font-weight:700;text-transform:uppercase;
+  .iconlist h4{font-family:var(--hand);font-weight:400;text-transform:uppercase;
     font-size:21px;margin:0 0 2px;line-height:1.1}
   .iconlist .bd p{margin:0 0 1px;font-size:17px;line-height:1.34}
   .badge{position:absolute;right:44px;bottom:34px;width:118px}
   .badge.mid{left:50%;right:auto;transform:translateX(-50%)}
   .cover-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .page-logo{filter:drop-shadow(0 1px 1px rgba(80,60,30,.18))}
-  .badge{filter:drop-shadow(0 1px 1px rgba(80,60,30,.18))}
-  .cover-txt{position:absolute;left:0;right:0;bottom:0;padding:40px 46px;
-    background:linear-gradient(to top,rgba(247,236,210,.96),rgba(247,236,210,0));text-align:center}
-  .cover-txt h1{font-family:"Baloo 2",cursive;font-weight:800;text-transform:uppercase;font-size:40px;
+  .e-logo,.badge{filter:drop-shadow(0 1px 1px rgba(80,60,30,.18))}
+  /* When the words are switched on they need to survive whatever is behind
+     them, so the scrim goes deeper and the type carries its own light halo
+     rather than relying on the gradient alone. */
+  .cover-txt{position:absolute;left:0;right:0;bottom:0;padding:56px 46px 40px;text-align:center;
+    background:linear-gradient(to top,rgb(247 236 210 / .99) 0%,rgb(247 236 210 / .93) 46%,
+      rgb(247 236 210 / .62) 76%,rgb(247 236 210 / 0) 100%)}
+  .cover-txt h1,.cover-txt .sub,.cover-txt .by{
+    text-shadow:0 1px 0 rgba(255,250,238,.95),0 0 8px rgba(255,250,238,.85)}
+  .cover-txt h1{font-family:var(--hand);-webkit-text-stroke:var(--stroke-title) currentColor;font-weight:400;text-transform:uppercase;font-size:40px;
     line-height:1.02;margin:0 0 8px}
   .cover-txt .sub{font-size:20px;margin:0 0 10px}
-  .cover-txt .by{font-family:"Nunito",sans-serif;font-size:13px;font-weight:800;
-    letter-spacing:.09em;text-transform:uppercase;color:#6b6152}
+  .cover-txt .by{font-family:var(--body);font-size:14px;font-weight:800;
+    letter-spacing:.15em;text-transform:uppercase;color:var(--ink-hand-soft)}
   @media (max-width:1200px){ .layout{grid-template-columns:200px minmax(0,1fr)} .pv{display:none} }
 </style>
 </head>
@@ -272,7 +298,7 @@ const TONES = [["blue","Blue"],["amber","Amber"],["red","Red"],["tape","Taped pa
 /* ---- what each "+ Add" button drops onto a page ---- */
 function newEl(kind){
   switch(kind){
-    case "title": return { k:"title", text:"", swash:1, plain:0 };
+    case "title": return { k:"title", text:"", swash:1, plain:0, size:"m" };
     case "image": return { k:"image", url:"" };
     case "text":  return { k:"text", md:"", align:"center" };
     case "box":   return { k:"box", tone:"blue", title:"", icon:"", body:"", bullets:1 };
@@ -281,6 +307,7 @@ function newEl(kind){
     case "sub":   return { k:"sub", text:"" };
     case "num":   return { k:"num", start:1, entries:"" };
     case "icons": return { k:"icons", items:[{icon:"",title:"",body:""}] };
+    case "logo":  return { k:"logo", pos:"bottom", align:"center", size:124, url:"" };
   }
 }
 
@@ -293,21 +320,21 @@ function newSpread(kind){
 
   if(kind==="one-contents"){
     s.name = "What's inside";
-    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0},
+    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0,size:"l"},
                 {k:"sub",text:"BOOK ONE: BEFORE THE BABY ARRIVES"},
                 {k:"num",start:1,entries:""},
-                {k:"note",text:"",style:"small",badge:1} ];
+                {k:"logo",pos:"bottom",align:"center",size:124,url:""} ];
     s.right = [ {k:"num",start:11,entries:""}, {k:"image",url:""} ];
     return s;
   }
   if(kind==="one-intro"){
     s.name = "Welcome to the mess";
-    s.left  = [ {k:"title",text:"WELCOME TO THE MESS",swash:1,plain:0},
+    s.left  = [ {k:"title",text:"WELCOME TO THE MESS",swash:1,plain:0,size:"m"},
                 {k:"sub",text:"BEFORE THE BABY ARRIVES"},
                 {k:"text",md:"",align:"left"},
                 {k:"image",url:""},
-                {k:"note",text:"",style:"small",badge:1} ];
-    s.right = [ {k:"title",text:"WHAT THIS BOOK WILL DO",swash:0,plain:0},
+                {k:"logo",pos:"bottom",align:"center",size:124,url:""} ];
+    s.right = [ {k:"title",text:"WHAT THIS BOOK WILL DO",swash:0,plain:0,size:"s"},
                 {k:"icons",items:[{icon:"",title:"HELP YOU BUY LESS",body:""},
                                   {icon:"",title:"HELP YOU SET UP",body:""},
                                   {icon:"",title:"HELP YOU FEEL READY",body:""}]},
@@ -317,12 +344,12 @@ function newSpread(kind){
   }
   if(kind==="one-chapter"){
     s.name = "New chapter (Book One)";
-    s.left  = [ {k:"title",text:"TRAVEL SETUP",swash:1,plain:0},
+    s.left  = [ {k:"title",text:"TRAVEL SETUP",swash:1,plain:0,size:"l"},
                 {k:"sub",text:"WE THOUGHT WE NEEDED THE WHOLE HOUSE."},
                 {k:"text",md:"",align:"left"},
                 {k:"image",url:""},
-                {k:"note",text:"",style:"small",badge:1} ];
-    s.right = [ {k:"title",text:"WHAT YOU ACTUALLY NEED.",swash:0,plain:0},
+                {k:"logo",pos:"bottom",align:"center",size:124,url:""} ];
+    s.right = [ {k:"title",text:"WHAT YOU ACTUALLY NEED.",swash:0,plain:0,size:"s"},
                 {k:"icons",items:[{icon:"",title:"",body:""},{icon:"",title:"",body:""}]},
                 {k:"box",tone:"amber",title:"WHAT HELPED US",icon:"",body:"",bullets:0} ];
     return s;
@@ -337,7 +364,8 @@ function newSpread(kind){
     s.right = [ {k:"box",tone:"blue", title:"What may be going on",icon:"",body:"",bullets:1},
                 {k:"box",tone:"amber",title:"What helped us",      icon:"",body:"",bullets:1},
                 {k:"box",tone:"red",  title:"Call the doctor if",  icon:"",body:"",bullets:1},
-                {k:"note",text:"Our experience, not medical advice.",style:"small",badge:1} ];
+                {k:"note",text:"Our experience, not medical advice.",style:"small",badge:0},
+                {k:"logo",pos:"bottom",align:"right",size:118,url:""} ];
     s.right.unshift({k:"title",text:"",swash:0,plain:1});
   } else if(kind==="feature"){
     s.name = "Intro / note";
@@ -347,22 +375,26 @@ function newSpread(kind){
                 {k:"box",tone:"blue", title:"What you'll find",   icon:"",body:"",bullets:0},
                 {k:"box",tone:"tape", title:"How to use this book",icon:"",body:"",bullets:0},
                 {k:"box",tone:"red",  title:"We're not doctors",  icon:"",body:"",bullets:0},
-                {k:"note",text:"You're doing better than you think.",style:"mid",badge:1} ];
+                {k:"note",text:"You're doing better than you think.",style:"mid",badge:0},
+                {k:"logo",pos:"bottom",align:"right",size:118,url:""} ];
   } else if(kind==="contents"){
     s.name = "Contents";
-    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0},
+    s.left  = [ {k:"title",text:"WHAT'S INSIDE",swash:1,plain:0,size:"l"},
                 {k:"toc",tone:"blue",title:"Before the baby arrives",icon:"",entries:""},
-                {k:"note",text:"",style:"small",badge:1} ];
+                {k:"logo",pos:"bottom",align:"center",size:124,url:""} ];
     s.right = [ {k:"toc",tone:"red",title:"Health",icon:"",entries:""}, {k:"image",url:""} ];
   }
   return s;
 }
 
 function blankBook(){
+  /* The first spread has to come from this book's own layout — seeding Book One
+     with a Book Two spread is what put an "Intro / note" at the front of it. */
+  const first = state.template==="one" ? "one-intro" : "feature";
   return {
-    cover:{ image:"", title:"The Messy Parents Handbook", subtitle:"", byline:"Ari & Papa" },
-    badge:"",                       // the Messy Parents Collection logo, used by note elements
-    spreads:[ newSpread("feature") ],
+    cover:{ image:"", title:"", subtitle:"", byline:"", overlay:0 },
+    badge:"",                        // overrides the bundled collection logo
+    spreads:[ newSpread(first) ],
     updated:0
   };
 }
@@ -412,12 +444,14 @@ async function loadBook(){
   const idx = await loadIndex();
   const entry = idx.find(b=>b.id===BOOK_ID);
   state.template = (entry && entry.template) || (BOOK_ID==="book-one" ? "one" : "standard");
+  if(entry && entry.title && !state.bookTitle) state.bookTitle = entry.title;
   try{
     const s = await fs.getDoc(fs.doc(db,"book",BOOK_ID));
     state.book = s.exists() ? Object.assign(blankBook(), s.data()) : blankBook();
   }catch(e){ state.book = blankBook(); }
   if(!Array.isArray(state.book.spreads) || !state.book.spreads.length)
     state.book.spreads = blankBook().spreads;
+  migrateLogos(state.book);
   if(entry) $("#mode").textContent = entry.title;
 }
 async function saveBook(){
@@ -436,6 +470,29 @@ async function uploadPicture(file){
   const ref=storage.ref(st,"book/"+Date.now()+"-"+uid()+"."+ext);
   await storage.uploadBytes(ref,file,{contentType:file.type||"image/"+ext});
   return await storage.getDownloadURL(ref);
+}
+
+/* Earlier versions hid the logo inside a Closing line, and had a per-page
+   "logo at the top" switch. Both are now the Logo element, so anything saved
+   under the old shape is converted once, on load, rather than disappearing. */
+function migrateLogos(book){
+  for(const s of (book.spreads||[])){
+    for(const side of ["left","right"]){
+      const arr = s[side]; if(!Array.isArray(arr)) continue;
+      for(let i=arr.length-1;i>=0;i--){
+        const el=arr[i];
+        if(el.k==="note" && el.badge){
+          delete el.badge;
+          arr.splice(i+1,0,{k:"logo",pos:"bottom",align:"right",size:118,url:""});
+          if(!el.text) arr.splice(i,1);        // it only ever held the badge
+        }
+      }
+      const flag = side==="left" ? s.logoL : s.logoR;
+      if(flag && !arr.some(e=>e.k==="logo" && e.pos==="top"))
+        arr.unshift({k:"logo",pos:"top",align:"center",size:124,url:""});
+    }
+    delete s.logoL; delete s.logoR;
+  }
 }
 
 /* ==========================================================================
@@ -474,12 +531,17 @@ function elEditor(side, i, el){
       <option value="0" ${!el.plain?"selected":""}>Big capitals, centred</option>
       <option value="1" ${el.plain?"selected":""}>Sentence case, left — for a guide title</option>
     </select></div>
+    <div class="field"><label>Size <span class="hint">— drop it down a step if the words wrap</span></label>
+      <select data-f="size">
+        <option value="s" ${el.size==="s"?"selected":""}>Small</option>
+        <option value="m" ${(el.size||"m")==="m"?"selected":""}>Medium</option>
+        <option value="l" ${el.size==="l"?"selected":""}>Large</option></select></div>
     <div class="field"><label>Blue underline</label><select data-f="swash">
       <option value="1" ${el.swash?"selected":""}>Yes</option>
       <option value="0" ${!el.swash?"selected":""}>No</option></select></div>`);
 
   if(el.k==="image") return wrap(head("🖼","Illustration")+`
-    <div class="imgrow"><img class="thumb" src="${esc(el.url)}" alt="">
+    <div class="imgrow"><img class="thumb" ${el.url?`src="${esc(el.url)}"`:""} alt="">
       <div class="rowbtns"><button class="btn sm" data-act="pick">Upload / replace…</button>
         <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
 
@@ -500,7 +562,7 @@ function elEditor(side, i, el){
     <div class="field"><label>Show bullets</label><select data-f="bullets">
       <option value="1" ${el.bullets?"selected":""}>Yes</option>
       <option value="0" ${!el.bullets?"selected":""}>No — plain lines</option></select></div>
-    <div class="imgrow"><img class="thumb" src="${esc(el.icon)}" alt="">
+    <div class="imgrow"><img class="thumb" ${el.icon?`src="${esc(el.icon)}"`:""} alt="">
       <div class="rowbtns"><button class="btn sm" data-act="pick">Icon…</button>
         <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
 
@@ -512,9 +574,23 @@ function elEditor(side, i, el){
       <option value="amber" ${el.tone==="amber"?"selected":""}>Amber</option></select></div>
     <div class="field"><label>Entries <span class="hint">— one per line, as <code>Title | 22</code></span></label>
       <textarea data-f="entries" rows="4">${esc(el.entries)}</textarea></div>
-    <div class="imgrow"><img class="thumb" src="${esc(el.icon)}" alt="">
+    <div class="imgrow"><img class="thumb" ${el.icon?`src="${esc(el.icon)}"`:""} alt="">
       <div class="rowbtns"><button class="btn sm" data-act="pick">Icon…</button>
         <button class="btn sm ghost" data-act="clear">Clear</button></div></div>`);
+
+  if(el.k==="logo") return wrap(head("🏷","Logo")+`
+    <div class="field"><label>Top or bottom of the page</label><select data-f="pos">
+      <option value="top" ${el.pos==="top"?"selected":""}>Top — the page starts below it</option>
+      <option value="bottom" ${el.pos!=="top"?"selected":""}>Bottom</option></select></div>
+    <div class="field"><label>Across the page</label><select data-f="align">
+      <option value="left" ${el.align==="left"?"selected":""}>Left</option>
+      <option value="center" ${el.align!=="left"&&el.align!=="right"?"selected":""}>Middle</option>
+      <option value="right" ${el.align==="right"?"selected":""}>Right</option></select></div>
+    <div class="field"><label>Size <span class="hint">— ${+el.size||124}px wide</span></label>
+      <input data-f="size" type="range" min="60" max="260" step="4" value="${+el.size||124}"></div>
+    <div class="imgrow"><img class="thumb" src="${esc(el.url||"../assets/img/mpc-logo.png")}" alt="">
+      <div class="rowbtns"><button class="btn sm" data-act="pick">Use a different picture…</button>
+        <button class="btn sm ghost" data-act="clear">Back to the collection logo</button></div></div>`);
 
   if(el.k==="sub") return wrap(head("🔵","Blue subtitle")+`
     <div class="field"><label>Words <span class="hint">— the blue capitals under the heading</span></label>
@@ -535,7 +611,7 @@ function elEditor(side, i, el){
       <div class="field"><label>Heading</label><input data-if="title" type="text" value="${esc(it.title)}"></div>
       <div class="field"><label>Lines <span class="hint">— one per line</span></label>
         <textarea data-if="body" rows="3">${esc(it.body)}</textarea></div>
-      <div class="imgrow"><img class="thumb" src="${esc(it.icon)}" alt="">
+      <div class="imgrow"><img class="thumb" ${it.icon?`src="${esc(it.icon)}"`:""} alt="">
         <div class="rowbtns"><button class="btn sm" data-act="ipick">Picture…</button>
           <button class="btn sm ghost" data-act="iclear">Clear</button></div></div>
     </div>`).join("")}
@@ -547,26 +623,18 @@ function elEditor(side, i, el){
     <div class="field"><label>Style</label><select data-f="style">
       <option value="small" ${el.style!=="mid"?"selected":""}>Small print, left</option>
       <option value="mid" ${el.style==="mid"?"selected":""}>Hand-written, centred</option></select></div>
-    <div class="field"><label>Messy Parents badge</label><select data-f="badge">
-      <option value="1" ${el.badge?"selected":""}>Show it in the corner</option>
-      <option value="0" ${!el.badge?"selected":""}>No badge</option></select></div>`);
+    <p class="field hint" style="margin:2px 0 0">For the collection logo, add a <strong>Logo</strong> element — you can place and size it there.</p>`);
 }
 
-function pageEditor(side, arr, spread){
-  const on = side==="left" ? spread.logoL : spread.logoR;
+function pageEditor(side, arr){
   return `<div class="pagecol">
     <h3>${side==="left"?"Left page":"Right page"}</h3>
-    <div class="field"><label>Collection logo at the top of this page</label>
-      <select data-logo="${side}">
-        <option value="0" ${!on?"selected":""}>No — start the content higher</option>
-        <option value="1" ${on?"selected":""}>Yes — logo at the top</option>
-      </select></div>
     ${arr.map((el,i)=>elEditor(side,i,el)).join("") ||
       `<p class="msg" style="margin:0 0 10px">Nothing on this page yet.</p>`}
     <div class="addbar">
       ${[["title","Heading"],["sub","Subtitle"],["image","Image"],["text","Text"],
          ["icons","Picture list"],["num","Numbered list"],["box","Panel"],
-         ["toc","Contents group"],["note","Closing line"]].map(([k,l])=>
+         ["toc","Contents group"],["logo","Logo"],["note","Closing line"]].map(([k,l])=>
         `<button class="btn sm" data-add="${side}:${k}">+ ${l}</button>`).join("")}
     </div>
   </div>`;
@@ -579,11 +647,19 @@ function renderWork(){
       <p class="field hint" style="margin:0 0 14px">The picture fills the page; the words sit over the bottom of it.</p>
       <div class="el" data-el="cover:0">
         <span class="tag">🖼 Cover picture</span>
-        <div class="imgrow"><img class="thumb" src="${esc(b.cover.image)}" alt="">
+        <div class="imgrow"><img class="thumb" ${b.cover.image?`src="${esc(b.cover.image)}"`:""} alt="">
           <div class="rowbtns"><button class="btn sm" data-act="pick">Upload / replace…</button>
             <button class="btn sm ghost" data-act="clear">Clear</button></div></div>
       </div>
-      <div class="field"><label>Title</label><input data-cov="title" type="text" value="${esc(b.cover.title)}"></div>
+      <div class="field"><label>Words over the picture</label>
+        <select data-cov="overlay">
+          <option value="0" ${!b.cover.overlay?"selected":""}>Picture only — the artwork already has the title on it</option>
+          <option value="1" ${b.cover.overlay?"selected":""}>Print the title, subtitle and byline over the bottom</option>
+        </select>
+        <p class="field hint" style="margin:6px 0 0">Leave this off for a finished cover. Switching it on lays a cream fade over the lower third, which will dim anything drawn there.</p>
+      </div>
+      <div class="field"><label>Title <span class="hint">— also used to name the exported files</span></label>
+        <input data-cov="title" type="text" value="${esc(b.cover.title)}"></div>
       <div class="field"><label>Subtitle</label><input data-cov="subtitle" type="text" value="${esc(b.cover.subtitle)}"></div>
       <div class="field"><label>Byline</label><input data-cov="byline" type="text" value="${esc(b.cover.byline)}"></div>
       <div class="el" data-el="badge:0" style="margin-top:18px">
@@ -604,8 +680,8 @@ function renderWork(){
       <select id="importGuide"><option value="">Choose a guide…</option>
         ${(window.GUIDES||[]).map(g=>`<option value="${esc(g.id)}">${esc(g.title)}</option>`).join("")}
       </select></div>
-    ${pageEditor("left", s.left, s)}
-    ${pageEditor("right", s.right, s)}
+    ${pageEditor("left", s.left)}
+    ${pageEditor("right", s.right)}
     <div class="rowbtns" style="margin-top:6px">
       <button class="btn sm ghost" data-act="spup">Move spread earlier</button>
       <button class="btn sm ghost" data-act="spdown">Move spread later</button>
@@ -619,7 +695,7 @@ function renderWork(){
 function elHtml(el, badge){
   switch(el.k){
     case "title":
-      return `<h1 class="e-title ${el.plain?"plain":""}">${esc(el.text)}</h1>` +
+      return `<h1 class="e-title ${el.plain?"plain":""} sz-${el.size||"m"}">${esc(el.text)}</h1>` +
              (el.swash?`<span class="swash"></span>`:"");
     case "image":
       return el.url?`<img class="e-img" src="${esc(el.url)}" alt="">`:"";
@@ -643,6 +719,13 @@ function elHtml(el, badge){
         <h4>${el.icon?`<img class="ic" src="${esc(el.icon)}" alt="">`:""}${esc(el.title)}</h4>
         <ul>${rows}</ul></div>`;
     }
+    case "logo":{
+      const src = el.url || badge;
+      if(!src) return "";
+      const a = el.align==="left" ? "al" : el.align==="right" ? "ar" : "ac";
+      return `<img class="e-logo ${el.pos==="top"?"top":"bottom"} ${a}"
+        style="width:${+el.size||124}px" src="${esc(src)}" alt="">`;
+    }
     case "sub":
       return `<p class="e-sub">${esc(el.text)}</p>`;
     case "num":{
@@ -665,25 +748,39 @@ function elHtml(el, badge){
 /* topLogo puts the collection badge at the head of the page. When it is off the
    page loses that band of padding, so the words start higher up rather than
    leaving a gap where the logo would have been. */
-function pageHtml(arr, side, badge, topLogo){
-  const logo = topLogo && badge ? `<img class="page-logo" src="${esc(badge)}" alt="">` : "";
-  return `<div class="page ${side} ${topLogo&&badge?"haslogo":""}">${logo}${
+/* The cover. Most covers are finished artwork with the title already drawn in,
+   so the words are off unless you ask for them — otherwise the scrim behind
+   them washes out the bottom of the picture, which is exactly what happened to
+   the tagline on the Before Baby Arrives cover. */
+function coverHtml(){
+  const c = state.book.cover;
+  const words = c.overlay && (c.title || c.subtitle || c.byline)
+    ? `<div class="cover-txt">
+         ${c.title?`<h1>${esc(c.title)}</h1>`:""}
+         ${c.subtitle?`<p class="sub">${esc(c.subtitle)}</p>`:""}
+         ${c.byline?`<p class="by">${esc(c.byline)}</p>`:""}
+       </div>` : "";
+  return `<div class="page cover">${
+    c.image?`<img class="cover-art" src="${esc(c.image)}" alt="">`:""}${words}</div>`;
+}
+
+function pageHtml(arr, side, badge){
+  /* If there is a logo at the top, reserve exactly the room it needs — its own
+     height plus the gap above and below — so the content starts underneath it.
+     With no top logo the page keeps its normal padding and starts higher. */
+  const top = (arr||[]).find(e=>e.k==="logo" && e.pos==="top" && (e.url||badge));
+  const pad = top ? Math.round(26 + (+top.size||124)/2.3 + 22) : 0;
+  return `<div class="page ${side}"${pad?` style="padding-top:${pad}px"`:""}>${
     (arr||[]).map(el=>elHtml(el,badge)).join("")}</div>`;
 }
 function renderPreview(){
   const b=state.book, all=$("#allPages").checked, out=[];
   if(state.sel==="cover" || all){
-    out.push(`<div class="spread"><div class="page left cover">
-      ${b.cover.image?`<img class="cover-art" src="${esc(b.cover.image)}" alt="">`:""}
-      <div class="cover-txt"><h1>${esc(b.cover.title)}</h1>
-        ${b.cover.subtitle?`<p class="sub">${esc(b.cover.subtitle)}</p>`:""}
-        ${b.cover.byline?`<p class="by">${esc(b.cover.byline)}</p>`:""}</div>
-      </div><div class="page right"></div></div>`);
+    out.push(`<div class="spread solo">${coverHtml()}</div>`);
   }
   const list = all ? b.spreads : b.spreads.filter(s=>s.id===state.sel);
   for(const s of list){
-    out.push(`<div class="spread">${pageHtml(s.left,"left",badgeSrc(),s.logoL)}${
-      pageHtml(s.right,"right",badgeSrc(),s.logoR)}</div>`);
+    out.push(`<div class="spread">${pageHtml(s.left,"left",badgeSrc())}${pageHtml(s.right,"right",badgeSrc())}</div>`);
   }
   $("#pages").innerHTML = out.join("") || `<p class="msg">Nothing to show.</p>`;
   applyZoom();
@@ -765,12 +862,12 @@ $("#work").addEventListener("click", e=>{
 
 $("#work").addEventListener("input", e=>{
   const el=e.target, s=spreadById(state.sel);
-  if(el.dataset.cov){ state.book.cover[el.dataset.cov]=el.value; touch(); renderPreview(); return; }
-  if(el.dataset.sp){ s.name=el.value; touch(); renderRail(); return; }
-  if(el.dataset.logo){
-    if(el.dataset.logo==="left") s.logoL=+el.value; else s.logoR=+el.value;
+  if(el.dataset.cov){
+    const f=el.dataset.cov;
+    state.book.cover[f] = (f==="overlay") ? +el.value : el.value;
     touch(); renderPreview(); return;
   }
+  if(el.dataset.sp){ s.name=el.value; touch(); renderRail(); return; }
   if(el.dataset.if){
     const holder=el.closest("[data-el]"), [sd,ix]=holder.dataset.el.split(":");
     const j=+el.closest("[data-item]").dataset.item;
@@ -780,10 +877,16 @@ $("#work").addEventListener("input", e=>{
   if(!el.dataset.f) return;
   const holder=el.closest("[data-el]"), [side,idx]=holder.dataset.el.split(":");
   const item=s[side][+idx], f=el.dataset.f;
-  item[f] = (f==="swash"||f==="plain"||f==="bullets"||f==="badge"||f==="start") ? +el.value : el.value;
+  const numeric = (f==="swash"||f==="plain"||f==="bullets"||f==="badge"||f==="start") ||
+                  (f==="size" && item.k==="logo");
+  item[f] = numeric ? +el.value : el.value;
   touch();
   /* A dropdown that changes the shape of the card needs the panel redrawn too. */
-  if(el.tagName==="SELECT" && (f==="plain"||f==="bullets")) redraw(); else renderPreview();
+  if(el.tagName==="SELECT" && (f==="plain"||f==="bullets")) redraw();
+  else if(f==="size" && item.k==="logo"){ renderPreview();
+    const lab=el.closest(".field").querySelector(".hint");
+    if(lab) lab.textContent="— "+el.value+"px wide"; }
+  else renderPreview();
 });
 
 /* Pull a guide from the site into the right-hand page. */
@@ -796,7 +899,8 @@ $("#work").addEventListener("change", e=>{
   s.right = [
     {k:"title",text:g.title,swash:0,plain:1},
     box(p.normal,"blue"), box(p.helped,"amber"), box(p.warn,"red"),
-    {k:"note",text:"Our experience, not medical advice.",style:"small",badge:1}
+    {k:"note",text:"Our experience, not medical advice.",style:"small",badge:0},
+                {k:"logo",pos:"bottom",align:"right",size:118,url:""}
   ].filter(Boolean);
   if(!s.name || s.name==="New chapter" || s.name==="New spread") s.name=g.title;
   touch(); redraw();
@@ -841,6 +945,7 @@ $("#exportMd").addEventListener("click", ()=>{
     if(el.k==="box")   return "\n### "+el.title+"\n"+lines(el.body).map(l=>"- "+l).join("\n");
     if(el.k==="toc")   return "\n### "+el.title+"\n"+lines(el.entries)
                          .map(l=>{const [t,p]=l.split("|");return `- ${(t||"").trim()} — ${(p||"").trim()}`;}).join("\n");
+    if(el.k==="logo")  return "";
     if(el.k==="sub")   return "\n**"+el.text+"**";
     if(el.k==="num"){ let n=+el.start||1;
       return lines(el.entries).map(l=>(n++)+". "+l).join("\n"); }
@@ -859,20 +964,16 @@ $("#exportPdf").addEventListener("click", ()=>{
   const b=state.book, css=document.querySelector("style").textContent;
   const w=window.open("","_blank");
   if(!w){ alert("Allow pop-ups for this page, then try again."); return; }
-  const pages=[`<div class="page cover">
-      ${b.cover.image?`<img class="cover-art" src="${esc(b.cover.image)}" alt="">`:""}
-      <div class="cover-txt"><h1>${esc(b.cover.title)}</h1>
-        ${b.cover.subtitle?`<p class="sub">${esc(b.cover.subtitle)}</p>`:""}
-        ${b.cover.byline?`<p class="by">${esc(b.cover.byline)}</p>`:""}</div></div>`];
+  const pages=[coverHtml()];
   for(const s of b.spreads){
-    pages.push(pageHtml(s.left,"",badgeSrc(),s.logoL));
-    pages.push(pageHtml(s.right,"",badgeSrc(),s.logoR));
+    pages.push(pageHtml(s.left,"",badgeSrc()));
+    pages.push(pageHtml(s.right,"",badgeSrc()));
   }
   /* The print window starts life at about:blank, so the paper texture and the
      logo need an explicit base to resolve against. */
   w.document.write(`<!doctype html><meta charset="utf-8"><base href="${location.href}">
     <title>${esc(b.cover.title)}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>${css}
       @page{ size:6in 9in; margin:0 }
       body{background:#fff;margin:0}
@@ -985,6 +1086,7 @@ $("#exportDocx").addEventListener("click", async ()=>{
               body += paraXml("Body", t+"\t"+pg);
             });
           }
+          else if(el.k==="logo"){ /* decoration — not part of the manuscript */ }
           else if(el.k==="sub") body += paraXml("Heading3", el.text);
           else if(el.k==="num"){
             let n=+el.start||1;

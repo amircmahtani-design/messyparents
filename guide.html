@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/style.css?v=11">
 <style>
   /* Align the shared header with the guide's 1180px container on this page,
@@ -23,10 +24,13 @@
   .site-head .wrap{--wrap:1180px}
   /* ===== Guide panel — approved visual-first template ===================== */
   .gpanel{
-    --g-ink:#2b2622; --g-ink-soft:#4a423a; --g-blue:#3f6fa3;
-    --g-band:#c9dced; --g-band-line:#a9c4dc; --g-rule:#cdbf9f;
+    /* These used to be their own hex values and had drifted from the rest of
+       the site. They now point at tokens.css, so the guide, the book and the
+       website are literally the same colours. */
+    --g-ink:var(--ink-hand); --g-ink-soft:var(--ink-hand-soft); --g-blue:var(--blue-ink);
+    --g-band:var(--blue-band); --g-band-line:var(--blue-band-line); --g-rule:var(--rule-hand);
     color:var(--g-ink);
-    font-family:"Patrick Hand","Poppins",ui-rounded,system-ui,sans-serif;
+    font-family:var(--hand);
     width:min(1180px, calc(100% - 48px));margin-inline:auto;padding:12px 0 24px;
   }
   .gpanel .g-eyebrow{
@@ -43,9 +47,9 @@
   .gpanel .g-copy{min-width:0}
   .gpanel .g-hero > *{min-width:0}
   .gpanel h1{
-    font-family:"Patrick Hand","Poppins",cursive;font-weight:400;
+    font-family:var(--hand);font-weight:400;
     font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:8px 0 0;
-    -webkit-text-stroke:.8px var(--g-ink);letter-spacing:.4px;width:100%;max-width:none;
+    -webkit-text-stroke:var(--stroke-title) var(--g-ink);letter-spacing:.4px;width:100%;max-width:none;
   }
   /* Illustration sits centred in its column (balanced whitespace), nudged
      slightly left — NOT jammed against the far-right edge. */

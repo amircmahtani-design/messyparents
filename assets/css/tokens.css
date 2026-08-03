@@ -1,0 +1,76 @@
+/* ============================================================================
+   THE MESSY PARENTS UNIVERSE — one definition of the fonts and colours.
+
+   The website, the guide layout, Studio and the book Editor all read from this
+   file. Before it existed the same colours were written out separately in each
+   of them and had drifted apart: three different blues, three inks, two creams
+   and two oranges, all supposedly the same.
+
+   If a colour needs changing, change it HERE and it changes everywhere.
+
+   --------------------------------------------------------------------------
+   TWO FAMILIES OF COLOUR, AND WHY
+   --------------------------------------------------------------------------
+   UI colours are for things the reader clicks: links, buttons, focus rings.
+   They are bright and high-contrast because they have a job to do.
+
+   INK colours are for things that look hand-drawn: the guide panels, the book
+   pages, the swoosh under a heading. They are softer and warmer, because they
+   are pretending to be pen on paper.
+
+   They are deliberately not the same value. --blue is a link; --blue-ink is a
+   pen. Reach for the one that matches what you are drawing.
+   ========================================================================== */
+
+:root{
+  /* ---- Paper and ink ------------------------------------------------- */
+  --cream:#fbf0d3;              /* the site's page background              */
+  --cream-soft:#fdf8ec;         /* cards sitting on the cream              */
+  --card:#fdf8ec;
+  --paper:#f7ecd2;              /* a printed book page (under the texture) */
+
+  --ink:#211d18;                /* body text on the site                   */
+  --ink-70:rgba(33,29,24,.74);
+  --ink-50:rgba(33,29,24,.52);
+  --line:rgba(33,29,24,.62);
+  --line-soft:rgba(33,29,24,.26);
+
+  --ink-hand:#2b2622;           /* hand-lettered text: warmer than --ink   */
+  --ink-hand-soft:#4a423a;      /* the same, stepped back for list items   */
+  --rule-hand:#cdbf9f;          /* a ruled line on paper                   */
+
+  /* ---- Blue ----------------------------------------------------------- */
+  --blue:#0b62c4;               /* links, buttons — the UI blue            */
+  --blue-dark:#084a97;
+  --blue-wash:#e7f0fb;
+  --blue-ink:#3f6fa3;           /* the drawn blue: swooshes, headings      */
+  --blue-band:#c9dced;          /* the quick-answer band, and blue panels  */
+  --blue-band-line:#a9c4dc;
+
+  /* ---- The rest of the palette ---------------------------------------- */
+  --yellow:#ffcc33;
+  --orange:#ff4500;             /* UI orange                               */
+  --orange-ink:#e2601f;         /* the drawn orange: numbered discs, heart */
+  --sage:#8fbc8f;
+
+  /* Panel tints used by guides and by book pages. Amber and red are the
+     "what helped us" and "call the doctor if" panels. */
+  --amber-fill:#fdf1d8;  --amber-line:#e3ac47;  --amber-ink:#c07f1e;
+  --red-fill:#f9e2da;    --red-line:#e29078;    --red-ink:#d4553a;
+  --tape-fill:#f2e4c3;   --tape-line:#e3d3ac;   --tape-ink:#a8802c;
+
+  /* ---- Type ------------------------------------------------------------
+     Only three faces in the whole universe. Patrick Hand carries almost
+     everything that is meant to look handwritten; it ships in ONE weight, so
+     bold text needs -webkit-text-stroke rather than font-weight. */
+  --display:"Baloo 2", "Trebuchet MS", sans-serif;
+  --hand:"Patrick Hand", "Poppins", ui-rounded, system-ui, sans-serif;
+  --body:"Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --stroke-title:.8px;          /* how much weight a hand-lettered heading gets */
+
+  /* ---- Measurements ---------------------------------------------------- */
+  --wrap:1080px;
+  --label:min(226px, 24vw);
+  --radius:16px;
+}
