@@ -102,6 +102,12 @@
   .slot-maxw input[type=range]{width:100%}
   .slot-maxw .maxw-val{font-weight:700;color:var(--muted)}
   .slot[data-nopos] .slot-controls,.slot[data-nopos] .slot-maxw{display:none}
+  /* About section text cards */
+  .sectext .tag{background:#fdf3e2;color:#8a6a2f}
+  .sectext .slot-help{color:var(--muted);font-size:12px;margin:-4px 0 12px;line-height:1.5}
+  .sectext .slot-help code,.editor .hint code{background:#eef1f4;border-radius:4px;padding:1px 5px;font-size:11.5px}
+  .sectext textarea{font-family:inherit;line-height:1.55}
+  .sectext + .slot{margin-top:-4px}
 
   /* crop modal */
   .cropback{position:fixed;inset:0;background:rgba(20,25,33,.55);display:grid;place-items:center;z-index:60}
@@ -125,6 +131,7 @@
 <!-- data + config for local/preview mode -->
 <script src="../assets/js/firebase-config.js"></script>
 <script src="../assets/js/guides.js"></script>
+<script src="../assets/js/about-text.js"></script>
 
 <div class="top">
   <span class="logo">MPC <b>Studio</b></span>
@@ -211,6 +218,24 @@
         <div class="actions">
           <button id="saveBooks" class="btn primary" type="button">Save</button>
           <span id="booksMsg" class="msg"></span>
+        </div>
+      </div>
+
+      <!-- FOOTER MANAGER: the two lines at the bottom of every page -->
+      <div id="footerEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px">Footer</h2>
+        <p class="field hint" style="margin:0 0 16px">The two lines at the very bottom of every page. Write <code>{year}</code> in the copyright line and it becomes the current year automatically, so it never goes stale. Links go in as <code>[Contact us](mailto:hello@example.com)</code>. Empty a box and Save to put the original line back.</p>
+        <div class="field">
+          <label>Copyright line</label>
+          <input id="foot_copy" type="text">
+        </div>
+        <div class="field">
+          <label>Disclaimer</label>
+          <textarea id="foot_note" rows="3"></textarea>
+        </div>
+        <div class="actions">
+          <button id="saveFooter" class="btn primary" type="button">Save</button>
+          <span id="footerMsg" class="msg"></span>
         </div>
       </div>
 
@@ -323,7 +348,7 @@
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{} }, uploadKey: null, topics: [], booksList: [], topicUploadIndex: null, bookUploadIndex: null };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{}, text:{} }, uploadKey: null, topics: [], booksList: [], footer: {}, topicUploadIndex: null, bookUploadIndex: null };
 
 /* small helpers for the Topics / Books managers */
 const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -380,12 +405,20 @@ const PAGE_SLOTS = {
   popular: [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   guides:  [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   about: [
-    { key:"hero",   label:"Hero Illustration",     help:"Appears beside “About us” and the subtitle.", pos:true, align:"right" },
-    { key:"middle", label:"Middle Illustration",   help:"Appears beside the “What we do” section.",     pos:true, align:"left"  },
-    { key:"who",    label:"“Who we are” Illustration",      help:"Appears beside the “Who we are” section.",      pos:true, align:"right" },
-    { key:"notare", label:"“What we are not” Illustration", help:"Appears beside the “What we are not” section.", pos:true, align:"left"  }
+    { key:"hero",   section:"Opening section", text:true, noHeading:true,
+      label:"Hero Illustration",     help:"Appears beside “About us” and the subtitle.", pos:true, align:"right" },
+    { key:"middle", section:"Second section", text:true,
+      label:"Middle Illustration",   help:"Appears beside the “What we do” section.",     pos:true, align:"left"  },
+    { key:"who",    section:"Third section", text:true,
+      label:"“Who we are” Illustration",      help:"Appears beside the “Who we are” section.",      pos:true, align:"right" },
+    { key:"notare", section:"Fourth section", text:true,
+      label:"“What we are not” Illustration", help:"Appears beside the “What we are not” section.", pos:true, align:"left"  }
   ]
 };
+/* Default About wording, from ../assets/js/about-text.js — the same text that
+   ships inside about.html. Used to pre-fill the boxes so you edit what is
+   actually on the page rather than starting from blank. */
+const ABOUT_TEXT = window.ABOUT_TEXT_DEFAULTS || {};
 /* Default artwork per About slot (studio-relative paths for the thumbnails).
    Kept in sync with MPCStore.ABOUT_DEFAULTS on the public side. */
 const ABOUT_DEFAULTS = {
@@ -608,9 +641,39 @@ function slotCardHTML(id, s){
   </div>`;
 }
 
+/* Build the words-editor for one About section: its heading and its
+   paragraphs. Plain text only — a blank line starts a new paragraph and
+   [label](page.html) makes a link, so nothing typed here can break the page.
+   Empty the box and Save to put the original wording back. */
+function textCardHTML(s){
+  const t = state.pageDraft.text[s.key] || {};
+  const d = ABOUT_TEXT[s.key] || {};
+  const headingField = s.noHeading ? "" : `<div class="field">
+      <label>Heading</label>
+      <input type="text" data-txt="heading" value="${escS(t.heading!=null?t.heading:(d.heading||""))}">
+    </div>`;
+  return `<div class="col-card sectext" data-sectext="${s.key}">
+    <span class="tag">✏️ ${s.section} — words</span>
+    <p class="slot-help">${s.noHeading
+      ? "The opening paragraphs, under the page Title and Subtitle above."
+      : "The heading and the paragraphs for this section."}
+      Leave a blank line between paragraphs. Write a link as
+      <code>[Start with the guides](guides.html)</code>. Empty a box and Save to
+      put the original wording back.</p>
+    ${headingField}
+    <div class="field">
+      <label>Paragraphs</label>
+      <textarea rows="${s.key==="who"?4:7}" data-txt="body">${escS(t.body!=null?t.body:(d.body||""))}</textarea>
+    </div>
+  </div>`;
+}
+
 function renderSlots(id){
   const slots = PAGE_SLOTS[id] || [];
-  $("#p_slots").innerHTML = slots.map(s=>slotCardHTML(id, s)).join("");
+  // On About, each section gets its words first, then its picture, so the
+  // panel reads top-to-bottom in the same order as the live page.
+  $("#p_slots").innerHTML = slots.map(s =>
+    (s.text ? textCardHTML(s) : "") + slotCardHTML(id, s)).join("");
   slots.forEach(s=>{
     const card = $(`.slot[data-slot="${s.key}"]`);
     const c = state.pageDraft.slots[s.key] || {};
@@ -634,6 +697,14 @@ function draftPageData(){
       const o={ image:c.image||"", width:c.width||"medium",
                 align:c.align||s.align||"right" };
       const mw=parseInt(c.maxw,10)||0; if(mw) o.maxw=mw;
+      // The words for this section live in the same object as its picture.
+      // An empty string is stored deliberately — the site reads that as
+      // "use the wording that ships in about.html".
+      if(s.text){
+        const t=state.pageDraft.text[s.key]||{};
+        if(!s.noHeading) o.heading=(t.heading||"").trim();
+        o.body=(t.body||"").replace(/\r\n?/g,"\n").trim();
+      }
       data[s.key]=o;
     });
   }else{
@@ -665,7 +736,7 @@ function selectPage(id){
   $("#p_intro").textContent = p.noText
     ? "Replace the illustration at the top of the homepage. Upload a new picture, or reset it to the original."
     : (id==="about"
-        ? "Edit the text and the three illustrations. Each picture has its own space beside the words."
+        ? "Edit every word on the About page, section by section, plus the four illustrations. Changes show in the preview as you type — press Save to put them live."
         : "Edit the text and the illustration that sits beside this page’s title.");
   // Home only edits the image, so hide the title/subtitle fields for it.
   $("#p_title").closest(".field").classList.toggle("hidden", !!p.noText);
@@ -674,7 +745,7 @@ function selectPage(id){
   $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
   // seed the per-slot draft from saved data (with fall-back for the old single
   // "bottom" slot, which is now split into "who" / "what we are not").
-  state.pageDraft = { slots:{} };
+  state.pageDraft = { slots:{}, text:{} };
   const legacyBottom = d.bottom, legacyTarget = (d.bottom && d.bottom.target) || "who";
   (PAGE_SLOTS[id]||[]).forEach(s=>{
     let cfg;
@@ -684,6 +755,16 @@ function selectPage(id){
     else cfg = {};
     delete cfg.target;   // no longer used
     state.pageDraft.slots[s.key] = cfg;
+    // Words: whatever was saved, otherwise the wording that ships on the page,
+    // so the boxes always show what a visitor is currently reading.
+    if(s.text){
+      const dflt = ABOUT_TEXT[s.key] || {};
+      const saved = d[s.key] || {};
+      state.pageDraft.text[s.key] = {
+        heading: (saved.heading!=null && saved.heading!=="") ? saved.heading : (dflt.heading || ""),
+        body:    (saved.body!=null    && saved.body!=="")    ? saved.body    : (dflt.body    || "")
+      };
+    }
   });
   renderSlots(id);
   $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";
@@ -1025,6 +1106,15 @@ $("#p_slots").addEventListener("click", e => {
   }
 });
 
+/* About section words: update the draft and repaint the preview as you type. */
+$("#p_slots").addEventListener("input", e => {
+  const fld=e.target.closest("[data-txt]"); if(!fld) return;
+  const key=fld.closest(".sectext").dataset.sectext;
+  const t=state.pageDraft.text[key]||(state.pageDraft.text[key]={});
+  t[fld.dataset.txt]=fld.value;
+  pushPagePreview();
+});
+
 /* Slot positioning controls (width / side / target / max-width). */
 $("#p_slots").addEventListener("input", e => {
   const ctl=e.target.closest("[data-ctl]"); if(!ctl) return;
@@ -1099,7 +1189,7 @@ $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.or
    SITE SECTIONS — Topics manager + Books manager
    ====================================================================== */
 function showPanel(which){
-  ["empty","pageEditor","editor","topicsEditor","booksEditor"].forEach(id=>{
+  ["empty","pageEditor","editor","topicsEditor","booksEditor","footerEditor"].forEach(id=>{
     const el=$("#"+id); if(el) el.classList.toggle("hidden", id!==which);
   });
 }
@@ -1107,14 +1197,42 @@ function renderSiteList(){
   const cur=state.currentSection;
   $("#siteList").innerHTML =
     `<button class="gitem ${cur==="topics"?"active":""}" data-section="topics">Topics</button>` +
-    `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Our Books</button>`;
+    `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Our Books</button>` +
+    `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>`;
 }
+const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor" };
 function selectSection(which){
   state.current=null; state.currentPage=null; state.currentSection=which;
-  showPanel(which==="topics" ? "topicsEditor" : "booksEditor");
+  showPanel(SITE_PANELS[which] || "empty");
   $("#pvId").textContent = "· " + which;
-  if(which==="topics") renderTopicRows(); else renderBookRows();
+  if(which==="topics") renderTopicRows();
+  else if(which==="books") renderBookRows();
+  else if(which==="footer") renderFooterFields();
   renderPageList(); renderSiteList(); renderList($("#q").value);
+}
+
+/* ---- Footer ---- */
+/* The shipped wording, from ../assets/js/about-text.js, used to pre-fill the
+   boxes so you edit the lines that are actually on the site. */
+const FOOTER_TEXT = window.FOOTER_DEFAULTS || {};
+let pvFooterReady=false;
+function renderFooterFields(){
+  const f = state.footer || {};
+  $("#foot_copy").value = f.copyright || FOOTER_TEXT.copyright || "";
+  $("#foot_note").value = f.note      || FOOTER_TEXT.note      || "";
+  $("#footerMsg").textContent=""; $("#footerMsg").className="msg";
+  // The footer is the same on every page, so preview it on the homepage.
+  const pv=$("#pv"); pvFooterReady=false;
+  pv.onload=()=>{ pvFooterReady=true; pushFooterPreview(); };
+  pv.src="../index.html";
+}
+function draftFooter(){
+  return { copyright:$("#foot_copy").value.trim(), note:$("#foot_note").value.trim() };
+}
+function pushFooterPreview(){
+  if(!pvFooterReady) return;
+  try{ $("#pv").contentWindow.MPCStore.applyFooter(draftFooter()); }
+  catch(e){/* iframe not ready — ignore */}
 }
 
 /* Load the editable topics + books from Firestore (seeding the built-ins the
@@ -1136,6 +1254,10 @@ async function loadMeta(){
     const items = b.exists() && Array.isArray(b.data().items) ? b.data().items : null;
     state.booksList = items ? items.map(x=>({...x})) : BUILTIN_BOOKS.map(x=>({...x}));
   }catch(e){ state.booksList = BUILTIN_BOOKS.map(x=>({...x})); }
+  try{
+    const f=await fs.getDoc(fs.doc(db,"meta","footer"));
+    state.footer = f.exists() ? (f.data()||{}) : {};
+  }catch(e){ state.footer = {}; }
 }
 
 /* ---- Topics ---- */
@@ -1289,6 +1411,25 @@ $("#saveBooks").addEventListener("click", async ()=>{
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
     state.booksList=items.map(x=>({...x})); renderBookRows();
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
+});
+
+/* ---- Footer: live preview as you type, then Save ---- */
+$("#foot_copy").addEventListener("input", pushFooterPreview);
+$("#foot_note").addEventListener("input", pushFooterPreview);
+
+$("#saveFooter").addEventListener("click", async ()=>{
+  const btn=$("#saveFooter"), msg=$("#footerMsg");
+  if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Editing the footer needs Firebase mode."; return; }
+  const data=draftFooter();
+  btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
+  try{
+    const {fs,db}=state.fb;
+    await fs.setDoc(fs.doc(db,"meta","footer"), Object.assign({}, data, { updated:Date.now() }));
+    state.footer=data;
+    msg.className="msg ok"; msg.textContent="Saved — live on every page.";
+    pushFooterPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });

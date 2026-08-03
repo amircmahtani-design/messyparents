@@ -36,6 +36,15 @@ MPCStore.ready = (async function () {
       const pagesP  = fs.getDocs(fs.collection(db, "pages"));
       const topicsP = fs.getDoc(fs.doc(db, "meta", "topics"));   // editable browse topics
       const booksP  = fs.getDoc(fs.doc(db, "meta", "books"));    // editable Our Books list
+      const footerP = fs.getDoc(fs.doc(db, "meta", "footer"));   // editable footer lines
+
+      // Footer: every page has one, so apply it the moment it arrives rather
+      // than waiting for the guides read. No per-page wiring needed.
+      footerP.then(fsnap => {
+        if (!fsnap.exists()) return;
+        MPCStore.footer = fsnap.data() || {};
+        MPCStore.applyFooter(MPCStore.footer);
+      }).catch(() => { /* meta/footer is optional — the markup stands */ });
 
       pagesP.then(psnap => {
         const pages = {};
@@ -197,6 +206,100 @@ function setImageSource(img, src) {
   if (img.complete && img.naturalWidth > 0) img.classList.add("ready");   // was cached
 }
 
+/* --------------------------------------------------------------------------
+   Editable About copy.
+
+   Each About section can have its heading and body text overridden from
+   Studio. The stored text is plain text, so nothing typed in Studio can break
+   the page: a blank line starts a new paragraph and [label](url) becomes a
+   link. Anything else is escaped.
+
+   Clearing a field in Studio saves an empty string, which puts the wording
+   that ships in about.html back — so "reset" is just "empty the box".
+   ------------------------------------------------------------------------ */
+function _inlineHTML(text) {
+  // Escape everything, then turn [label](url) back into a link. Only same-site
+  // paths and http(s)/mailto links are allowed, so a stray "javascript:" can
+  // never end up in an href.
+  return _escHtml(text).replace(
+    /\[([^\]\n]+)\]\(([^)\s]+)\)/g,
+    function (whole, label, href) {
+      return /^(https?:\/\/|mailto:|\/|[\w.-]+\.html|#)/i.test(href)
+        ? '<a href="' + href + '">' + label + "</a>"
+        : whole;
+    }
+  );
+}
+
+function proseHTML(text) {
+  return String(text || "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)                          // blank line = new paragraph
+    .map(function (para) { return para.trim(); })
+    .filter(Boolean)
+    .map(function (para) {
+      return "<p>" + _inlineHTML(para).replace(/\n/g, "<br>") + "</p>";
+    })
+    .join("");
+}
+
+/* --------------------------------------------------------------------------
+   Editable footer — the copyright line and the disclaimer under it. Both are
+   on every page, so this runs itself as soon as the data arrives; no page
+   needs to call it. {year} in the copyright line becomes the current year, so
+   it never goes stale.
+   ------------------------------------------------------------------------ */
+MPCStore.applyFooter = function (cfg) {
+  cfg = cfg || {};
+  var year = new Date().getFullYear();
+  [["copyright", "[data-foot-copy]"], ["note", "[data-foot-note]"]].forEach(function (pair) {
+    var el = document.querySelector(pair[1]);
+    if (!el) return;
+    // Remember what shipped in the markup, so emptying the box in Studio puts
+    // the original line back instead of leaving a gap.
+    if (el.__mpcOriginal == null) el.__mpcOriginal = el.innerHTML;
+    var txt = (cfg[pair[0]] == null ? "" : String(cfg[pair[0]])).trim();
+    el.innerHTML = txt
+      ? _inlineHTML(txt.replace(/\{year\}/gi, year))
+      : el.__mpcOriginal;
+  });
+};
+
+/* Swap the words in one .about-section. The original markup is remembered the
+   first time round so an empty override restores it (and so Studio's live
+   preview can go backwards as you edit). */
+function applyAboutText(sec, config) {
+  if (!sec) return;
+  var c = config || {};
+  var prose = sec.querySelector(".prose");
+  if (!prose) return;
+
+  if (!prose.__mpcOriginal) {
+    var h0 = prose.querySelector("h2");
+    prose.__mpcOriginal = {
+      heading: h0 ? h0.innerHTML : null,
+      body: Array.prototype.map.call(prose.querySelectorAll("p"), function (p) {
+        return p.outerHTML;
+      }).join("")
+    };
+  }
+  var orig = prose.__mpcOriginal;
+
+  var heading = (c.heading == null ? "" : String(c.heading)).trim();
+  var body    = (c.body    == null ? "" : String(c.body)).trim();
+  if (!heading && !body) {                       // nothing saved — leave as shipped
+    prose.innerHTML = (orig.heading != null ? "<h2>" + orig.heading + "</h2>" : "") + orig.body;
+    return;
+  }
+
+  var html = "";
+  if (orig.heading != null) {                    // this section has a heading
+    html += "<h2>" + (heading ? _escHtml(heading) : orig.heading) + "</h2>";
+  }
+  html += body ? proseHTML(body) : orig.body;
+  prose.innerHTML = html;
+}
+
 /* Apply an editable slot's image + positioning to one .about-section.
    config = { image, width:"small|medium|large", align:"left|right", maxw:Number } */
 function applyAboutArt(sec, config, fallback) {
@@ -231,18 +334,26 @@ function applyAboutPage(pg) {
   // Hero (backward compatible with the old single "image" field).
   const heroCfg = Object.assign({}, pg.hero);
   if (!heroCfg.image && pg.image) heroCfg.image = pg.image;
-  applyAboutArt(document.querySelector('.about-section[data-illus="hero"]'), heroCfg, D.hero);
-
-  // Middle.
-  applyAboutArt(document.querySelector('.about-section[data-illus="middle"]'), pg.middle, D.middle);
 
   // "Who we are" and "What we are not" now each have their own slot. Fall back
   // to the old single "bottom" slot (with its target) for previously-saved data.
   const legacy = pg.bottom, legacyTarget = (legacy && legacy.target) || "who";
   const whoCfg    = pg.who    || (legacyTarget === "who"    ? legacy : null);
   const notareCfg = pg.notare || (legacyTarget === "notare" ? legacy : null);
-  applyAboutArt(document.querySelector('.about-section[data-illus="who"]'),    whoCfg,    D.who);
-  applyAboutArt(document.querySelector('.about-section[data-illus="notare"]'), notareCfg, D.notare);
+
+  const sections = [
+    ["hero",   heroCfg,    D.hero],
+    ["middle", pg.middle,  D.middle],
+    ["who",    whoCfg,     D.who],
+    ["notare", notareCfg,  D.notare]
+  ];
+
+  // Each section carries both its words and its picture in one saved object.
+  sections.forEach(function (s) {
+    const sec = document.querySelector('.about-section[data-illus="' + s[0] + '"]');
+    applyAboutText(sec, s[1]);
+    applyAboutArt(sec, s[1], s[2]);
+  });
 }
 
 /* Apply an editable page image (and optional title/subtitle) once data is

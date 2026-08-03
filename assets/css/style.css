@@ -520,11 +520,20 @@ html.illus-ready .hero-art img{opacity:1}
   .head-inner{display:flex;align-items:center;position:relative;gap:12px}
   .brand{margin-right:auto}
   .brand img{width:clamp(180px,42vw,230px)}
-  /* couple sits above the banner, overlapping its top edge */
-  .band{position:relative;display:block;width:auto;max-width:none;height:auto;
-    margin:78px 0 0;padding:76px 20px 22px;text-align:center}
-  .band-art{position:absolute;left:50%;top:0;transform:translate(-50%,-60%);margin:0}
-  .band-art img{height:132px;width:auto}
+  /* The couple sits above the banner and overlaps its top edge. The art is
+     --band-art-h tall and lifts --band-art-lift of itself above the band, so
+     the space it needs above the band is exactly that much. The top margin is
+     that overhang plus a little breathing room — keep them in step if either
+     number changes, or the heads will run into whatever sits above (this is
+     what was happening to the last book card on the Our Books page). */
+  .band{--band-art-h:128px;--band-art-lift:.55;
+    position:relative;display:block;width:auto;max-width:none;height:auto;
+    margin:calc(var(--band-art-h) * var(--band-art-lift) + 24px) 0 0;
+    padding:calc(var(--band-art-h) * (1 - var(--band-art-lift)) + 16px) 20px 22px;
+    text-align:center}
+  .band-art{position:absolute;left:50%;top:0;margin:0;
+    transform:translate(-50%,calc(var(--band-art-lift) * -100%))}
+  .band-art img{height:var(--band-art-h);width:auto}
   .band p{font-size:1.65rem;line-height:1.2}
   .book{grid-template-columns:1fr;gap:6px}
 }

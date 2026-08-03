@@ -13,11 +13,17 @@
   setTimeout(function(){ document.documentElement.classList.add("illus-ready"); }, 1500);
 </script>
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
-<link rel="apple-touch-icon" href="assets/img/navicon.webp">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<!-- Home-screen icon: a fully opaque, square PNG. Transparent or non-square
+     icons get padded with white by iOS, which is what caused the white edges. -->
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Messy Parents">
+<meta name="theme-color" content="#fbf0d3">
+<link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=10">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -127,16 +133,20 @@
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot-note">
-      <span>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
-      <span>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
+      <!-- Both lines are editable in Studio (Site → Footer). The wording here
+           is what shows if nothing has been saved. -->
+      <span data-foot-copy>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
+      <span data-foot-note>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
     </div>
   </div>
 </footer>
 
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/guides.js?v=9"></script>
-<script src="assets/js/mpc-store.js?v=9"></script>
-<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script src="assets/js/mpc-store.js?v=10"></script>
+<script>/* The Studio-edited copyright line writes its own year, so this span
+   may already be gone by the time this runs. */
+var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();</script>
 <script>MPCStore.pagesReady.then(function(){ MPCStore.applyPage("about"); });</script>
 
 </body>
