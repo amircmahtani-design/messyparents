@@ -30,20 +30,20 @@
   .rows.searching .row:not(#resultsRow){order:1}
 </style>
 </head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
+<body data-mpc-page="home">
+<a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
 
 <header class="site-head">
   <div class="wrap head-inner">
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="popular.html">Popular</a>
-      <a href="guides.html">Guides</a>
-      <a href="about.html">About Us</a>
-      <a href="books.html">Our Books</a>
+      <a href="index.html" aria-current="page" data-mpc-text="nav.home">Home</a>
+      <a href="popular.html" data-mpc-text="nav.popular">Popular</a>
+      <a href="guides.html" data-mpc-text="nav.guides">Guides</a>
+      <a href="about.html" data-mpc-text="nav.about">About Us</a>
+      <a href="books.html" data-mpc-text="nav.books">Our Books</a>
     </nav>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav" data-mpc-text="nav.toggle">Menu</button>
   </div>
 </header>
 
@@ -51,12 +51,12 @@
   <section class="hero wrap">
     <div class="hero-grid">
       <div class="hero-copy rise">
-        <h1><span class="hl">Parenting is messy.</span> <span class="hl">Finding answers shouldn&rsquo;t be.</span></h1>
-        <p class="lede">The things you&rsquo;re googling at 3am, answered in three minutes &mdash; by parents who were googling them last week.</p>
+        <h1 data-mpc-text="hero.title"><span class="hl">Parenting is messy.</span> <span class="hl">Finding answers shouldn&rsquo;t be.</span></h1>
+        <p class="lede" data-mpc-text="hero.lede">The things you&rsquo;re googling at 3am, answered in three minutes &mdash; by parents who were googling them last week.</p>
         <form class="search" id="heroSearch" role="search">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
           <input type="search" id="heroQ" name="q" autocomplete="off" aria-label="Search the guides" aria-controls="grid" placeholder="What do you need help with?">
-          <button type="submit">Search</button>
+          <button type="submit" data-mpc-text="search.button">Search</button>
         </form>
       </div>
       <div class="hero-art rise">
@@ -67,20 +67,20 @@
 
   <section class="rows wrap" aria-label="Find a guide">
     <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">1</span>Browse by topic</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">1</span><span data-mpc-text="row.topic">Browse by topic</span></p>
       <div class="pills" id="topicPills"></div>
     </div>
     <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">2</span><span data-mpc-text="row.age">How old is your little one?</span></p>
       <div class="pills" id="agePills"></div>
     </div>
     <div class="row row--stack" id="resultsRow">
-      <p class="eyebrow"><span id="resultsTitle">Popular guides</span></p>
+      <p class="eyebrow"><span id="resultsTitle" data-mpc-text="results.default">Popular guides</span></p>
       <div class="card-grid" id="grid" aria-live="polite"></div>
       <p class="row-note">
         <span class="hint" id="resultsHint"></span>
         <a class="link-reset" id="seeAll" href="guides.html" hidden>See all</a>
-        <button class="link-reset" id="resetBtn" hidden>Clear filters</button>
+        <button class="link-reset" id="resetBtn" hidden data-mpc-text="results.clear">Clear filters</button>
       </p>
     </div>
   </section>
@@ -90,7 +90,7 @@
       <span class="band-art" aria-hidden="true">
         <img src="assets/img/couple.webp" alt="" width="520" height="392">
       </span>
-      <p>Short answers for long nights.</p>
+      <p data-mpc-text="band.line">Short answers for long nights.</p>
     </div>
   </section>
 
@@ -144,7 +144,9 @@ MPCStore.ready.then(function(){
     document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
     const shown = list.slice(0, CAP);
-    title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Popular guides");
+    title.textContent = q ? MPCStore.t("results.search", "Closest matches")
+      : (active ? MPCStore.t("results.filtered", "Matching guides")
+                : MPCStore.t("results.default", "Popular guides"));
     reset.hidden = !active;
     hint.textContent = active ? describe(list.length) : "";
 
@@ -154,13 +156,14 @@ MPCStore.ready.then(function(){
       if(topic) pr.set("topic", topic);
       if(age) pr.set("age", age);
       more.href = "guides.html?" + pr.toString();
-      more.textContent = "See all " + list.length + " \u2192";
+      more.textContent = MPCStore.t("results.seeAll", "See all {n} \u2192")
+        .replace(/\{n\}/g, list.length);
       more.hidden = false;
     } else { more.hidden = true; }
 
     grid.innerHTML = shown.length ? shown.map(cardHTML).join("")
-      : `<div class="empty"><p><strong>Nothing matches that yet.</strong></p>
-         <p>Try a single word, or <a href="guides.html">browse all guides</a>.</p></div>`;
+      : `<div class="empty"><p><strong>${MPCStore.esc(MPCStore.t("empty.title", "Nothing matches that yet."))}</strong></p>
+         <p>${MPCStore.inline(MPCStore.t("empty.body", "Try a single word, or [browse all guides](guides.html)."))}</p></div>`;
 
     if(flash){ grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated"); }
   }
@@ -187,11 +190,15 @@ MPCStore.ready.then(function(){
 
   render(false);
 
+  // Studio edits (and a slow data load) fire this; redraw so the scripted
+  // strings above pick up the new wording without a refresh.
+  window.addEventListener("mpc:textchange", function(){ render(false); setPlaceholder(); });
+
   // the long placeholder gets cut off on phones
   const setPlaceholder = () => {
     input.placeholder = window.innerWidth < 620
-      ? "Search the guides\u2026"
-      : "What do you need help with?";
+      ? MPCStore.t("search.placeholderShort", "Search the guides\u2026")
+      : MPCStore.t("search.placeholder", "What do you need help with?");
   };
   setPlaceholder();
   window.addEventListener("resize", setPlaceholder);

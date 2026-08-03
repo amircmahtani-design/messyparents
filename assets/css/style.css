@@ -299,6 +299,10 @@ h3{font-size:1.3rem}
 .prose{width:100%;max-width:100%}
 .prose > :first-child{margin-top:0}
 .prose > :last-child{margin-bottom:0}
+/* The paragraphs of an editable block sit inside a plain wrapper div, so the
+   first/last-child trimming above has to reach one level further in. */
+.prose > [data-mpc-text] > :first-child{margin-top:0}
+.prose > [data-mpc-text] > :last-child{margin-bottom:0}
 .prose p{font-family:var(--hand);font-size:1.28rem;line-height:1.5;
   color:var(--ink-80,var(--ink-70));margin:0 0 16px}
 .prose p a{font-family:var(--hand)}

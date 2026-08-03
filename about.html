@@ -25,20 +25,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=11">
 </head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
+<body data-mpc-page="about">
+<a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
 
 <header class="site-head">
   <div class="wrap head-inner">
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
-      <a href="index.html">Home</a>
-      <a href="popular.html">Popular</a>
-      <a href="guides.html">Guides</a>
-      <a href="about.html" aria-current="page">About Us</a>
-      <a href="books.html">Our Books</a>
+      <a href="index.html" data-mpc-text="nav.home">Home</a>
+      <a href="popular.html" data-mpc-text="nav.popular">Popular</a>
+      <a href="guides.html" data-mpc-text="nav.guides">Guides</a>
+      <a href="about.html" aria-current="page" data-mpc-text="nav.about">About Us</a>
+      <a href="books.html" data-mpc-text="nav.books">Our Books</a>
     </nav>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav" data-mpc-text="nav.toggle">Menu</button>
   </div>
 </header>
 
@@ -64,11 +64,13 @@
       <h1 data-page-title>About us</h1>
       <p class="about-sub" data-page-subtitle>We are not experts. That is rather the point.</p>
       <div class="prose">
+        <div data-mpc-text="hero.body">
         <p>The Messy Parents Collection started at 3am, on a phone, one-handed, while googling a question that had a
         forty-minute answer when what was needed was a forty-second one.</p>
         <p>Every parenting resource we found was either a wall of citations or a stranger on a forum shouting in capitals.
         Neither is much use when you are holding a baby who has been crying for an hour and you cannot remember whether
         you have eaten today.</p>
+        </div>
       </div>
     </div>
     <figure class="about-art" data-slot="hero">
@@ -81,12 +83,14 @@
   <section class="wrap about-section has-art art-medium" data-illus="middle" data-pos="left">
     <div class="about-copy">
       <div class="prose">
-        <h2>What we do</h2>
+        <h2 data-mpc-text="middle.heading">What we do</h2>
+        <div data-mpc-text="middle.body">
         <p>We write short guides on the questions that come up over and over in the first two years: feeding, sleeping,
         development, health, and the state of the adults in the room. Each one takes about three minutes to read.
         Each one is written to be understood by someone who has slept for four hours.</p>
         <p>Where something needs a doctor, we say so plainly and early, with a clear list of what to watch for.
         We would rather send you to a professional unnecessarily than have you sit at home wondering.</p>
+        </div>
       </div>
     </div>
     <figure class="about-art" data-slot="middle">
@@ -99,10 +103,12 @@
   <section class="wrap about-section has-art art-medium" data-section="who" data-illus="who" data-pos="right">
     <div class="about-copy">
       <div class="prose">
-        <h2>Who we are</h2>
+        <h2 data-mpc-text="who.heading">Who we are</h2>
+        <div data-mpc-text="who.body">
         <p>Ari &amp; Papa &mdash; one baby, two very tired adults, one sofa that has seen things. We write what we wish
         someone had handed us in week two, checked against current guidance from national health services and paediatric
         bodies, and stripped of everything that made us feel worse.</p>
+        </div>
       </div>
     </div>
     <figure class="about-art" data-slot="who">
@@ -115,11 +121,13 @@
   <section class="wrap about-section has-art art-medium" data-section="notare" data-illus="notare" data-pos="left">
     <div class="about-copy">
       <div class="prose">
-        <h2>What we are not</h2>
+        <h2 data-mpc-text="notare.heading">What we are not</h2>
+        <div data-mpc-text="notare.body">
         <p>We are not doctors, midwives, health visitors or paediatricians. Nothing here replaces advice from someone who
         can actually see your baby. If your instinct says something is wrong, act on it &mdash; that instinct is
         genuinely good information, and no one who does this professionally will mind you asking.</p>
         <p><a href="guides.html">Start with the guides</a>, or come back at 3am. We will be here. We will be awake.</p>
+        </div>
       </div>
     </div>
     <figure class="about-art" data-slot="notare">

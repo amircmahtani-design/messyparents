@@ -103,11 +103,7 @@
   .slot-maxw .maxw-val{font-weight:700;color:var(--muted)}
   .slot[data-nopos] .slot-controls,.slot[data-nopos] .slot-maxw{display:none}
   /* About section text cards */
-  .sectext .tag{background:#fdf3e2;color:#8a6a2f}
-  .sectext .slot-help{color:var(--muted);font-size:12px;margin:-4px 0 12px;line-height:1.5}
-  .sectext .slot-help code,.editor .hint code{background:#eef1f4;border-radius:4px;padding:1px 5px;font-size:11.5px}
-  .sectext textarea{font-family:inherit;line-height:1.55}
-  .sectext + .slot{margin-top:-4px}
+  .editor .hint code,.field .hint code{background:#eef1f4;border-radius:4px;padding:1px 5px;font-size:11.5px}
 
   /* crop modal */
   .cropback{position:fixed;inset:0;background:rgba(20,25,33,.55);display:grid;place-items:center;z-index:60}
@@ -131,7 +127,7 @@
 <!-- data + config for local/preview mode -->
 <script src="../assets/js/firebase-config.js"></script>
 <script src="../assets/js/guides.js"></script>
-<script src="../assets/js/about-text.js"></script>
+<script src="../assets/js/site-text.js"></script>
 
 <div class="top">
   <span class="logo">MPC <b>Studio</b></span>
@@ -183,6 +179,9 @@
           <label>Subtitle</label>
           <textarea id="p_subtitle" rows="2"></textarea>
         </div>
+        <!-- Every editable string for this page; built by renderTextRows()
+             from the list in ../assets/js/site-text.js -->
+        <div id="p_text"></div>
         <!-- One .slot card per illustration; built by renderSlots() -->
         <div id="p_slots"></div>
         <input id="p_upload" type="file" accept="image/*" class="hidden">
@@ -238,6 +237,18 @@
           <span id="footerMsg" class="msg"></span>
         </div>
       </div>
+
+      <!-- MENU & SHARED TEXT / GUIDE LAYOUT: the same row editor as the pages -->
+      <div id="siteTextEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px" id="st_heading">Text</h2>
+        <p class="field hint" style="margin:0 0 16px" id="st_intro"></p>
+        <div id="st_rows"></div>
+        <div class="actions">
+          <button id="saveSiteText" class="btn primary" type="button">Save</button>
+          <span id="siteTextMsg" class="msg"></span>
+        </div>
+      </div>
+      <input id="p_textupload" type="file" accept="image/*" class="hidden">
 
       <div id="editor" class="editor hidden">
         <div class="field">
@@ -348,7 +359,7 @@
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{}, text:{} }, uploadKey: null, topics: [], booksList: [], footer: {}, topicUploadIndex: null, bookUploadIndex: null };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{} }, textDraft: {}, uploadKey: null, topics: [], booksList: [], footer: {}, topicUploadIndex: null, bookUploadIndex: null };
 
 /* small helpers for the Topics / Books managers */
 const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -392,7 +403,11 @@ const PAGES = [
     default:"../assets/img/couple.webp" },
   { id:"about", label:"About", title:"About us",
     subtitle:"We are not experts. That is rather the point.",
-    default:"../assets/img/papa.webp" }
+    default:"../assets/img/papa.webp" },
+  /* Text-only pages: no hero illustration, so no Title/Subtitle boxes either —
+     their headings are ordinary editable strings in the list below. */
+  { id:"books",    label:"Our Books", title:"Our Books page",   textOnly:true, file:"books.html" },
+  { id:"notfound", label:"Not found", title:"“Page not found”", textOnly:true, file:"404.html" }
 ];
 const GUIDE_HERO = { w:1120, h:620, label:"Guide illustration — fills a 560 × 310 space beside the title. Transparent PNGs look best." };
 const PAGE_HERO  = { w:880,  h:680, label:"Page illustration — fills a 440 × 340 space beside the title. Transparent PNGs look best." };
@@ -405,20 +420,12 @@ const PAGE_SLOTS = {
   popular: [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   guides:  [{ key:"hero", label:"Hero illustration", help:"Sits beside the page title.", pos:false }],
   about: [
-    { key:"hero",   section:"Opening section", text:true, noHeading:true,
-      label:"Hero Illustration",     help:"Appears beside “About us” and the subtitle.", pos:true, align:"right" },
-    { key:"middle", section:"Second section", text:true,
-      label:"Middle Illustration",   help:"Appears beside the “What we do” section.",     pos:true, align:"left"  },
-    { key:"who",    section:"Third section", text:true,
-      label:"“Who we are” Illustration",      help:"Appears beside the “Who we are” section.",      pos:true, align:"right" },
-    { key:"notare", section:"Fourth section", text:true,
-      label:"“What we are not” Illustration", help:"Appears beside the “What we are not” section.", pos:true, align:"left"  }
+    { key:"hero",   label:"Hero Illustration",     help:"Appears beside “About us” and the subtitle.", pos:true, align:"right" },
+    { key:"middle", label:"Middle Illustration",   help:"Appears beside the “What we do” section.",     pos:true, align:"left"  },
+    { key:"who",    label:"“Who we are” Illustration",      help:"Appears beside the “Who we are” section.",      pos:true, align:"right" },
+    { key:"notare", label:"“What we are not” Illustration", help:"Appears beside the “What we are not” section.", pos:true, align:"left"  }
   ]
 };
-/* Default About wording, from ../assets/js/about-text.js — the same text that
-   ships inside about.html. Used to pre-fill the boxes so you edit what is
-   actually on the page rather than starting from blank. */
-const ABOUT_TEXT = window.ABOUT_TEXT_DEFAULTS || {};
 /* Default artwork per About slot (studio-relative paths for the thumbnails).
    Kept in sync with MPCStore.ABOUT_DEFAULTS on the public side. */
 const ABOUT_DEFAULTS = {
@@ -641,39 +648,76 @@ function slotCardHTML(id, s){
   </div>`;
 }
 
-/* Build the words-editor for one About section: its heading and its
-   paragraphs. Plain text only — a blank line starts a new paragraph and
-   [label](page.html) makes a link, so nothing typed here can break the page.
-   Empty the box and Save to put the original wording back. */
-function textCardHTML(s){
-  const t = state.pageDraft.text[s.key] || {};
-  const d = ABOUT_TEXT[s.key] || {};
-  const headingField = s.noHeading ? "" : `<div class="field">
-      <label>Heading</label>
-      <input type="text" data-txt="heading" value="${escS(t.heading!=null?t.heading:(d.heading||""))}">
+/* ========================================================================
+   EDITABLE TEXT — one row per string, built from ../assets/js/site-text.js.
+
+   Adding a new editable string anywhere on the site means tagging it in the
+   HTML and adding a line to that file. Nothing here needs changing.
+   ====================================================================== */
+const SITE_TEXT = window.SITE_TEXT || {};
+
+function textFields(id){ return (SITE_TEXT[id] && SITE_TEXT[id].fields) || []; }
+
+/* The value to show in a box: what was saved, otherwise the shipped wording. */
+function textValue(id, f){
+  const saved = state.textDraft[f.key];
+  return saved != null ? saved : (f.default || "");
+}
+
+function textRowHTML(id, f){
+  const v = textValue(id, f);
+  const hint = f.help ? `<span class="hint">— ${f.help}</span>` : "";
+
+  // Pictures reuse the same card as the page illustrations, so the panel looks
+  // and behaves the same wherever an image can be swapped.
+  if(f.type === "image"){
+    return `<div class="col-card" data-tkey="${f.key}">
+      <span class="tag">🖼 ${escS(f.label)}</span>
+      <p class="slot-help">${f.help || ""}</p>
+      <div class="pageimg-row">
+        <img class="pageimg-thumb" data-timg src="${escS(v || f.preview || "")}" alt="">
+        <div style="flex:1;min-width:0">
+          <button class="btn" data-tact="upload" type="button">Upload / replace…</button>
+          <button class="btn ghost" data-tact="reset" type="button" style="margin-left:6px">Reset</button>
+          <div class="hint" data-tmsg2 style="margin-top:8px"></div>
+        </div>
+      </div>
     </div>`;
-  return `<div class="col-card sectext" data-sectext="${s.key}">
-    <span class="tag">✏️ ${s.section} — words</span>
-    <p class="slot-help">${s.noHeading
-      ? "The opening paragraphs, under the page Title and Subtitle above."
-      : "The heading and the paragraphs for this section."}
-      Leave a blank line between paragraphs. Write a link as
-      <code>[Start with the guides](guides.html)</code>. Empty a box and Save to
-      put the original wording back.</p>
-    ${headingField}
-    <div class="field">
-      <label>Paragraphs</label>
-      <textarea rows="${s.key==="who"?4:7}" data-txt="body">${escS(t.body!=null?t.body:(d.body||""))}</textarea>
-    </div>
+  }
+  const box = f.multiline
+    ? `<textarea data-tin rows="${f.rows || 2}">${escS(v)}</textarea>`
+    : `<input data-tin type="text" value="${escS(v)}">`;
+  return `<div class="field" data-tkey="${f.key}">
+    <label>${escS(f.label)} ${hint}</label>
+    ${box}
   </div>`;
+}
+
+/* Draw the rows for one page/section into a container. */
+function renderTextRows(id, containerId){
+  const box = $("#"+(containerId || "p_text"));
+  if(!box) return;
+  const fields = textFields(id);
+  if(!fields.length){ box.innerHTML = ""; return; }
+  box.innerHTML = fields.map(f => textRowHTML(id, f)).join("");
+}
+
+/* The saved map for Firestore: only the strings you actually changed, so the
+   HTML stays the source of truth for everything you left alone. */
+function draftText(id){
+  const out = {};
+  textFields(id).forEach(f => {
+    const v = state.textDraft[f.key];
+    if(v == null) return;
+    const clean = String(v).replace(/\r\n?/g,"\n").trim();
+    if(clean && clean !== (f.default || "")) out[f.key] = clean;
+  });
+  return out;
 }
 
 function renderSlots(id){
   const slots = PAGE_SLOTS[id] || [];
-  // On About, each section gets its words first, then its picture, so the
-  // panel reads top-to-bottom in the same order as the live page.
-  $("#p_slots").innerHTML = slots.map(s =>
-    (s.text ? textCardHTML(s) : "") + slotCardHTML(id, s)).join("");
+  $("#p_slots").innerHTML = slots.map(s => slotCardHTML(id, s)).join("");
   slots.forEach(s=>{
     const card = $(`.slot[data-slot="${s.key}"]`);
     const c = state.pageDraft.slots[s.key] || {};
@@ -686,25 +730,27 @@ function draftPageData(){
   const id=state.currentPage;
   const pg=PAGES.find(x=>x.id===id);
   // Home only edits the illustration — no title/subtitle to store.
+  if(pg && pg.textOnly){
+    const tx=draftText(id);
+    return Object.keys(tx).length ? { text:tx } : {};
+  }
   if(pg && pg.noText){
     const c=state.pageDraft.slots.hero||{};
-    return { image:c.image||"" };
+    const out={ image:c.image||"" };
+    const tx=draftText(id);
+    if(Object.keys(tx).length) out.text=tx;
+    return out;
   }
   const data={ title:$("#p_title").value.trim(), subtitle:$("#p_subtitle").value.trim() };
+  // Every page carries its own editable strings alongside its images.
+  const txt = draftText(id);
+  if(Object.keys(txt).length) data.text = txt;
   if(id==="about"){
     (PAGE_SLOTS.about).forEach(s=>{
       const c=state.pageDraft.slots[s.key]||{};
       const o={ image:c.image||"", width:c.width||"medium",
                 align:c.align||s.align||"right" };
       const mw=parseInt(c.maxw,10)||0; if(mw) o.maxw=mw;
-      // The words for this section live in the same object as its picture.
-      // An empty string is stored deliberately — the site reads that as
-      // "use the wording that ships in about.html".
-      if(s.text){
-        const t=state.pageDraft.text[s.key]||{};
-        if(!s.noHeading) o.heading=(t.heading||"").trim();
-        o.body=(t.body||"").replace(/\r\n?/g,"\n").trim();
-      }
       data[s.key]=o;
     });
   }else{
@@ -724,28 +770,35 @@ function pushPagePreview(){
     win.MPC_PAGES = win.MPC_PAGES || {};
     win.MPC_PAGES[state.currentPage] = draftPageData();
     win.MPCStore.applyPage(state.currentPage);
+    win.MPCStore.applyText(win.MPC_PAGES);   // the words, as well as the pictures
   }catch(e){/* iframe not ready / cross-origin — ignore */}
 }
 
 function selectPage(id){
   const p=PAGES.find(x=>x.id===id); if(!p) return;
-  state.current=null; state.currentPage=id; state.currentSection=null;
+  state.current=null; state.currentPage=id; state.currentSection=null; state.currentTextDoc=null;
   showPanel("pageEditor"); renderSiteList();
   const d=state.pagesData[id]||{};
   $("#p_heading").textContent = p.title;
-  $("#p_intro").textContent = p.noText
-    ? "Replace the illustration at the top of the homepage. Upload a new picture, or reset it to the original."
+  $("#p_intro").textContent = p.textOnly
+    ? ((SITE_TEXT[id] && SITE_TEXT[id].intro) || "Edit the wording on this page.")
+    : p.noText
+    ? "Replace the illustration at the top of the homepage, and edit the wording below it."
     : (id==="about"
         ? "Edit every word on the About page, section by section, plus the four illustrations. Changes show in the preview as you type — press Save to put them live."
         : "Edit the text and the illustration that sits beside this page’s title.");
   // Home only edits the image, so hide the title/subtitle fields for it.
-  $("#p_title").closest(".field").classList.toggle("hidden", !!p.noText);
-  $("#p_subtitle").closest(".field").classList.toggle("hidden", !!p.noText);
+  const hideTitles = !!(p.noText || p.textOnly);
+  $("#p_title").closest(".field").classList.toggle("hidden", hideTitles);
+  $("#p_subtitle").closest(".field").classList.toggle("hidden", hideTitles);
   $("#p_title").value = d.title!=null ? d.title : p.title;
   $("#p_subtitle").value = d.subtitle!=null ? d.subtitle : p.subtitle;
   // seed the per-slot draft from saved data (with fall-back for the old single
   // "bottom" slot, which is now split into "who" / "what we are not").
-  state.pageDraft = { slots:{}, text:{} };
+  state.pageDraft = { slots:{} };
+  // Seed the text boxes from what was saved; anything not saved shows the
+  // wording that ships in the HTML.
+  state.textDraft = Object.assign({}, (d.text || {}));
   const legacyBottom = d.bottom, legacyTarget = (d.bottom && d.bottom.target) || "who";
   (PAGE_SLOTS[id]||[]).forEach(s=>{
     let cfg;
@@ -755,17 +808,8 @@ function selectPage(id){
     else cfg = {};
     delete cfg.target;   // no longer used
     state.pageDraft.slots[s.key] = cfg;
-    // Words: whatever was saved, otherwise the wording that ships on the page,
-    // so the boxes always show what a visitor is currently reading.
-    if(s.text){
-      const dflt = ABOUT_TEXT[s.key] || {};
-      const saved = d[s.key] || {};
-      state.pageDraft.text[s.key] = {
-        heading: (saved.heading!=null && saved.heading!=="") ? saved.heading : (dflt.heading || ""),
-        body:    (saved.body!=null    && saved.body!=="")    ? saved.body    : (dflt.body    || "")
-      };
-    }
   });
+  renderTextRows(id, "p_text");
   renderSlots(id);
   $("#p_savemsg").textContent=""; $("#p_savemsg").className="msg";
   $("#pvId").textContent = "· " + id;
@@ -1106,13 +1150,50 @@ $("#p_slots").addEventListener("click", e => {
   }
 });
 
-/* About section words: update the draft and repaint the preview as you type. */
-$("#p_slots").addEventListener("input", e => {
-  const fld=e.target.closest("[data-txt]"); if(!fld) return;
-  const key=fld.closest(".sectext").dataset.sectext;
-  const t=state.pageDraft.text[key]||(state.pageDraft.text[key]={});
-  t[fld.dataset.txt]=fld.value;
-  pushPagePreview();
+/* ---- Editable text rows: typing, reset, and picture swaps ---- */
+/* One set of handlers serves the page panels and the two standalone sections,
+   so they behave identically wherever they appear. */
+function wireTextRows(containerId, onChange){
+  const box = $("#"+containerId);
+
+  box.addEventListener("input", e => {
+    const fld = e.target.closest("[data-tin]"); if(!fld) return;
+    const row = fld.closest("[data-tkey]");
+    state.textDraft[row.dataset.tkey] = fld.value;
+    row.classList.add("changed");
+    onChange();
+  });
+
+  box.addEventListener("click", e => {
+    const btn = e.target.closest("[data-tact]"); if(!btn) return;
+    const row = btn.closest("[data-tkey]"), key = row.dataset.tkey;
+    if(btn.dataset.tact === "reset"){
+      delete state.textDraft[key];                    // back to the shipped wording
+      state.textRerender();
+      onChange();
+    } else if(btn.dataset.tact === "upload"){
+      state.textUploadKey = key;
+      $("#p_textupload").click();
+    }
+  });
+}
+
+/* Shared file input for the picture rows (the guide badge and blue-box art). */
+$("#p_textupload").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0]; e.target.value = "";
+  const key = state.textUploadKey; if(!file || !key) return;
+  const row = document.querySelector(`[data-tkey="${key}"]`);
+  const msg = row && row.querySelector("[data-tmsg2]");
+  if(MODE !== "firebase"){ if(msg) msg.textContent = "Uploading needs Firebase mode."; return; }
+  if(msg) msg.textContent = "Uploading…";
+  try{
+    const ext = (file.name.split(".").pop() || "png");
+    const url = await uploadImage("sitetext", key.replace(/[^\w.-]/g, "_"), file, ext);
+    state.textDraft[key] = url;
+    if(row) row.querySelector("[data-timg]").src = url;
+    if(msg) msg.textContent = "Uploaded — press Save to put it live.";
+    state.textOnChange && state.textOnChange();
+  }catch(err){ if(msg) msg.textContent = "Upload failed: " + (err.message || err); }
 });
 
 /* Slot positioning controls (width / side / target / max-width). */
@@ -1189,7 +1270,7 @@ $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.or
    SITE SECTIONS — Topics manager + Books manager
    ====================================================================== */
 function showPanel(which){
-  ["empty","pageEditor","editor","topicsEditor","booksEditor","footerEditor"].forEach(id=>{
+  ["empty","pageEditor","editor","topicsEditor","booksEditor","footerEditor","siteTextEditor"].forEach(id=>{
     const el=$("#"+id); if(el) el.classList.toggle("hidden", id!==which);
   });
 }
@@ -1197,22 +1278,60 @@ function renderSiteList(){
   const cur=state.currentSection;
   $("#siteList").innerHTML =
     `<button class="gitem ${cur==="topics"?"active":""}" data-section="topics">Topics</button>` +
-    `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Our Books</button>` +
-    `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>`;
+    `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Book list</button>` +
+    `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>` +
+    `<button class="gitem ${cur==="sitetext"?"active":""}" data-section="sitetext">Menu</button>` +
+    `<button class="gitem ${cur==="guidelayout"?"active":""}" data-section="guidelayout">Guide layout</button>`;
 }
-const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor" };
+const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor",
+                      sitetext:"siteTextEditor", guidelayout:"siteTextEditor" };
+/* Which entry in site-text.js each standalone section edits, and where it is
+   stored (a doc in the "pages" collection, same as the real pages). */
+const SITE_TEXT_SECTIONS = { sitetext:"site", guidelayout:"guide" };
 function selectSection(which){
-  state.current=null; state.currentPage=null; state.currentSection=which;
+  state.current=null; state.currentPage=null; state.currentSection=which; state.currentTextDoc=null;
   showPanel(SITE_PANELS[which] || "empty");
   $("#pvId").textContent = "· " + which;
   if(which==="topics") renderTopicRows();
   else if(which==="books") renderBookRows();
   else if(which==="footer") renderFooterFields();
+  else if(SITE_TEXT_SECTIONS[which]) renderSiteTextPanel(which);
   renderPageList(); renderSiteList(); renderList($("#q").value);
 }
 
+/* ---- Menu & shared text / Guide layout ----
+   Both use the same row editor as the pages; they just save to a different
+   doc and preview on a different page. */
+let pvSiteTextReady=false;
+function renderSiteTextPanel(which){
+  const id = SITE_TEXT_SECTIONS[which];
+  const meta = SITE_TEXT[id] || {};
+  const d = state.pagesData[id] || {};
+  state.textDraft = Object.assign({}, (d.text || {}));
+  state.currentTextDoc = id;
+  $("#st_heading").textContent = meta.label || id;
+  $("#st_intro").textContent = meta.intro || "";
+  renderTextRows(id, "st_rows");
+  $("#siteTextMsg").textContent=""; $("#siteTextMsg").className="msg";
+  // Guide-layout wording only shows on a guide, so preview it there.
+  const first = (state.guides[0] && state.guides[0].id) || "";
+  const pv=$("#pv"); pvSiteTextReady=false;
+  pv.onload=()=>{ pvSiteTextReady=true; pushSiteTextPreview(); };
+  pv.src = (id==="guide" && first) ? `../guide.html?id=${encodeURIComponent(first)}` : "../index.html";
+}
+function pushSiteTextPreview(){
+  if(!pvSiteTextReady) return;
+  const id = state.currentTextDoc;
+  try{
+    const win=$("#pv").contentWindow;
+    win.MPC_PAGES = win.MPC_PAGES || {};
+    win.MPC_PAGES[id] = Object.assign({}, win.MPC_PAGES[id], { text: draftText(id) });
+    win.MPCStore.applyText(win.MPC_PAGES);
+  }catch(e){/* iframe not ready — ignore */}
+}
+
 /* ---- Footer ---- */
-/* The shipped wording, from ../assets/js/about-text.js, used to pre-fill the
+/* The shipped wording, from ../assets/js/site-text.js, used to pre-fill the
    boxes so you edit the lines that are actually on the site. */
 const FOOTER_TEXT = window.FOOTER_DEFAULTS || {};
 let pvFooterReady=false;
@@ -1411,6 +1530,32 @@ $("#saveBooks").addEventListener("click", async ()=>{
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
     state.booksList=items.map(x=>({...x})); renderBookRows();
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+  }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
+  finally{ btn.disabled=false; }
+});
+
+/* ---- Text rows: hook both places they appear ---- */
+/* state.textRerender redraws whichever set of rows is on screen (used after a
+   Reset, so the box refills with the shipped wording). */
+state.textRerender = function(){
+  if(state.currentPage) renderTextRows(state.currentPage, "p_text");
+  else if(state.currentTextDoc) renderTextRows(state.currentTextDoc, "st_rows");
+};
+wireTextRows("p_text",  () => { state.textOnChange = pushPagePreview;     pushPagePreview(); });
+wireTextRows("st_rows", () => { state.textOnChange = pushSiteTextPreview; pushSiteTextPreview(); });
+
+$("#saveSiteText").addEventListener("click", async ()=>{
+  const id=state.currentTextDoc, btn=$("#saveSiteText"), msg=$("#siteTextMsg");
+  if(!id) return;
+  if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Editing text needs Firebase mode."; return; }
+  btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
+  try{
+    const {fs,db}=state.fb;
+    const data=Object.assign({}, state.pagesData[id], { text:draftText(id) });
+    await fs.setDoc(fs.doc(db,"pages",id), data);
+    state.pagesData[id]=data;
+    msg.className="msg ok"; msg.textContent="Saved — live across the site.";
+    pushSiteTextPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });

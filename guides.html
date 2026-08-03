@@ -37,20 +37,20 @@
   @media (min-width:961px){ body.searching-active .rows{padding-top:12px} }
 </style>
 </head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
+<body data-mpc-page="guides">
+<a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
 
 <header class="site-head">
   <div class="wrap head-inner">
     <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
     <nav class="nav" id="nav">
-      <a href="index.html">Home</a>
-      <a href="popular.html">Popular</a>
-      <a href="guides.html" aria-current="page">Guides</a>
-      <a href="about.html">About Us</a>
-      <a href="books.html">Our Books</a>
+      <a href="index.html" data-mpc-text="nav.home">Home</a>
+      <a href="popular.html" data-mpc-text="nav.popular">Popular</a>
+      <a href="guides.html" aria-current="page" data-mpc-text="nav.guides">Guides</a>
+      <a href="about.html" data-mpc-text="nav.about">About Us</a>
+      <a href="books.html" data-mpc-text="nav.books">Our Books</a>
     </nav>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav" data-mpc-text="nav.toggle">Menu</button>
   </div>
 </header>
 
@@ -61,8 +61,8 @@
       <p data-page-subtitle>Search it, or scroll it. Every one is a three-minute read.</p>
     <form class="search" id="searchForm" role="search">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-      <input type="search" id="q" name="q" aria-label="Search the guides" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
-      <button type="submit">Search</button>
+      <input type="search" id="q" name="q" aria-label="Search the guides" data-mpc-attr="placeholder:search.placeholder" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
+      <button type="submit" data-mpc-text="search.button">Search</button>
     </form>
     </div>
     <div class="page-hero-art">
@@ -72,18 +72,18 @@
 
   <section class="rows wrap" aria-label="Filter guides">
     <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">1</span>Browse by topic</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">1</span><span data-mpc-text="row.topic">Browse by topic</span></p>
       <div class="pills" id="topicPills"></div>
     </div>
     <div class="row">
-      <p class="eyebrow"><span class="step" aria-hidden="true">2</span>How old is your little one?</p>
+      <p class="eyebrow"><span class="step" aria-hidden="true">2</span><span data-mpc-text="row.age">How old is your little one?</span></p>
       <div class="pills" id="agePills"></div>
     </div>
     <div class="row row--stack" id="resultsRow">
-      <p class="eyebrow"><span id="resultsTitle">Every guide</span></p>
+      <p class="eyebrow"><span id="resultsTitle" data-mpc-text="results.default">Every guide</span></p>
       <div class="card-grid" id="grid"></div>
       <p class="row-note"><span id="resultsCount"></span>
-        <button class="link-reset" id="resetBtn" hidden>Clear filters</button></p>
+        <button class="link-reset" id="resetBtn" hidden data-mpc-text="results.clear">Clear filters</button></p>
     </div>
   </section>
 
@@ -129,11 +129,14 @@ MPCStore.ready.then(function(){
     document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
     document.body.classList.toggle("searching-active", !!q);              // collapse the hero art while searching
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.slice();
-    title.textContent = q ? "Closest matches" : (active ? "Matching guides" : "Every guide");
+    title.textContent = q ? MPCStore.t("results.search", "Closest matches")
+      : (active ? MPCStore.t("results.filtered", "Matching guides")
+                : MPCStore.t("results.default", "Every guide"));
     count.textContent = list.length + " guide" + (list.length===1?"":"s");
     reset.hidden = !active;
     grid.innerHTML = list.length ? list.map(cardHTML).join("")
-      : `<div class="empty"><p><strong>No guides match that yet.</strong></p><p>Try a single word, or clear the filters and scroll.</p></div>`;
+      : `<div class="empty"><p><strong>${MPCStore.esc(MPCStore.t("empty.title", "No guides match that yet."))}</strong></p>
+         <p>${MPCStore.inline(MPCStore.t("empty.body", "Try a single word, or clear the filters and scroll."))}</p></div>`;
     grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated");
   }
 
@@ -144,6 +147,9 @@ MPCStore.ready.then(function(){
     document.querySelectorAll("[data-topic]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.topic===topic)));
     document.querySelectorAll("[data-age]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.age===age)));
     render();
+  // Studio edits (and a slow data load) fire this; redraw so the scripted
+  // strings above pick up the new wording without a refresh.
+  window.addEventListener("mpc:textchange", function(){ render(); });
   });
   document.getElementById("searchForm").addEventListener("submit", e=>{e.preventDefault(); q=input.value.trim(); render();});
   input.addEventListener("input", ()=>{q=input.value.trim(); render();});

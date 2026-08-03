@@ -51,6 +51,9 @@ MPCStore.ready = (async function () {
         psnap.forEach(d => (pages[d.id] = d.data()));
         window.MPC_PAGES = pages;
         MPCStore.pages = pages;
+        // Every page has editable wording, so apply it here rather than making
+        // each page remember to ask for it.
+        MPCStore.applyText(pages);
       }).catch(() => { /* pages collection is optional */ })
         .finally(() => _resolvePages());
 
@@ -218,17 +221,17 @@ function setImageSource(img, src) {
    that ships in about.html back — so "reset" is just "empty the box".
    ------------------------------------------------------------------------ */
 function _inlineHTML(text) {
-  // Escape everything, then turn [label](url) back into a link. Only same-site
-  // paths and http(s)/mailto links are allowed, so a stray "javascript:" can
-  // never end up in an href.
-  return _escHtml(text).replace(
-    /\[([^\]\n]+)\]\(([^)\s]+)\)/g,
-    function (whole, label, href) {
+  // Escape everything, then put back the few bits of formatting Studio allows.
+  return _escHtml(text)
+    // [label](url) -> link. Only same-site paths and http(s)/mailto links are
+    // allowed, so a stray "javascript:" can never end up in an href.
+    .replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, function (whole, label, href) {
       return /^(https?:\/\/|mailto:|\/|[\w.-]+\.html|#)/i.test(href)
         ? '<a href="' + href + '">' + label + "</a>"
         : whole;
-    }
-  );
+    })
+    // *stars* -> the cream highlight used behind headline words.
+    .replace(/\*([^*\n]+)\*/g, '<span class="hl">$1</span>');
 }
 
 function proseHTML(text) {
@@ -242,6 +245,85 @@ function proseHTML(text) {
     })
     .join("");
 }
+
+/* --------------------------------------------------------------------------
+   Editable site text.
+
+   Every editable string has a key. Strings that sit in the HTML are tagged
+   <p data-mpc-text="the.key">, and get replaced here. Strings that a script
+   builds are read with MPCStore.t("the.key", "fallback").
+
+   Values come from two Firestore docs: pages/site (shown on every page) and
+   pages/<this page> (from <body data-mpc-page="...">). The page's own value
+   wins if both set the same key. An empty or missing value means "use the
+   wording that ships in the HTML", so clearing a box in Studio is the reset.
+   ------------------------------------------------------------------------ */
+MPCStore.text = {};
+
+function currentPageId() {
+  var b = document.body;
+  return (b && b.getAttribute("data-mpc-page")) || "";
+}
+
+/* Merge the site-wide and this-page text maps into one lookup. */
+function buildTextMap(pages) {
+  var out = {}, id = currentPageId();
+  [(pages || {}).site, (pages || {})[id]].forEach(function (pg) {
+    var t = pg && pg.text;
+    if (!t) return;
+    Object.keys(t).forEach(function (k) {
+      var v = t[k];
+      if (v != null && String(v).trim() !== "") out[k] = String(v);
+    });
+  });
+  return out;
+}
+
+/* Look up one string. Falls back to whatever the caller passes, which is
+   always the wording that ships in the code — so this is safe before (or
+   without) any Firestore data. */
+MPCStore.t = function (key, fallback) {
+  var v = MPCStore.text[key];
+  return (v == null || v === "") ? (fallback == null ? "" : fallback) : v;
+};
+
+/* Replace every tagged element on the page. Elements remember what shipped in
+   the markup, so removing an override puts the original words straight back
+   (which is what makes Studio's live preview able to go backwards). */
+/* Page scripts that build their own strings use these to stay safe. */
+MPCStore.esc = _escHtml;
+MPCStore.inline = _inlineHTML;
+
+MPCStore.applyText = function (pages) {
+  MPCStore.text = buildTextMap(pages || window.MPC_PAGES);
+  var nodes = document.querySelectorAll("[data-mpc-text]");
+  Array.prototype.forEach.call(nodes, function (el) {
+    var key = el.getAttribute("data-mpc-text");
+    if (el.__mpcOriginal == null) el.__mpcOriginal = el.innerHTML;
+    var v = MPCStore.text[key];
+    if (v == null || String(v).trim() === "") { el.innerHTML = el.__mpcOriginal; return; }
+    // A multi-paragraph value becomes real paragraphs; a single line is
+    // dropped straight in, so a heading stays a heading.
+    el.innerHTML = /\n\s*\n/.test(v)
+      ? proseHTML(v)
+      : _inlineHTML(String(v).trim());
+  });
+
+  // Editable attributes, e.g. data-mpc-attr="placeholder:search.placeholder".
+  // Plain text only — an attribute can't take markup.
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mpc-attr]"), function (el) {
+    var spec = (el.getAttribute("data-mpc-attr") || "").split(":");
+    var attr = spec[0], key = spec[1];
+    if (!attr || !key) return;
+    if (el.__mpcOriginalAttr == null) el.__mpcOriginalAttr = el.getAttribute(attr) || "";
+    var v = MPCStore.text[key];
+    el.setAttribute(attr, (v == null || String(v).trim() === "") ? el.__mpcOriginalAttr : String(v).trim());
+  });
+  // Let any page script that builds its own strings redraw with the new words.
+  try {
+    window.dispatchEvent(new CustomEvent("mpc:textchange"));
+  } catch (e) { /* very old browser — the static text still updated */ }
+};
 
 /* --------------------------------------------------------------------------
    Editable footer — the copyright line and the disclaimer under it. Both are
@@ -264,41 +346,6 @@ MPCStore.applyFooter = function (cfg) {
       : el.__mpcOriginal;
   });
 };
-
-/* Swap the words in one .about-section. The original markup is remembered the
-   first time round so an empty override restores it (and so Studio's live
-   preview can go backwards as you edit). */
-function applyAboutText(sec, config) {
-  if (!sec) return;
-  var c = config || {};
-  var prose = sec.querySelector(".prose");
-  if (!prose) return;
-
-  if (!prose.__mpcOriginal) {
-    var h0 = prose.querySelector("h2");
-    prose.__mpcOriginal = {
-      heading: h0 ? h0.innerHTML : null,
-      body: Array.prototype.map.call(prose.querySelectorAll("p"), function (p) {
-        return p.outerHTML;
-      }).join("")
-    };
-  }
-  var orig = prose.__mpcOriginal;
-
-  var heading = (c.heading == null ? "" : String(c.heading)).trim();
-  var body    = (c.body    == null ? "" : String(c.body)).trim();
-  if (!heading && !body) {                       // nothing saved — leave as shipped
-    prose.innerHTML = (orig.heading != null ? "<h2>" + orig.heading + "</h2>" : "") + orig.body;
-    return;
-  }
-
-  var html = "";
-  if (orig.heading != null) {                    // this section has a heading
-    html += "<h2>" + (heading ? _escHtml(heading) : orig.heading) + "</h2>";
-  }
-  html += body ? proseHTML(body) : orig.body;
-  prose.innerHTML = html;
-}
 
 /* Apply an editable slot's image + positioning to one .about-section.
    config = { image, width:"small|medium|large", align:"left|right", maxw:Number } */
@@ -348,11 +395,10 @@ function applyAboutPage(pg) {
     ["notare", notareCfg,  D.notare]
   ];
 
-  // Each section carries both its words and its picture in one saved object.
+  // Words are handled by the general text system (see MPCStore.applyText);
+  // this only places the artwork.
   sections.forEach(function (s) {
-    const sec = document.querySelector('.about-section[data-illus="' + s[0] + '"]');
-    applyAboutText(sec, s[1]);
-    applyAboutArt(sec, s[1], s[2]);
+    applyAboutArt(document.querySelector('.about-section[data-illus="' + s[0] + '"]'), s[1], s[2]);
   });
 }
 
