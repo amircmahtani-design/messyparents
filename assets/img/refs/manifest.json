@@ -1,8 +1,21 @@
 {
+  "_comment": "Character canon for the illustration generator. 'references' are the images sent with every generation — keep this set small, clean and character-defining. 'library' is everything available.",
   "references": [
-    "family-sofa.png",
+    "papa.png",
     "mama.png",
-    "ari-baby.png",
-    "mama-papa-hugging.png"
+    "ari.png",
+    "family-messy-sofa-close.png"
+  ],
+  "library": [
+    "papa.png",
+    "mama.png",
+    "ari.png",
+    "family-messy-sofa-close.png",
+    "mama-papa-hugging.png",
+    "family-standing-giraffe.png",
+    "family-writing-guide-ari.png",
+    "popular-guides-family-warm.png",
+    "all-guides-family.png",
+    "family-not-doctors-toy-stethoscope.png"
   ]
 }

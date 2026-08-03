@@ -10,3 +10,13 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin", "pngjs"]
+
+# Netlify's image CDN. Illustrations uploaded through Studio are stored in
+# Firebase, and the older ones are full-size PNGs — a 1.4MB book cover was
+# taking 3.4 seconds. Listing the host here lets Netlify re-encode them to
+# WebP at display size and cache the result on the edge, so nothing has to be
+# re-uploaded. Only hosts listed here are transformed.
+[images]
+  remote_images = [
+    "https://firebasestorage.googleapis.com/.*"
+  ]

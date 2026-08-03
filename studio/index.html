@@ -335,6 +335,20 @@
     </div>
     <p style="color:var(--muted);font-size:13px;margin:0 0 14px">Each character keeps a persistent illustration session so the look stays consistent across every guide. If a character starts drifting, reset its session — the canon is re-established from your reference images on the next generation.</p>
     <div id="charList"></div>
+
+    <!-- One-time housekeeping: get the 8.6MB of reference art out of the repo. -->
+    <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
+      <h3 style="margin:0 0 4px;font-size:14px">Reference images</h3>
+      <p style="color:var(--muted);font-size:12.5px;margin:0 0 10px;line-height:1.5">
+        The reference art is bundled with the site — 8.6MB deployed on every build for
+        files only this panel uses. Move it to Firebase Storage and it is fetched from
+        there instead. Run this <strong>once, on the live site, before</strong> deleting
+        <code>assets/img/refs/</code> from the repo — it copies the files from where they
+        are now.
+      </p>
+      <button id="migrateRefs" class="btn" type="button">Move reference images to Storage</button>
+      <span id="migrateRefsMsg" class="msg" style="margin-left:8px"></span>
+    </div>
   </div>
 </div>
 
@@ -458,12 +472,76 @@ async function loadGuides(){
   }
   return (window.GUIDES || []).map(g => JSON.parse(JSON.stringify(g)));
 }
+/* Every reference image the illustration generator can draw from. They used to
+   sit in assets/img/refs/ — 8.6MB deployed with every build, for files only
+   Studio ever touches. They now live in Firebase Storage; the list of URLs is
+   kept in meta/refs. */
+const REF_FILES = [
+  "papa.png", "mama.png", "ari.png", "family-messy-sofa-close.png",
+  "mama-papa-hugging.png", "family-standing-giraffe.png",
+  "family-writing-guide-ari.png", "popular-guides-family-warm.png",
+  "all-guides-family.png", "family-not-doctors-toy-stethoscope.png"
+];
+/* The four sent with every generation. Deliberately the three single-character
+   studies plus one group shot — they define each face and outfit cleanly.
+   family-not-doctors-toy-stethoscope.png is NOT in this set: it carries a large
+   red cross as part of its meaning, and using it as a style reference would
+   teach the generator to draw red crosses over everything. */
+const REF_ACTIVE = ["papa.png", "mama.png", "ari.png", "family-messy-sofa-close.png"];
+
 async function loadRefs(){
+  // Preferred: the URLs recorded in Firestore after the one-time move.
+  if(MODE === "firebase"){
+    try{
+      const {fs,db} = state.fb;
+      const s = await fs.getDoc(fs.doc(db,"meta","refs"));
+      if(s.exists()){
+        const m = s.data().files || {};
+        const urls = (s.data().active || REF_ACTIVE).map(n => m[n]).filter(Boolean);
+        if(urls.length) return urls;
+      }
+    }catch(e){ /* fall through to the bundled copies */ }
+  }
+  // Fallback for a site that has not been migrated yet.
   try{
     const r = await fetch("../assets/img/refs/manifest.json", { cache: "no-store" });
     const j = await r.json();
     return (j.references || []).map(n => location.origin + "/assets/img/refs/" + n);
   }catch(e){ return []; }
+}
+
+/* ---- One-time move of the reference images into Storage -----------------
+   Reads each file from the live site, uploads it, and records the URLs. Run it
+   ONCE, from the deployed site, BEFORE deleting assets/img/refs/ — it needs
+   those files to still be reachable in order to copy them. */
+async function migrateRefsToStorage(btn, msg){
+  if(MODE !== "firebase"){ msg.className="msg err"; msg.textContent="Needs Firebase mode."; return; }
+  btn.disabled = true;
+  const {fs,db} = state.fb, files = {}, failed = [];
+  for(let i=0;i<REF_FILES.length;i++){
+    const name = REF_FILES[i];
+    msg.className="msg"; msg.textContent = `Moving ${i+1} of ${REF_FILES.length}: ${name}…`;
+    try{
+      const r = await fetch("../assets/img/refs/" + name, { cache:"no-store" });
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      const blob = await r.blob();
+      files[name] = await uploadImage("refs", name.replace(/\.png$/,""), blob, "png");
+    }catch(e){ failed.push(name); }
+  }
+  if(!Object.keys(files).length){
+    msg.className="msg err";
+    msg.textContent="Nothing copied — are the files still deployed at /assets/img/refs/?";
+    btn.disabled=false; return;
+  }
+  try{
+    await fs.setDoc(fs.doc(db,"meta","refs"),
+      { files, active: REF_ACTIVE.filter(n=>files[n]), updated: Date.now() });
+    msg.className = failed.length ? "msg err" : "msg ok";
+    msg.textContent = failed.length
+      ? `Moved ${Object.keys(files).length}, but these failed: ${failed.join(", ")}`
+      : `All ${Object.keys(files).length} moved. You can now delete assets/img/refs/ from the repo.`;
+  }catch(e){ msg.className="msg err"; msg.textContent="Could not save the list: "+(e.message||e); }
+  btn.disabled=false;
 }
 /* ---- CHARACTER BIBLE ---------------------------------------------------
    Edit these descriptions to match your art exactly — the closer the words,
@@ -585,7 +663,14 @@ function openCropper(file, target){
         const c=document.createElement("canvas"); c.width=target.w; c.height=target.h;
         const ctx=c.getContext("2d");
         ctx.drawImage(im, -tx/s, -ty/s, fw/s, fh/s, 0, 0, target.w, target.h);
-        c.toBlob(b=>{ cleanup(); b ? resolve(b) : reject(new Error("Could not process image")); }, "image/png");
+        /* WebP at 0.9 is visually identical to the PNG here and a fraction of
+           the size — these illustrations were the slow part of a page load.
+           If a browser cannot write WebP, fall back to PNG rather than fail. */
+        c.toBlob(b=>{
+          if(b){ cleanup(); b.__ext="webp"; resolve(b); return; }
+          c.toBlob(b2=>{ cleanup(); b2 ? (b2.__ext="png", resolve(b2))
+            : reject(new Error("Could not process image")); }, "image/png");
+        }, "image/webp", 0.9);
       };
       $("#cropCancel").onclick=()=>{ cleanup(); reject(new Error("cancelled")); };
     };
@@ -836,6 +921,9 @@ async function savePage(){
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 }
+
+$("#migrateRefs").addEventListener("click", () =>
+  migrateRefsToStorage($("#migrateRefs"), $("#migrateRefsMsg")));
 
 /* ---- Character Manager (retained but unused) ---- */
 const CHAR_KEYS = ["family","mama","papa","ari","mama-ari","papa-ari"];
@@ -1220,7 +1308,7 @@ $("#p_upload").addEventListener("change", async e => {
     const blob=await openCropper(file, cropSize);        // cropper works in any mode
     if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving page images needs Firebase mode."; return; }
     if(msg) msg.textContent="Uploading…";
-    const url=await uploadImage("pages", state.currentPage+"-"+key, blob, "png");
+    const url=await uploadImage("pages", state.currentPage+"-"+key, blob, blob.__ext || "png");
     const c=state.pageDraft.slots[key]||(state.pageDraft.slots[key]={});
     c.image=url;
     card.querySelector("[data-thumb]").src=url;   // thumbnail now shows ONLY the new image
@@ -1435,7 +1523,7 @@ $("#topicIconUpload").addEventListener("change", async e=>{
     const blob=await openCropper(file, TOPIC_ICON);
     if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving needs Firebase mode."; return; }
     if(msg) msg.textContent="Uploading…";
-    const url=await uploadImage("icons","topic-"+(state.topics[i].id||slugify(state.topics[i].label)||i), blob, "png");
+    const url=await uploadImage("icons", "topic-"+(state.topics[i].id||slugify(state.topics[i].label)||i), blob, blob.__ext || "png");
     state.topics[i].icon=url; renderTopicRows();
   }catch(err){ if(err.message!=="cancelled" && msg) msg.textContent="Upload failed: "+(err.message||err); }
 });
@@ -1511,7 +1599,7 @@ $("#bookCoverUpload").addEventListener("change", async e=>{
     const blob=await openCropper(file, BOOK_COVER);
     if(MODE!=="firebase"){ if(msg) msg.textContent="Cropped ✓ — saving needs Firebase mode."; return; }
     if(msg) msg.textContent="Uploading…";
-    const url=await uploadImage("books","cover-"+i, blob, "png");
+    const url=await uploadImage("books", "cover-"+i, blob, blob.__ext || "png");
     state.booksList[i].cover=url;
     if(row) row.querySelector("[data-cover]").innerHTML=bookCoverThumb(url);
     if(msg) msg.textContent="Uploaded ✓ — click Save to keep it.";
@@ -1629,7 +1717,7 @@ async function boot(){
     try{
       const blob = await openCropper(file, GUIDE_HERO);
       msg.textContent = "Uploading…";
-      const url = await uploadImage("guides", g.id, blob, "png");
+      const url = await uploadImage("guides", g.id, blob, blob.__ext || "png");
       $("#f_hero").value = url; pushPreview();
       msg.textContent = "Uploaded ✓ — click Save to keep it.";
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }

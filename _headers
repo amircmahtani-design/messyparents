@@ -1,0 +1,18 @@
+# Netlify cache rules. Images, fonts and icons never change without changing
+# their filename, so they can be cached hard. HTML must not be, or a deploy
+# would not reach anyone who had visited before.
+
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/css/*
+  Cache-Control: public, max-age=604800
+
+/assets/js/*
+  Cache-Control: public, max-age=604800
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate

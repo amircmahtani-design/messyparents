@@ -17,6 +17,11 @@ service firebase.storage {
     match /icons/{file=**}    { allow read: if true; allow write: if isAdmin(); }
     match /sitetext/{file=**} { allow read: if true; allow write: if isAdmin(); }
 
+    // Character reference art, moved out of the repo. It must stay publicly
+    // readable: Studio hands these URLs to the illustration API, which fetches
+    // them itself and cannot sign in as you.
+    match /refs/{file=**}     { allow read: if true; allow write: if isAdmin(); }
+
     // Pictures used inside the book (the Editor). The manuscript text is fully
     // private in Firestore; these files sit behind long unguessable download
     // URLs rather than the sign-in wall, because the <img> tags in the editor

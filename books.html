@@ -14,6 +14,9 @@
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Guide illustrations are served from Firebase Storage; opening the
+     connection early saves the handshake when the first one is needed. -->
+<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
@@ -24,7 +27,7 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270"></a>
+    <a class="brand" href="index.html"><img src="assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270" fetchpriority="high" decoding="async"></a>
     <nav class="nav" id="nav">
       <a href="index.html" data-mpc-text="nav.home">Home</a>
       <a href="popular.html" data-mpc-text="nav.popular">Popular</a>
@@ -53,7 +56,7 @@
          sitting on top of the book card above. -->
     <div class="band">
       <span class="band-art" aria-hidden="true">
-        <img src="assets/img/couple.webp" alt="" width="520" height="392">
+        <img src="assets/img/couple.webp" alt="" width="520" height="392" loading="lazy" decoding="async">
       </span>
       <div>
         <p data-mpc-text="band.line">Read the guides first.</p>

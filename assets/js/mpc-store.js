@@ -110,6 +110,31 @@ MPCStore.ABOUT_DEFAULTS = {
    Editable TOPICS (the "Browse by topic" pills) + the Our Books list.
    Both are managed in Studio and stored in Firestore under /meta/{topics,books}.
    ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------
+   Image sizing.
+
+   Illustrations uploaded through Studio live in Firebase Storage, and the older
+   ones are full-size PNGs — one book cover was 1.4MB and took 3.4 seconds. Rather
+   than re-uploading everything, these are routed through Netlify's image CDN,
+   which re-encodes them to WebP at the size they are actually displayed and
+   caches the result on the edge.
+
+   Netlify only transforms remote hosts listed under [images] in netlify.toml.
+   Anything else — a local asset, a data: URI — is handed back untouched, and if
+   the CDN is ever unavailable the <img> falls back to the original URL.
+   ------------------------------------------------------------------------ */
+var REMOTE_IMG = /^https:\/\/firebasestorage\.googleapis\.com\//;
+MPCStore.img = function (url, width) {
+  if (!url || !REMOTE_IMG.test(url)) return url || "";
+  return "/.netlify/images?url=" + encodeURIComponent(url) +
+         "&w=" + (width || 800) + "&fm=webp&q=78";
+};
+/* Put on an <img> so a CDN failure shows the original rather than nothing. */
+MPCStore.imgFallback = function (url) {
+  if (!url || !REMOTE_IMG.test(url)) return "";
+  return ' onerror="this.onerror=null;this.src=' + "'" + _escHtml(url).replace(/'/g, "&#39;") + "'" + '"';
+};
+
 function _escHtml(s){
   return String(s == null ? "" : s)
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -121,7 +146,8 @@ function topicIconMarkup(icon){
   const v = (icon == null ? "" : String(icon)).trim();
   if (!v) return '<span class="pill-ico" aria-hidden="true">📌</span>';   // 📌 fallback
   if (/^(https?:|data:|\.?\/|assets\/)/i.test(v) || /\.(webp|png|jpe?g|svg|gif)$/i.test(v))
-    return '<img src="' + _escHtml(v) + '" alt="" aria-hidden="true">';
+    return '<img src="' + _escHtml(MPCStore.img(v, 120)) + '" alt="" aria-hidden="true"' +
+      MPCStore.imgFallback(v) + '>';
   return '<span class="pill-ico" aria-hidden="true">' + _escHtml(v) + '</span>';
 }
 
@@ -169,7 +195,8 @@ function bookCardHTML(b){
     ? '<span class="status ' + bookStatusClass(b.status) + '">' + _escHtml(b.status) + '</span>'
     : "";
   const cover = b.cover
-    ? '<img src="' + _escHtml(b.cover) + '" alt="' + title + ' cover" loading="lazy">'
+    ? '<img src="' + _escHtml(MPCStore.img(b.cover, 600)) + '" alt="' + title +
+      ' cover" loading="lazy" decoding="async"' + MPCStore.imgFallback(b.cover) + '>'
     : '<div class="book-cover-empty" aria-hidden="true"><span>' + title + '</span></div>';
   return '<article class="book-card">' +
     '<div class="book-cover">' + cover + '</div>' +
@@ -204,8 +231,15 @@ function setImageSource(img, src) {
   }
   img.classList.remove("ready");                 // hide until the new one is in
   img.addEventListener("load",  function(){ img.classList.add("ready"); }, { once: true });
-  img.addEventListener("error", function(){ img.classList.add("ready"); }, { once: true });
-  img.setAttribute("src", src);
+  img.addEventListener("error", function(){
+    // If the resized copy could not be fetched, show the original rather than
+    // an empty frame — then stop, so a broken original cannot loop.
+    var raw = img.getAttribute("data-src-original");
+    if (raw && img.getAttribute("src") !== raw) { img.setAttribute("src", raw); return; }
+    img.classList.add("ready");
+  }, { once: false });
+  img.setAttribute("data-src-original", src);
+  img.setAttribute("src", MPCStore.img(src, 1100));
   if (img.complete && img.naturalWidth > 0) img.classList.add("ready");   // was cached
 }
 
