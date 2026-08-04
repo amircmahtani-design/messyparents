@@ -32,6 +32,43 @@
   .rows.searching{display:flex;flex-direction:column}
   .rows.searching #resultsRow{order:-1;margin-bottom:8px}
   .rows.searching .row:not(#resultsRow){order:1}
+
+  /* --- Answered steps collapse in place (small screens only) -------------
+     Same pattern as the guides page. On a phone the hero art, the two pill
+     rows and the search bar push the results grid off screen, so tapping a
+     topic changed something nobody could see. An answered step shrinks to a
+     single line naming the choice and its count — which confirms the tap and
+     lifts the guides into view — and nothing slides down past the finger.
+     Desktop is untouched: the label column means it all fits there already. */
+  .row-body{min-width:0}
+
+  .row-summary{display:none;text-align:left;
+    border-color:var(--blue);color:var(--blue);background:#fff;
+    box-shadow:inset 0 0 0 1px var(--blue)}
+  .row-summary:hover{transform:none}
+  .row-summary .rs-label{font-weight:700;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row-summary .rs-count{font-family:var(--hand);font-weight:400;color:var(--ink-50);
+    flex:1 1 auto;white-space:nowrap}
+  .row-summary .rs-change{font-family:var(--hand);font-weight:400;flex:0 0 auto;
+    text-decoration:underline;text-underline-offset:3px}
+
+  /* TEMPORARY — delete this rule and the .build-stamp div before the footer
+     once you have confirmed the right file is live. */
+  .build-stamp{position:fixed;left:8px;bottom:6px;z-index:99;pointer-events:none;
+    font-family:var(--hand);font-size:11px;color:var(--ink);opacity:.35}
+
+  @media (max-width:960px){
+    .row.is-collapsed .pills{display:none}
+    .row.is-collapsed .row-summary{display:inline-flex;
+      animation:pop .28s cubic-bezier(.2,.7,.3,1) both}
+    /* On phones the family illustration sits ABOVE the copy (order:-1) and runs
+       to 260px, so it costs more height than both pill rows put together. Once
+       a filter or a search is on it has done its job. */
+    body.filtering-active .hero-art{display:none}
+    body.filtering-active .hero-grid{gap:0}
+    body.filtering-active .rows{padding-top:8px}
+  }
 </style>
 </head>
 <body data-mpc-page="home">
@@ -70,13 +107,22 @@
   </section>
 
   <section class="rows wrap" aria-label="Find a guide">
-    <div class="row">
+    <div class="row" id="topicRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">1</span><span data-mpc-text="row.topic">Browse by topic</span></p>
-      <div class="pills" id="topicPills"></div>
+      <div class="row-body">
+        <div class="pills" id="topicPills"></div>
+        <!-- Shown only on small screens, once step 1 is answered. -->
+        <button class="pill row-summary" type="button" id="topicSummary" data-row="topic"
+                aria-controls="topicPills" aria-expanded="true"></button>
+      </div>
     </div>
-    <div class="row">
+    <div class="row" id="ageRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">2</span><span data-mpc-text="row.age">How old is your little one?</span></p>
-      <div class="pills" id="agePills"></div>
+      <div class="row-body">
+        <div class="pills" id="agePills"></div>
+        <button class="pill row-summary" type="button" id="ageSummary" data-row="age"
+                aria-controls="agePills" aria-expanded="true"></button>
+      </div>
     </div>
     <div class="row row--stack" id="resultsRow">
       <p class="eyebrow"><span id="resultsTitle" data-mpc-text="results.default">Popular guides</span></p>
@@ -99,6 +145,9 @@
   </section>
 
 </main>
+
+<!-- TEMPORARY deployment check — remove once confirmed. -->
+<div class="build-stamp" aria-hidden="true">home v2</div>
 
 <footer class="site-foot">
   <div class="wrap">
@@ -128,7 +177,14 @@ MPCStore.ready.then(function(){
         hint=document.getElementById("resultsHint"), reset=document.getElementById("resetBtn"),
         more=document.getElementById("seeAll"), form=document.getElementById("heroSearch"),
         input=document.getElementById("heroQ");
+  const topicRow=document.getElementById("topicRow"), ageRow=document.getElementById("ageRow"),
+        topicSummary=document.getElementById("topicSummary"),
+        ageSummary=document.getElementById("ageSummary");
   let topic=null, age=null, q="";
+
+  /* A collapsed row only re-opens when the parent taps its summary line to
+     change that choice; picking a value closes it again. */
+  const openRow = {topic:false, age:false};
 
   document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
     `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
@@ -143,9 +199,37 @@ MPCStore.ready.then(function(){
     return n + " guide" + (n===1?"":"s") + " for " + bits.join(", ");
   }
 
+  const plural = n => n + " guide" + (n===1 ? "" : "s");
+
+  function fillSummary(btn, icon, label, n){
+    btn.innerHTML = (icon || "")
+      + `<span class="rs-label">${MPCStore.esc(label)}</span>`
+      + `<span class="rs-count">&middot; ${plural(n)}</span>`
+      + `<span class="rs-change">${MPCStore.esc(MPCStore.t("results.change", "Change"))}</span>`;
+  }
+
+  /* Collapse an answered step down to one line, so the guides move up into
+     view without anything sliding out from under the finger. The counts are
+     the full match totals, not the four that fit in the grid. */
+  function syncRows(){
+    const showTopic = !topic || openRow.topic;
+    if(topic){
+      const t = topicById(topic);
+      fillSummary(topicSummary, t.icon, t.label, searchGuides(q, {topic}).length);
+    }
+    topicRow.classList.toggle("is-collapsed", !showTopic);
+    topicSummary.setAttribute("aria-expanded", String(showTopic));
+
+    const showAge = !age || openRow.age;
+    if(age) fillSummary(ageSummary, "", age, searchGuides(q, {topic, age}).length);
+    ageRow.classList.toggle("is-collapsed", !showAge);
+    ageSummary.setAttribute("aria-expanded", String(showAge));
+  }
+
   function render(flash){
     const active = q || topic || age;
     document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
+    document.body.classList.toggle("filtering-active", !!active);         // drop the hero art on phones
     const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
     const shown = list.slice(0, CAP);
     title.textContent = q ? MPCStore.t("results.search", "Closest matches")
@@ -170,13 +254,18 @@ MPCStore.ready.then(function(){
          <p>${MPCStore.inline(MPCStore.t("empty.body", "Try a single word, or [browse all guides](guides.html)."))}</p></div>`;
 
     if(flash){ grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated"); }
+    syncRows();
   }
 
   document.addEventListener("click", e => {
+    // The summary line is itself a .pill, so deal with it before the pills.
+    const sum = e.target.closest(".row-summary");
+    if(sum){ openRow[sum.dataset.row] = true; syncRows(); return; }
+
     const btn = e.target.closest(".pill");
     if(!btn) return;
-    if(btn.dataset.topic) topic = (topic===btn.dataset.topic) ? null : btn.dataset.topic;
-    if(btn.dataset.age)   age   = (age===btn.dataset.age)     ? null : btn.dataset.age;
+    if(btn.dataset.topic){ topic = (topic===btn.dataset.topic) ? null : btn.dataset.topic; openRow.topic = false; }
+    if(btn.dataset.age)  { age   = (age===btn.dataset.age)     ? null : btn.dataset.age;   openRow.age   = false; }
     document.querySelectorAll("[data-topic]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.topic===topic)));
     document.querySelectorAll("[data-age]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.age===age)));
     render(true);
@@ -187,6 +276,7 @@ MPCStore.ready.then(function(){
 
   reset.addEventListener("click", () => {
     topic = age = null; q = ""; input.value = "";
+    openRow.topic = openRow.age = false;
     document.querySelectorAll(".pill").forEach(b=>b.setAttribute("aria-pressed","false"));
     render(false);
     input.focus();
