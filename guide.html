@@ -245,9 +245,12 @@ var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFull
         ${heroHTML}
       </div>
       <div class="g-cols">
+        <!-- Reassurance, then what to try, then when to get help. The warning
+             column goes last deliberately: a worried parent should meet the
+             normal explanation and something actionable before the red flags. -->
         ${col("ok", p.normal)}
-        ${col("warn", p.warn)}
         ${col("tip", p.helped)}
+        ${col("warn", p.warn)}
       </div>
       <div class="g-bandwrap">
         <div class="g-band">
