@@ -80,10 +80,27 @@
 </div>
 `;
 
-  const gpState = { url: null, brief: null, qa: null, unsub: null };
+  const gpState = { url: null, brief: null, qa: null, unsub: null, fb: null };
 
   function isStudioEditorPage() {
     return !!(document.querySelector(".top .logo") && document.querySelector("#f_hero"));
+  }
+
+  /* ---------- Firebase: grab the studio's already-initialized app ---------- */
+  async function getFirebase() {
+    if (gpState.fb) return gpState.fb;
+    if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.projectId) {
+      throw new Error("Firebase config not loaded — sign in first.");
+    }
+    const V = "10.12.2";
+    const [appMod, fsMod] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`)
+    ]);
+    const apps = appMod.getApps();
+    const app = apps.length ? apps[0] : appMod.initializeApp(window.FIREBASE_CONFIG);
+    gpState.fb = { fs: fsMod, db: fsMod.getFirestore(app) };
+    return gpState.fb;
   }
 
   function q(sel){ return document.querySelector(sel); }
@@ -155,12 +172,14 @@
   }
 
   /** Subscribe to the job doc in Firestore and show progress. */
-  function subscribeToJob(guideId) {
-    if (!window.state || !window.state.fb) {
-      document.getElementById("gpMsg").textContent = "Sign in first — Firebase not ready.";
+  async function subscribeToJob(guideId) {
+    let fb;
+    try { fb = await getFirebase(); }
+    catch (e) {
+      document.getElementById("gpMsg").textContent = "Firebase not ready: " + (e.message || e);
       return;
     }
-    const { fs, db } = window.state.fb;
+    const { fs, db } = fb;
     const jobRef = fs.doc(db, "illustration_jobs", guideId);
     if (gpState.unsub) { try { gpState.unsub(); } catch(_) {} }
     let first = true;
@@ -193,16 +212,19 @@
     hideReview();
     document.getElementById("gpMsg").textContent = "Starting…";
 
-    // Persist current draft so the planner sees the latest content
+    // Persist current draft so the planner sees the latest content.
+    // draftGuide() lives in studio's script scope — we can only reach it if
+    // studio exposed it on window. Skip if not available; the planner will
+    // fall back to the Firestore-stored version.
     try {
-      if (window.draftGuide && window.state && window.state.fb) {
+      if (typeof window.draftGuide === "function") {
         const g = window.draftGuide();
-        const { fs, db } = window.state.fb;
+        const { fs, db } = await getFirebase();
         await fs.setDoc(fs.doc(db, "guides", g.id), g, { merge: true });
       }
     } catch(_) {}
 
-    subscribeToJob(id);
+    await subscribeToJob(id);
 
     try {
       await fetch("/.netlify/functions/generate-illustration-background", {
