@@ -1,0 +1,41 @@
+<div class="field" id="genWrap">
+  <label>Hero image <span class="hint">— upload from your computer, or generate an on-brand illustration below</span></label>
+  <input id="f_upload" type="file" accept="image/*" style="font-family:inherit;font-size:14px">
+
+  <div style="margin-top:14px;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;background:#fafaf5">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <strong style="font-family:inherit">✨ AI illustration</strong>
+      <span class="hint">— brand-locked characters, human approval before it attaches</span>
+    </div>
+
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" id="genBtn" class="btn">Generate illustration</button>
+      <button type="button" id="genEditBriefBtn" class="btn btn-ghost hidden">Edit brief &amp; regenerate</button>
+      <button type="button" id="genRegenBtn" class="btn btn-ghost hidden">Regenerate</button>
+      <button type="button" id="genApproveBtn" class="btn btn-primary hidden">Approve &amp; use</button>
+      <button type="button" id="genRejectBtn" class="btn btn-ghost hidden">Reject</button>
+    </div>
+
+    <div style="margin-top:8px"><span id="genMsg" class="hint">Not started.</span></div>
+
+    <!-- Pending image preview + QA verdict -->
+    <div id="genPreviewWrap" class="hidden" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div>
+        <div class="hint" style="margin-bottom:4px">Pending illustration (not saved to guide yet)</div>
+        <img id="genPreviewImg" alt="pending illustration"
+             style="width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px">
+      </div>
+      <div>
+        <div class="hint" style="margin-bottom:4px">QA verdict</div>
+        <pre id="genQAPre" style="margin:0;padding:10px;background:#111;color:#c6f6c6;font-size:12px;line-height:1.4;border-radius:8px;max-height:280px;overflow:auto;white-space:pre-wrap"></pre>
+      </div>
+    </div>
+
+    <!-- Editable scene brief -->
+    <div id="genBriefWrap" class="hidden" style="margin-top:12px">
+      <div class="hint" style="margin-bottom:4px">Scene brief (edit &amp; regenerate to steer the illustration)</div>
+      <textarea id="genBriefTA" rows="10"
+                style="width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px"></textarea>
+    </div>
+  </div>
+</div>
