@@ -1,21 +1,30 @@
 {
-  "_comment": "Character canon for the illustration generator. 'references' are the images sent with every generation — keep this set small, clean and character-defining. 'library' is everything available.",
-  "references": [
-    "papa.png",
-    "mama.png",
-    "ari.png",
-    "family-messy-sofa-close.png"
+  "_comment": "Canonical brand references for the illustration generator. Every generation sends the character sheets for the characters in the scene, PLUS the brand board, PLUS one semantically-chosen approved scene. Reference priority is (1) character sheets = identity, (2) approved scene = finish/composition, (3) brand board = palette/texture, (4) slide text = meaning only.",
+  "version": "messy-parents-image-v2",
+  "characters": {
+    "mama": "mama.png",
+    "papa": "papa.png",
+    "ari":  "ari.png"
+  },
+  "brand": "brand-reference-board.png",
+  "approvedScenes": [
+    "approved-milk-refusal.png",
+    "approved-family-writing.png",
+    "approved-popular-guides.png",
+    "approved-not-doctors.png"
   ],
-  "library": [
-    "papa.png",
-    "mama.png",
-    "ari.png",
+  "_legacy_library": [
     "family-messy-sofa-close.png",
     "mama-papa-hugging.png",
     "family-standing-giraffe.png",
     "family-writing-guide-ari.png",
     "popular-guides-family-warm.png",
     "all-guides-family.png",
-    "family-not-doctors-toy-stethoscope.png"
+    "family-not-doctors-toy-stethoscope.png",
+    "first-steps-high-five.png",
+    "midnight-handover.png",
+    "papa-used-diaper.png",
+    "mama-baby-food.png",
+    "ari-baby.png"
   ]
 }
