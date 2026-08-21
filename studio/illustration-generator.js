@@ -28,6 +28,13 @@
 #genPanel .gp-current-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
 #genPanel .gp-current-img{width:100%;max-width:320px;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px;display:block}
 #genPanel .gp-current-none{padding:20px;text-align:center;color:#6b7684;font-size:13px;border:1px dashed #cbd5e1;border-radius:8px;background:#fff}
+#genPanel .gp-chars{margin-bottom:12px}
+#genPanel .gp-chars-label{font-size:12px;color:#6b7684;font-weight:700;margin-bottom:6px}
+#genPanel .gp-chars-chips{display:flex;gap:6px;flex-wrap:wrap}
+#genPanel .gp-chip{background:#fff;border:2px solid #e3e6ea;color:#1f2733;padding:8px 14px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;min-height:36px}
+#genPanel .gp-chip:hover{border-color:#c9ced6}
+#genPanel .gp-chip.active{background:#3f6fa3;border-color:#3f6fa3;color:#fff}
+#genPanel .gp-chip[data-char="auto"].active{background:#7c56b8;border-color:#7c56b8}
 #genPanel .gp-review{display:grid;grid-template-columns:1fr;gap:12px}
 #genPanel .gp-preview-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
 #genPanel .gp-preview-img{width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px}
@@ -50,6 +57,16 @@
     <div class="gp-current-label">Current hero image</div>
     <img id="gpCurrentImg" class="gp-current-img gp-hidden" alt="current hero">
     <div id="gpCurrentNone" class="gp-current-none">No hero image set yet.</div>
+  </div>
+
+  <div class="gp-chars">
+    <div class="gp-chars-label">Who's in the picture?</div>
+    <div class="gp-chars-chips">
+      <button type="button" class="gp-chip active" data-char="auto">✨ Let AI choose</button>
+      <button type="button" class="gp-chip" data-char="Mama">Mama</button>
+      <button type="button" class="gp-chip" data-char="Papa">Papa</button>
+      <button type="button" class="gp-chip" data-char="Ari">Ari</button>
+    </div>
   </div>
 
   <div class="gp-buttons">
@@ -107,6 +124,18 @@
   function on(id, evt, fn){ const el = document.getElementById(id); if (el) el.addEventListener(evt, fn); }
   function show(id){ document.getElementById(id).classList.remove("gp-hidden"); }
   function hide(id){ document.getElementById(id).classList.add("gp-hidden"); }
+
+  /** Read the character-selector chips. Returns null if "Let AI choose" is
+      active (planner picks), or an array of selected character names. */
+  function getSelectedCharacters() {
+    const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
+    if (!autoChip || autoChip.classList.contains("active")) return null;
+    const chars = [];
+    document.querySelectorAll('#genPanel .gp-chip.active').forEach(c => {
+      if (c.dataset.char !== "auto") chars.push(c.dataset.char);
+    });
+    return chars.length ? chars : null;
+  }
 
   function refreshCurrentPreview() {
     const heroInput = document.getElementById("f_hero");
@@ -233,7 +262,8 @@
         body: JSON.stringify({
           guideId: id,
           refsBase: location.origin + "/assets/img/refs",
-          briefOverride: briefOverride || null
+          briefOverride: briefOverride || null,
+          characterSelection: getSelectedCharacters()
         })
       });
     } catch (e) {
@@ -303,6 +333,27 @@
     on("gpEditBriefBtn", "click", tryEditBrief);
     on("gpApproveBtn",   "click", approve);
     on("gpRejectBtn",    "click", reject);
+
+    // 3b) Wire up character-selector chips
+    document.querySelectorAll("#genPanel .gp-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const isAuto = chip.dataset.char === "auto";
+        const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
+        const charChips = document.querySelectorAll('#genPanel .gp-chip:not([data-char="auto"])');
+        if (isAuto) {
+          // Tapping "Let AI choose" clears everything else and activates auto
+          autoChip.classList.add("active");
+          charChips.forEach(c => c.classList.remove("active"));
+        } else {
+          // Tapping a character toggles it and turns off auto
+          autoChip.classList.remove("active");
+          chip.classList.toggle("active");
+          // If no character is selected, fall back to auto
+          const anyActive = Array.from(charChips).some(c => c.classList.contains("active"));
+          if (!anyActive) autoChip.classList.add("active");
+        }
+      });
+    });
 
     // 4) Wire up the hero-input to refresh the current preview
     heroInput.addEventListener("input",  refreshCurrentPreview);
