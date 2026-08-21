@@ -81,7 +81,7 @@ const HARD_RULES = [
   "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
-  "Solid bright GREEN background (#00FF00, one flat colour). No gradient, no texture, no scenery, no checkerboard. Bright green NEVER appears anywhere on the characters, their clothes, hair, skin or props — only on the background."
+  "TECHNICAL BACKGROUND REQUIREMENT — this is not aesthetic, it is required for the pipeline: the ENTIRE background behind the characters MUST be pure saturated bright green, RGB (0, 255, 0), hex #00FF00. Fill the whole canvas outside the characters with this exact bright green. Do NOT use muted green, sage green, olive, khaki, beige, cream, paper-tone, warm off-white, or any 'book-appropriate' subtle background. Do NOT add texture, watercolour wash, paper grain, gradient, vignette or scenery. The green must be flat, uniform and unmistakably #00FF00. Bright green must NEVER appear anywhere on the characters, their clothes, hair, skin or props — only on the background."
 ];
 
 /* ---------- helpers --------------------------------------------------------- */
@@ -144,41 +144,96 @@ function parseJSONLoose(text) {
   try { return JSON.parse(cleaned.slice(first, last + 1)); } catch { return null; }
 }
 
-/* ---------- transparency: chroma-key the GREEN background in code ---------- */
-/* gpt-image-2 does not support native transparent output. We generate on a
-   solid #00FF00 background — a colour the warm character palette never uses
-   anywhere — and cut it out here. Green is far safer than magenta because
-   Ari's pink outfit and the parents' warm skin tones sit CLOSE to magenta in
-   colour space and used to bleed through as a pink halo. Nothing on any
-   character is bright green.
+/* ---------- transparency: adaptive corner-sampled chroma-key --------------- */
+/* gpt-image-2 doesn't support native transparent output. We ASK it for a solid
+   bright green (#00FF00) background, but in practice the model often renders a
+   muted "book-appropriate" green/khaki/beige instead of pure #00FF00.
+   Naive fixed-colour chroma-keying fails on those muted backgrounds.
 
-   Algorithm:
-   1) Full green pixels → fully transparent (background).
-   2) Anti-aliased edge pixels (partial green) → alpha reduced proportionally,
-      AND the green tint despilled by clamping G down toward max(R,B). This
-      removes the coloured halo that naive threshold-cut leaves behind. */
+   This adaptive algorithm:
+   1) Samples 8 corner-region pixels to determine what the AI ACTUALLY used
+      as the background colour.
+   2) Validates the samples agree (low variance) → we have a solid background.
+   3) Chroma-keys against THAT specific colour, with generous tolerance and
+      proper despill of the sampled hue.
+   4) Falls back to the old green-dominance heuristic if corners disagree
+      (e.g. the AI put scenery in a corner). */
 function cutoutMagenta(b64) {
   const png = PNG.sync.read(Buffer.from(b64, "base64"));
   const d = png.data;
-  const FULL_GREEN = 100;   // g dominance above this -> fully transparent
-  const EDGE_GREEN = 20;    // g dominance above this -> partial despill
-  const SPAN = FULL_GREEN - EDGE_GREEN;
+  const w = png.width, h = png.height;
 
+  // ---- 1) Sample corner regions
+  const OFFSET = 4;
+  const cornerPts = [
+    [OFFSET,           OFFSET],
+    [w - 1 - OFFSET,   OFFSET],
+    [OFFSET,           h - 1 - OFFSET],
+    [w - 1 - OFFSET,   h - 1 - OFFSET],
+    [OFFSET,           Math.floor(h / 2)],
+    [w - 1 - OFFSET,   Math.floor(h / 2)],
+    [Math.floor(w / 2), OFFSET],
+    [Math.floor(w / 2), h - 1 - OFFSET]
+  ];
+  const samples = cornerPts.map(([x, y]) => {
+    const i = (y * w + x) * 4;
+    return [d[i], d[i + 1], d[i + 2]];
+  });
+
+  // ---- 2) Median → background colour candidate
+  const median = c => {
+    const arr = samples.map(s => s[c]).sort((a, b) => a - b);
+    return arr[Math.floor(arr.length / 2)];
+  };
+  const bgR = median(0), bgG = median(1), bgB = median(2);
+
+  // Variance check — do the samples agree?
+  const dist = (s) => Math.hypot(s[0] - bgR, s[1] - bgG, s[2] - bgB);
+  const spread = samples.reduce((m, s) => Math.max(m, dist(s)), 0);
+  const hasSolidBackground = spread < 40;
+  const isGreenish = bgG - Math.max(bgR, bgB) > 8;  // any green dominance
+
+  // ---- 3) Adaptive chroma-key against the SAMPLED colour
+  if (hasSolidBackground && isGreenish) {
+    const TOL_FULL = 60;   // within this distance → fully transparent
+    const TOL_EDGE = 120;  // within this distance → feathered
+    const SPAN = TOL_EDGE - TOL_FULL;
+
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      const dr = r - bgR, dg = g - bgG, db = b - bgB;
+      const distance = Math.sqrt(dr * dr + dg * dg + db * db);
+
+      if (distance <= TOL_FULL) {
+        d[i + 3] = 0;
+      } else if (distance <= TOL_EDGE) {
+        // Feather the alpha
+        const t = (distance - TOL_FULL) / SPAN;
+        d[i + 3] = Math.round(d[i + 3] * t);
+        // Despill: pull the green channel down toward max(R,B) to remove
+        // the sampled colour's tint from edge pixels
+        if (g > Math.max(r, b)) d[i + 1] = Math.max(r, b);
+      }
+    }
+    return { b64: PNG.sync.write(png).toString("base64"), width: w, height: h };
+  }
+
+  // ---- 4) Fallback: the old green-dominance heuristic
+  const FULL_GREEN = 100;
+  const EDGE_GREEN = 20;
+  const SPAN = FULL_GREEN - EDGE_GREEN;
   for (let i = 0; i < d.length; i += 4) {
     const r = d[i], g = d[i + 1], b = d[i + 2];
-    // How much green dominates over red and blue in this pixel
     const green = g - Math.max(r, b);
     if (green >= FULL_GREEN) {
       d[i + 3] = 0;
     } else if (green > EDGE_GREEN) {
-      // Fade alpha proportional to greenness
-      const t = (green - EDGE_GREEN) / SPAN;         // 0 → 1
+      const t = (green - EDGE_GREEN) / SPAN;
       d[i + 3] = Math.round(d[i + 3] * (1 - t));
-      // Despill: pull G down toward the character's underlying tone
       d[i + 1] = Math.min(g, Math.max(r, b));
     }
   }
-  return { b64: PNG.sync.write(png).toString("base64"), width: png.width, height: png.height };
+  return { b64: PNG.sync.write(png).toString("base64"), width: w, height: h };
 }
 
 /** How much of the image border is actually transparent? Sanity check. */
