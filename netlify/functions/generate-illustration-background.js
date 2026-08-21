@@ -22,7 +22,7 @@
      STAGE 3 · GENERATE
        gpt-image-2 (configurable) via the Responses API, with hard rules
        ("Papa never has glasses", "no text", "no new characters", etc.)
-       baked into the prompt as absolute constraints. Solid magenta background
+       baked into the prompt as absolute constraints. Solid GREEN background
        so transparency is done reliably in code, not by the model.
 
      STAGE 4 · QA + RETRY
@@ -76,11 +76,12 @@ const HARD_RULES = [
   "Papa NEVER has glasses.",
   "Do not redesign, beautify, age, modernise or reinterpret any character.",
   "No written words, letters, headings, labels, logos, borders, numbers or captions anywhere in the image.",
-  "No furniture, scenery, decorative shapes, extra people, unexplained props, extra fingers or extra limbs.",
+  "No floating decorative elements: NO soap bubbles, NO sparkles, NO floating hearts, NO stars, NO speech bubbles, NO thought bubbles, NO whimsical particles or emojis. Only draw physical objects that are actually part of the scene brief.",
+  "No unrequested extra people, unexplained props, extra fingers or extra limbs. Simple environmental context (a rug, a couch) is fine when it grounds the scene, but do not add clutter — extra toys, books or objects — that are not called for by the brief.",
   "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
-  "Solid bright magenta background (#FF00FF, one flat colour). No gradient, no texture, no scenery, no checkerboard. Magenta never appears on the characters themselves."
+  "Solid bright GREEN background (#00FF00, one flat colour). No gradient, no texture, no scenery, no checkerboard. Bright green NEVER appears anywhere on the characters, their clothes, hair, skin or props — only on the background."
 ];
 
 /* ---------- helpers --------------------------------------------------------- */
@@ -143,17 +144,39 @@ function parseJSONLoose(text) {
   try { return JSON.parse(cleaned.slice(first, last + 1)); } catch { return null; }
 }
 
-/* ---------- transparency: chroma-key the magenta background in code -------- */
+/* ---------- transparency: chroma-key the GREEN background in code ---------- */
 /* gpt-image-2 does not support native transparent output. We generate on a
-   solid #FF00FF background — a colour the warm character palette never uses —
-   and remove it here. Reliable, and lets us actually VERIFY alpha in code. */
+   solid #00FF00 background — a colour the warm character palette never uses
+   anywhere — and cut it out here. Green is far safer than magenta because
+   Ari's pink outfit and the parents' warm skin tones sit CLOSE to magenta in
+   colour space and used to bleed through as a pink halo. Nothing on any
+   character is bright green.
+
+   Algorithm:
+   1) Full green pixels → fully transparent (background).
+   2) Anti-aliased edge pixels (partial green) → alpha reduced proportionally,
+      AND the green tint despilled by clamping G down toward max(R,B). This
+      removes the coloured halo that naive threshold-cut leaves behind. */
 function cutoutMagenta(b64) {
   const png = PNG.sync.read(Buffer.from(b64, "base64"));
   const d = png.data;
-  const tol2 = 90 * 90;
+  const FULL_GREEN = 100;   // g dominance above this -> fully transparent
+  const EDGE_GREEN = 20;    // g dominance above this -> partial despill
+  const SPAN = FULL_GREEN - EDGE_GREEN;
+
   for (let i = 0; i < d.length; i += 4) {
-    const dr = d[i] - 255, dg = d[i + 1] - 0, db = d[i + 2] - 255;
-    if (dr * dr + dg * dg + db * db <= tol2) d[i + 3] = 0;
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    // How much green dominates over red and blue in this pixel
+    const green = g - Math.max(r, b);
+    if (green >= FULL_GREEN) {
+      d[i + 3] = 0;
+    } else if (green > EDGE_GREEN) {
+      // Fade alpha proportional to greenness
+      const t = (green - EDGE_GREEN) / SPAN;         // 0 → 1
+      d[i + 3] = Math.round(d[i + 3] * (1 - t));
+      // Despill: pull G down toward the character's underlying tone
+      d[i + 1] = Math.min(g, Math.max(r, b));
+    }
   }
   return { b64: PNG.sync.write(png).toString("base64"), width: png.width, height: png.height };
 }
@@ -175,7 +198,7 @@ function borderTransparencyRatio(b64) {
 
 /* ---------- STAGE 1: PLAN --------------------------------------------------- */
 
-async function planScene(guide) {
+async function planScene(guide, characterSelection) {
   const guideText = [
     "TITLE: "     + (guide.title || ""),
     "EYEBROW: "   + ((guide.panel && guide.panel.eyebrow) || ""),
@@ -184,20 +207,45 @@ async function planScene(guide) {
     "AGE RANGE: " + (guide.age || guide.ageRange || "")
   ].join("\n");
 
+  const charConstraint = (characterSelection && characterSelection.length)
+    ? ("\n\nMANDATORY CHARACTER SELECTION: This illustration MUST include exactly these characters and only these characters: " +
+       characterSelection.join(", ") +
+       ". Do not add anyone else, do not drop anyone. Build the visual moment around this specific set.")
+    : "";
+
   const instruction =
-    "You are the visual director for The Messy Parents Collection. Read the guide " +
-    "and identify the single clearest, warmest, most lightly humorous visual moment " +
-    "that communicates its meaning. Do not design a poster or reproduce the slide. " +
-    "Do not place titles, body copy, labels or logos inside the illustration. " +
-    "Use only the characters who genuinely improve the visual idea — do NOT " +
-    "automatically include all three family members. Keep medical and safety topics " +
-    "reassuring, not frightening. Humour must come from recognisable parenting " +
-    "behaviour. Return ONLY valid JSON matching this schema — no prose, no code " +
-    "fences:\n\n" +
+    "You are the visual director for The Messy Parents Collection. Your job is to " +
+    "pick the SINGLE visual moment that makes a parent read the guide and think " +
+    "'yes, that is exactly my situation.'\n\n" +
+    "Think in this order, and DO NOT skip a step:\n" +
+    "1. PROBLEM: What specific parenting concern, question or frustration is this " +
+    "guide addressing? State it in one sentence.\n" +
+    "2. VISUAL EVIDENCE: What would a parent actually see happening at home when " +
+    "this concern is live? (e.g. baby refusing a bottle by turning her head away; " +
+    "baby crying at 3am while a bleary parent stands over the crib; baby smearing " +
+    "food; parent holding a thermometer.) The visual must depict the ACTUAL BEHAVIOUR " +
+    "the guide is about — never a tangentially related happy moment.\n" +
+    "3. EMOTIONAL FRAME: What are the parents feeling? For 'why is my baby doing/" +
+    "not doing X' guides they are mildly worried, puzzled or resigned — not alarmed, " +
+    "not delighted. The illustration reassures the reader through calm parent body " +
+    "language WHILE showing the real behaviour, not by pretending nothing is wrong.\n" +
+    "4. COMPOSITION: Now design the single frame — who is in it, what they are doing, " +
+    "expressions, props.\n\n" +
+    "COMMON FAILURE TO AVOID: 'baby not drinking milk' shown as a happy baby eating " +
+    "a banana. That misses the concern entirely — happy baby with banana = no problem = " +
+    "the illustration disagrees with the guide's premise. The correct visual is baby " +
+    "TURNING AWAY from the milk bottle while a parent looks mildly puzzled, holding " +
+    "the bottle out. Show the refusal, not a substitute activity.\n\n" +
+    "Other rules: Do not design a poster or reproduce the slide. Do not place titles, " +
+    "body copy, labels or logos inside the illustration. Use only the characters who " +
+    "genuinely improve the visual idea — do NOT automatically include all three family " +
+    "members. Humour must come from recognisable parenting behaviour, not slapstick.\n\n" +
+    "Return ONLY valid JSON matching this schema — no prose, no code fences:\n\n" +
     "{\n" +
     '  "guideTopic": string,\n' +
+    '  "parentConcern": string,  // one sentence: the specific worry/question\n' +
     '  "coreMeaning": string,\n' +
-    '  "visualMoment": string,\n' +
+    '  "visualMoment": string,   // must directly depict parentConcern\n' +
     '  "characters": ["Mama"|"Papa"|"Ari"],\n' +
     '  "characterActions": { "Mama"?: string, "Papa"?: string, "Ari"?: string },\n' +
     '  "expressions":       { "Mama"?: string, "Papa"?: string, "Ari"?: string },\n' +
@@ -210,7 +258,7 @@ async function planScene(guide) {
     '  "mustAvoid": [string]\n' +
     "}\n\n" +
     "Explicitly resolve arm positions, who holds Ari, and which hand holds each " +
-    "prop whenever characters touch or carry objects.";
+    "prop whenever characters touch or carry objects." + charConstraint;
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -222,22 +270,30 @@ async function planScene(guide) {
   const brief = parseJSONLoose(extractText(resp));
   if (!brief || !Array.isArray(brief.characters) || brief.characters.length === 0) {
     // Safe fallback so we never hard-fail: a warm generic family moment.
+    const fallbackChars = (characterSelection && characterSelection.length)
+      ? characterSelection
+      : ["Mama", "Papa", "Ari"];
     return {
       guideTopic:   guide.title || "parenting moment",
       coreMeaning:  ((guide.panel && guide.panel.summary) || guide.title || ""),
       visualMoment: "Warm family moment relevant to the guide topic",
-      characters:   ["Mama", "Papa", "Ari"],
+      characters:   fallbackChars,
       characterActions: {},
       expressions: { Mama: "warm, gentle", Papa: "warm, gentle", Ari: "cheerful" },
       props: [],
       ariAccessory: "none",
       tone: ["warm", "gentle"],
-      composition: "family group, characters centred with breathing room",
+      composition: "characters centred with breathing room",
       medicalIntensity: "none",
       mustShow: [],
       mustAvoid: ["glasses on Papa", "text", "extra characters"],
       _fallback: true
     };
+  }
+  // Defensive override: if the user explicitly picked characters, force the
+  // brief to match — the planner sometimes ignores the mandatory instruction.
+  if (characterSelection && characterSelection.length) {
+    brief.characters = characterSelection;
   }
   return brief;
 }
@@ -324,12 +380,18 @@ function buildGenerationPrompt(brief, retryNotes) {
     bibleLines,
     "",
     "SCENE:",
+    "PARENT'S CONCERN (this is the specific worry the guide addresses — the image must depict this literally): " + (brief.parentConcern || brief.coreMeaning || ""),
     "VISUAL MOMENT: " + brief.visualMoment,
     "COMPOSITION:   " + (brief.composition || "characters centred with breathing room"),
     "ACTIONS + EXPRESSIONS:",
     actLines,
     propsLine,
     ariAcc,
+    "",
+    "NARRATIVE CHECK before drawing: does this scene show the parent's actual concern? " +
+    "If the concern is 'baby not eating', SHOW the refusal, not a happy substitute activity. " +
+    "If the concern is 'baby not sleeping', SHOW an awake unsettled baby, not a peaceful one. " +
+    "Parents' expressions should reflect mild puzzlement or gentle concern for a 'why/is-this-normal' guide — never alarmed, never delighted.",
     "",
     "HARD RULES (all must hold):",
     ...HARD_RULES.map((r, i) => (i + 1) + ". " + r)
@@ -395,12 +457,29 @@ async function qaImage(b64, refUrls, brief) {
     "• ARI identity = BROWN hair (not blonde), big rosy cheeks, wide open-mouth smile, PINK floral-print romper with a LARGE PINK BOW at the chest. " +
     "The pink romper and chest bow are BINDING. Her HEAD accessory (crown, headband, hair bow, or nothing) is VARIABLE and MUST NOT be treated as an identity mismatch — do NOT flag Ari as identity=false because her head accessory differs from any reference or from the brief. Only mark Ari identity=false if her face, hair colour, or the pink floral romper have changed.\n" +
     "• BRAND STYLE: hand-drawn ink linework + soft watercolour fill, warm muted palette, gently imperfect edges. Papa's and Mama's jeans should look 'lived in' — small paint stains, patches or scribble marks are correct, not defects.\n\n" +
+    "NARRATIVE ALIGNMENT — this is what sceneMeaningMatches must actually check:\n" +
+    "The scene brief contains a `parentConcern` field describing the SPECIFIC worry, " +
+    "question or behaviour the guide addresses. The image must depict that concern " +
+    "literally and recognisably. Mark sceneMeaningMatches=false if the image shows " +
+    "a tangentially related happy moment instead of the actual concern.\n" +
+    "Example failure: guide is 'why is my baby not drinking milk', image shows baby " +
+    "happily eating a banana → sceneMeaningMatches=FALSE. The correct image would " +
+    "show baby turning away FROM the bottle. A happy baby with a substitute activity " +
+    "contradicts the guide's premise.\n" +
+    "Example failure: guide is 'is this sleep regression?', image shows baby " +
+    "peacefully asleep → sceneMeaningMatches=FALSE. Correct: baby awake and unsettled " +
+    "at night while a bleary parent stands by.\n" +
+    "Parent expressions should match the concern: for 'why/is-this-normal' guides, " +
+    "parents look mildly puzzled or gently concerned — NOT alarmed, NOT delighted, " +
+    "NOT indifferent.\n\n" +
     "AUTOMATIC RETRY if any of the following are true: a required character does " +
     "not match the identity rules above; Papa has glasses; Ari's face/hair colour/romper " +
     "have changed; a wooden spoon appears without being requested; arms/hands/held " +
     "objects are confused; the baby looks ill or distressed for a normal topic; " +
-    "text or a logo appears; the image illustrates a generic scene instead of the " +
-    "brief's actual meaning.\n\n" +
+    "text or a logo appears; sceneMeaningMatches is false per the NARRATIVE ALIGNMENT " +
+    "rules above; the image contains floating decorative elements " +
+    "(soap bubbles, sparkles, hearts, stars, particles, speech bubbles) that were " +
+    "not in the brief's `props` or `mustShow` — these count as containsUnrequestedObjects=true.\n\n" +
     "DO NOT retry over: variation in Ari's head accessory (a crown, headband, bow, or nothing are all acceptable); Papa not holding his coffee mug; paint stains being subtle or absent from jeans; minor pose differences; minor colour variations that don't affect identity.\n\n" +
     "SCENE BRIEF:\n" + JSON.stringify(brief);
 
@@ -454,7 +533,7 @@ async function loadManifest(refsBase) {
 exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return; }
-  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null } = body;
+  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
@@ -468,7 +547,11 @@ exports.handler = async (event) => {
     if (sceneOverride) guide.title = sceneOverride;
 
     /* STAGE 1 · PLAN (or accept the user's edited brief) */
-    const brief = briefOverride || await planScene(guide);
+    let brief = briefOverride || await planScene(guide, characterSelection);
+    // If the user edited a brief AND also toggled character chips, honour the chips
+    if (briefOverride && characterSelection && characterSelection.length) {
+      brief = { ...brief, characters: characterSelection };
+    }
     await job.set({ status: "generating", brief, ts: Date.now() }, { merge: true });
 
     /* STAGE 2 · REFERENCES */
