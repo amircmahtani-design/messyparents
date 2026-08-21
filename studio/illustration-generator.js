@@ -1,0 +1,311 @@
+/* ============================================================================
+   MPC Studio — illustration generator UI (self-installing)
+   ----------------------------------------------------------------------------
+   Load this via Netlify snippet injection or a <script src> in studio/.
+   Injects everything it needs into the guide editor:
+     • A preview of the current hero image (so you can see what's there)
+     • A ✨ Generate illustration button
+     • Live progress while the pipeline runs
+     • The generated image + QA verdict, with Approve/Regenerate/Reject
+     • An editable scene brief so you can steer the illustration
+   Works on mobile.
+   ========================================================================== */
+(function(){
+  const CSS = `
+#genPanel{margin-top:14px;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;background:#fafaf5}
+#genPanel .gp-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+#genPanel .gp-head strong{font-family:inherit;font-size:15px}
+#genPanel .gp-head .hint{font-size:12px;color:#6b7684}
+#genPanel .gp-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+#genPanel .gp-btn{border:1px solid #e3e6ea;background:#fff;color:#1f2733;padding:10px 14px;border-radius:9px;font-weight:700;font-size:14px;min-height:44px;cursor:pointer;font-family:inherit}
+#genPanel .gp-btn:hover{border-color:#c9ced6}
+#genPanel .gp-btn.primary{background:#3f6fa3;border-color:#3f6fa3;color:#fff}
+#genPanel .gp-btn.primary:hover{background:#335c88}
+#genPanel .gp-btn.ghost{background:transparent}
+#genPanel .gp-btn[disabled]{opacity:.5;cursor:default}
+#genPanel .gp-msg{font-size:13px;color:#41505f;margin-bottom:10px;min-height:18px;font-weight:600}
+#genPanel .gp-current{margin-bottom:12px}
+#genPanel .gp-current-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
+#genPanel .gp-current-img{width:100%;max-width:320px;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px;display:block}
+#genPanel .gp-current-none{padding:20px;text-align:center;color:#6b7684;font-size:13px;border:1px dashed #cbd5e1;border-radius:8px;background:#fff}
+#genPanel .gp-review{display:grid;grid-template-columns:1fr;gap:12px}
+#genPanel .gp-preview-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
+#genPanel .gp-preview-img{width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px}
+#genPanel .gp-qa{margin:0;padding:10px;background:#111;color:#c6f6c6;font-size:11px;line-height:1.4;border-radius:8px;max-height:220px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
+#genPanel .gp-brief{margin-top:10px}
+#genPanel .gp-brief-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
+#genPanel .gp-brief-ta{width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:180px}
+@media (min-width: 700px){#genPanel .gp-review{grid-template-columns:1fr 1fr}}
+.gp-hidden{display:none !important}
+`;
+
+  const HTML_BLOCK = `
+<div id="genPanel">
+  <div class="gp-head">
+    <strong>✨ AI illustration</strong>
+    <span class="hint">brand-locked characters, human approval before it attaches</span>
+  </div>
+
+  <div class="gp-current" id="gpCurrentWrap">
+    <div class="gp-current-label">Current hero image</div>
+    <img id="gpCurrentImg" class="gp-current-img gp-hidden" alt="current hero">
+    <div id="gpCurrentNone" class="gp-current-none">No hero image set yet.</div>
+  </div>
+
+  <div class="gp-buttons">
+    <button type="button" id="gpGenerateBtn" class="gp-btn primary">✨ Generate illustration</button>
+    <button type="button" id="gpEditBriefBtn" class="gp-btn ghost gp-hidden">Edit brief &amp; regenerate</button>
+    <button type="button" id="gpRegenBtn" class="gp-btn ghost gp-hidden">Regenerate</button>
+    <button type="button" id="gpApproveBtn" class="gp-btn primary gp-hidden">Approve &amp; use</button>
+    <button type="button" id="gpRejectBtn" class="gp-btn ghost gp-hidden">Reject</button>
+  </div>
+
+  <div class="gp-msg" id="gpMsg">Ready.</div>
+
+  <div id="gpReviewWrap" class="gp-review gp-hidden">
+    <div>
+      <div class="gp-preview-label">Pending illustration (not saved yet)</div>
+      <img id="gpPreviewImg" class="gp-preview-img" alt="pending illustration">
+    </div>
+    <div>
+      <div class="gp-preview-label">QA verdict</div>
+      <pre id="gpQAPre" class="gp-qa"></pre>
+    </div>
+  </div>
+
+  <div id="gpBriefWrap" class="gp-brief gp-hidden">
+    <div class="gp-brief-label">Scene brief — edit &amp; regenerate to steer the illustration</div>
+    <textarea id="gpBriefTA" class="gp-brief-ta"></textarea>
+  </div>
+</div>
+`;
+
+  const gpState = { url: null, brief: null, qa: null, unsub: null };
+
+  function isStudioEditorPage() {
+    return !!(document.querySelector(".top .logo") && document.querySelector("#f_hero"));
+  }
+
+  function q(sel){ return document.querySelector(sel); }
+  function on(id, evt, fn){ const el = document.getElementById(id); if (el) el.addEventListener(evt, fn); }
+  function show(id){ document.getElementById(id).classList.remove("gp-hidden"); }
+  function hide(id){ document.getElementById(id).classList.add("gp-hidden"); }
+
+  function refreshCurrentPreview() {
+    const heroInput = document.getElementById("f_hero");
+    const img       = document.getElementById("gpCurrentImg");
+    const none      = document.getElementById("gpCurrentNone");
+    if (!heroInput || !img || !none) return;
+    const url = (heroInput.value || "").trim();
+    if (url) {
+      // Handle both full URLs and relative paths like "assets/img/guides/xxx.webp"
+      const src = /^https?:\/\//.test(url) ? url : ("/" + url.replace(/^\//, ""));
+      img.src = src;
+      img.classList.remove("gp-hidden");
+      none.classList.add("gp-hidden");
+    } else {
+      img.classList.add("gp-hidden");
+      none.classList.remove("gp-hidden");
+    }
+  }
+
+  function showReview(d) {
+    gpState.url   = d.url;
+    gpState.brief = d.brief;
+    gpState.qa    = d.qa;
+    document.getElementById("gpPreviewImg").src = d.url;
+    document.getElementById("gpQAPre").textContent = JSON.stringify(d.qa || {}, null, 2);
+    document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
+    show("gpReviewWrap"); show("gpBriefWrap");
+    show("gpEditBriefBtn"); show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+    document.getElementById("gpGenerateBtn").disabled = false;
+
+    const flag = d.status === "awaiting-approval-with-issues"
+      ? "⚠ QA flagged issues — review carefully before approving."
+      : "✓ Ready for your approval.";
+    document.getElementById("gpMsg").textContent = flag + " Attempts: " + (d.attempts || 1);
+  }
+
+  function hideReview() {
+    hide("gpReviewWrap"); hide("gpBriefWrap");
+    hide("gpEditBriefBtn"); hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
+    document.getElementById("gpGenerateBtn").disabled = false;
+  }
+
+  /** Grab the current guide's ID from the studio's internal state.
+      Studio exposes it via the hidden #f_id input in most builds. */
+  function currentGuideId() {
+    const el = document.getElementById("f_id");
+    if (el && el.value) return el.value.trim();
+    // Fallback: try to read from the highlighted item in the guide list
+    const active = document.querySelector(".gitem.active");
+    if (active && active.dataset && active.dataset.id) return active.dataset.id;
+    return null;
+  }
+
+  /** Fetch the guide from Firestore so the planner has real content. */
+  async function fetchGuide(id) {
+    if (!window.state || !window.state.fb) return { id, title: id };
+    const { fs, db } = window.state.fb;
+    try {
+      const snap = await fs.getDoc(fs.doc(db, "guides", id));
+      if (snap.exists()) return snap.data();
+    } catch (_) {}
+    return { id, title: id };
+  }
+
+  /** Subscribe to the job doc in Firestore and show progress. */
+  function subscribeToJob(guideId) {
+    if (!window.state || !window.state.fb) {
+      document.getElementById("gpMsg").textContent = "Sign in first — Firebase not ready.";
+      return;
+    }
+    const { fs, db } = window.state.fb;
+    const jobRef = fs.doc(db, "illustration_jobs", guideId);
+    if (gpState.unsub) { try { gpState.unsub(); } catch(_) {} }
+    let first = true;
+    gpState.unsub = fs.onSnapshot(jobRef, snap => {
+      const d = snap.data(); if (!d) return;
+      if (first) { first = false; if (!["planning","generating","reviewing"].includes(d.status)) return; }
+      const msg = document.getElementById("gpMsg");
+      if (d.status === "planning")   msg.textContent = "🧠 Planning the scene…";
+      if (d.status === "generating") msg.textContent = "🎨 Drawing (attempt " + (d.attempt || 1) + ")…";
+      if (d.status === "reviewing")  msg.textContent = "🔍 Reviewing for brand fidelity…";
+      if (d.status === "awaiting-approval" || d.status === "awaiting-approval-with-issues") {
+        try { gpState.unsub(); } catch(_) {}
+        showReview(d);
+      }
+      if (d.status === "error") {
+        try { gpState.unsub(); } catch(_) {}
+        msg.textContent = "✗ Failed: " + (d.error || "generation error");
+        document.getElementById("gpGenerateBtn").disabled = false;
+      }
+    });
+  }
+
+  async function startGeneration(briefOverride) {
+    const id = currentGuideId();
+    if (!id) {
+      document.getElementById("gpMsg").textContent = "Pick a guide first (open one from the ☰ menu).";
+      return;
+    }
+    document.getElementById("gpGenerateBtn").disabled = true;
+    hideReview();
+    document.getElementById("gpMsg").textContent = "Starting…";
+
+    // Persist current draft so the planner sees the latest content
+    try {
+      if (window.draftGuide && window.state && window.state.fb) {
+        const g = window.draftGuide();
+        const { fs, db } = window.state.fb;
+        await fs.setDoc(fs.doc(db, "guides", g.id), g, { merge: true });
+      }
+    } catch(_) {}
+
+    subscribeToJob(id);
+
+    try {
+      await fetch("/.netlify/functions/generate-illustration-background", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          guideId: id,
+          refsBase: location.origin + "/assets/img/refs",
+          briefOverride: briefOverride || null
+        })
+      });
+    } catch (e) {
+      document.getElementById("gpMsg").textContent = "Could not start: " + (e.message || e);
+      document.getElementById("gpGenerateBtn").disabled = false;
+    }
+
+    setTimeout(() => {
+      if (!gpState.url && document.getElementById("gpGenerateBtn").disabled) {
+        try { gpState.unsub && gpState.unsub(); } catch(_) {}
+        document.getElementById("gpMsg").textContent = "Still working after 6 min. Reopen the guide shortly — the job may finish in the background.";
+        document.getElementById("gpGenerateBtn").disabled = false;
+      }
+    }, 360000);
+  }
+
+  function approve() {
+    if (!gpState.url) return;
+    const heroInput = document.getElementById("f_hero");
+    if (heroInput) {
+      heroInput.value = gpState.url;
+      heroInput.dispatchEvent(new Event("input", { bubbles: true }));
+      heroInput.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    refreshCurrentPreview();
+    document.getElementById("gpMsg").textContent = "✓ Approved — now tap Save on the guide to keep it.";
+    hideReview();
+  }
+
+  function reject() {
+    gpState.url = null; gpState.brief = null; gpState.qa = null;
+    document.getElementById("gpMsg").textContent = "Rejected. Nothing attached.";
+    hideReview();
+  }
+
+  function tryEditBrief() {
+    try {
+      const edited = JSON.parse(document.getElementById("gpBriefTA").value);
+      startGeneration(edited);
+    } catch (e) {
+      document.getElementById("gpMsg").textContent = "Brief is not valid JSON: " + (e.message || e);
+    }
+  }
+
+  function inject() {
+    if (!isStudioEditorPage()) return;
+    if (document.getElementById("genPanel")) return;
+
+    // 1) Inject CSS
+    if (!document.getElementById("mpc-gen-css")) {
+      const st = document.createElement("style");
+      st.id = "mpc-gen-css"; st.textContent = CSS;
+      document.head.appendChild(st);
+    }
+
+    // 2) Inject the panel right after the #f_hero field (or its wrapper)
+    const heroInput = document.getElementById("f_hero");
+    if (!heroInput) return;
+    const container = heroInput.closest(".field") || heroInput.parentElement;
+    const wrap = document.createElement("div");
+    wrap.innerHTML = HTML_BLOCK.trim();
+    container.parentElement.insertBefore(wrap.firstElementChild, container.nextSibling);
+
+    // 3) Wire up buttons
+    on("gpGenerateBtn",  "click", () => startGeneration(null));
+    on("gpRegenBtn",     "click", () => startGeneration(gpState.brief));
+    on("gpEditBriefBtn", "click", tryEditBrief);
+    on("gpApproveBtn",   "click", approve);
+    on("gpRejectBtn",    "click", reject);
+
+    // 4) Wire up the hero-input to refresh the current preview
+    heroInput.addEventListener("input",  refreshCurrentPreview);
+    heroInput.addEventListener("change", refreshCurrentPreview);
+    refreshCurrentPreview();
+
+    // 5) When the user picks a different guide from the sidebar, refresh
+    //    the current preview a moment later (after the form re-renders)
+    document.addEventListener("click", e => {
+      if (e.target.closest(".gitem")) {
+        setTimeout(refreshCurrentPreview, 200);
+        setTimeout(refreshCurrentPreview, 700);
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inject);
+  } else {
+    inject();
+  }
+  let tries = 0;
+  const iv = setInterval(() => {
+    tries++;
+    inject();
+    if (document.getElementById("genPanel") || tries > 20) clearInterval(iv);
+  }, 300);
+})();
