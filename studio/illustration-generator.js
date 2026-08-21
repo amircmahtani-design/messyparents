@@ -41,6 +41,9 @@
 #genPanel .gp-brief{margin-top:10px}
 #genPanel .gp-brief-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
 #genPanel .gp-brief-ta{width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:180px}
+#genPanel .gp-change{margin-top:12px}
+#genPanel .gp-change-row{display:flex;gap:8px;flex-wrap:wrap}
+#genPanel .gp-change-input{flex:1;min-width:200px;padding:12px 14px;font-family:inherit;font-size:16px;border:1px solid #cbd5e1;border-radius:8px}
 @media (min-width: 560px){#genPanel .gp-images{grid-template-columns:1fr 1fr}}
 .gp-hidden{display:none !important}
 `;
@@ -96,6 +99,15 @@
   <div id="gpBriefWrap" class="gp-brief gp-hidden">
     <div class="gp-brief-label">Scene brief — edit &amp; regenerate to steer the illustration</div>
     <textarea id="gpBriefTA" class="gp-brief-ta"></textarea>
+  </div>
+
+  <div id="gpChangeWrap" class="gp-change gp-hidden">
+    <div class="gp-brief-label">Or just tell me what to change (plain English):</div>
+    <div class="gp-change-row">
+      <input id="gpChangeInput" class="gp-change-input" type="text"
+             placeholder="e.g. Papa standing up, Ari looking at the bottle">
+      <button type="button" id="gpChangeBtn" class="gp-btn primary">Apply change</button>
+    </div>
   </div>
 </div>
 `;
@@ -174,7 +186,8 @@
     document.getElementById("gpPendingCol").classList.remove("gp-hidden");
     document.getElementById("gpQAPre").textContent = JSON.stringify(d.qa || {}, null, 2);
     document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
-    show("gpQAWrap"); show("gpBriefWrap");
+    document.getElementById("gpChangeInput").value = "";
+    show("gpQAWrap"); show("gpBriefWrap"); show("gpChangeWrap");
     show("gpEditBriefBtn"); show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
 
@@ -186,7 +199,7 @@
 
   function hideReview() {
     document.getElementById("gpPendingCol").classList.add("gp-hidden");
-    hide("gpQAWrap"); hide("gpBriefWrap");
+    hide("gpQAWrap"); hide("gpBriefWrap"); hide("gpChangeWrap");
     hide("gpEditBriefBtn"); hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
   }
@@ -244,7 +257,7 @@
     });
   }
 
-  async function startGeneration(briefOverride) {
+  async function startGeneration(briefOverride, userInstructions) {
     const id = currentGuideId();
     if (!id) {
       document.getElementById("gpMsg").textContent = "Pick a guide first (open one from the ☰ menu).";
@@ -255,9 +268,6 @@
     document.getElementById("gpMsg").textContent = "Starting…";
 
     // Persist current draft so the planner sees the latest content.
-    // draftGuide() lives in studio's script scope — we can only reach it if
-    // studio exposed it on window. Skip if not available; the planner will
-    // fall back to the Firestore-stored version.
     try {
       if (typeof window.draftGuide === "function") {
         const g = window.draftGuide();
@@ -276,7 +286,8 @@
           guideId: id,
           refsBase: location.origin + "/assets/img/refs",
           briefOverride: briefOverride || null,
-          characterSelection: getSelectedCharacters()
+          characterSelection: getSelectedCharacters(),
+          userInstructions: userInstructions || ""
         })
       });
     } catch (e) {
@@ -293,7 +304,7 @@
     }, 360000);
   }
 
-  function approve() {
+  async function approve() {
     if (!gpState.url) return;
     const heroInput = document.getElementById("f_hero");
     if (heroInput) {
@@ -302,7 +313,30 @@
       heroInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
     refreshCurrentPreview();
-    document.getElementById("gpMsg").textContent = "✓ Approved — now tap Save on the guide to keep it.";
+
+    // Auto-save: write the hero URL directly to Firestore so the guide is
+    // persisted immediately. Merge write — won't overwrite other fields.
+    // Studio's schema is `guide.panel.hero`, not top-level.
+    let savedOk = false;
+    try {
+      const id = currentGuideId();
+      if (id) {
+        const { fs, db } = await getFirebase();
+        await fs.setDoc(fs.doc(db, "guides", id), {
+          panel: { hero: gpState.url },
+          heroUpdated: Date.now()
+        }, { merge: true });
+        savedOk = true;
+      }
+    } catch (e) {
+      document.getElementById("gpMsg").textContent =
+        "✓ Approved — but auto-save failed (tap Save to keep): " + (e.message || e);
+    }
+    if (savedOk) {
+      document.getElementById("gpMsg").textContent = "✓ Approved and saved.";
+      // Refresh the sidebar dots so the new state (green) shows immediately.
+      setTimeout(() => refreshSidebarDots(), 500);
+    }
     hideReview();
   }
 
@@ -315,7 +349,7 @@
   function tryEditBrief() {
     try {
       const edited = JSON.parse(document.getElementById("gpBriefTA").value);
-      startGeneration(edited);
+      startGeneration(edited, "");
     } catch (e) {
       document.getElementById("gpMsg").textContent = "Brief is not valid JSON: " + (e.message || e);
     }
@@ -341,11 +375,19 @@
     container.parentElement.insertBefore(wrap.firstElementChild, container.nextSibling);
 
     // 3) Wire up buttons
-    on("gpGenerateBtn",  "click", () => startGeneration(null));
-    on("gpRegenBtn",     "click", () => startGeneration(gpState.brief));
+    on("gpGenerateBtn",  "click", () => startGeneration(null, ""));
+    on("gpRegenBtn",     "click", () => startGeneration(gpState.brief, ""));
     on("gpEditBriefBtn", "click", tryEditBrief);
     on("gpApproveBtn",   "click", approve);
     on("gpRejectBtn",    "click", reject);
+    on("gpChangeBtn",    "click", () => {
+      const txt = (document.getElementById("gpChangeInput").value || "").trim();
+      if (!txt) {
+        document.getElementById("gpMsg").textContent = "Type what to change first (e.g. 'Papa standing up').";
+        return;
+      }
+      startGeneration(gpState.brief, txt);
+    });
 
     // 3b) Wire up character-selector chips
     document.querySelectorAll("#genPanel .gp-chip").forEach(chip => {
@@ -373,14 +415,320 @@
     heroInput.addEventListener("change", refreshCurrentPreview);
     refreshCurrentPreview();
 
+    // 4b) Studio sets #f_hero.value programmatically when you pick a guide,
+    //     which does NOT fire input/change events. Poll for value changes
+    //     every 500ms — bullet-proof way to catch programmatic assignments.
+    let lastHeroValue = heroInput.value;
+    setInterval(() => {
+      const el = document.getElementById("f_hero");
+      if (!el) return;
+      if (el.value !== lastHeroValue) {
+        lastHeroValue = el.value;
+        refreshCurrentPreview();
+      }
+    }, 500);
+
     // 5) When the user picks a different guide from the sidebar, refresh
-    //    the current preview a moment later (after the form re-renders)
+    //    the current preview a moment later (belt-and-braces on top of the poll)
     document.addEventListener("click", e => {
       if (e.target.closest(".gitem")) {
         setTimeout(refreshCurrentPreview, 200);
         setTimeout(refreshCurrentPreview, 700);
       }
     });
+  }
+
+  /* ==========================================================================
+     FEATURE: sidebar dots — colour-code each guide item by hero status
+     ------------------------------------------------------------------------
+     Grey  = no hero
+     Green = has hero
+     Amber = hero older than 30 days (stale — worth regenerating)
+     ========================================================================== */
+
+  const DOT_CSS = `
+.gitem { position: relative; padding-left: 30px !important; }
+.gitem::before {
+  content: "";
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #cbd5e1;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.05);
+}
+.gitem.dot-has::before   { background: #2e8b57; }
+.gitem.dot-stale::before { background: #d19a20; }
+`;
+
+  let guideStatusCache = {};
+
+  async function fetchGuideStatuses() {
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDocs(fs.collection(db, "guides"));
+      const now = Date.now();
+      const stale = 30 * 24 * 60 * 60 * 1000;
+      const out = {};
+      snap.forEach(doc => {
+        const g = doc.data();
+        const hero = ((g.panel && g.panel.hero) || g.hero || "").trim();
+        if (!hero) { out[doc.id] = "none"; return; }
+        const t = g.heroUpdated || parseTimestampFromUrl(hero);
+        out[doc.id] = (t && (now - t) > stale) ? "stale" : "has";
+      });
+      guideStatusCache = out;
+      return out;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Firebase Storage URLs from our pipeline have the pattern
+  //   guides-pending/{guideId}-{timestamp}.png
+  // We can pull a rough timestamp out. Returns null if not parseable.
+  function parseTimestampFromUrl(url) {
+    const m = /\/guides(?:-pending)?%2F[^-]+-(\d{13})\.png/.exec(url) ||
+              /\/guides(?:-pending)?\/[^-]+-(\d{13})\.png/.exec(url);
+    return m ? parseInt(m[1], 10) : null;
+  }
+
+  function applyDotsToDom() {
+    document.querySelectorAll(".gitem").forEach(el => {
+      const id = el.dataset && el.dataset.id;
+      if (!id) return;
+      const status = guideStatusCache[id];
+      el.classList.remove("dot-has", "dot-stale");
+      if (status === "has")   el.classList.add("dot-has");
+      if (status === "stale") el.classList.add("dot-stale");
+    });
+  }
+
+  async function refreshSidebarDots() {
+    await fetchGuideStatuses();
+    applyDotsToDom();
+  }
+
+  function installSidebarDots() {
+    if (document.getElementById("mpc-dots-css")) return;
+    const st = document.createElement("style");
+    st.id = "mpc-dots-css"; st.textContent = DOT_CSS;
+    document.head.appendChild(st);
+
+    // Initial paint (may run before .gitem elements exist — the observer catches later renders)
+    refreshSidebarDots();
+
+    // Re-paint whenever the guide list re-renders
+    const listEl = document.getElementById("list");
+    if (listEl && !listEl.__mpcObserver) {
+      const obs = new MutationObserver(() => applyDotsToDom());
+      obs.observe(listEl, { childList: true, subtree: true });
+      listEl.__mpcObserver = obs;
+    }
+  }
+
+  /* ==========================================================================
+     FEATURE: brand consistency gallery
+     ------------------------------------------------------------------------
+     A grid modal showing every guide's hero side-by-side, so drift over time
+     is easy to spot. Opens from a button injected into the top bar.
+     ========================================================================== */
+
+  const GALLERY_CSS = `
+#galleryBtn { padding: 8px 12px; }
+#galleryModal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(20, 25, 33, .75);
+  display: none; overflow: auto;
+}
+#galleryModal.open { display: block; }
+#galleryCard {
+  background: #f4f5f7; margin: 20px auto; max-width: 1200px;
+  border-radius: 12px; padding: 20px 20px 40px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+#galleryHead {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+#galleryHead h2 { margin: 0; font-size: 18px; font-family: inherit; flex: 1; }
+#galleryHead .btn { padding: 8px 14px; }
+#galleryFilters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+#galleryFilters button {
+  background: #fff; border: 2px solid #e3e6ea; color: #1f2733;
+  padding: 6px 12px; border-radius: 999px; font-family: inherit; font-size: 13px;
+  font-weight: 700; cursor: pointer; min-height: 34px;
+}
+#galleryFilters button.active { background: #3f6fa3; border-color: #3f6fa3; color: #fff; }
+#galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+#galleryGrid .g-card {
+  background: #fff; border: 1px solid #e3e6ea; border-radius: 10px;
+  overflow: hidden; cursor: pointer; text-align: left;
+  padding: 0; font-family: inherit;
+  transition: transform .12s ease, border-color .12s ease;
+}
+#galleryGrid .g-card:hover { transform: translateY(-2px); border-color: #3f6fa3; }
+#galleryGrid .g-thumb {
+  width: 100%; aspect-ratio: 3 / 2;
+  background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/12px 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: #6b7684; font-size: 11px; text-align: center; padding: 4px;
+}
+#galleryGrid .g-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+#galleryGrid .g-title {
+  padding: 8px 10px; font-size: 12px; font-weight: 700; color: #1f2733;
+  border-top: 1px solid #eef1f4; line-height: 1.3;
+}
+#galleryGrid .g-title small { display: block; font-weight: 500; color: #6b7684; font-size: 10.5px; margin-top: 2px; }
+`;
+
+  const GALLERY_HTML = `
+<div id="galleryModal" aria-hidden="true">
+  <div id="galleryCard">
+    <div id="galleryHead">
+      <h2>🖼 Brand consistency gallery</h2>
+      <button type="button" class="btn" id="galleryCloseBtn">Close</button>
+    </div>
+    <div id="galleryFilters">
+      <button type="button" data-filter="all" class="active">All</button>
+      <button type="button" data-filter="has">With hero</button>
+      <button type="button" data-filter="none">Missing hero</button>
+      <button type="button" data-filter="stale">Stale (>30d)</button>
+    </div>
+    <div id="galleryGrid"></div>
+  </div>
+</div>
+`;
+
+  async function openGallery() {
+    document.getElementById("galleryModal").classList.add("open");
+    document.getElementById("galleryModal").setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    await refreshSidebarDots();  // also refresh the cache
+    renderGallery(currentGalleryFilter);
+  }
+  function closeGallery() {
+    document.getElementById("galleryModal").classList.remove("open");
+    document.getElementById("galleryModal").setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+  let currentGalleryFilter = "all";
+
+  async function renderGallery(filter) {
+    currentGalleryFilter = filter;
+    document.querySelectorAll("#galleryFilters button").forEach(b => {
+      b.classList.toggle("active", b.dataset.filter === filter);
+    });
+    const grid = document.getElementById("galleryGrid");
+    grid.innerHTML = "<div style='padding:20px;color:#6b7684'>Loading guides…</div>";
+    let guides = [];
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDocs(fs.collection(db, "guides"));
+      snap.forEach(doc => guides.push({ id: doc.id, ...doc.data() }));
+    } catch (e) {
+      grid.innerHTML = "<div style='padding:20px;color:#c0392b'>Failed to load: " + (e.message || e) + "</div>";
+      return;
+    }
+    const filtered = guides.filter(g => {
+      const s = guideStatusCache[g.id] || "none";
+      if (filter === "all")   return true;
+      if (filter === "has")   return s === "has" || s === "stale";
+      if (filter === "none")  return s === "none";
+      if (filter === "stale") return s === "stale";
+      return true;
+    });
+    if (filtered.length === 0) {
+      grid.innerHTML = "<div style='padding:20px;color:#6b7684'>Nothing to show for this filter.</div>";
+      return;
+    }
+    filtered.sort((a, b) => String(a.title || a.id).localeCompare(String(b.title || b.id)));
+    grid.innerHTML = "";
+    filtered.forEach(g => {
+      const hero = ((g.panel && g.panel.hero) || g.hero || "").trim();
+      const status = guideStatusCache[g.id] || "none";
+      const card = document.createElement("button");
+      card.className = "g-card";
+      card.type = "button";
+      card.dataset.guideId = g.id;
+      const badge = status === "has" ? "✓ has hero"
+                  : status === "stale" ? "⚠ stale"
+                  : "○ missing";
+      card.innerHTML = `
+        <div class="g-thumb">
+          ${hero
+            ? `<img src="${hero}" alt="" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='broken URL'">`
+            : "no hero yet"}
+        </div>
+        <div class="g-title">${escapeHtml(g.title || g.id)}<small>${badge}</small></div>
+      `;
+      card.addEventListener("click", () => {
+        closeGallery();
+        // Try to open the picked guide in the studio's editor by clicking its sidebar item.
+        setTimeout(() => {
+          const item = document.querySelector(`.gitem[data-id="${CSS.escape(g.id)}"]`);
+          if (item) item.click();
+        }, 100);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function installGallery() {
+    if (document.getElementById("galleryBtn")) return;
+    const top = document.querySelector(".top");
+    if (!top) return;
+
+    // CSS
+    if (!document.getElementById("mpc-gallery-css")) {
+      const st = document.createElement("style");
+      st.id = "mpc-gallery-css"; st.textContent = GALLERY_CSS;
+      document.head.appendChild(st);
+    }
+
+    // Button in top bar — insert before Sign out for prominence
+    const btn = document.createElement("button");
+    btn.id = "galleryBtn";
+    btn.className = "btn ghost";
+    btn.type = "button";
+    btn.title = "Brand consistency gallery — see all hero illustrations together";
+    btn.textContent = "🖼 Gallery";
+    const signout = document.getElementById("signout");
+    if (signout) top.insertBefore(btn, signout);
+    else top.appendChild(btn);
+
+    // Modal
+    const wrap = document.createElement("div");
+    wrap.innerHTML = GALLERY_HTML.trim();
+    document.body.appendChild(wrap.firstElementChild);
+
+    // Wire
+    btn.addEventListener("click", openGallery);
+    document.getElementById("galleryCloseBtn").addEventListener("click", closeGallery);
+    document.getElementById("galleryModal").addEventListener("click", e => {
+      if (e.target.id === "galleryModal") closeGallery();  // click backdrop
+    });
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.getElementById("galleryModal").classList.contains("open")) closeGallery();
+    });
+    document.querySelectorAll("#galleryFilters button").forEach(b => {
+      b.addEventListener("click", () => renderGallery(b.dataset.filter));
+    });
+  }
+
+  /* ---- bootstrap: also install dots + gallery once the studio DOM is up ---- */
+  function bootExtras() {
+    if (!document.querySelector(".top") || !document.querySelector("aside.side")) return;
+    installSidebarDots();
+    installGallery();
   }
 
   if (document.readyState === "loading") {
@@ -392,6 +740,7 @@
   const iv = setInterval(() => {
     tries++;
     inject();
-    if (document.getElementById("genPanel") || tries > 20) clearInterval(iv);
+    bootExtras();
+    if (document.getElementById("genPanel") && document.getElementById("galleryBtn") && tries > 5 || tries > 30) clearInterval(iv);
   }, 300);
 })();
