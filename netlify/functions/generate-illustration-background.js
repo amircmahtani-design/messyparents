@@ -403,7 +403,7 @@ function assembleReferences(brief, manifest, refsBase) {
 
 /* ---------- STAGE 3: generate ---------------------------------------------- */
 
-function buildGenerationPrompt(brief, retryNotes) {
+function buildGenerationPrompt(brief, retryNotes, userInstructions) {
   const chars = (brief.characters || []);
   const bibleLines = chars.map(c => CHARACTER_BIBLE[c.toLowerCase()]).filter(Boolean).join("\n");
   const actions = brief.characterActions || {};
@@ -463,12 +463,20 @@ function buildGenerationPrompt(brief, retryNotes) {
       retryNotes
     );
   }
+  if (userInstructions && userInstructions.trim()) {
+    parts.push(
+      "",
+      "USER OVERRIDE — the human author has specifically requested this change. " +
+      "Apply it exactly while preserving the rest of the scene brief and all hard rules:",
+      userInstructions.trim()
+    );
+  }
   return parts.join("\n");
 }
 
-async function generateImage(brief, refUrls, retryNotes) {
+async function generateImage(brief, refUrls, retryNotes, userInstructions) {
   const size = (brief.characters && brief.characters.length >= 3) ? "1536x1024" : "1024x1024";
-  const prompt = buildGenerationPrompt(brief, retryNotes);
+  const prompt = buildGenerationPrompt(brief, retryNotes, userInstructions);
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -588,7 +596,7 @@ async function loadManifest(refsBase) {
 exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return; }
-  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null } = body;
+  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null, userInstructions = "" } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
@@ -621,7 +629,7 @@ exports.handler = async (event) => {
       attempt++;
       await job.set({ status: "generating", attempt, ts: Date.now() }, { merge: true });
 
-      const gen = await generateImage(brief, refUrls, retryNotes);
+      const gen = await generateImage(brief, refUrls, retryNotes, userInstructions);
 
       /* transparency in code, then verify alpha */
       const cut = cutoutMagenta(gen.b64);
