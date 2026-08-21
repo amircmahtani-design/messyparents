@@ -24,10 +24,13 @@
 #genPanel .gp-btn.ghost{background:transparent}
 #genPanel .gp-btn[disabled]{opacity:.5;cursor:default}
 #genPanel .gp-msg{font-size:13px;color:#41505f;margin-bottom:10px;min-height:18px;font-weight:600}
-#genPanel .gp-current{margin-bottom:12px}
-#genPanel .gp-current-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
-#genPanel .gp-current-img{width:100%;max-width:320px;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px;display:block}
-#genPanel .gp-current-none{padding:20px;text-align:center;color:#6b7684;font-size:13px;border:1px dashed #cbd5e1;border-radius:8px;background:#fff}
+#genPanel .gp-qa{margin:0;padding:10px;background:#111;color:#c6f6c6;font-size:11px;line-height:1.4;border-radius:8px;max-height:220px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
+#genPanel .gp-images{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}
+#genPanel .gp-img-col{min-width:0}
+#genPanel .gp-img-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
+#genPanel .gp-img-frame{width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;min-height:120px;position:relative}
+#genPanel .gp-img{width:100%;display:block}
+#genPanel .gp-img-none{padding:24px 12px;text-align:center;color:#6b7684;font-size:13px}
 #genPanel .gp-chars{margin-bottom:12px}
 #genPanel .gp-chars-label{font-size:12px;color:#6b7684;font-weight:700;margin-bottom:6px}
 #genPanel .gp-chars-chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -35,14 +38,10 @@
 #genPanel .gp-chip:hover{border-color:#c9ced6}
 #genPanel .gp-chip.active{background:#3f6fa3;border-color:#3f6fa3;color:#fff}
 #genPanel .gp-chip[data-char="auto"].active{background:#7c56b8;border-color:#7c56b8}
-#genPanel .gp-review{display:grid;grid-template-columns:1fr;gap:12px}
-#genPanel .gp-preview-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
-#genPanel .gp-preview-img{width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px}
-#genPanel .gp-qa{margin:0;padding:10px;background:#111;color:#c6f6c6;font-size:11px;line-height:1.4;border-radius:8px;max-height:220px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
 #genPanel .gp-brief{margin-top:10px}
 #genPanel .gp-brief-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
 #genPanel .gp-brief-ta{width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:180px}
-@media (min-width: 700px){#genPanel .gp-review{grid-template-columns:1fr 1fr}}
+@media (min-width: 560px){#genPanel .gp-images{grid-template-columns:1fr 1fr}}
 .gp-hidden{display:none !important}
 `;
 
@@ -53,10 +52,20 @@
     <span class="hint">brand-locked characters, human approval before it attaches</span>
   </div>
 
-  <div class="gp-current" id="gpCurrentWrap">
-    <div class="gp-current-label">Current hero image</div>
-    <img id="gpCurrentImg" class="gp-current-img gp-hidden" alt="current hero">
-    <div id="gpCurrentNone" class="gp-current-none">No hero image set yet.</div>
+  <div class="gp-images" id="gpImagesRow">
+    <div class="gp-img-col">
+      <div class="gp-img-label">Current hero image</div>
+      <div class="gp-img-frame">
+        <img id="gpCurrentImg" class="gp-img gp-hidden" alt="current hero">
+        <div id="gpCurrentNone" class="gp-img-none">No hero image set yet.</div>
+      </div>
+    </div>
+    <div class="gp-img-col gp-hidden" id="gpPendingCol">
+      <div class="gp-img-label">Proposed (not saved yet)</div>
+      <div class="gp-img-frame">
+        <img id="gpPreviewImg" class="gp-img" alt="proposed illustration">
+      </div>
+    </div>
   </div>
 
   <div class="gp-chars">
@@ -79,15 +88,9 @@
 
   <div class="gp-msg" id="gpMsg">Ready.</div>
 
-  <div id="gpReviewWrap" class="gp-review gp-hidden">
-    <div>
-      <div class="gp-preview-label">Pending illustration (not saved yet)</div>
-      <img id="gpPreviewImg" class="gp-preview-img" alt="pending illustration">
-    </div>
-    <div>
-      <div class="gp-preview-label">QA verdict</div>
-      <pre id="gpQAPre" class="gp-qa"></pre>
-    </div>
+  <div id="gpQAWrap" class="gp-hidden" style="margin-top:12px">
+    <div class="gp-img-label">QA verdict</div>
+    <pre id="gpQAPre" class="gp-qa"></pre>
   </div>
 
   <div id="gpBriefWrap" class="gp-brief gp-hidden">
@@ -144,14 +147,22 @@
     if (!heroInput || !img || !none) return;
     const url = (heroInput.value || "").trim();
     if (url) {
-      // Handle both full URLs and relative paths like "assets/img/guides/xxx.webp"
       const src = /^https?:\/\//.test(url) ? url : ("/" + url.replace(/^\//, ""));
+      img.onerror = () => {
+        // URL is set but the image failed to load — show a helpful message
+        img.classList.add("gp-hidden");
+        none.classList.remove("gp-hidden");
+        none.textContent = "URL is set but the image couldn't load.";
+      };
+      img.onload = () => {
+        img.classList.remove("gp-hidden");
+        none.classList.add("gp-hidden");
+      };
       img.src = src;
-      img.classList.remove("gp-hidden");
-      none.classList.add("gp-hidden");
     } else {
       img.classList.add("gp-hidden");
       none.classList.remove("gp-hidden");
+      none.textContent = "No hero image set yet.";
     }
   }
 
@@ -160,9 +171,10 @@
     gpState.brief = d.brief;
     gpState.qa    = d.qa;
     document.getElementById("gpPreviewImg").src = d.url;
+    document.getElementById("gpPendingCol").classList.remove("gp-hidden");
     document.getElementById("gpQAPre").textContent = JSON.stringify(d.qa || {}, null, 2);
     document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
-    show("gpReviewWrap"); show("gpBriefWrap");
+    show("gpQAWrap"); show("gpBriefWrap");
     show("gpEditBriefBtn"); show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
 
@@ -173,7 +185,8 @@
   }
 
   function hideReview() {
-    hide("gpReviewWrap"); hide("gpBriefWrap");
+    document.getElementById("gpPendingCol").classList.add("gp-hidden");
+    hide("gpQAWrap"); hide("gpBriefWrap");
     hide("gpEditBriefBtn"); hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
   }
