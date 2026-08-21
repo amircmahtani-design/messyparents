@@ -59,9 +59,9 @@ const MAX_RETRIES = 2;
 /* ---------- CANON: what a canonical Messy Parents illustration looks like -- */
 
 const CHARACTER_BIBLE = {
-  mama: "MAMA — woman with auburn/brown wavy hair in a loose messy bun, warm light-blue ribbed knit sweater, blue jeans, rosy cheeks, warm friendly face, natural eyebrows. Never wears glasses.",
-  papa: "PAPA — man with black tousled hair and a full black beard, grey hoodie, blue jeans, kind tired eyes, natural eyebrows. NEVER wears glasses — Papa has no glasses, ever.",
-  ari:  "ARI — chubby baby girl with wispy blonde hair, big rosy cheeks, wide open-mouth smile, white floral-print sleeveless romper. Hair varies naturally between no accessory, a small pink bow, a soft headband, or a palm-tree ponytail. A gold paper crown is OCCASIONAL and only appears if the scene brief explicitly requests it. Never carries a wooden spoon unless the scene brief explicitly requests it."
+  mama: "MAMA — woman with auburn/brown wavy hair pulled into a LOOSE MESSY BUN with soft strands falling out. She wears a BLUE RIBBED KNIT TURTLENECK sweater and BLUE JEANS that show the family's 'messy' brand: paint splatters, small stains and a visible knee patch. Round rosy pink cheeks, soft warm closed-eyed smile, warm friendly face. Never wears glasses.",
+  papa: "PAPA — man with BLACK TOUSLED / spiky hair and a FULL THICK BLACK BEARD. He wears a GREY HOODIE (often lightly paint-stained) and BLUE JEANS with paint splatters and small doodled marks — the same 'messy' look as Mama. Kind tired eyes. NEVER wears glasses — Papa has no glasses, ever. He is often holding a white mug that reads 'DADA NEED COFFEE' — that mug is his signature prop and appears when it makes narrative sense, but it is NOT required in every illustration.",
+  ari:  "ARI — chubby baby GIRL with SOFT BROWN HAIR (not blonde), big round rosy pink cheeks and a wide open-mouth cheerful smile with tongue visible. HER SIGNATURE OUTFIT is a PINK floral-print sleeveless romper covered in tiny scattered rose-pink flowers, with a LARGE PINK BOW at the chest — the pink romper and the pink chest bow are BINDING parts of her identity and are ALWAYS present in every illustration. Her HEAD is variable — she may wear a small gold paper crown, a soft headband, a pink hair bow, or nothing at all. Any of these is correct and none is required. Never carries a wooden spoon unless the scene brief explicitly requests it."
 };
 
 const STYLE_BIBLE =
@@ -389,12 +389,19 @@ async function qaImage(b64, refUrls, brief) {
     '  "issues": [string],\n' +
     '  "decision": "accept" | "retry"\n' +
     "}\n\n" +
+    "IDENTITY RULES — read carefully, this is where errors happen:\n" +
+    "• MAMA identity = auburn/brown wavy hair in a LOOSE MESSY BUN with strands falling out, BLUE RIBBED TURTLENECK sweater, paint-stained blue jeans (with a knee patch), rosy cheeks, no glasses.\n" +
+    "• PAPA identity = BLACK TOUSLED hair, FULL BLACK BEARD, grey hoodie, paint-stained/messy blue jeans, NO GLASSES ever. The 'DADA NEED COFFEE' mug is his signature but is OPTIONAL — don't flag him identity=false if he's not holding it.\n" +
+    "• ARI identity = BROWN hair (not blonde), big rosy cheeks, wide open-mouth smile, PINK floral-print romper with a LARGE PINK BOW at the chest. " +
+    "The pink romper and chest bow are BINDING. Her HEAD accessory (crown, headband, hair bow, or nothing) is VARIABLE and MUST NOT be treated as an identity mismatch — do NOT flag Ari as identity=false because her head accessory differs from any reference or from the brief. Only mark Ari identity=false if her face, hair colour, or the pink floral romper have changed.\n" +
+    "• BRAND STYLE: hand-drawn ink linework + soft watercolour fill, warm muted palette, gently imperfect edges. Papa's and Mama's jeans should look 'lived in' — small paint stains, patches or scribble marks are correct, not defects.\n\n" +
     "AUTOMATIC RETRY if any of the following are true: a required character does " +
-    "not match the reference; Papa has glasses; Ari's design has changed; a crown " +
-    "or spoon appears without being requested; arms/hands/held objects are " +
-    "confused; the baby looks ill or distressed for a normal topic; text or a " +
-    "logo appears; the image illustrates a generic scene instead of the brief's " +
-    "actual meaning.\n\n" +
+    "not match the identity rules above; Papa has glasses; Ari's face/hair colour/romper " +
+    "have changed; a wooden spoon appears without being requested; arms/hands/held " +
+    "objects are confused; the baby looks ill or distressed for a normal topic; " +
+    "text or a logo appears; the image illustrates a generic scene instead of the " +
+    "brief's actual meaning.\n\n" +
+    "DO NOT retry over: variation in Ari's head accessory (a crown, headband, bow, or nothing are all acceptable); Papa not holding his coffee mug; paint stains being subtle or absent from jeans; minor pose differences; minor colour variations that don't affect identity.\n\n" +
     "SCENE BRIEF:\n" + JSON.stringify(brief);
 
   const gen = "data:image/png;base64," + b64;
