@@ -160,6 +160,40 @@
     return chars.length ? chars : null;
   }
 
+  /** Set the chip UI to match a saved selection.
+      null / empty array → "Let AI choose"; array of names → those chars active. */
+  function setSelectedCharacters(chars) {
+    const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
+    const charChips = document.querySelectorAll('#genPanel .gp-chip:not([data-char="auto"])');
+    if (!autoChip) return;
+    if (!chars || !chars.length) {
+      autoChip.classList.add("active");
+      charChips.forEach(c => c.classList.remove("active"));
+      return;
+    }
+    autoChip.classList.remove("active");
+    const set = new Set(chars);
+    charChips.forEach(c => {
+      c.classList.toggle("active", set.has(c.dataset.char));
+    });
+  }
+
+  /** Load a guide's saved chip selection from Firestore and apply to UI.
+      Called whenever the guide changes (detected by f_id / active gitem). */
+  let lastLoadedSelectionFor = null;
+  async function loadCharacterSelectionForCurrentGuide() {
+    const id = currentGuideId();
+    if (!id || id === lastLoadedSelectionFor) return;
+    lastLoadedSelectionFor = id;
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDoc(fs.doc(db, "guides", id));
+      if (!snap.exists()) return;
+      const g = snap.data();
+      setSelectedCharacters(g.characterSelection || null);
+    } catch (_) { /* silent — default AI-choose is fine fallback */ }
+  }
+
   function refreshCurrentPreview() {
     const heroInput = document.getElementById("f_hero");
     const img       = document.getElementById("gpCurrentImg");
@@ -276,12 +310,21 @@
     document.getElementById("gpMsg").textContent = "Starting…";
 
     // Persist current draft so the planner sees the latest content.
+    // Also save the current character-chip selection so it's remembered next time.
+    const currentSelection = getSelectedCharacters();
     try {
       if (typeof window.draftGuide === "function") {
         const g = window.draftGuide();
         const { fs, db } = await getFirebase();
         await fs.setDoc(fs.doc(db, "guides", g.id), g, { merge: true });
       }
+      // Persist the character-selection independently — this is per-guide,
+      // separate from the draft, and needs to work even if draftGuide isn't
+      // exposed on window.
+      const { fs, db } = await getFirebase();
+      await fs.setDoc(fs.doc(db, "guides", id), {
+        characterSelection: currentSelection
+      }, { merge: true });
     } catch(_) {}
 
     await subscribeToJob(id);
@@ -325,15 +368,20 @@
     // Auto-save: write the hero URL directly to Firestore so the guide is
     // persisted immediately. Merge write — won't overwrite other fields.
     // Studio's schema is `guide.panel.hero`, not top-level.
+    // Also save the alt-text produced by QA — nested under panel so it sits
+    // next to hero and can be used as the <img alt="..."> on the live site.
+    const altText = (gpState.qa && gpState.qa.altText) ? String(gpState.qa.altText).trim() : "";
     let savedOk = false;
     try {
       const id = currentGuideId();
       if (id) {
         const { fs, db } = await getFirebase();
-        await fs.setDoc(fs.doc(db, "guides", id), {
+        const patch = {
           panel: { hero: gpState.url },
           heroUpdated: Date.now()
-        }, { merge: true });
+        };
+        if (altText) patch.panel.heroAlt = altText;
+        await fs.setDoc(fs.doc(db, "guides", id), patch, { merge: true });
         savedOk = true;
       }
     } catch (e) {
@@ -341,7 +389,8 @@
         "✓ Approved — but auto-save failed (tap Save to keep): " + (e.message || e);
     }
     if (savedOk) {
-      document.getElementById("gpMsg").textContent = "✓ Approved and saved.";
+      const altNote = altText ? " (with alt-text)" : "";
+      document.getElementById("gpMsg").textContent = "✓ Approved and saved" + altNote + ".";
       // Refresh the sidebar dots so the new state (green) shows immediately.
       setTimeout(() => refreshSidebarDots(), 500);
     }
@@ -426,6 +475,7 @@
     // 4b) Studio sets #f_hero.value programmatically when you pick a guide,
     //     which does NOT fire input/change events. Poll for value changes
     //     every 500ms — bullet-proof way to catch programmatic assignments.
+    //     Same trick catches guide changes so we can also refresh chips.
     let lastHeroValue = heroInput.value;
     setInterval(() => {
       const el = document.getElementById("f_hero");
@@ -433,6 +483,8 @@
       if (el.value !== lastHeroValue) {
         lastHeroValue = el.value;
         refreshCurrentPreview();
+        // Guide likely just changed — reload its saved character selection
+        loadCharacterSelectionForCurrentGuide();
       }
     }, 500);
 
@@ -442,8 +494,12 @@
       if (e.target.closest(".gitem")) {
         setTimeout(refreshCurrentPreview, 200);
         setTimeout(refreshCurrentPreview, 700);
+        setTimeout(loadCharacterSelectionForCurrentGuide, 300);
       }
     });
+
+    // Initial load — first guide the studio opens on boot
+    setTimeout(loadCharacterSelectionForCurrentGuide, 800);
   }
 
   /* ==========================================================================
@@ -746,11 +802,499 @@
     });
   }
 
-  /* ---- bootstrap: also install dots + gallery once the studio DOM is up ---- */
+  /* ==========================================================================
+     FEATURE: batch generation
+     ------------------------------------------------------------------------
+     Kick off illustration generation across many guides at once.
+     • 🚀 Batch button in the top bar
+     • Modal to pick guides (quick picks + individual checkboxes)
+     • Cost + time estimate shown before starting
+     • Live progress updates from Firestore
+     • Floating pill shows progress when modal is closed
+     • Abort button flips batch.status to "aborted" — chain function checks
+       this and stops
+     ========================================================================== */
+
+  const BATCH_CSS = `
+#batchBtn { padding: 8px 12px; }
+#batchModal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(20, 25, 33, .75);
+  display: none; overflow: auto;
+}
+#batchModal.open { display: block; }
+#batchCard {
+  background: #f4f5f7; margin: 20px auto; max-width: 900px;
+  border-radius: 12px; padding: 20px 20px 40px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+#batchHead {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+#batchHead h2 { margin: 0; font-size: 18px; font-family: inherit; flex: 1; }
+#batchQuickPicks { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+#batchQuickPicks button {
+  background: #fff; border: 2px solid #e3e6ea; color: #1f2733;
+  padding: 6px 12px; border-radius: 999px; font-family: inherit; font-size: 13px;
+  font-weight: 700; cursor: pointer; min-height: 34px;
+}
+#batchQuickPicks button:hover { border-color: #3f6fa3; }
+#batchSummary {
+  background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 12px; font-size: 14px;
+}
+#batchSummary strong { color: #3f6fa3; }
+#batchSummary .warn { color: #c0392b; margin-top: 6px; display: block; font-size: 13px; }
+#batchList {
+  background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+  padding: 8px; max-height: 320px; overflow-y: auto; margin-bottom: 12px;
+}
+#batchList .g-topic {
+  font-size: 11px; font-weight: 700; color: #6b7684; text-transform: uppercase;
+  padding: 6px 8px; letter-spacing: .5px;
+}
+#batchList .g-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 6px; cursor: pointer;
+}
+#batchList .g-row:hover { background: #f4f5f7; }
+#batchList .g-row input { width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
+#batchList .g-row .g-title-text { font-size: 14px; color: #1f2733; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#batchList .g-row .g-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: #cbd5e1;
+}
+#batchList .g-row.has-hero .g-dot { background: #2e8b57; }
+#batchList .g-row.stale .g-dot { background: #d19a20; }
+#batchStartBtn { padding: 14px 20px; font-size: 15px; min-height: 48px; width: 100%; }
+#batchProgress {
+  background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+  padding: 14px; margin-top: 14px;
+}
+#batchProgressBar {
+  height: 10px; background: #e3e6ea; border-radius: 5px; overflow: hidden;
+  margin: 8px 0;
+}
+#batchProgressBar > div {
+  height: 100%; background: #3f6fa3; transition: width .3s ease;
+  width: 0%;
+}
+#batchStatusLine { font-size: 13px; color: #41505f; margin-bottom: 4px; }
+#batchResults {
+  display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px;
+  max-height: 280px; overflow-y: auto;
+}
+#batchResults .r-row {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: #f7f8fa; border-radius: 6px; font-size: 13px;
+}
+#batchResults .r-row .r-status {
+  padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+#batchResults .r-row.pending .r-status  { background: #eaeaea; color: #6b7684; }
+#batchResults .r-row.processing .r-status { background: #dbeafe; color: #1e40af; }
+#batchResults .r-row.done .r-status     { background: #dcfce7; color: #166534; }
+#batchResults .r-row.issues .r-status   { background: #fef3c7; color: #92400e; }
+#batchResults .r-row.error .r-status    { background: #fecaca; color: #991b1b; }
+#batchResults .r-row .r-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#batchAbortBtn {
+  background: #c0392b; color: #fff; border: 2px solid #a03020;
+  padding: 10px 16px; border-radius: 8px; font-family: inherit;
+  font-weight: 700; cursor: pointer; margin-top: 10px;
+}
+#batchPill {
+  position: fixed; bottom: 20px; right: 20px; z-index: 60;
+  background: #3f6fa3; color: #fff; padding: 12px 18px; border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(20, 25, 33, .3);
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer; display: none;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+#batchPill.show { display: block; }
+`;
+
+  const BATCH_HTML = `
+<div id="batchModal" aria-hidden="true">
+  <div id="batchCard">
+    <div id="batchHead">
+      <h2>🚀 Batch generate illustrations</h2>
+      <button type="button" class="btn" id="batchCloseBtn">Close</button>
+    </div>
+
+    <div id="batchSetup">
+      <div style="font-size:13px;color:#6b7684;margin-bottom:8px">Quick pick:</div>
+      <div id="batchQuickPicks">
+        <button type="button" data-quick="missing">All missing hero</button>
+        <button type="button" data-quick="topic">All in topic…</button>
+        <button type="button" data-quick="all">Everything</button>
+        <button type="button" data-quick="clear">Clear</button>
+      </div>
+
+      <div id="batchSummary">
+        <div><strong id="batchCount">0</strong> guides selected · estimated cost <strong id="batchCost">$0.00</strong> · runtime <strong id="batchRuntime">~0 min</strong></div>
+        <span class="warn" id="batchWarn" style="display:none"></span>
+      </div>
+
+      <div id="batchList"></div>
+
+      <button type="button" id="batchStartBtn" class="gp-btn primary">🚀 Start batch</button>
+    </div>
+
+    <div id="batchProgress" style="display:none">
+      <div id="batchStatusLine">Preparing…</div>
+      <div id="batchProgressBar"><div></div></div>
+      <div id="batchResults"></div>
+      <button type="button" id="batchAbortBtn">Abort batch</button>
+    </div>
+  </div>
+</div>
+
+<div id="batchPill" title="Batch running — tap to view"></div>
+`;
+
+  // Module state
+  const batchState = {
+    guides: [],
+    selection: new Set(),
+    topics: new Set(),
+    unsub: null,
+    activeBatchId: null
+  };
+
+  function openBatchModal() {
+    document.getElementById("batchModal").classList.add("open");
+    document.body.style.overflow = "hidden";
+    // If a batch is already running, subscribe & show progress
+    checkAndSubscribeExistingBatch().then(() => {
+      if (!batchState.activeBatchId) loadGuidesForBatch();
+    });
+  }
+  function closeBatchModal() {
+    document.getElementById("batchModal").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  async function loadGuidesForBatch() {
+    document.getElementById("batchSetup").style.display = "block";
+    document.getElementById("batchProgress").style.display = "none";
+    const list = document.getElementById("batchList");
+    list.innerHTML = "<div style='padding:16px;color:#6b7684'>Loading guides…</div>";
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDocs(fs.collection(db, "guides"));
+      batchState.guides = [];
+      batchState.topics = new Set();
+      snap.forEach(doc => {
+        const g = { ...doc.data(), _docId: doc.id };
+        if (!g.id) g.id = doc.id;
+        batchState.guides.push(g);
+        if (g.topic) batchState.topics.add(g.topic);
+      });
+      batchState.guides.sort((a, b) =>
+        String(a.topic || "").localeCompare(String(b.topic || "")) ||
+        String(a.title || a.id).localeCompare(String(b.title || b.id))
+      );
+      renderBatchList();
+      updateBatchSummary();
+    } catch (e) {
+      list.innerHTML = "<div style='padding:16px;color:#c0392b'>Failed to load: " + escapeHtml(e.message || e) + "</div>";
+    }
+  }
+
+  function renderBatchList() {
+    const list = document.getElementById("batchList");
+    list.innerHTML = "";
+    let currentTopic = null;
+    batchState.guides.forEach(g => {
+      if (g.topic !== currentTopic) {
+        currentTopic = g.topic;
+        const h = document.createElement("div");
+        h.className = "g-topic";
+        h.textContent = currentTopic || "(no topic)";
+        list.appendChild(h);
+      }
+      const row = document.createElement("label");
+      row.className = "g-row";
+      const status = guideStatusCache[g.id] || "none";
+      if (status === "has") row.classList.add("has-hero");
+      if (status === "stale") row.classList.add("stale");
+      const checked = batchState.selection.has(g.id) ? " checked" : "";
+      row.innerHTML = `
+        <input type="checkbox" data-gid="${escapeHtml(g.id)}"${checked}>
+        <span class="g-dot"></span>
+        <span class="g-title-text">${escapeHtml(g.title || g.id)}</span>
+      `;
+      row.querySelector("input").addEventListener("change", e => {
+        if (e.target.checked) batchState.selection.add(g.id);
+        else batchState.selection.delete(g.id);
+        updateBatchSummary();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function updateBatchSummary() {
+    const n = batchState.selection.size;
+    document.getElementById("batchCount").textContent = n;
+    document.getElementById("batchCost").textContent = "$" + (n * 0.08).toFixed(2);
+    const mins = Math.ceil(n * 2.5);
+    document.getElementById("batchRuntime").textContent = "~" + mins + " min";
+    const warn = document.getElementById("batchWarn");
+    const overwriting = Array.from(batchState.selection).filter(id => {
+      const s = guideStatusCache[id];
+      return s === "has" || s === "stale";
+    }).length;
+    if (overwriting > 0) {
+      warn.textContent = "⚠ " + overwriting + " selected guide" + (overwriting === 1 ? "" : "s") + " already ha" + (overwriting === 1 ? "s" : "ve") + " a hero — batch will queue new versions requiring approval.";
+      warn.style.display = "block";
+    } else {
+      warn.style.display = "none";
+    }
+    document.getElementById("batchStartBtn").disabled = n === 0;
+  }
+
+  function applyQuickPick(kind) {
+    if (kind === "clear") {
+      batchState.selection.clear();
+    } else if (kind === "missing") {
+      batchState.selection.clear();
+      batchState.guides.forEach(g => {
+        if ((guideStatusCache[g.id] || "none") === "none") batchState.selection.add(g.id);
+      });
+    } else if (kind === "all") {
+      batchState.selection.clear();
+      batchState.guides.forEach(g => batchState.selection.add(g.id));
+    } else if (kind === "topic") {
+      const topics = Array.from(batchState.topics).sort();
+      const picked = prompt("Which topic?\n\n" + topics.map((t,i) => (i+1) + ". " + t).join("\n") + "\n\nEnter the number:");
+      if (!picked) return;
+      const idx = parseInt(picked, 10) - 1;
+      if (isNaN(idx) || !topics[idx]) return;
+      const targetTopic = topics[idx];
+      batchState.selection.clear();
+      batchState.guides.forEach(g => {
+        if (g.topic === targetTopic) batchState.selection.add(g.id);
+      });
+    }
+    renderBatchList();
+    updateBatchSummary();
+  }
+
+  async function startBatch() {
+    const guideIds = Array.from(batchState.selection);
+    if (guideIds.length === 0) return;
+
+    // Confirm for large or expensive batches
+    const cost = guideIds.length * 0.08;
+    if (guideIds.length > 20 || cost > 3) {
+      const ok = confirm(`Kick off ${guideIds.length} generations?\n\nEstimated cost: $${cost.toFixed(2)}\nRuntime: ~${Math.ceil(guideIds.length * 2.5)} minutes.\n\nEach result will need your approval before it attaches to a guide.`);
+      if (!ok) return;
+    }
+
+    document.getElementById("batchStartBtn").disabled = true;
+    document.getElementById("batchStartBtn").textContent = "Starting…";
+
+    try {
+      const r = await fetch("/.netlify/functions/start-batch", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          guideIds,
+          refsBase: location.origin + "/assets/img/refs"
+        })
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || "start-batch failed");
+      batchState.activeBatchId = j.batchId;
+      subscribeToBatch(j.batchId);
+    } catch (e) {
+      alert("Failed to start batch: " + (e.message || e));
+      document.getElementById("batchStartBtn").disabled = false;
+      document.getElementById("batchStartBtn").textContent = "🚀 Start batch";
+    }
+  }
+
+  async function checkAndSubscribeExistingBatch() {
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDocs(
+        fs.query(fs.collection(db, "batches"),
+          fs.where("status", "in", ["queued", "running"]),
+          fs.limit(1))
+      );
+      if (!snap.empty) {
+        const doc = snap.docs[0];
+        batchState.activeBatchId = doc.id;
+        subscribeToBatch(doc.id);
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  async function subscribeToBatch(batchId) {
+    const { fs, db } = await getFirebase();
+    if (batchState.unsub) { try { batchState.unsub(); } catch(_) {} }
+    batchState.unsub = fs.onSnapshot(fs.doc(db, "batches", batchId), snap => {
+      const d = snap.data();
+      if (!d) return;
+      renderBatchProgress(d);
+    });
+  }
+
+  function renderBatchProgress(batch) {
+    document.getElementById("batchSetup").style.display = "none";
+    document.getElementById("batchProgress").style.display = "block";
+    const total = (batch.guideIds || []).length;
+    const done = Object.keys(batch.results || {}).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+
+    const currentTitle = getTitle(batch.currentGuideId);
+    let statusText;
+    if (batch.status === "completed") {
+      const s = batch.summary || {};
+      statusText = `✓ Complete · ${s.ok || 0} clean · ${s.withIssues || 0} with issues · ${s.errored || 0} errors`;
+    } else if (batch.status === "aborted") {
+      statusText = `✗ Aborted at ${done} of ${total}`;
+    } else if (batch.status === "running") {
+      statusText = `Generating ${done + 1} of ${total}: ${currentTitle || batch.currentGuideId || ""}`;
+    } else {
+      statusText = `Queued…`;
+    }
+    document.getElementById("batchStatusLine").textContent = statusText;
+    document.getElementById("batchProgressBar").firstElementChild.style.width = pct + "%";
+
+    // Results list
+    const results = batch.results || {};
+    const grid = document.getElementById("batchResults");
+    grid.innerHTML = "";
+    (batch.guideIds || []).forEach(gid => {
+      const r = results[gid];
+      const title = getTitle(gid) || gid;
+      const isCurrent = batch.currentGuideId === gid && batch.status === "running" && !r;
+      const cls = r ? (r.status === "awaiting-approval" ? "done"
+                     : r.status === "awaiting-approval-with-issues" ? "issues"
+                     : r.status === "error" ? "error" : "processing")
+                    : (isCurrent ? "processing" : "pending");
+      const badge = r ? (r.status === "awaiting-approval" ? "✓ ready"
+                       : r.status === "awaiting-approval-with-issues" ? "⚠ issues"
+                       : r.status === "error" ? "✗ error" : "…")
+                      : (isCurrent ? "generating…" : "pending");
+      const row = document.createElement("div");
+      row.className = "r-row " + cls;
+      row.innerHTML = `
+        <span class="r-status">${badge}</span>
+        <span class="r-title">${escapeHtml(title)}</span>
+      `;
+      if (r && (r.status === "awaiting-approval" || r.status === "awaiting-approval-with-issues")) {
+        row.style.cursor = "pointer";
+        row.title = "Jump to this guide to review";
+        row.addEventListener("click", () => {
+          closeBatchModal();
+          const searchInput = document.getElementById("q");
+          if (searchInput && searchInput.value) {
+            searchInput.value = "";
+            searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+          setTimeout(() => {
+            const item = document.querySelector(`.gitem[data-id="${CSS.escape(gid)}"]`);
+            if (item) item.click();
+          }, 200);
+        });
+      }
+      grid.appendChild(row);
+    });
+
+    // Abort button visibility
+    const abortBtn = document.getElementById("batchAbortBtn");
+    abortBtn.style.display = (batch.status === "running" || batch.status === "queued") ? "inline-block" : "none";
+
+    // Floating pill
+    const pill = document.getElementById("batchPill");
+    if (batch.status === "running" || batch.status === "queued") {
+      pill.classList.add("show");
+      pill.textContent = `🚀 ${done}/${total}`;
+    } else {
+      pill.classList.remove("show");
+    }
+
+    // When completed, refresh dots so newly-generated ones show
+    if (batch.status === "completed") {
+      setTimeout(() => refreshSidebarDots(), 500);
+    }
+  }
+
+  function getTitle(guideId) {
+    if (!guideId) return "";
+    const g = batchState.guides.find(x => x.id === guideId);
+    return g ? (g.title || g.id) : "";
+  }
+
+  async function abortBatch() {
+    if (!batchState.activeBatchId) return;
+    if (!confirm("Abort the running batch? The in-flight guide will finish but no more will start.")) return;
+    try {
+      const { fs, db } = await getFirebase();
+      await fs.setDoc(fs.doc(db, "batches", batchState.activeBatchId), {
+        status: "aborted",
+        abortedAt: Date.now()
+      }, { merge: true });
+    } catch (e) {
+      alert("Abort failed: " + (e.message || e));
+    }
+  }
+
+  function installBatch() {
+    if (document.getElementById("batchBtn")) return;
+    const top = document.querySelector(".top");
+    if (!top) return;
+
+    if (!document.getElementById("mpc-batch-css")) {
+      const st = document.createElement("style");
+      st.id = "mpc-batch-css"; st.textContent = BATCH_CSS;
+      document.head.appendChild(st);
+    }
+
+    // Button — insert before the gallery button, both before signout
+    const btn = document.createElement("button");
+    btn.id = "batchBtn";
+    btn.className = "btn ghost";
+    btn.type = "button";
+    btn.title = "Generate illustrations for many guides at once";
+    btn.textContent = "🚀 Batch";
+    const galleryBtn = document.getElementById("galleryBtn");
+    if (galleryBtn) top.insertBefore(btn, galleryBtn);
+    else top.appendChild(btn);
+
+    // Modal + pill
+    const wrap = document.createElement("div");
+    wrap.innerHTML = BATCH_HTML.trim();
+    while (wrap.firstElementChild) document.body.appendChild(wrap.firstElementChild);
+
+    // Wire
+    btn.addEventListener("click", openBatchModal);
+    document.getElementById("batchCloseBtn").addEventListener("click", closeBatchModal);
+    document.getElementById("batchModal").addEventListener("click", e => {
+      if (e.target.id === "batchModal") closeBatchModal();
+    });
+    document.getElementById("batchStartBtn").addEventListener("click", startBatch);
+    document.getElementById("batchAbortBtn").addEventListener("click", abortBatch);
+    document.getElementById("batchPill").addEventListener("click", openBatchModal);
+    document.querySelectorAll("#batchQuickPicks button").forEach(b => {
+      b.addEventListener("click", () => applyQuickPick(b.dataset.quick));
+    });
+
+    // On boot, subscribe to any already-running batch (so pill shows immediately)
+    checkAndSubscribeExistingBatch();
+  }
+
+  /* ---- bootstrap: also install dots + gallery + batch once the studio DOM is up ---- */
   function bootExtras() {
     if (!document.querySelector(".top") || !document.querySelector("aside.side")) return;
     installSidebarDots();
     installGallery();
+    installBatch();
   }
 
   if (document.readyState === "loading") {
@@ -763,6 +1307,6 @@
     tries++;
     inject();
     bootExtras();
-    if (document.getElementById("genPanel") && document.getElementById("galleryBtn") && tries > 5 || tries > 30) clearInterval(iv);
+    if (document.getElementById("genPanel") && document.getElementById("batchBtn") && tries > 5 || tries > 30) clearInterval(iv);
   }, 300);
 })();
