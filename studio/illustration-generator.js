@@ -1651,21 +1651,33 @@
     checkAndSubscribeExistingBatch();
   }
 
-  /* ---- diagnostic toast queue: shows each restore step so we can SEE
-          exactly what's happening on mobile without a devtools console ---- */
-  const diagQueue = [];
-  let diagShowing = false;
+  /* ---- persistent diagnostic panel: shows all state at once for 30 seconds
+          so one screenshot captures everything --- */
+  const diagLines = [];
+  function ensureDiagPanel() {
+    let p = document.getElementById("mpcDiag");
+    if (p) return p;
+    p = document.createElement("div");
+    p.id = "mpcDiag";
+    p.style.cssText =
+      "position:fixed;bottom:12px;left:12px;right:12px;z-index:2000;" +
+      "background:rgba(20,25,33,.94);color:#fff;padding:12px 14px;border-radius:10px;" +
+      "font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.5;" +
+      "max-height:60vh;overflow:auto;box-shadow:0 4px 20px rgba(0,0,0,.4)";
+    document.body.appendChild(p);
+    // Auto-hide after 60s
+    setTimeout(() => { if (p && p.parentNode) p.parentNode.removeChild(p); }, 60000);
+    return p;
+  }
   function diag(msg, kind) {
-    diagQueue.push({ msg, kind: kind || null });
-    if (!diagShowing) pumpDiag();
+    const stamp = ((Date.now() - PAGE_START_TIME) / 1000).toFixed(1) + "s";
+    const prefix = kind === "success" ? "✓ " : kind === "error" ? "✗ " : "  ";
+    diagLines.push("[" + stamp + "] " + prefix + msg);
+    const p = ensureDiagPanel();
+    p.textContent = diagLines.join("\n") + "\n\n(tap to dismiss)";
+    p.onclick = () => { if (p.parentNode) p.parentNode.removeChild(p); };
   }
-  function pumpDiag() {
-    if (!diagQueue.length) { diagShowing = false; return; }
-    diagShowing = true;
-    const { msg, kind } = diagQueue.shift();
-    showToast(msg, kind);
-    setTimeout(pumpDiag, 3400);
-  }
+  const PAGE_START_TIME = Date.now();
 
   /* ---- bootstrap: also install dots + gallery + batch once the studio DOM is up ---- */
   let bootToastShown = false;
@@ -1678,10 +1690,14 @@
     processPendingJump();
     if (!bootToastShown) {
       bootToastShown = true;
-      // Diagnostic sequence — tells you exactly what state is
-      diag("v3 loaded", "success");
-      diag("localStorage last-guide = " + (LAST_GUIDE_AT_BOOT || "(empty)"),
+      diag("v3-diag loaded", "success");
+      diag("LAST_GUIDE_AT_BOOT = " + (LAST_GUIDE_AT_BOOT || "(null)"),
            LAST_GUIDE_AT_BOOT ? "success" : "error");
+      diag("JUMP_TARGET_AT_BOOT = " + (JUMP_TARGET_AT_BOOT || "(null)"),
+           JUMP_TARGET_AT_BOOT ? "success" : null);
+      const activeNow = currentActiveGuideId();
+      diag("Studio's active guide now: " + (activeNow || "(none)"));
+      diag("state.guides in DOM (.gitem count): " + document.querySelectorAll(".gitem[data-id]").length);
     }
   }
 
