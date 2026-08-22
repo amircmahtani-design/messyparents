@@ -283,7 +283,7 @@ function borderTransparencyRatio(b64) {
 
 /* ---------- STAGE 1: PLAN --------------------------------------------------- */
 
-async function planScene(guide, characterSelection) {
+async function planScene(guide, characterSelection, userVisualDescription) {
   const guideText = [
     "TITLE: "     + (guide.title || ""),
     "EYEBROW: "   + ((guide.panel && guide.panel.eyebrow) || ""),
@@ -296,6 +296,10 @@ async function planScene(guide, characterSelection) {
     ? ("\n\nMANDATORY CHARACTER SELECTION: This illustration MUST include exactly these characters and only these characters: " +
        characterSelection.join(", ") +
        ". Do not add anyone else, do not drop anyone. Build the visual moment around this specific set.")
+    : "";
+
+  const userDescBlock = (userVisualDescription && userVisualDescription.trim())
+    ? ("\n\nUSER-DIRECTED VISUAL — the human author has described exactly what they want to see. Take this as the visualMoment more or less verbatim, only refine wording. Everything else (parentConcern, characters, expressions) should be derived to fit this exact scene:\n\"" + userVisualDescription.trim() + "\"")
     : "";
 
   const instruction =
@@ -343,7 +347,7 @@ async function planScene(guide, characterSelection) {
     '  "mustAvoid": [string]\n' +
     "}\n\n" +
     "Explicitly resolve arm positions, who holds Ari, and which hand holds each " +
-    "prop whenever characters touch or carry objects." + charConstraint;
+    "prop whenever characters touch or carry objects." + charConstraint + userDescBlock;
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -431,6 +435,146 @@ function assembleReferences(brief, manifest, refsBase) {
   return { urls: refs, chosen };
 }
 
+/* ---------- ICON MODE ------------------------------------------------------
+   For small object illustrations (pram, bottle, car seat) in book pages.
+   No character references, no identity risk. Same brand style but simpler.
+   Icon subject is either explicit (user typed "pram") or inferred from
+   the guide's context. */
+
+async function planIconScene(guide, iconSubject, userVisualDescription) {
+  const subject = (iconSubject || "").trim();
+  const desc    = (userVisualDescription || "").trim();
+
+  // If both are empty, ask the LLM to infer from the guide's text
+  let finalSubject = subject;
+  if (!finalSubject && !desc) {
+    try {
+      const guideText = [
+        (guide.title || ""),
+        ((guide.panel && guide.panel.eyebrow) || ""),
+        ((guide.panel && guide.panel.summary) || guide.summary || "")
+      ].filter(Boolean).join(" — ");
+      const resp = await callResponses({
+        model: ORCH_MODEL,
+        input: [{ role: "user", content: [{ type: "input_text",
+          text: "You are picking a single ICON to illustrate a section of a parenting book. " +
+                "Given this guide text, name ONE clear physical object (2-4 words max) that " +
+                "would work as a small stand-alone illustration. Reply with ONLY the object " +
+                "name, no other words.\n\n" + guideText
+        }]}]
+      });
+      finalSubject = (extractText(resp) || "baby bottle").trim().split("\n")[0].slice(0, 60);
+    } catch (_) { finalSubject = "baby bottle"; }
+  }
+
+  return {
+    guideTopic:   guide.title || "parenting icon",
+    coreMeaning:  desc || finalSubject,
+    visualMoment: desc || ("A single " + finalSubject + " icon"),
+    iconSubject:  finalSubject || desc,
+    userDescription: desc,
+    tone: ["friendly", "clean"],
+    composition: "one object centred, breathing room around it",
+    mustShow: [finalSubject || desc].filter(Boolean),
+    mustAvoid: ["people", "characters", "text", "background scenery"]
+  };
+}
+
+function assembleIconReferences(manifest, refsBase) {
+  const base = (refsBase || "").replace(/\/$/, "");
+  const refs = [];
+  const chosen = { brand: null };
+  if (manifest.brand) {
+    refs.push(base + "/" + manifest.brand);
+    chosen.brand = manifest.brand;
+  }
+  return { urls: refs, chosen };
+}
+
+function buildIconPrompt(brief, retryNotes, userInstructions) {
+  const subject = brief.iconSubject || brief.visualMoment || "an object";
+  const parts = [
+    "Draw ONE small icon in The Messy Parents Collection house style.",
+    "",
+    "STYLE: hand-drawn expressive black ink linework with soft watercolour fill, " +
+    "warm muted palette, cream paper highlights, gently imperfect edges. " +
+    "Match the exact same illustrator as the brand reference board provided.",
+    "",
+    "SUBJECT: " + subject + (brief.userDescription ? "  (" + brief.userDescription + ")" : ""),
+    "",
+    "HARD RULES:",
+    "1. Draw ONLY the requested object. No people, no characters, no Mama, no Papa, no Ari, no baby.",
+    "2. No text, letters, numbers, labels, logos or captions anywhere.",
+    "3. No background scenery, environment, furniture or supporting objects — just the icon itself.",
+    "4. Object should be centred with generous breathing room.",
+    "5. Solid bright GREEN background (#00FF00, one flat colour). No gradient, no texture. " +
+    "Green NEVER appears on the object itself — only on the background.",
+    "6. Consistent line weight and watercolour treatment matching the brand board."
+  ];
+  if (retryNotes) parts.push("", "CORRECTIVE RETRY — fix these issues from the previous attempt:", retryNotes);
+  if (userInstructions && userInstructions.trim()) {
+    parts.push("", "USER OVERRIDE — apply exactly:", userInstructions.trim());
+  }
+  return parts.join("\n");
+}
+
+async function qaIcon(b64, refUrls, brief) {
+  const instruction =
+    "You are the QA reviewer for a children's-book icon. Compare the GENERATED image " +
+    "against the BRAND REFERENCE. Return ONLY valid JSON:\n\n" +
+    "{\n" +
+    '  "subjectMatches": bool,       // is the requested object actually drawn?\n' +
+    '  "styleMatches": bool,          // ink linework + watercolour, matching brand?\n' +
+    '  "containsPeople": bool,        // any humans/characters visible? (should be false)\n' +
+    '  "containsText": bool,          // any letters/labels? (should be false)\n' +
+    '  "isSingleObject": bool,        // one focused icon vs cluttered scene?\n' +
+    '  "backgroundIsClean": bool,     // solid colour, no scenery?\n' +
+    '  "issues": [string],\n' +
+    '  "decision": "accept" | "retry",\n' +
+    '  "altText": string              // short plain-English description of the icon, e.g. "A blue baby stroller"\n' +
+    "}\n\n" +
+    "RETRY if: subject wrong or missing; people/characters appear; text appears; " +
+    "multiple objects or scenery clutter the icon; background isn't clean.\n\n" +
+    "REQUESTED SUBJECT: " + (brief.iconSubject || brief.visualMoment);
+
+  const gen = "data:image/png;base64," + b64;
+  const resp = await callResponses({
+    model: ORCH_MODEL,
+    input: [{ role: "user", content: [
+      { type: "input_text", text: instruction },
+      { type: "input_text", text: "BRAND REFERENCE:" },
+      ...refUrls.map(imgInput),
+      { type: "input_text", text: "GENERATED ICON:" },
+      imgInput(gen)
+    ]}]
+  });
+
+  const qa = parseJSONLoose(extractText(resp));
+  if (!qa) return { decision: "retry", issues: ["QA response was not valid JSON"], _empty: true };
+  // Map to the same shape the rest of the pipeline expects
+  qa.sceneMeaningMatches = qa.subjectMatches !== false;
+  qa.identity = {};
+  qa.anatomyIsCoherent = true;
+  qa.propsAreCorrect = qa.subjectMatches !== false;
+  qa.containsUnrequestedText = qa.containsText === true;
+  qa.containsUnrequestedObjects = qa.isSingleObject === false;
+  qa.toneIsAppropriate = qa.styleMatches !== false;
+  return qa;
+}
+
+/* Aspect ratio → gpt-image-2 size string. gpt-image-2 supports:
+   1024x1024, 1024x1536 (portrait), 1536x1024 (landscape) */
+function aspectRatioToSize(aspectRatio, brief) {
+  const ar = (aspectRatio || "auto").toLowerCase();
+  if (ar === "portrait")  return "1024x1536";
+  if (ar === "landscape") return "1536x1024";
+  if (ar === "fullpage")  return "1024x1536"; // full page ≈ portrait
+  if (ar === "square")    return "1024x1024";
+  // auto: character scenes with 3 characters go landscape, else square
+  if (brief && brief.characters && brief.characters.length >= 3) return "1536x1024";
+  return "1024x1024";
+}
+
 /* ---------- STAGE 3: generate ---------------------------------------------- */
 
 function buildGenerationPrompt(brief, retryNotes, userInstructions) {
@@ -505,8 +649,10 @@ function buildGenerationPrompt(brief, retryNotes, userInstructions) {
 }
 
 async function generateImage(brief, refUrls, retryNotes, userInstructions) {
-  const size = (brief.characters && brief.characters.length >= 3) ? "1536x1024" : "1024x1024";
-  const prompt = buildGenerationPrompt(brief, retryNotes, userInstructions);
+  const size = aspectRatioToSize(brief.aspectRatio, brief);
+  const prompt = (brief.mode === "icon")
+    ? buildIconPrompt(brief, retryNotes, userInstructions)
+    : buildGenerationPrompt(brief, retryNotes, userInstructions);
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -627,7 +773,19 @@ async function loadManifest(refsBase) {
 exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return; }
-  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null, userInstructions = "", batchId = null } = body;
+  const {
+    guideId,
+    refsBase = "",
+    sceneOverride = "",
+    briefOverride = null,
+    characterSelection = null,
+    userInstructions = "",
+    batchId = null,
+    userVisualDescription = "",
+    mode = "character",
+    aspectRatio = "auto",
+    iconSubject = ""
+  } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
@@ -647,17 +805,26 @@ exports.handler = async (event) => {
       backfillEmbedding(guideId, guide).catch(err => console.error("embed:", err));
     }
 
-    /* STAGE 1 · PLAN (or accept the user's edited brief) */
-    let brief = briefOverride || await planScene(guide, characterSelection);
-    // If the user edited a brief AND also toggled character chips, honour the chips
-    if (briefOverride && characterSelection && characterSelection.length) {
-      brief = { ...brief, characters: characterSelection };
+    /* STAGE 1 · PLAN (or accept the user's edited brief, or icon-mode brief) */
+    let brief;
+    if (mode === "icon") {
+      brief = await planIconScene(guide, iconSubject, userVisualDescription);
+    } else {
+      brief = briefOverride || await planScene(guide, characterSelection, userVisualDescription);
+      // If the user edited a brief AND also toggled character chips, honour the chips
+      if (briefOverride && characterSelection && characterSelection.length) {
+        brief = { ...brief, characters: characterSelection };
+      }
     }
+    brief.mode = mode;
+    brief.aspectRatio = aspectRatio;
     await job.set({ status: "generating", brief, ts: Date.now() }, { merge: true });
 
-    /* STAGE 2 · REFERENCES */
+    /* STAGE 2 · REFERENCES — icons need only the brand board, not characters */
     const manifest = await loadManifest(refsBase);
-    const { urls: refUrls, chosen } = assembleReferences(brief, manifest, refsBase);
+    const { urls: refUrls, chosen } = (mode === "icon")
+      ? assembleIconReferences(manifest, refsBase)
+      : assembleReferences(brief, manifest, refsBase);
 
     /* STAGE 3 + 4 · GENERATE with QA retry loop */
     let attempt = 0, retryNotes = "", best = null, bestQA = null, bestBorderRatio = 0;
@@ -677,7 +844,9 @@ exports.handler = async (event) => {
       /* vision QA */
       await job.set({ status: "reviewing", attempt, ts: Date.now() }, { merge: true });
       let qa;
-      try { qa = await qaImage(cut.b64, refUrls, brief); }
+      try { qa = (brief.mode === "icon")
+        ? await qaIcon(cut.b64, refUrls, brief)
+        : await qaImage(cut.b64, refUrls, brief); }
       catch (e) { qa = { decision: "retry", issues: ["QA call failed: " + (e.message || e)] }; }
 
       qa.transparencyOk = transparencyOk;
