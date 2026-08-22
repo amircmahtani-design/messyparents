@@ -40,10 +40,14 @@
 #genPanel .gp-chip[data-char="auto"].active{background:#7c56b8;border-color:#7c56b8}
 #genPanel .gp-brief{margin-top:10px}
 #genPanel .gp-brief-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
-#genPanel .gp-brief-ta{width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:180px}
-#genPanel .gp-change{margin-top:12px}
+#genPanel .gp-brief-summary{cursor:pointer;font-size:13px;font-weight:700;color:#6b7684;padding:8px 0;user-select:none}
+#genPanel .gp-brief-summary:hover{color:#1f2733}
+#genPanel .gp-brief-ta{width:100%;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:180px;margin-top:6px}
+#genPanel .gp-change{margin-top:14px;padding:12px;background:#fff;border:2px solid #7c56b8;border-radius:10px}
+#genPanel .gp-change-label{font-size:14px;font-weight:700;color:#1f2733;margin-bottom:8px}
 #genPanel .gp-change-row{display:flex;gap:8px;flex-wrap:wrap}
 #genPanel .gp-change-input{flex:1;min-width:200px;padding:12px 14px;font-family:inherit;font-size:16px;border:1px solid #cbd5e1;border-radius:8px}
+#genPanel .gp-change-hint{font-size:12px;color:#6b7684;margin-top:8px;font-style:italic}
 @media (min-width: 560px){#genPanel .gp-images{grid-template-columns:1fr 1fr}}
 .gp-hidden{display:none !important}
 `;
@@ -83,7 +87,7 @@
 
   <div class="gp-buttons">
     <button type="button" id="gpGenerateBtn" class="gp-btn primary">✨ Generate illustration</button>
-    <button type="button" id="gpEditBriefBtn" class="gp-btn ghost gp-hidden">Edit brief &amp; regenerate</button>
+    <button type="button" id="gpEditBriefBtn" class="gp-btn ghost gp-hidden">Edit JSON &amp; regenerate</button>
     <button type="button" id="gpRegenBtn" class="gp-btn ghost gp-hidden">Regenerate</button>
     <button type="button" id="gpApproveBtn" class="gp-btn primary gp-hidden">Approve &amp; use</button>
     <button type="button" id="gpRejectBtn" class="gp-btn ghost gp-hidden">Reject</button>
@@ -96,18 +100,22 @@
     <pre id="gpQAPre" class="gp-qa"></pre>
   </div>
 
-  <div id="gpBriefWrap" class="gp-brief gp-hidden">
-    <div class="gp-brief-label">Scene brief — edit &amp; regenerate to steer the illustration</div>
-    <textarea id="gpBriefTA" class="gp-brief-ta"></textarea>
-  </div>
-
   <div id="gpChangeWrap" class="gp-change gp-hidden">
-    <div class="gp-brief-label">Or just tell me what to change (plain English):</div>
+    <div class="gp-change-label">💬 Tell me what to change (plain English)</div>
     <div class="gp-change-row">
       <input id="gpChangeInput" class="gp-change-input" type="text"
-             placeholder="e.g. Papa standing up, Ari looking at the bottle">
+             placeholder="e.g. Papa standing up, or Mama sitting on a chair not floating">
       <button type="button" id="gpChangeBtn" class="gp-btn primary">Apply change</button>
     </div>
+    <div class="gp-change-hint">This is usually all you need — it keeps everything else the same and just applies your fix.</div>
+  </div>
+
+  <div id="gpBriefWrap" class="gp-brief gp-hidden">
+    <details>
+      <summary class="gp-brief-summary">⚙️ Advanced: edit full brief as JSON</summary>
+      <div class="gp-brief-label">Edit the raw brief and regenerate</div>
+      <textarea id="gpBriefTA" class="gp-brief-ta"></textarea>
+    </details>
   </div>
 </div>
 `;
@@ -665,12 +673,26 @@
         <div class="g-title">${escapeHtml(g.title || g.id)}<small>${badge}</small></div>
       `;
       card.addEventListener("click", () => {
+        const targetId = g.id;
         closeGallery();
-        // Try to open the picked guide in the studio's editor by clicking its sidebar item.
-        setTimeout(() => {
-          const item = document.querySelector(`.gitem[data-id="${CSS.escape(g.id)}"]`);
-          if (item) item.click();
-        }, 100);
+        // Clear any active sidebar search filter so ALL guides are re-rendered
+        // — otherwise the target .gitem might not exist in the DOM.
+        const searchInput = document.getElementById("q");
+        if (searchInput && searchInput.value) {
+          searchInput.value = "";
+          searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        // Give studio a beat to re-render, then click the target guide's item.
+        const tryClick = (attempt) => {
+          const item = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"]`);
+          if (item) { item.click(); return; }
+          if (attempt < 5) setTimeout(() => tryClick(attempt + 1), 150);
+          else {
+            const msg = document.getElementById("gpMsg");
+            if (msg) msg.textContent = "Couldn't jump to that guide — try picking it from the ☰ menu.";
+          }
+        };
+        setTimeout(() => tryClick(0), 120);
       });
       grid.appendChild(card);
     });
