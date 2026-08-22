@@ -773,59 +773,23 @@
         const targetTitle = g.title || g.id;
         closeGallery();
 
-        // Snapshot what's currently active so we can detect a real switch
-        const previouslyActive = document.querySelector(".gitem.active");
-        const previousId = previouslyActive ? previouslyActive.dataset.id : null;
-
         // If they clicked the guide they're already on, no-op
-        if (previousId === targetId) {
+        const currentlyActive = document.querySelector(".gitem.active");
+        if (currentlyActive && currentlyActive.dataset.id === targetId) {
           showToast("Already on this guide", "success");
           return;
         }
 
-        // Clear any active sidebar search filter first
-        const searchInput = document.getElementById("q");
-        if (searchInput && searchInput.value) {
-          searchInput.value = "";
-          searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-
-        showToast("Opening: " + targetTitle);
-
-        // Try clicking. If after 1 second the active guide hasn't changed,
-        // the click was a silent no-op — offer the reload fallback.
-        const tryClick = (attempt) => {
-          const item = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"]`);
-          if (item) {
-            item.click();
-            // Verify the switch by checking if the previously-active guide
-            // is no longer active, or the target is now active
-            setTimeout(() => {
-              const nowActive = document.querySelector(".gitem.active");
-              const nowActiveId = nowActive ? nowActive.dataset.id : null;
-              if (nowActiveId === targetId) {
-                showToast("✓ Opened: " + targetTitle, "success");
-              } else if (nowActiveId !== previousId) {
-                // Something switched, but not to our target — still counts as success-ish
-                showToast("Opened: " + (nowActive?.textContent || "guide"), "success");
-              } else if (attempt < 3) {
-                setTimeout(() => tryClick(attempt + 1), 300);
-              } else {
-                // Click was a silent no-op (guide not in state.guides).
-                // Reload is the only reliable path.
-                triggerReloadFallback(targetId, targetTitle);
-              }
-            }, 400);
-            return;
-          }
-          if (attempt < 8) {
-            setTimeout(() => tryClick(attempt + 1), 300);
-          } else {
-            // .gitem never rendered — try the reload path
-            triggerReloadFallback(targetId, targetTitle);
-          }
-        };
-        setTimeout(() => tryClick(0), 250);
+        // No fast-path anymore — the .gitem click was failing silently
+        // for reasons that vary per guide (state.guides can lag Firestore,
+        // some guides may lack an `id` field in data, etc.). Reload always
+        // works because Studio re-reads guides fresh from Firestore.
+        // We store the target in localStorage; the boot handler picks it up.
+        showToast("Opening " + targetTitle + "…");
+        try { localStorage.setItem("mpc-jump-to-guide", targetId); } catch(_) {}
+        try { localStorage.setItem("mpc-jump-to-guide-title", targetTitle); } catch(_) {}
+        // Short delay so the toast is visible before the reload wipes it
+        setTimeout(() => { location.reload(); }, 400);
       });
       grid.appendChild(card);
     });
@@ -861,31 +825,75 @@
   }
 
   /** Nuclear fallback: store the guide id, reload, and on next boot look
-      for the stored id and click its sidebar item. 100% reliable but disruptive. */
+      for the stored id and click its sidebar item. 100% reliable.
+      Kept as a helper in case other code paths need it. */
   function triggerReloadFallback(guideId, title) {
-    const ok = confirm("Couldn't jump to \"" + title + "\" — the sidebar list may be out of sync.\n\nReload the page to open it? (Any unsaved changes will be lost.)");
-    if (!ok) {
-      showToast("Cancelled — pick it from the ☰ menu instead", "error");
-      return;
-    }
     try { localStorage.setItem("mpc-jump-to-guide", guideId); } catch(_) {}
+    if (title) { try { localStorage.setItem("mpc-jump-to-guide-title", title); } catch(_) {} }
     location.reload();
   }
 
-  /** Called on boot — if we came from a reload triggered by triggerReloadFallback,
-      look for the stored guide id and click its .gitem once the sidebar is ready. */
+  /** Called on boot — if we came from a reload triggered by a gallery click,
+      look for the stored guide id and click its .gitem once studio is ready.
+      Verifies the switch actually happened, retries if not, gives clear feedback. */
   function processPendingJump() {
-    let target;
-    try { target = localStorage.getItem("mpc-jump-to-guide"); } catch(_) { return; }
+    let target, title;
+    try {
+      target = localStorage.getItem("mpc-jump-to-guide");
+      title  = localStorage.getItem("mpc-jump-to-guide-title") || "guide";
+    } catch(_) { return; }
     if (!target) return;
-    try { localStorage.removeItem("mpc-jump-to-guide"); } catch(_) {}
-    const tryClick = (attempt) => {
+    try {
+      localStorage.removeItem("mpc-jump-to-guide");
+      localStorage.removeItem("mpc-jump-to-guide-title");
+    } catch(_) {}
+
+    // Clear any residual sidebar search filter so ALL guides are in the DOM
+    setTimeout(() => {
+      const searchInput = document.getElementById("q");
+      if (searchInput && searchInput.value) {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }, 800);
+
+    const startTime = Date.now();
+    const attemptClick = () => {
+      // Give up after 15 seconds
+      if (Date.now() - startTime > 15000) {
+        showToast("Couldn't open " + title + " — pick from ☰ menu", "error");
+        return;
+      }
       const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
-      if (item) { item.click(); showToast("✓ Opened", "success"); return; }
-      if (attempt < 30) setTimeout(() => tryClick(attempt + 1), 400);
-      else showToast("Couldn't open guide after reload — pick from ☰", "error");
+      if (!item) {
+        // .gitem not rendered yet — sidebar still loading. Wait & retry.
+        setTimeout(attemptClick, 300);
+        return;
+      }
+      // Snapshot active before clicking so we can verify the switch
+      const beforeActive = document.querySelector(".gitem.active");
+      const beforeId = beforeActive ? beforeActive.dataset.id : null;
+
+      item.click();
+
+      // Verify at 400ms — did the active guide change to our target?
+      setTimeout(() => {
+        const nowActive = document.querySelector(".gitem.active");
+        const nowId = nowActive ? nowActive.dataset.id : null;
+        if (nowId === target) {
+          showToast("✓ Opened: " + title, "success");
+        } else if (nowId !== beforeId) {
+          // Something switched, even if not exactly our target
+          showToast("✓ Opened", "success");
+        } else {
+          // Click still didn't switch — retry
+          setTimeout(attemptClick, 500);
+        }
+      }, 400);
     };
-    setTimeout(() => tryClick(0), 1500);
+
+    // Give Studio a beat to boot (auth + guide load) before first click
+    setTimeout(attemptClick, 2000);
   }
 
   function installGallery() {
