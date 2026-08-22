@@ -37,7 +37,11 @@
 #genPanel .gp-chip{background:#fff;border:2px solid #e3e6ea;color:#1f2733;padding:8px 14px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;min-height:36px}
 #genPanel .gp-chip:hover{border-color:#c9ced6}
 #genPanel .gp-chip.active{background:#3f6fa3;border-color:#3f6fa3;color:#fff}
-#genPanel .gp-chip[data-char="auto"].active{background:#7c56b8;border-color:#7c56b8}
+#genPanel .gp-chip[data-char="auto"].active,#genPanel .gp-chip[data-aspect="auto"].active{background:#7c56b8;border-color:#7c56b8}
+#genPanel .gp-describe{margin-bottom:12px}
+#genPanel .gp-describe-label{font-size:12px;color:#6b7684;font-weight:700;margin-bottom:6px}
+#genPanel .gp-describe-input{width:100%;padding:10px 12px;font-family:inherit;font-size:15px;border:1px solid #cbd5e1;border-radius:8px;resize:vertical}
+#genPanel .gp-aspect{margin-bottom:12px}
 #genPanel .gp-brief{margin-top:10px}
 #genPanel .gp-brief-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
 #genPanel .gp-brief-summary{cursor:pointer;font-size:13px;font-weight:700;color:#6b7684;padding:8px 0;user-select:none}
@@ -72,6 +76,22 @@
       <div class="gp-img-frame">
         <img id="gpPreviewImg" class="gp-img" alt="proposed illustration">
       </div>
+    </div>
+  </div>
+
+  <div class="gp-describe">
+    <div class="gp-describe-label">💡 Describe your visual (optional)</div>
+    <textarea id="gpDescribeInput" class="gp-describe-input" rows="2"
+              placeholder="If you already have a scene in mind, describe it here. Leave blank to let AI decide."></textarea>
+  </div>
+
+  <div class="gp-aspect">
+    <div class="gp-chars-label">Shape</div>
+    <div class="gp-chars-chips">
+      <button type="button" class="gp-chip active" data-aspect="auto">Auto</button>
+      <button type="button" class="gp-chip" data-aspect="square">Square</button>
+      <button type="button" class="gp-chip" data-aspect="landscape">Landscape</button>
+      <button type="button" class="gp-chip" data-aspect="portrait">Portrait</button>
     </div>
   </div>
 
@@ -151,20 +171,32 @@
   /** Read the character-selector chips. Returns null if "Let AI choose" is
       active (planner picks), or an array of selected character names. */
   function getSelectedCharacters() {
-    const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
+    const autoChip = document.querySelector('#genPanel .gp-chars .gp-chip[data-char="auto"]');
     if (!autoChip || autoChip.classList.contains("active")) return null;
     const chars = [];
-    document.querySelectorAll('#genPanel .gp-chip.active').forEach(c => {
+    document.querySelectorAll('#genPanel .gp-chars .gp-chip.active').forEach(c => {
       if (c.dataset.char !== "auto") chars.push(c.dataset.char);
     });
     return chars.length ? chars : null;
   }
 
+  /** Read the currently-active aspect ratio chip. Returns "auto" if none. */
+  function getSelectedAspect() {
+    const active = document.querySelector('#genPanel .gp-aspect .gp-chip.active');
+    return (active && active.dataset.aspect) || "auto";
+  }
+
+  /** Read the describe-your-visual textarea. */
+  function getDescribeText() {
+    const el = document.getElementById("gpDescribeInput");
+    return el ? (el.value || "").trim() : "";
+  }
+
   /** Set the chip UI to match a saved selection.
       null / empty array → "Let AI choose"; array of names → those chars active. */
   function setSelectedCharacters(chars) {
-    const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
-    const charChips = document.querySelectorAll('#genPanel .gp-chip:not([data-char="auto"])');
+    const autoChip = document.querySelector('#genPanel .gp-chars .gp-chip[data-char="auto"]');
+    const charChips = document.querySelectorAll('#genPanel .gp-chars .gp-chip:not([data-char="auto"])');
     if (!autoChip) return;
     if (!chars || !chars.length) {
       autoChip.classList.add("active");
@@ -226,7 +258,7 @@
     gpState.qa    = d.qa;
     document.getElementById("gpPreviewImg").src = d.url;
     document.getElementById("gpPendingCol").classList.remove("gp-hidden");
-    document.getElementById("gpQAPre").textContent = JSON.stringify(d.qa || {}, null, 2);
+    document.getElementById("gpQAPre").textContent = readableQA(d.qa);
     document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
     document.getElementById("gpChangeInput").value = "";
     show("gpQAWrap"); show("gpBriefWrap"); show("gpChangeWrap");
@@ -338,7 +370,10 @@
           refsBase: location.origin + "/assets/img/refs",
           briefOverride: briefOverride || null,
           characterSelection: getSelectedCharacters(),
-          userInstructions: userInstructions || ""
+          userInstructions: userInstructions || "",
+          userVisualDescription: getDescribeText(),
+          aspectRatio: getSelectedAspect(),
+          mode: "character"
         })
       });
     } catch (e) {
@@ -446,24 +481,29 @@
       startGeneration(gpState.brief, txt);
     });
 
-    // 3b) Wire up character-selector chips
-    document.querySelectorAll("#genPanel .gp-chip").forEach(chip => {
+    // 3b) Wire up character-selector chips (multi-select, auto if none)
+    document.querySelectorAll('#genPanel .gp-chars .gp-chip').forEach(chip => {
       chip.addEventListener("click", () => {
         const isAuto = chip.dataset.char === "auto";
-        const autoChip = document.querySelector('#genPanel .gp-chip[data-char="auto"]');
-        const charChips = document.querySelectorAll('#genPanel .gp-chip:not([data-char="auto"])');
+        const autoChip = document.querySelector('#genPanel .gp-chars .gp-chip[data-char="auto"]');
+        const charChips = document.querySelectorAll('#genPanel .gp-chars .gp-chip:not([data-char="auto"])');
         if (isAuto) {
-          // Tapping "Let AI choose" clears everything else and activates auto
           autoChip.classList.add("active");
           charChips.forEach(c => c.classList.remove("active"));
         } else {
-          // Tapping a character toggles it and turns off auto
           autoChip.classList.remove("active");
           chip.classList.toggle("active");
-          // If no character is selected, fall back to auto
           const anyActive = Array.from(charChips).some(c => c.classList.contains("active"));
           if (!anyActive) autoChip.classList.add("active");
         }
+      });
+    });
+
+    // 3c) Wire up aspect-ratio chips (single-select)
+    document.querySelectorAll('#genPanel .gp-aspect .gp-chip').forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll('#genPanel .gp-aspect .gp-chip').forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
       });
     });
 
@@ -730,25 +770,43 @@
       `;
       card.addEventListener("click", () => {
         const targetId = g.id;
+        const targetTitle = g.title || g.id;
         closeGallery();
-        // Clear any active sidebar search filter so ALL guides are re-rendered
-        // — otherwise the target .gitem might not exist in the DOM.
+
+        // Clear any active sidebar search filter first
         const searchInput = document.getElementById("q");
         if (searchInput && searchInput.value) {
           searchInput.value = "";
           searchInput.dispatchEvent(new Event("input", { bubbles: true }));
         }
-        // Give studio a beat to re-render, then click the target guide's item.
+
+        showToast("Opening: " + targetTitle);
+
+        // Retry hard — up to 10 attempts over ~3 seconds
         const tryClick = (attempt) => {
           const item = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"]`);
-          if (item) { item.click(); return; }
-          if (attempt < 5) setTimeout(() => tryClick(attempt + 1), 150);
-          else {
-            const msg = document.getElementById("gpMsg");
-            if (msg) msg.textContent = "Couldn't jump to that guide — try picking it from the ☰ menu.";
+          if (item) {
+            item.click();
+            // Verify the switch actually happened by checking .active class after a beat
+            setTimeout(() => {
+              const stillActive = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"].active`);
+              if (stillActive) {
+                showToast("✓ Opened: " + targetTitle, "success");
+              } else if (attempt < 8) {
+                setTimeout(() => tryClick(attempt + 1), 300);
+              } else {
+                triggerReloadFallback(targetId, targetTitle);
+              }
+            }, 300);
+            return;
+          }
+          if (attempt < 10) {
+            setTimeout(() => tryClick(attempt + 1), 300);
+          } else {
+            triggerReloadFallback(targetId, targetTitle);
           }
         };
-        setTimeout(() => tryClick(0), 120);
+        setTimeout(() => tryClick(0), 200);
       });
       grid.appendChild(card);
     });
@@ -758,6 +816,57 @@
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  /** Show a floating toast at the top of the screen. Auto-dismisses. */
+  function showToast(text, kind) {
+    let t = document.getElementById("mpcToast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "mpcToast";
+      t.style.cssText =
+        "position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;" +
+        "background:#1f2733;color:#fff;padding:10px 18px;border-radius:999px;" +
+        "font-family:inherit;font-size:14px;font-weight:600;" +
+        "box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .2s ease;" +
+        "max-width:calc(100vw - 40px);text-align:center";
+      document.body.appendChild(t);
+    }
+    t.textContent = text;
+    t.style.background = kind === "success" ? "#2e8b57"
+                       : kind === "error"   ? "#c0392b"
+                       : "#1f2733";
+    t.style.opacity = "1";
+    clearTimeout(t.__hideTimer);
+    t.__hideTimer = setTimeout(() => { t.style.opacity = "0"; }, 3200);
+  }
+
+  /** Nuclear fallback: store the guide id, reload, and on next boot look
+      for the stored id and click its sidebar item. 100% reliable but disruptive. */
+  function triggerReloadFallback(guideId, title) {
+    const ok = confirm("Couldn't jump to \"" + title + "\" — the sidebar list may be out of sync.\n\nReload the page to open it? (Any unsaved changes will be lost.)");
+    if (!ok) {
+      showToast("Cancelled — pick it from the ☰ menu instead", "error");
+      return;
+    }
+    try { localStorage.setItem("mpc-jump-to-guide", guideId); } catch(_) {}
+    location.reload();
+  }
+
+  /** Called on boot — if we came from a reload triggered by triggerReloadFallback,
+      look for the stored guide id and click its .gitem once the sidebar is ready. */
+  function processPendingJump() {
+    let target;
+    try { target = localStorage.getItem("mpc-jump-to-guide"); } catch(_) { return; }
+    if (!target) return;
+    try { localStorage.removeItem("mpc-jump-to-guide"); } catch(_) {}
+    const tryClick = (attempt) => {
+      const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
+      if (item) { item.click(); showToast("✓ Opened", "success"); return; }
+      if (attempt < 30) setTimeout(() => tryClick(attempt + 1), 400);
+      else showToast("Couldn't open guide after reload — pick from ☰", "error");
+    };
+    setTimeout(() => tryClick(0), 1500);
   }
 
   function installGallery() {
@@ -886,8 +995,12 @@
   max-height: 280px; overflow-y: auto;
 }
 #batchResults .r-row {
-  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  display: block; padding: 0;
   background: #f7f8fa; border-radius: 6px; font-size: 13px;
+  overflow: hidden;
+}
+#batchResults .r-row .r-head {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
 }
 #batchResults .r-row .r-status {
   padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; flex-shrink: 0;
@@ -898,6 +1011,20 @@
 #batchResults .r-row.issues .r-status   { background: #fef3c7; color: #92400e; }
 #batchResults .r-row.error .r-status    { background: #fecaca; color: #991b1b; }
 #batchResults .r-row .r-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#batchResults .r-row .r-expand { color: #6b7684; font-weight: 700; }
+#batchResults .r-body { padding: 12px; border-top: 1px solid #e3e6ea; background: #fff; }
+#batchResults .r-preview {
+  width: 100%; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;
+  border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; overflow: hidden;
+}
+#batchResults .r-preview img { width: 100%; display: block; }
+#batchResults .r-qa {
+  margin: 0 0 10px 0; padding: 10px; background: #f7f8fa; color: #1f2733;
+  font-size: 12px; line-height: 1.5; border-radius: 6px;
+  white-space: pre-wrap; font-family: ui-monospace, Menlo, monospace;
+}
+#batchResults .r-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+#batchResults .r-actions .gp-btn { padding: 10px 14px; min-height: 40px; font-size: 13px; }
 #batchAbortBtn {
   background: #c0392b; color: #fff; border: 2px solid #a03020;
   padding: 10px 16px; border-radius: 8px; font-family: inherit;
@@ -1181,26 +1308,34 @@
                        : r.status === "awaiting-approval-with-issues" ? "⚠ issues"
                        : r.status === "error" ? "✗ error" : "…")
                       : (isCurrent ? "generating…" : "pending");
+      const isReviewable = r && (r.status === "awaiting-approval" || r.status === "awaiting-approval-with-issues");
       const row = document.createElement("div");
       row.className = "r-row " + cls;
       row.innerHTML = `
-        <span class="r-status">${badge}</span>
-        <span class="r-title">${escapeHtml(title)}</span>
+        <div class="r-head">
+          <span class="r-status">${badge}</span>
+          <span class="r-title">${escapeHtml(title)}</span>
+          ${isReviewable ? '<span class="r-expand">▸</span>' : ''}
+        </div>
+        <div class="r-body" style="display:none"></div>
       `;
-      if (r && (r.status === "awaiting-approval" || r.status === "awaiting-approval-with-issues")) {
+      if (r && r.status === "error") {
+        row.querySelector(".r-body").innerHTML = `<div style="padding:8px 10px;color:#991b1b;font-size:12px">${escapeHtml(r.error || "unknown error")}</div>`;
+        row.querySelector(".r-body").style.display = "block";
+      }
+      if (isReviewable) {
         row.style.cursor = "pointer";
-        row.title = "Jump to this guide to review";
-        row.addEventListener("click", () => {
-          closeBatchModal();
-          const searchInput = document.getElementById("q");
-          if (searchInput && searchInput.value) {
-            searchInput.value = "";
-            searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+        row.querySelector(".r-head").addEventListener("click", () => {
+          const body = row.querySelector(".r-body");
+          const isOpen = body.style.display !== "none";
+          if (isOpen) {
+            body.style.display = "none";
+            row.querySelector(".r-expand").textContent = "▸";
+          } else {
+            renderBatchExpanded(body, gid, r);
+            body.style.display = "block";
+            row.querySelector(".r-expand").textContent = "▾";
           }
-          setTimeout(() => {
-            const item = document.querySelector(`.gitem[data-id="${CSS.escape(gid)}"]`);
-            if (item) item.click();
-          }, 200);
         });
       }
       grid.appendChild(row);
@@ -1229,6 +1364,142 @@
     if (!guideId) return "";
     const g = batchState.guides.find(x => x.id === guideId);
     return g ? (g.title || g.id) : "";
+  }
+
+  /** Turn the raw QA JSON into a human-readable checklist. Handles both
+      character-mode QA and icon-mode QA response shapes. */
+  function readableQA(qa) {
+    if (!qa) return "No QA data.";
+    const lines = [];
+    // Character identity checks
+    if (qa.identity) {
+      for (const name of ["Mama", "Papa", "Ari"]) {
+        const info = qa.identity[name];
+        if (!info || !info.required) continue;
+        if (info.matches) lines.push("✓ " + name + " identity OK");
+        else lines.push("⚠ " + name + ": " + ((info.issues || []).join("; ") || "identity mismatch"));
+      }
+    }
+    // Scene / narrative
+    if ("sceneMeaningMatches" in qa) {
+      lines.push((qa.sceneMeaningMatches ? "✓" : "⚠") + " Scene matches the guide's meaning");
+    }
+    if ("anatomyIsCoherent" in qa) {
+      lines.push((qa.anatomyIsCoherent ? "✓" : "⚠") + " Anatomy / hands / arms look right");
+    }
+    if ("propsAreCorrect" in qa) {
+      lines.push((qa.propsAreCorrect ? "✓" : "⚠") + " Props / objects correct");
+    }
+    if ("containsUnrequestedText" in qa) {
+      lines.push((qa.containsUnrequestedText ? "⚠" : "✓") + " " + (qa.containsUnrequestedText ? "Contains unrequested text" : "No unrequested text"));
+    }
+    if ("containsUnrequestedObjects" in qa) {
+      lines.push((qa.containsUnrequestedObjects ? "⚠" : "✓") + " " + (qa.containsUnrequestedObjects ? "Contains unrequested objects" : "No unrequested objects"));
+    }
+    if ("toneIsAppropriate" in qa) {
+      lines.push((qa.toneIsAppropriate ? "✓" : "⚠") + " Tone appropriate");
+    }
+    // Icon-only fields
+    if ("subjectMatches" in qa) {
+      lines.push((qa.subjectMatches ? "✓" : "⚠") + " Requested icon subject drawn");
+    }
+    if ("containsPeople" in qa) {
+      lines.push((qa.containsPeople ? "⚠" : "✓") + " " + (qa.containsPeople ? "People visible (icons should not have people)" : "No people (correct for icon)"));
+    }
+    if ("isSingleObject" in qa && !("containsUnrequestedObjects" in qa)) {
+      lines.push((qa.isSingleObject ? "✓" : "⚠") + " Single focused object");
+    }
+    if ("backgroundIsClean" in qa) {
+      lines.push((qa.backgroundIsClean ? "✓" : "⚠") + " Background clean");
+    }
+    if (qa.issues && qa.issues.length) {
+      lines.push("");
+      lines.push("Other notes:");
+      qa.issues.forEach(i => lines.push("• " + i));
+    }
+    if (qa.decision) {
+      lines.push("");
+      lines.push("Verdict: " + qa.decision.toUpperCase());
+    }
+    if (qa.altText) {
+      lines.push("");
+      lines.push("Alt text: " + qa.altText);
+    }
+    return lines.join("\n");
+  }
+
+  /** Render the expanded review body for a single batch result — image
+      preview, readable QA checklist, and per-item action buttons. */
+  function renderBatchExpanded(bodyEl, guideId, result) {
+    const qaText = readableQA(result.qa);
+    bodyEl.innerHTML = `
+      <div class="r-preview">
+        ${result.url ? `<img src="${escapeHtml(result.url)}" alt="proposed illustration">` : `<div style="padding:20px;color:#6b7684;font-size:12px">No image URL</div>`}
+      </div>
+      <pre class="r-qa">${escapeHtml(qaText)}</pre>
+      <div class="r-actions">
+        <button type="button" class="gp-btn primary" data-act="approve">Approve &amp; save</button>
+        <button type="button" class="gp-btn ghost" data-act="regen">Regenerate</button>
+        <button type="button" class="gp-btn ghost" data-act="jump">Open in editor</button>
+        <button type="button" class="gp-btn ghost" data-act="reject">Reject</button>
+      </div>
+      <div class="r-msg" style="font-size:12px;color:#6b7684;margin-top:8px;min-height:14px"></div>
+    `;
+    const msg = bodyEl.querySelector(".r-msg");
+
+    bodyEl.querySelector('[data-act="approve"]').addEventListener("click", async () => {
+      msg.textContent = "Saving…";
+      try {
+        const { fs, db } = await getFirebase();
+        const patch = {
+          panel: { hero: result.url },
+          heroUpdated: Date.now()
+        };
+        if (result.qa && result.qa.altText) patch.panel.heroAlt = result.qa.altText;
+        await fs.setDoc(fs.doc(db, "guides", guideId), patch, { merge: true });
+        msg.textContent = "✓ Saved to guide.";
+        setTimeout(() => refreshSidebarDots(), 500);
+      } catch (e) {
+        msg.textContent = "Save failed: " + (e.message || e);
+      }
+    });
+
+    bodyEl.querySelector('[data-act="regen"]').addEventListener("click", async () => {
+      msg.textContent = "Kicking off regeneration…";
+      try {
+        await fetch("/.netlify/functions/generate-illustration-background", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            guideId,
+            refsBase: location.origin + "/assets/img/refs",
+            mode: (result.brief && result.brief.mode) || "character",
+            aspectRatio: (result.brief && result.brief.aspectRatio) || "auto"
+          })
+        });
+        msg.textContent = "🎨 Regenerating — open the guide to watch, or check back here in ~2 min.";
+      } catch (e) {
+        msg.textContent = "Failed to start: " + (e.message || e);
+      }
+    });
+
+    bodyEl.querySelector('[data-act="jump"]').addEventListener("click", () => {
+      closeBatchModal();
+      const searchInput = document.getElementById("q");
+      if (searchInput && searchInput.value) {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      setTimeout(() => {
+        const item = document.querySelector(`.gitem[data-id="${CSS.escape(guideId)}"]`);
+        if (item) item.click();
+        else showToast("Couldn't find in sidebar — try search", "error");
+      }, 200);
+    });
+
+    bodyEl.querySelector('[data-act="reject"]').addEventListener("click", () => {
+      msg.textContent = "Rejected — nothing attached to the guide.";
+    });
   }
 
   async function abortBatch() {
@@ -1295,6 +1566,7 @@
     installSidebarDots();
     installGallery();
     installBatch();
+    processPendingJump();
   }
 
   if (document.readyState === "loading") {
