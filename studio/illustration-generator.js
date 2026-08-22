@@ -773,6 +773,16 @@
         const targetTitle = g.title || g.id;
         closeGallery();
 
+        // Snapshot what's currently active so we can detect a real switch
+        const previouslyActive = document.querySelector(".gitem.active");
+        const previousId = previouslyActive ? previouslyActive.dataset.id : null;
+
+        // If they clicked the guide they're already on, no-op
+        if (previousId === targetId) {
+          showToast("Already on this guide", "success");
+          return;
+        }
+
         // Clear any active sidebar search filter first
         const searchInput = document.getElementById("q");
         if (searchInput && searchInput.value) {
@@ -782,31 +792,40 @@
 
         showToast("Opening: " + targetTitle);
 
-        // Retry hard — up to 10 attempts over ~3 seconds
+        // Try clicking. If after 1 second the active guide hasn't changed,
+        // the click was a silent no-op — offer the reload fallback.
         const tryClick = (attempt) => {
           const item = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"]`);
           if (item) {
             item.click();
-            // Verify the switch actually happened by checking .active class after a beat
+            // Verify the switch by checking if the previously-active guide
+            // is no longer active, or the target is now active
             setTimeout(() => {
-              const stillActive = document.querySelector(`.gitem[data-id="${CSS.escape(targetId)}"].active`);
-              if (stillActive) {
+              const nowActive = document.querySelector(".gitem.active");
+              const nowActiveId = nowActive ? nowActive.dataset.id : null;
+              if (nowActiveId === targetId) {
                 showToast("✓ Opened: " + targetTitle, "success");
-              } else if (attempt < 8) {
+              } else if (nowActiveId !== previousId) {
+                // Something switched, but not to our target — still counts as success-ish
+                showToast("Opened: " + (nowActive?.textContent || "guide"), "success");
+              } else if (attempt < 3) {
                 setTimeout(() => tryClick(attempt + 1), 300);
               } else {
+                // Click was a silent no-op (guide not in state.guides).
+                // Reload is the only reliable path.
                 triggerReloadFallback(targetId, targetTitle);
               }
-            }, 300);
+            }, 400);
             return;
           }
-          if (attempt < 10) {
+          if (attempt < 8) {
             setTimeout(() => tryClick(attempt + 1), 300);
           } else {
+            // .gitem never rendered — try the reload path
             triggerReloadFallback(targetId, targetTitle);
           }
         };
-        setTimeout(() => tryClick(0), 200);
+        setTimeout(() => tryClick(0), 250);
       });
       grid.appendChild(card);
     });
