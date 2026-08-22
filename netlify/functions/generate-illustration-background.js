@@ -53,8 +53,38 @@ const bucket = admin.storage().bucket();
 const KEY         = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
 const ORCH_MODEL  = process.env.OPENAI_MODEL       || "gpt-4o";
+const EMBED_MODEL = "text-embedding-3-small";
 const PROMPT_VER  = "messy-parents-image-v2";
 const MAX_RETRIES = 2;
+
+/* Compute a semantic embedding for a guide and save it back for Pass 3
+   similarity searches. Silent-fail: never blocks or breaks generation. */
+async function backfillEmbedding(guideId, g) {
+  try {
+    const text = [
+      g.title || "",
+      (g.panel && g.panel.eyebrow) || "",
+      (g.panel && g.panel.summary) || g.summary || "",
+      g.topic || "",
+      (g.age || g.ageRange || "")
+    ].filter(Boolean).join(" — ");
+    if (!text.trim()) return;
+    const r = await fetch("https://api.openai.com/v1/embeddings", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ input: text, model: EMBED_MODEL })
+    });
+    const j = await r.json();
+    const vec = j?.data?.[0]?.embedding;
+    if (!vec) return;
+    await db.collection("guides").doc(guideId).set({
+      embedding: vec,
+      embeddingText: text,
+      embeddingModel: EMBED_MODEL,
+      embeddingAt: Date.now()
+    }, { merge: true });
+  } catch (_) { /* silent — Pass 3 will just skip similarity for guides without embeddings */ }
+}
 
 /* ---------- CANON: what a canonical Messy Parents illustration looks like -- */
 
@@ -512,7 +542,8 @@ async function qaImage(b64, refUrls, brief) {
     '  "containsUnrequestedObjects": bool,\n' +
     '  "toneIsAppropriate": bool,\n' +
     '  "issues": [string],\n' +
-    '  "decision": "accept" | "retry"\n' +
+    '  "decision": "accept" | "retry",\n' +
+    '  "altText": string  // A single plain-English sentence describing what is happening in the image, for use as accessibility alt-text on the website. Focus on WHO is in the scene and WHAT they are doing. Do NOT mention brand elements (paint stains, mug branding) or style (watercolour). Max 140 characters. Example: "A mother gently offers a bottle to her baby daughter, who turns her head away with a puzzled look."\n' +
     "}\n\n" +
     "IDENTITY RULES — read carefully, this is where errors happen:\n" +
     "• MAMA identity = auburn/brown wavy hair in a LOOSE MESSY BUN with strands falling out, BLUE RIBBED TURTLENECK sweater, paint-stained blue jeans (with a knee patch), rosy cheeks, no glasses.\n" +
@@ -596,7 +627,7 @@ async function loadManifest(refsBase) {
 exports.handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || "{}"); } catch { return; }
-  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null, userInstructions = "" } = body;
+  const { guideId, refsBase = "", sceneOverride = "", briefOverride = null, characterSelection = null, userInstructions = "", batchId = null } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
@@ -608,6 +639,13 @@ exports.handler = async (event) => {
     const gSnap = await db.collection("guides").doc(guideId).get();
     const guide = gSnap.exists ? gSnap.data() : { title: sceneOverride || guideId };
     if (sceneOverride) guide.title = sceneOverride;
+
+    /* Fire-and-forget: compute this guide's semantic embedding if missing.
+       Used later by Pass 3 for "this looks similar to X" reuse suggestions.
+       Doesn't block generation, silent failure. ~$0.0001 per call. */
+    if (!guide.embedding || guide.embeddingModel !== EMBED_MODEL) {
+      backfillEmbedding(guideId, guide).catch(err => console.error("embed:", err));
+    }
 
     /* STAGE 1 · PLAN (or accept the user's edited brief) */
     let brief = briefOverride || await planScene(guide, characterSelection);
@@ -683,6 +721,14 @@ exports.handler = async (event) => {
       ts: Date.now()
     }, { merge: true });
 
+    /* ---------- BATCH: update batch record and chain to the next guide ------- */
+    if (batchId) {
+      try { await afterBatchStep(batchId, guideId, {
+        status: accepted ? "awaiting-approval" : "awaiting-approval-with-issues",
+        url, qa: finalQA, brief, accepted, attempts: attempt
+      }); } catch (e) { console.error("batch chain error:", e); }
+    }
+
   } catch (e) {
     await job.set({
       status: "error",
@@ -690,5 +736,84 @@ exports.handler = async (event) => {
       promptVersion: PROMPT_VER,
       ts: Date.now()
     }, { merge: true });
+    if (batchId) {
+      try { await afterBatchStep(batchId, guideId, {
+        status: "error", error: String((e && e.message) || e)
+      }); } catch (e2) { console.error("batch chain error:", e2); }
+    }
   }
 };
+
+/* ============================================================================
+   BATCH CHAIN — runs after each generation when a batchId is set.
+   Updates the batch record, then triggers the next pending guide by POSTing
+   back to this same function URL. If all done, marks the batch completed.
+   ========================================================================== */
+
+async function afterBatchStep(batchId, guideId, result) {
+  const batchRef = db.collection("batches").doc(batchId);
+
+  // Save this guide's result AND advance the currentIndex
+  await batchRef.set({
+    results: { [guideId]: { ...result, finishedAt: Date.now() } },
+    lastActivityAt: Date.now()
+  }, { merge: true });
+
+  // Reload the batch to find what's next
+  const snap = await batchRef.get();
+  if (!snap.exists) return;
+  const batch = snap.data();
+
+  // Respect user abort
+  if (batch.status === "aborted") return;
+
+  // Find the next guide whose result isn't recorded yet
+  const done = batch.results || {};
+  const nextGuideId = (batch.guideIds || []).find(id => !done[id]);
+
+  if (!nextGuideId) {
+    // Batch complete
+    const summary = summariseBatch(batch);
+    await batchRef.set({
+      status: "completed",
+      finishedAt: Date.now(),
+      summary
+    }, { merge: true });
+    return;
+  }
+
+  // Trigger the next guide. Fire-and-forget — Netlify background function
+  // returns immediately, our current invocation ends, next one starts fresh.
+  const nextIndex = (batch.guideIds.indexOf(nextGuideId));
+  await batchRef.set({
+    status: "running",
+    currentIndex: nextIndex,
+    currentGuideId: nextGuideId
+  }, { merge: true });
+
+  const siteUrl = process.env.URL || process.env.DEPLOY_URL || "";
+  if (!siteUrl) { console.error("no site URL env for chaining"); return; }
+
+  await fetch(siteUrl + "/.netlify/functions/generate-illustration-background", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      guideId: nextGuideId,
+      batchId,
+      refsBase: batch.refsBase || "",
+      characterSelection: (batch.guideOptions && batch.guideOptions[nextGuideId] && batch.guideOptions[nextGuideId].characterSelection) || null
+    })
+  });
+}
+
+function summariseBatch(batch) {
+  const results = batch.results || {};
+  let ok = 0, withIssues = 0, errored = 0;
+  for (const id in results) {
+    const s = results[id].status;
+    if (s === "awaiting-approval") ok++;
+    else if (s === "awaiting-approval-with-issues") withIssues++;
+    else if (s === "error") errored++;
+  }
+  return { total: (batch.guideIds || []).length, ok, withIssues, errored };
+}
