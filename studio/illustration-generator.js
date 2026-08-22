@@ -824,76 +824,116 @@
     t.__hideTimer = setTimeout(() => { t.style.opacity = "0"; }, 3200);
   }
 
-  /** Nuclear fallback: store the guide id, reload, and on next boot look
-      for the stored id and click its sidebar item. 100% reliable.
-      Kept as a helper in case other code paths need it. */
+  /** Nuclear fallback — kept for other code paths that might need it. */
   function triggerReloadFallback(guideId, title) {
     try { localStorage.setItem("mpc-jump-to-guide", guideId); } catch(_) {}
     if (title) { try { localStorage.setItem("mpc-jump-to-guide-title", title); } catch(_) {} }
     location.reload();
   }
 
-  /** Called on boot — if we came from a reload triggered by a gallery click,
-      look for the stored guide id and click its .gitem once studio is ready.
-      Verifies the switch actually happened, retries if not, gives clear feedback. */
+  /* ==========================================================================
+     REMEMBER + RESTORE LAST GUIDE
+     ------------------------------------------------------------------------
+     Studio's built-in behaviour ALWAYS opens the first guide (state.guides[0])
+     on every boot — there's no memory of what you last had open. That means
+     every refresh dumps you back on "Why is my baby drinking less milk".
+     Also breaks gallery jumps because my post-reload click races Studio's
+     auto-select-first-guide and loses.
+
+     This system fixes both:
+     1. MutationObserver on the sidebar watches for the .active class moving
+        to a different .gitem, and auto-saves that guide's id to localStorage.
+     2. On boot, after Studio has run its own init, we check localStorage.
+        If the saved id != currently-active id, we click that guide's .gitem.
+     3. Gallery jumps just write to the same localStorage key before reload.
+     ========================================================================== */
+
+  const LAST_GUIDE_KEY = "mpc-last-guide";
+  const JUMP_GUIDE_KEY = "mpc-jump-to-guide";  // priority over last-guide
+  const JUMP_TITLE_KEY = "mpc-jump-to-guide-title";
+
+  function currentActiveGuideId() {
+    const active = document.querySelector(".gitem.active[data-id]");
+    return active ? active.dataset.id : null;
+  }
+
+  /** Watch for guide changes and auto-save the active guide id. */
+  function watchActiveGuide() {
+    const list = document.getElementById("list");
+    if (!list || list.__mpcActiveWatcher) return;
+    list.__mpcActiveWatcher = true;
+    let lastSeen = null;
+    const check = () => {
+      const now = currentActiveGuideId();
+      if (now && now !== lastSeen) {
+        lastSeen = now;
+        try { localStorage.setItem(LAST_GUIDE_KEY, now); } catch(_) {}
+      }
+    };
+    // Poll every 400ms — MutationObserver on class attribute is fiddly
+    // because Studio re-renders the whole innerHTML rather than toggling
+    // classes, so we just poll.
+    setInterval(check, 400);
+    check();
+  }
+
+  /** On boot, restore the last-opened guide (or jump target). Studio's own
+      showApp() fires first and opens guide[0]; we then switch to the
+      remembered guide. There's a brief flash of guide[0], but that's OK. */
   function processPendingJump() {
-    let target, title;
+    let jumpTarget = null, jumpTitle = null, lastTarget = null;
     try {
-      target = localStorage.getItem("mpc-jump-to-guide");
-      title  = localStorage.getItem("mpc-jump-to-guide-title") || "guide";
-    } catch(_) { return; }
-    if (!target) return;
-    try {
-      localStorage.removeItem("mpc-jump-to-guide");
-      localStorage.removeItem("mpc-jump-to-guide-title");
+      jumpTarget = localStorage.getItem(JUMP_GUIDE_KEY);
+      jumpTitle  = localStorage.getItem(JUMP_TITLE_KEY);
+      lastTarget = localStorage.getItem(LAST_GUIDE_KEY);
     } catch(_) {}
 
-    // Clear any residual sidebar search filter so ALL guides are in the DOM
-    setTimeout(() => {
-      const searchInput = document.getElementById("q");
-      if (searchInput && searchInput.value) {
-        searchInput.value = "";
-        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    }, 800);
+    // Jump target (from gallery) wins if present
+    const target = jumpTarget || lastTarget;
+    if (!target) return;
+    // Clear the one-shot jump key so we don't loop
+    if (jumpTarget) {
+      try {
+        localStorage.removeItem(JUMP_GUIDE_KEY);
+        localStorage.removeItem(JUMP_TITLE_KEY);
+      } catch(_) {}
+    }
 
     const startTime = Date.now();
-    const attemptClick = () => {
-      // Give up after 15 seconds
+    const attemptRestore = () => {
       if (Date.now() - startTime > 15000) {
-        showToast("Couldn't open " + title + " — pick from ☰ menu", "error");
+        // Give up silently — this was a background restore, not user-initiated
+        if (jumpTarget) showToast("Couldn't open " + (jumpTitle || "guide"), "error");
         return;
       }
+
+      // Wait until Studio has rendered the sidebar
       const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
-      if (!item) {
-        // .gitem not rendered yet — sidebar still loading. Wait & retry.
-        setTimeout(attemptClick, 300);
+      if (!item) { setTimeout(attemptRestore, 300); return; }
+
+      // Check current active — if already on target, we're done
+      const activeId = currentActiveGuideId();
+      if (activeId === target) {
+        if (jumpTarget) showToast("✓ Opened " + (jumpTitle || "guide"), "success");
         return;
       }
-      // Snapshot active before clicking so we can verify the switch
-      const beforeActive = document.querySelector(".gitem.active");
-      const beforeId = beforeActive ? beforeActive.dataset.id : null;
 
+      // Click and verify
       item.click();
-
-      // Verify at 400ms — did the active guide change to our target?
       setTimeout(() => {
-        const nowActive = document.querySelector(".gitem.active");
-        const nowId = nowActive ? nowActive.dataset.id : null;
-        if (nowId === target) {
-          showToast("✓ Opened: " + title, "success");
-        } else if (nowId !== beforeId) {
-          // Something switched, even if not exactly our target
-          showToast("✓ Opened", "success");
+        const nowActive = currentActiveGuideId();
+        if (nowActive === target) {
+          if (jumpTarget) showToast("✓ Opened " + (jumpTitle || "guide"), "success");
         } else {
-          // Click still didn't switch — retry
-          setTimeout(attemptClick, 500);
+          // Retry — Studio's boot may still be running
+          setTimeout(attemptRestore, 500);
         }
       }, 400);
     };
 
-    // Give Studio a beat to boot (auth + guide load) before first click
-    setTimeout(attemptClick, 2000);
+    // Wait for Studio's own boot to complete before trying — otherwise
+    // Studio's showApp() will overwrite our restore.
+    setTimeout(attemptRestore, 2500);
   }
 
   function installGallery() {
@@ -1593,6 +1633,7 @@
     installSidebarDots();
     installGallery();
     installBatch();
+    watchActiveGuide();
     processPendingJump();
   }
 
