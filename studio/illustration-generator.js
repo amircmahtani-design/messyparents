@@ -878,74 +878,85 @@
   }
 
   /** Watch for guide changes and auto-save the active guide id.
-      Waits 3 seconds before starting to save — otherwise it would
-      immediately overwrite the pre-boot last-guide with guide[0] before
-      processPendingJump has a chance to restore. */
+      No delay — the LAST_GUIDE_AT_BOOT snapshot at IIFE start already
+      protects the restore path from being clobbered. Saving immediately
+      means user's guide gets remembered as soon as they switch, not 3.5s later. */
   function watchActiveGuide() {
     const list = document.getElementById("list");
     if (!list || list.__mpcActiveWatcher) return;
     list.__mpcActiveWatcher = true;
     let lastSeen = null;
-    let saveEnabled = false;
-    // Enable saving only after boot restore has had time to complete
-    setTimeout(() => { saveEnabled = true; }, 3500);
+    let saveCount = 0;
     const check = () => {
       const now = currentActiveGuideId();
       if (now && now !== lastSeen) {
         lastSeen = now;
-        if (saveEnabled) {
-          try { localStorage.setItem(LAST_GUIDE_KEY, now); } catch(_) {}
-        }
+        try {
+          localStorage.setItem(LAST_GUIDE_KEY, now);
+          saveCount++;
+          if (saveCount === 2) diag("💾 saving guide changes to memory", "success");
+        } catch(_) {}
       }
     };
     setInterval(check, 400);
     check();
   }
 
-  /** On boot, restore the last-opened guide (or one-shot jump target).
-      Uses the snapshot taken at snippet load, NOT current localStorage,
-      because watchActiveGuide might have already overwritten it. */
+  /** On boot, restore the last-opened guide (or one-shot jump target). */
   function processPendingJump() {
-    // Jump target (from gallery reload) wins if present
+    if (processPendingJump.__ran) return;
+    processPendingJump.__ran = true;
     const target = JUMP_TARGET_AT_BOOT || LAST_GUIDE_AT_BOOT;
-    const title = JUMP_TITLE_AT_BOOT || "guide";
-    if (!target) return;
+    if (!target) { diag("nothing to restore", null); return; }
 
     const startTime = Date.now();
+    let attemptNumber = 0;
     const attemptRestore = () => {
+      attemptNumber++;
       if (Date.now() - startTime > 15000) {
-        if (JUMP_TARGET_AT_BOOT) showToast("Couldn't open " + title, "error");
+        diag("gave up after 15s — target " + target + " never became active", "error");
         return;
       }
 
-      // Wait until Studio has rendered the sidebar
       const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
-      if (!item) { setTimeout(attemptRestore, 300); return; }
+      if (!item) {
+        if (attemptNumber === 1 || attemptNumber % 5 === 0) {
+          diag("waiting for guide item to render (attempt " + attemptNumber + ")", null);
+        }
+        setTimeout(attemptRestore, 300);
+        return;
+      }
 
-      // Prefer the actual guide title from the .gitem for the toast
-      const itemTitle = (item.textContent || title).trim();
-
-      // If already on target, done
+      const itemTitle = (item.textContent || target).trim();
       const activeId = currentActiveGuideId();
+
+      if (attemptNumber === 1) {
+        diag("found guide item, currently active = " + (activeId || "none"), null);
+      }
+
       if (activeId === target) {
-        if (JUMP_TARGET_AT_BOOT) showToast("✓ Opened " + itemTitle, "success");
+        diag("✓ Restored: " + itemTitle, "success");
         return;
       }
 
       // Click and verify
       item.click();
+      if (attemptNumber <= 3) {
+        diag("clicked " + itemTitle + " (attempt " + attemptNumber + ")", null);
+      }
       setTimeout(() => {
         const nowActive = currentActiveGuideId();
         if (nowActive === target) {
-          // Show success toast in both cases — jump AND last-guide restore
-          showToast("✓ " + (JUMP_TARGET_AT_BOOT ? "Opened " : "Restored: ") + itemTitle, "success");
+          diag("✓ Restored: " + itemTitle, "success");
         } else {
+          if (attemptNumber <= 3) {
+            diag("after click, active = " + (nowActive || "none") + " (wanted " + target + ")", "error");
+          }
           setTimeout(attemptRestore, 500);
         }
       }, 400);
     };
 
-    // Wait for Studio's own boot to complete before trying
     setTimeout(attemptRestore, 2500);
   }
 
@@ -1640,6 +1651,22 @@
     checkAndSubscribeExistingBatch();
   }
 
+  /* ---- diagnostic toast queue: shows each restore step so we can SEE
+          exactly what's happening on mobile without a devtools console ---- */
+  const diagQueue = [];
+  let diagShowing = false;
+  function diag(msg, kind) {
+    diagQueue.push({ msg, kind: kind || null });
+    if (!diagShowing) pumpDiag();
+  }
+  function pumpDiag() {
+    if (!diagQueue.length) { diagShowing = false; return; }
+    diagShowing = true;
+    const { msg, kind } = diagQueue.shift();
+    showToast(msg, kind);
+    setTimeout(pumpDiag, 3400);
+  }
+
   /* ---- bootstrap: also install dots + gallery + batch once the studio DOM is up ---- */
   let bootToastShown = false;
   function bootExtras() {
@@ -1649,10 +1676,12 @@
     installBatch();
     watchActiveGuide();
     processPendingJump();
-    // One-time boot toast — makes it obvious you're on the new version
     if (!bootToastShown) {
       bootToastShown = true;
-      showToast("Studio " + MPC_VERSION + " loaded", "success");
+      // Diagnostic sequence — tells you exactly what state is
+      diag("v3 loaded", "success");
+      diag("localStorage last-guide = " + (LAST_GUIDE_AT_BOOT || "(empty)"),
+           LAST_GUIDE_AT_BOOT ? "success" : "error");
     }
   }
 
