@@ -11,6 +11,7 @@
    Works on mobile.
    ========================================================================== */
 (function(){
+  const MPC_VERSION = "v3-guide-memory";
   const CSS = `
 #genPanel{margin-top:14px;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;background:#fafaf5}
 #genPanel .gp-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -852,58 +853,68 @@
   const JUMP_GUIDE_KEY = "mpc-jump-to-guide";  // priority over last-guide
   const JUMP_TITLE_KEY = "mpc-jump-to-guide-title";
 
+  // CRITICAL: snapshot the last-guide value at snippet load, BEFORE Studio's
+  // own boot causes my watchActiveGuide to overwrite it with guide[0].
+  // Without this, watchActiveGuide fires first (guide[0] is active), saves
+  // guide[0] to localStorage, then processPendingJump reads guide[0], sees
+  // it's already active, does nothing. Your real last guide gets lost.
+  let LAST_GUIDE_AT_BOOT = null;
+  let JUMP_TARGET_AT_BOOT = null;
+  let JUMP_TITLE_AT_BOOT = null;
+  try {
+    LAST_GUIDE_AT_BOOT = localStorage.getItem(LAST_GUIDE_KEY);
+    JUMP_TARGET_AT_BOOT = localStorage.getItem(JUMP_GUIDE_KEY);
+    JUMP_TITLE_AT_BOOT = localStorage.getItem(JUMP_TITLE_KEY);
+    // Clear the one-shot jump keys immediately
+    if (JUMP_TARGET_AT_BOOT) {
+      localStorage.removeItem(JUMP_GUIDE_KEY);
+      localStorage.removeItem(JUMP_TITLE_KEY);
+    }
+  } catch(_) {}
+
   function currentActiveGuideId() {
     const active = document.querySelector(".gitem.active[data-id]");
     return active ? active.dataset.id : null;
   }
 
-  /** Watch for guide changes and auto-save the active guide id. */
+  /** Watch for guide changes and auto-save the active guide id.
+      Waits 3 seconds before starting to save — otherwise it would
+      immediately overwrite the pre-boot last-guide with guide[0] before
+      processPendingJump has a chance to restore. */
   function watchActiveGuide() {
     const list = document.getElementById("list");
     if (!list || list.__mpcActiveWatcher) return;
     list.__mpcActiveWatcher = true;
     let lastSeen = null;
+    let saveEnabled = false;
+    // Enable saving only after boot restore has had time to complete
+    setTimeout(() => { saveEnabled = true; }, 3500);
     const check = () => {
       const now = currentActiveGuideId();
       if (now && now !== lastSeen) {
         lastSeen = now;
-        try { localStorage.setItem(LAST_GUIDE_KEY, now); } catch(_) {}
+        if (saveEnabled) {
+          try { localStorage.setItem(LAST_GUIDE_KEY, now); } catch(_) {}
+        }
       }
     };
-    // Poll every 400ms — MutationObserver on class attribute is fiddly
-    // because Studio re-renders the whole innerHTML rather than toggling
-    // classes, so we just poll.
     setInterval(check, 400);
     check();
   }
 
-  /** On boot, restore the last-opened guide (or jump target). Studio's own
-      showApp() fires first and opens guide[0]; we then switch to the
-      remembered guide. There's a brief flash of guide[0], but that's OK. */
+  /** On boot, restore the last-opened guide (or one-shot jump target).
+      Uses the snapshot taken at snippet load, NOT current localStorage,
+      because watchActiveGuide might have already overwritten it. */
   function processPendingJump() {
-    let jumpTarget = null, jumpTitle = null, lastTarget = null;
-    try {
-      jumpTarget = localStorage.getItem(JUMP_GUIDE_KEY);
-      jumpTitle  = localStorage.getItem(JUMP_TITLE_KEY);
-      lastTarget = localStorage.getItem(LAST_GUIDE_KEY);
-    } catch(_) {}
-
-    // Jump target (from gallery) wins if present
-    const target = jumpTarget || lastTarget;
+    // Jump target (from gallery reload) wins if present
+    const target = JUMP_TARGET_AT_BOOT || LAST_GUIDE_AT_BOOT;
+    const title = JUMP_TITLE_AT_BOOT || "guide";
     if (!target) return;
-    // Clear the one-shot jump key so we don't loop
-    if (jumpTarget) {
-      try {
-        localStorage.removeItem(JUMP_GUIDE_KEY);
-        localStorage.removeItem(JUMP_TITLE_KEY);
-      } catch(_) {}
-    }
 
     const startTime = Date.now();
     const attemptRestore = () => {
       if (Date.now() - startTime > 15000) {
-        // Give up silently — this was a background restore, not user-initiated
-        if (jumpTarget) showToast("Couldn't open " + (jumpTitle || "guide"), "error");
+        if (JUMP_TARGET_AT_BOOT) showToast("Couldn't open " + title, "error");
         return;
       }
 
@@ -911,10 +922,13 @@
       const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
       if (!item) { setTimeout(attemptRestore, 300); return; }
 
-      // Check current active — if already on target, we're done
+      // Prefer the actual guide title from the .gitem for the toast
+      const itemTitle = (item.textContent || title).trim();
+
+      // If already on target, done
       const activeId = currentActiveGuideId();
       if (activeId === target) {
-        if (jumpTarget) showToast("✓ Opened " + (jumpTitle || "guide"), "success");
+        if (JUMP_TARGET_AT_BOOT) showToast("✓ Opened " + itemTitle, "success");
         return;
       }
 
@@ -923,16 +937,15 @@
       setTimeout(() => {
         const nowActive = currentActiveGuideId();
         if (nowActive === target) {
-          if (jumpTarget) showToast("✓ Opened " + (jumpTitle || "guide"), "success");
+          // Show success toast in both cases — jump AND last-guide restore
+          showToast("✓ " + (JUMP_TARGET_AT_BOOT ? "Opened " : "Restored: ") + itemTitle, "success");
         } else {
-          // Retry — Studio's boot may still be running
           setTimeout(attemptRestore, 500);
         }
       }, 400);
     };
 
-    // Wait for Studio's own boot to complete before trying — otherwise
-    // Studio's showApp() will overwrite our restore.
+    // Wait for Studio's own boot to complete before trying
     setTimeout(attemptRestore, 2500);
   }
 
@@ -1628,6 +1641,7 @@
   }
 
   /* ---- bootstrap: also install dots + gallery + batch once the studio DOM is up ---- */
+  let bootToastShown = false;
   function bootExtras() {
     if (!document.querySelector(".top") || !document.querySelector("aside.side")) return;
     installSidebarDots();
@@ -1635,6 +1649,11 @@
     installBatch();
     watchActiveGuide();
     processPendingJump();
+    // One-time boot toast — makes it obvious you're on the new version
+    if (!bootToastShown) {
+      bootToastShown = true;
+      showToast("Studio " + MPC_VERSION + " loaded", "success");
+    }
   }
 
   if (document.readyState === "loading") {
