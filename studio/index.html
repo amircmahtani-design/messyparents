@@ -130,7 +130,7 @@
 
 <!-- data + config for local/preview mode -->
 <script src="../assets/js/firebase-config.js"></script>
-<script src="../assets/js/guides.js"></script>
+<script src="../assets/js/guides.js?v=11"></script>
 <script src="../assets/js/site-text.js"></script>
 
 <div class="top">
@@ -139,7 +139,7 @@
   <span class="spacer"></span>
   <span id="who" class="who"></span>
   <button id="charBtn" class="btn ghost hidden" title="View and reset the persistent character sessions">Characters</button>
-  <button id="seedBtn" class="btn ghost hidden" title="Copy the 16 built-in guides into Firestore (one-time)">Import site guides</button>
+  <button id="seedBtn" class="btn ghost hidden" title="Copy every guide in the bundled file into Firestore">Import site guides</button>
   <button id="signout" class="btn ghost hidden">Sign out</button>
 </div>
 
@@ -1710,7 +1710,7 @@ function showApp(user){
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
-    $("#empty").innerHTML = "No guides in Firestore yet.<br><br>Click <b>“Import site guides”</b> (top right) to load all 16 in one go.";
+    $("#empty").innerHTML = "No guides in Firestore yet.<br><br>Click <b>“Import site guides”</b> (top right) to load them all in one go.";
 }
 async function boot(){
   const badge = $("#modeBadge");
@@ -1732,7 +1732,7 @@ async function boot(){
   });
   $("#signout").addEventListener("click", () => auth.signOut(a));
   $("#seedBtn").addEventListener("click", async () => {
-    if(!confirm("Import the 16 built-in guides into Firestore?\n\nThis overwrites any guides with the same IDs.")) return;
+    if(!confirm("Import " + (window.GUIDES||[]).length + " guides into Firestore?\n\nThis overwrites any guides with the same IDs.")) return;
     const btn = $("#seedBtn"); const old = btn.textContent; btn.disabled = true; btn.textContent = "Importing…";
     try{
       const n = await importAll();
