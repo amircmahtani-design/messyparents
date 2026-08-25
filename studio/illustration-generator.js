@@ -11,7 +11,15 @@
    Works on mobile.
    ========================================================================== */
 (function(){
-  const MPC_VERSION = "v3-guide-memory";
+  const MPC_VERSION = "v4-fixed";
+
+  /** Safe escape for use inside a `[data-id="..."]` attribute selector.
+      Guide IDs are always slugs (a-z, 0-9, hyphens), but we handle quotes
+      and backslashes defensively. We DON'T use CSS.escape because some
+      browser/extension combinations have broken or missing implementations. */
+  function safeAttr(v) {
+    return String(v == null ? "" : v).replace(/["\\]/g, "\\$&");
+  }
   const CSS = `
 #genPanel{margin-top:14px;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;background:#fafaf5}
 #genPanel .gp-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -878,23 +886,33 @@
   }
 
   /** Watch for guide changes and auto-save the active guide id.
-      No delay — the LAST_GUIDE_AT_BOOT snapshot at IIFE start already
-      protects the restore path from being clobbered. Saving immediately
-      means user's guide gets remembered as soon as they switch, not 3.5s later. */
+      Only saves AFTER the initial Studio-default guide has been observed —
+      otherwise every boot would re-save Studio's default (guide[0]) and
+      overwrite the user's real "last guide" the moment they land. */
   function watchActiveGuide() {
     const list = document.getElementById("list");
     if (!list || list.__mpcActiveWatcher) return;
     list.__mpcActiveWatcher = true;
     let lastSeen = null;
+    let sawInitial = false;   // Set true after we see Studio's boot-default
     let saveCount = 0;
     const check = () => {
       const now = currentActiveGuideId();
-      if (now && now !== lastSeen) {
+      if (!now) return;
+      if (!sawInitial) {
+        // First time seeing an active guide — record but DO NOT save.
+        // This is Studio's boot-default, not a user choice.
+        lastSeen = now;
+        sawInitial = true;
+        return;
+      }
+      if (now !== lastSeen) {
+        // User (or my restore code) changed the active guide.
         lastSeen = now;
         try {
           localStorage.setItem(LAST_GUIDE_KEY, now);
           saveCount++;
-          if (saveCount === 2) diag("💾 saving guide changes to memory", "success");
+          if (saveCount <= 3) diag("💾 saved: " + now, "success");
         } catch(_) {}
       }
     };
@@ -902,62 +920,57 @@
     check();
   }
 
-  /** On boot, restore the last-opened guide (or one-shot jump target). */
+  /** On boot, restore the last-opened guide (or one-shot jump target).
+      Polling approach: check every 300ms whether Studio's sidebar has
+      rendered the target guide's item. As soon as it has, click. Keep
+      polling until success or 20 seconds. */
   function processPendingJump() {
     if (processPendingJump.__ran) return;
     processPendingJump.__ran = true;
     const target = JUMP_TARGET_AT_BOOT || LAST_GUIDE_AT_BOOT;
-    if (!target) { diag("nothing to restore", null); return; }
+    if (!target) { diag("nothing to restore"); return; }
 
+    diag("restore target: " + target, "success");
     const startTime = Date.now();
-    let attemptNumber = 0;
-    const attemptRestore = () => {
-      attemptNumber++;
-      if (Date.now() - startTime > 15000) {
-        diag("gave up after 15s — target " + target + " never became active", "error");
+    let attempts = 0;
+    let clickedOnce = false;
+
+    const iv = setInterval(() => {
+      attempts++;
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      if (Date.now() - startTime > 20000) {
+        clearInterval(iv);
+        diag("gave up at " + elapsed + "s (attempts=" + attempts + ")", "error");
         return;
       }
 
-      const item = document.querySelector(`.gitem[data-id="${CSS.escape(target)}"]`);
-      if (!item) {
-        if (attemptNumber === 1 || attemptNumber % 5 === 0) {
-          diag("waiting for guide item to render (attempt " + attemptNumber + ")", null);
-        }
-        setTimeout(attemptRestore, 300);
-        return;
-      }
-
-      const itemTitle = (item.textContent || target).trim();
+      const item = document.querySelector(`.gitem[data-id="${safeAttr(target)}"]`);
       const activeId = currentActiveGuideId();
+      const itemCount = document.querySelectorAll(".gitem[data-id]").length;
 
-      if (attemptNumber === 1) {
-        diag("found guide item, currently active = " + (activeId || "none"), null);
+      // Log key checkpoints only (avoid spam)
+      if (attempts === 1 || attempts === 5 || attempts === 10 || attempts === 20 || attempts === 40) {
+        diag("t=" + elapsed + "s attempts=" + attempts + " items=" + itemCount +
+             " active=" + (activeId || "?") + " found=" + (!!item));
       }
 
       if (activeId === target) {
-        diag("✓ Restored: " + itemTitle, "success");
+        clearInterval(iv);
+        diag("✓ RESTORED at " + elapsed + "s", "success");
         return;
       }
 
-      // Click and verify
-      item.click();
-      if (attemptNumber <= 3) {
-        diag("clicked " + itemTitle + " (attempt " + attemptNumber + ")", null);
+      if (item && !clickedOnce) {
+        // First click attempt
+        diag("clicking .gitem for " + target + " at " + elapsed + "s");
+        item.click();
+        clickedOnce = true;
+      } else if (item && clickedOnce && attempts % 5 === 0) {
+        // Retry the click every ~1.5s if it's not switching
+        diag("re-clicking (click didn't stick) at " + elapsed + "s");
+        item.click();
       }
-      setTimeout(() => {
-        const nowActive = currentActiveGuideId();
-        if (nowActive === target) {
-          diag("✓ Restored: " + itemTitle, "success");
-        } else {
-          if (attemptNumber <= 3) {
-            diag("after click, active = " + (nowActive || "none") + " (wanted " + target + ")", "error");
-          }
-          setTimeout(attemptRestore, 500);
-        }
-      }, 400);
-    };
-
-    setTimeout(attemptRestore, 2500);
+    }, 300);
   }
 
   function installGallery() {
@@ -1582,7 +1595,7 @@
         searchInput.dispatchEvent(new Event("input", { bubbles: true }));
       }
       setTimeout(() => {
-        const item = document.querySelector(`.gitem[data-id="${CSS.escape(guideId)}"]`);
+        const item = document.querySelector(`.gitem[data-id="${safeAttr(guideId)}"]`);
         if (item) item.click();
         else showToast("Couldn't find in sidebar — try search", "error");
       }, 200);
