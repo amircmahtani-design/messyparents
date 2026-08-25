@@ -40,6 +40,14 @@
 #genPanel .gp-img-frame{width:100%;background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/16px 16px;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;min-height:120px;position:relative}
 #genPanel .gp-img{width:100%;display:block}
 #genPanel .gp-img-none{padding:24px 12px;text-align:center;color:#6b7684;font-size:13px}
+#genPanel .gp-img-col.gp-regenerating .gp-img{opacity:.35;filter:grayscale(.4)}
+#genPanel .gp-img-col.gp-regenerating .gp-img-frame::after{
+  content:"🎨 Regenerating…";
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(20,25,33,.9);color:#fff;padding:10px 18px;border-radius:999px;
+  font-size:13px;font-weight:700;letter-spacing:.3px;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
 #genPanel .gp-chars{margin-bottom:12px}
 #genPanel .gp-chars-label{font-size:12px;color:#6b7684;font-weight:700;margin-bottom:6px}
 #genPanel .gp-chars-chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -116,7 +124,7 @@
 
   <div class="gp-buttons">
     <button type="button" id="gpGenerateBtn" class="gp-btn primary">✨ Generate illustration</button>
-    <button type="button" id="gpEditBriefBtn" class="gp-btn ghost gp-hidden">Edit JSON &amp; regenerate</button>
+    <button type="button" id="gpCancelBtn" class="gp-btn ghost gp-hidden">✕ Cancel</button>
     <button type="button" id="gpRegenBtn" class="gp-btn ghost gp-hidden">Regenerate</button>
     <button type="button" id="gpApproveBtn" class="gp-btn primary gp-hidden">Approve &amp; use</button>
     <button type="button" id="gpRejectBtn" class="gp-btn ghost gp-hidden">Reject</button>
@@ -142,8 +150,11 @@
   <div id="gpBriefWrap" class="gp-brief gp-hidden">
     <details>
       <summary class="gp-brief-summary">⚙️ Advanced: edit full brief as JSON</summary>
-      <div class="gp-brief-label">Edit the raw brief and regenerate</div>
+      <div class="gp-brief-label">Edit the raw brief below, then click regenerate to apply.</div>
       <textarea id="gpBriefTA" class="gp-brief-ta"></textarea>
+      <div class="gp-buttons" style="margin-top:8px">
+        <button type="button" id="gpEditBriefBtn" class="gp-btn primary">Regenerate with edited JSON</button>
+      </div>
     </details>
   </div>
 </div>
@@ -266,12 +277,15 @@
     gpState.brief = d.brief;
     gpState.qa    = d.qa;
     document.getElementById("gpPreviewImg").src = d.url;
-    document.getElementById("gpPendingCol").classList.remove("gp-hidden");
+    const pendingCol = document.getElementById("gpPendingCol");
+    pendingCol.classList.remove("gp-hidden");
+    pendingCol.classList.remove("gp-regenerating"); // clear dim overlay
     document.getElementById("gpQAPre").textContent = readableQA(d.qa);
     document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
     document.getElementById("gpChangeInput").value = "";
     show("gpQAWrap"); show("gpBriefWrap"); show("gpChangeWrap");
-    show("gpEditBriefBtn"); show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+    show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+    hide("gpCancelBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
 
     const flag = d.status === "awaiting-approval-with-issues"
@@ -281,9 +295,12 @@
   }
 
   function hideReview() {
-    document.getElementById("gpPendingCol").classList.add("gp-hidden");
+    const pendingCol = document.getElementById("gpPendingCol");
+    pendingCol.classList.add("gp-hidden");
+    pendingCol.classList.remove("gp-regenerating");
     hide("gpQAWrap"); hide("gpBriefWrap"); hide("gpChangeWrap");
-    hide("gpEditBriefBtn"); hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
+    hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
+    hide("gpCancelBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
   }
 
@@ -322,6 +339,7 @@
     if (gpState.unsub) { try { gpState.unsub(); } catch(_) {} }
     let first = true;
     gpState.unsub = fs.onSnapshot(jobRef, snap => {
+      if (gpState.cancelled) return;
       const d = snap.data(); if (!d) return;
       if (first) { first = false; if (!["planning","generating","reviewing"].includes(d.status)) return; }
       const msg = document.getElementById("gpMsg");
@@ -335,7 +353,7 @@
       if (d.status === "error") {
         try { gpState.unsub(); } catch(_) {}
         msg.textContent = "✗ Failed: " + (d.error || "generation error");
-        document.getElementById("gpGenerateBtn").disabled = false;
+        finishGeneration();
       }
     });
   }
@@ -346,9 +364,25 @@
       document.getElementById("gpMsg").textContent = "Pick a guide first (open one from the ☰ menu).";
       return;
     }
+    // Show Cancel button, hide Generate/Regenerate. Keep the previous
+    // Proposed image visible with a dimmed "Regenerating…" overlay so the
+    // user still has visual context while the new one is being generated.
     document.getElementById("gpGenerateBtn").disabled = true;
-    hideReview();
+    hide("gpRegenBtn");
+    show("gpCancelBtn");
+
+    const pendingCol = document.getElementById("gpPendingCol");
+    const hadPrevious = !pendingCol.classList.contains("gp-hidden");
+    if (hadPrevious) {
+      pendingCol.classList.add("gp-regenerating");
+    }
+    // Hide the QA / change / brief blocks while generating — they belong
+    // to the previous result and would be misleading. We'll re-show on new result.
+    hide("gpQAWrap"); hide("gpBriefWrap"); hide("gpChangeWrap");
+    hide("gpApproveBtn"); hide("gpRejectBtn");
+
     document.getElementById("gpMsg").textContent = "Starting…";
+    gpState.cancelled = false;
 
     // Persist current draft so the planner sees the latest content.
     // Also save the current character-chip selection so it's remembered next time.
@@ -359,9 +393,6 @@
         const { fs, db } = await getFirebase();
         await fs.setDoc(fs.doc(db, "guides", g.id), g, { merge: true });
       }
-      // Persist the character-selection independently — this is per-guide,
-      // separate from the draft, and needs to work even if draftGuide isn't
-      // exposed on window.
       const { fs, db } = await getFirebase();
       await fs.setDoc(fs.doc(db, "guides", id), {
         characterSelection: currentSelection
@@ -387,16 +418,56 @@
       });
     } catch (e) {
       document.getElementById("gpMsg").textContent = "Could not start: " + (e.message || e);
-      document.getElementById("gpGenerateBtn").disabled = false;
+      finishGeneration();
     }
 
     setTimeout(() => {
       if (!gpState.url && document.getElementById("gpGenerateBtn").disabled) {
         try { gpState.unsub && gpState.unsub(); } catch(_) {}
         document.getElementById("gpMsg").textContent = "Still working after 6 min. Reopen the guide shortly — the job may finish in the background.";
-        document.getElementById("gpGenerateBtn").disabled = false;
+        finishGeneration();
       }
     }, 360000);
+  }
+
+  /** Reset the UI back to the "not generating" state. */
+  function finishGeneration() {
+    document.getElementById("gpGenerateBtn").disabled = false;
+    hide("gpCancelBtn");
+    const pendingCol = document.getElementById("gpPendingCol");
+    if (pendingCol) pendingCol.classList.remove("gp-regenerating");
+  }
+
+  /** User clicked Cancel while a generation was in flight.
+      Unsubscribes from the job (so we stop reacting to it), restores
+      the previous review UI if there was one, and asks the backend to
+      abort by writing to Firestore. The Netlify function checks for this
+      between stages and stops early. */
+  async function cancelGeneration() {
+    gpState.cancelled = true;
+    try { gpState.unsub && gpState.unsub(); } catch(_) {}
+    finishGeneration();
+
+    // Tell the backend to abort — best-effort, silent failure
+    try {
+      const id = currentGuideId();
+      if (id) {
+        const { fs, db } = await getFirebase();
+        await fs.setDoc(fs.doc(db, "illustration_jobs", id), {
+          cancelRequested: true,
+          cancelRequestedAt: Date.now()
+        }, { merge: true });
+      }
+    } catch(_) {}
+
+    // If we had a previous Proposed image showing, restore its controls
+    if (gpState.url) {
+      show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+      show("gpQAWrap"); show("gpChangeWrap"); show("gpBriefWrap");
+      document.getElementById("gpMsg").textContent = "✕ Cancelled — previous version still shown.";
+    } else {
+      document.getElementById("gpMsg").textContent = "✕ Cancelled.";
+    }
   }
 
   async function approve() {
@@ -477,6 +548,7 @@
 
     // 3) Wire up buttons
     on("gpGenerateBtn",  "click", () => startGeneration(null, ""));
+    on("gpCancelBtn",    "click", cancelGeneration);
     on("gpRegenBtn",     "click", () => startGeneration(gpState.brief, ""));
     on("gpEditBriefBtn", "click", tryEditBrief);
     on("gpApproveBtn",   "click", approve);
