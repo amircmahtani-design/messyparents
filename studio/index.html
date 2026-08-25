@@ -73,6 +73,10 @@
   .tag.ok{background:#e8f5e3;color:#3f7a2f}
   .tag.warn{background:#fdeede;color:#c9761f}
   .tag.tip{background:#fdf6d8;color:#a98b13}
+  .tag.dont{background:#fbe6e3;color:#9B2C1F}
+  .col-card.is-off .field{display:none}
+  .col-card .toggle{float:right;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:#5f5e5a}
+  .col-card .toggle input{width:auto;margin:0;cursor:pointer}
   .actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(244,245,247,0),var(--bg) 30%);padding:16px 0 4px;display:flex;gap:10px;align-items:center}
   .actions .msg{font-size:13px;font-weight:700}
   .actions .msg.ok{color:var(--ok)}
@@ -306,6 +310,13 @@
           <span class="tag warn">⚠ Amber column</span>
           <div class="field"><label>Heading</label><input id="f_w_title" type="text"></div>
           <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_w_items" rows="5"></textarea></div>
+        </div>
+
+        <div class="col-card is-off" id="dontCard">
+          <span class="tag dont">✕ Don’t strip</span>
+          <label class="toggle"><input id="f_d_on" type="checkbox"> Include this section</label>
+          <div class="field"><label>Heading</label><input id="f_d_title" type="text" placeholder="Don’t"></div>
+          <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_d_items" rows="4"></textarea></div>
         </div>
 
         <div class="field">
@@ -1012,6 +1023,15 @@ function renderList(filter=""){
 const linesToItems = s => s.split(/\n/).map(x=>x.trim()).filter(Boolean);
 const itemsToLines = a => (a||[]).join("\n");
 
+function syncDont(){
+  var on = $("#f_d_on") && $("#f_d_on").checked;
+  var card = $("#dontCard");
+  if(card) card.classList.toggle("is-off", !on);
+}
+document.addEventListener("change", function(e){
+  if(e.target && e.target.id === "f_d_on") syncDont();
+});
+
 function fillForm(g){
   const p = g.panel || {};
   $("#f_title").value = g.title || "";
@@ -1028,6 +1048,11 @@ function fillForm(g){
   $("#f_w_items").value = itemsToLines(p.warn&&p.warn.items);
   $("#f_h_title").value = (p.helped&&p.helped.title) || "";
   $("#f_h_items").value = itemsToLines(p.helped&&p.helped.items);
+  var _d = p.dont && p.dont.items && p.dont.items.length ? p.dont : null;
+  $("#f_d_on").checked = !!_d;
+  $("#f_d_title").value = (_d && _d.title) || "Don’t";
+  $("#f_d_items").value = itemsToLines(_d && _d.items);
+  syncDont();
   $("#f_quick").value = p.quick || "";
   refreshAutoTopic();
 }
@@ -1049,6 +1074,10 @@ function draftGuide(){
   g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
   g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
+  var _di = linesToItems($("#f_d_items").value);
+  if($("#f_d_on").checked && _di.length){
+    g.panel.dont = { title:($("#f_d_title").value || "Don’t"), items:_di };
+  } else { delete g.panel.dont; }
   g.panel.quick  = $("#f_quick").value;
   return g;
 }
@@ -1097,6 +1126,7 @@ function guideText(){
     $("#f_n_title").value, $("#f_n_items").value,
     $("#f_w_title").value, $("#f_w_items").value,
     $("#f_h_title").value, $("#f_h_items").value,
+    String($("#f_d_on").checked), $("#f_d_title").value, $("#f_d_items").value,
     $("#f_quick").value].join(" ");
 }
 /* Recompute the suggestion. In auto mode we apply it to the (disabled)
