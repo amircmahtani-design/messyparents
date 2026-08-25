@@ -3,16 +3,14 @@
    Add a new guide: copy a block in GUIDES and change the fields.
    ========================================================================== */
 
-const AGES = ["Before baby","First trimester","Second trimester","Third trimester","0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"];
+const AGES = ["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"];
 
 const ICONS = {
   feeding:     `<img src="assets/img/icons/feeding.webp" alt="" aria-hidden="true">`,
   sleeping:    `<img src="assets/img/icons/sleeping.webp" alt="" aria-hidden="true">`,
   development: `<img src="assets/img/icons/development.webp" alt="" aria-hidden="true">`,
   health:      `<img src="assets/img/icons/health.webp" alt="" aria-hidden="true">`,
-  sanity:      `<img src="assets/img/icons/sanity.webp" alt="" aria-hidden="true">`,
-  "getting-ready": `<img src="assets/img/icons/getting-ready.webp" alt="" aria-hidden="true"
-                    onerror="this.replaceWith(document.createTextNode('\u2b50'))">`
+  sanity:      `<img src="assets/img/icons/sanity.webp" alt="" aria-hidden="true">`
 };
 
 const TOPICS = [
@@ -20,8 +18,7 @@ const TOPICS = [
   {id:"sleeping",    label:"Sleeping",      icon:ICONS.sleeping},
   {id:"development", label:"Development",   icon:ICONS.development},
   {id:"health",      label:"Health",        icon:ICONS.health},
-  {id:"sanity",      label:"Parent Sanity", icon:ICONS.sanity},
-  {id:"getting-ready", label:"Getting Ready", icon:ICONS["getting-ready"]}
+  {id:"sanity",      label:"Parent Sanity", icon:ICONS.sanity}
 ];
 
 const topicById = id => TOPICS.find(t => t.id === id) || TOPICS[0];
@@ -724,631 +721,559 @@ var GUIDES = [
   related:["touched-out","splitting-nights"]
 },
 
-/* --- Pregnancy, batch 01 ------------------------------------------------ */
+/* --- Website batch one: the first nights home --------------------------- */
 
 {
-  id:"pregnancy-belly-pain", topic:"health", icon:"cross", featured:false,
-  title:"Is belly pain during pregnancy normal?",
-  ages:["Second trimester","Third trimester"], read:3,
-  stage:"Second trimester", subcategory:"Pregnancy pain",
-  summary:"Some of it is stretching and digestion. But \u201cbelly pain\u201d is far too broad a phrase to reassure yourself with \u2014 the details decide.",
-  keywords:["belly pain","stomach pain pregnancy","abdominal pain","round ligament","is it normal"],
+  id:"safe-sleep-newborn",
+  topic:"sleeping",
+  icon:"moon",
+  featured:true,
+  title:"Where does she actually sleep? The rules, plainly",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Sleep environment",
+  summary:"Flat, on her back, on a firm clear surface. Every single sleep. It's the one thing on this whole site that isn't a judgement call.",
+  keywords:["safe sleep","back to sleep","cot setup","newborn sleep safety","incline cot reflux"],
   body:`
-<p>This is the question almost everyone asks first, and it is almost useless on its own. We know, because we asked it exactly like that: <em>"Feeling pain on my belly while pregnant normal"</em>. Within a few days it had become a much more specific question, and the specific version was the one worth answering.</p>
-<h2>Why the broad version can't be answered</h2>
-<p>A pregnant belly is doing several things at once. Muscles and ligaments are stretching, digestion has slowed down, organs are being rearranged, and later on there is a whole person moving around in there. Any of those can hurt.</p>
-<p>But the same region also produces pain that needs a doctor today. The difference is almost never in the word "pain" \u2014 it's in where, how badly, how long, and what else is happening.</p>
-<h2>Answer these four before you Google</h2>
+<p>Most of what we write here is nuance, context and it-depends. This one isn't. It's four rules and they don't bend.</p>
+<h2>The rules</h2>
 <ul>
-<li><strong>Where exactly.</strong> One side, both sides, low down, up under the ribs, across the whole bump.</li>
-<li><strong>What kind.</strong> Sharp, aching, tightening, burning, or a heavy pressure.</li>
-<li><strong>What pattern.</strong> Brief and triggered by moving, or constant, or coming and going at regular intervals.</li>
-<li><strong>What else.</strong> Any bleeding, any watery fluid, fever, vomiting, pain passing urine, or a change in movement once you're feeling it regularly.</li>
+<li><strong>On her back.</strong> Every sleep, day and night, until she can roll over reliably on her own.</li>
+<li><strong>Flat.</strong> Not propped, not inclined, not in a wedge.</li>
+<li><strong>Firm surface.</strong> A proper cot or Moses basket mattress. Not a sofa, not a pillow, not your bed's soft bit.</li>
+<li><strong>Clear.</strong> Nothing else in there. No pillows, no duvets, no bumpers, no toys, no positioners, no rolled towels.</li>
 </ul>
-<div class="quiet">Round-ligament pain is the usual reassuring answer, and often the right one \u2014 a sharp pull on one side when you stand up, roll over or sneeze, gone in seconds. It does not sit there all day.</div>
-<h2>Carry your dates with you</h2>
-<p>Whoever you ask needs to know how many weeks you are, and whether it's one baby or more. We learned this the annoying way: an early answer we got mentioned ectopic pregnancy, which was completely irrelevant to an established twin pregnancy well past the point where that was possible. Reassurance built on the wrong assumptions isn't reassurance.</p>`,
-  callout:{title:"Call your maternity team if",items:[
-    "The pain is severe, persistent, worsening, regular, or all on one side",
-    "There's bleeding, or watery fluid, or a change in discharge",
-    "Fever, vomiting, faintness, or pain when passing urine",
-    "Significant downward pelvic pressure, or anything that makes you wonder about early labour",
-    "Movements have reduced or changed, once you're feeling them regularly"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Often just",items:[
-      "Ligaments and muscles stretching","Slower digestion, gas and bloating",
-      "The uterus growing","Braxton Hicks tightenings","A baby with sharp elbows"]},
-    warn:{title:"Call your team if",items:[
-      "Severe, constant, worsening or regular pain","Bleeding or watery fluid",
-      "Fever, vomiting or faintness","Marked pelvic pressure before term"]},
-    helped:{title:"What to note down first",items:[
-      "Exactly where it is","Sharp, aching, tightening or pressure",
-      "How long it lasts and what sets it off","Your gestation \u2014 say it every time you ask"]},
-    quick:"Ordinary stretching pain is brief and moves with you. Pain that stays, worsens, comes in a rhythm or arrives with bleeding or fluid needs your maternity team, not a search bar."
-  },
-  originalQuestions:["Feeling pain on my belly while pregnant normal (19 May 2025)"],
-  sources:["RAW-20250519-682afa2a-01"],
+<div class="quiet">Feet-to-foot: her feet near the end of the cot, so she can't wriggle down under a blanket. A sleeping bag removes the problem entirely and is worth every penny.</div>
+<h2>The bit people get wrong</h2>
+<p>Reflux. It feels obvious that a baby who spits up should be tilted, and you'll find products sold on exactly that logic. Don't. Inclining the cot or using a positioner is not recommended, and it isn't safer — a small baby slumps down an incline into a position that compromises her airway.</p>
+<p>Unless your own specialist team has given you a specific written plan for a specific reason, reflux does not change the rules. Ours didn't.</p>
+<h2>Side sleeping</h2>
+<p>We asked whether she could sleep on her side if one of us was actively watching. The answer is that watching isn't the safeguard people assume — you will look away, or fall asleep, and the whole point is that sleep is when nobody is supervising.</p>
+<p>Supervised tummy time while she's awake is a completely different thing, and good for her. Awake, on you, on the floor, watched. That's not sleep.</p>
+<h2>Where</h2>
+<p>In your room, in her own sleep space, for the first six months. Not in your bed, not on a sofa or armchair — falling asleep with her on a sofa is one of the highest-risk things that happens by accident.</p>
+<p>If there's any chance you might doze off feeding her at 4am, plan for it. Feed somewhere you can put her down safely rather than somewhere you'll wake up an hour later still holding her.</p>`,
+  callout:{title:"Get advice straight away for",items:["Blue, grey or unusually pale colour","Pauses in breathing, or breathing that looks like hard work","Grunting with every breath, nostrils flaring, or the chest pulling in","A baby who is floppy, very hard to wake, or not feeding","Any instinct that something is wrong — you don't need to justify it"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's this simple",items:["On her back, every sleep","Flat — not propped or inclined","Firm mattress, not a sofa or your bed","Nothing else in the cot at all"]},warn:{title:"Call your doctor if",items:["Blue, grey or unusually pale colour","Any pause in breathing","Breathing that looks like hard work — chest pulling in, nostrils flaring","Floppy, very hard to wake, or not feeding","Any instinct that something is wrong"]},helped:{title:"What helped us",items:["A sleeping bag instead of blankets","Feet to the foot of the cot","Her own space in our room","We never tilted the cot, however tempting","Feeding somewhere we could put her down safely"]},dont:{title:"Don't",items:["Don't tilt or prop the cot, for reflux or anything else","No sleep positioners, wedges, bumpers, pillows or loose blankets","Don't put her down to sleep on her side, even if you're watching","Don't fall asleep holding her on a sofa or armchair"]},quick:"Back, flat, firm, clear — every sleep. Reflux doesn't change it, and side sleeping isn't made safe by watching, because sleep is exactly when nobody is watching."},
+  originalQuestions:["Is it safe for a newborn to sleep on her side if a parent is actively watching? (24 August 2025)","Whether a light must stay on, and whether she could be put down while making noise (21 August 2025)"],
+  sources:["RAW-20250824-68aa5aee-08","RAW-20250821-68a76ce2-27"],
   medical:true,
-  related:["pelvic-pressure-pregnancy","pregnancy-hip-pain","waters-breaking-without-pain"]
+  related:["newborn-noises-at-night","spit-up-while-asleep","milk-from-the-nose"]
 },
-
 {
-  id:"pelvic-pressure-pregnancy", topic:"health", icon:"cross", featured:true,
-  title:"Pelvic pressure so heavy it feels like the baby is coming",
-  ages:["Second trimester","Third trimester"], read:4,
-  stage:"Second trimester", subcategory:"Pregnancy pain",
-  summary:"Pubic and groin pressure is common and often mechanical. But new, heavy pressure before term is one of the few things that genuinely shouldn't wait.",
-  keywords:["pelvic pressure","pubic bone pain","spd","symphysis pubis","pressure 25 weeks","feels like giving birth"],
+  id:"newborn-hiccups",
+  topic:"health",
+  icon:"cross",
+  featured:true,
+  title:"Newborn hiccups at midnight",
+  ages:["0–1 month","2–3 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"Newborn body",
+  summary:"They bother you far more than they bother her. She can be put down to sleep still hiccupping.",
+  keywords:["newborn hiccups","baby hiccups","hiccups sleep","how long hiccups baby"],
   body:`
-<p>Ours started as pain in one small spot just above the pubic bone. Then it was a bruise-like feeling. Then, at 25 weeks with twins, it was enough pressure that it genuinely felt as though birth was about to happen. Two weeks later, at 27 weeks, it came back and stayed at about 5 out of 10 all day.</p>
-<p>We asked, in various desperate phrasings, whether all of that was normal. Here is the honest answer we wish we'd had first.</p>
-<h2>The mechanical explanation is real</h2>
-<p>The pelvic joints soften and loosen in pregnancy. That can produce genuine, sometimes severe pain over the pubic bone, in the groin, or across the back of the pelvis \u2014 often called pelvic girdle pain, or SPD when it's centred on the pubic joint. It's typically worse when you part your legs: getting out of a car, turning in bed, climbing stairs, standing on one leg to dress.</p>
-<p>It's common, it's mechanical, and it responds to being handled properly rather than endured.</p>
-<h2>What actually helps with the mechanical kind</h2>
+<p>Just after midnight, Ariadne got hiccups. We then worked through every possible follow-up in order: best position, does patting help, how long do we keep trying, are they harmful, and eventually — can we just put her down?</p>
+<p>Asked whether anything else was going on, the honest answer was: <em>"No she just hiccups."</em> So we put her down. That was the right call, and we could have got there twenty minutes earlier.</p>
+<h2>What they are</h2>
+<p>Extremely common, often several times a day, and almost always harmless. Babies hiccup in the womb too. They usually stop on their own without anybody doing anything.</p>
+<div class="quiet">Here's the thing nobody tells you at midnight: hiccups don't distress most babies at all. Watch her face. If she's unbothered, she's unbothered — you're the one who's upset.</div>
+<h2>If you want to do something</h2>
 <ul>
-<li><strong>Keep your knees together</strong> for anything that involves turning or getting up. Swing both legs out of the car as one unit. Roll in bed like a log.</li>
-<li><strong>A pillow between the knees</strong> at night, and one under the bump.</li>
-<li><strong>Sit down to dress.</strong> Standing on one leg is often the single worst movement of the day.</li>
-<li><strong>Shorter steps.</strong> Long strides open the pelvis further.</li>
-<li><strong>Ask for pelvic-health physiotherapy.</strong> This is the referral worth pushing for \u2014 a support belt fitted properly by someone who has examined you beats anything bought online on a guess.</li>
+<li>Hold her comfortably upright for a bit.</li>
+<li>Pause a feed if she seems unsettled by them, then carry on.</li>
+<li>A gentle burp, if you think she swallowed air. Gentle.</li>
+<li>That's it. Don't cycle through six positions trying to make them stop.</li>
 </ul>
-<div class="quiet">We asked whether an inversion might relieve the pressure. Don't improvise positional tricks from the internet in a high-risk or late pregnancy. Ask the team first \u2014 that's what the physio referral is for.</div>
-<h2>Where the reassurance has to stop</h2>
-<p>Everything above assumes a mechanical problem. New or markedly increased pelvic pressure before term can also be a sign of something else entirely \u2014 cervical change, preterm labour, or a urinary problem. That cannot be sorted out from a description typed into a phone at midnight, and with twins the threshold for checking should be lower, not higher.</p>
-<p>If you find yourself repeatedly asking whether it's still normal \u2014 as we did, four separate times in one evening \u2014 that repetition is itself the answer. Call them.</p>`,
-  callout:{title:"Call your maternity unit promptly if",items:[
-    "The pressure is new or markedly worse, and you're not yet at term",
-    "Regular tightenings, or period-like cramps, or low backache that comes and goes",
-    "Bleeding, watery fluid, or a noticeable change in discharge",
-    "Pain or burning when passing urine, or a fever",
-    "You can't walk or bear weight, or the pain is severe"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Often pelvic girdle pain",items:[
-      "Worse parting your legs \u2014 cars, stairs, turning in bed",
-      "Centred over the pubic bone or in the groin",
-      "Eases when you keep your knees together",
-      "Common, mechanical, and treatable"]},
-    warn:{title:"Call promptly if",items:[
-      "New or markedly heavier pressure before term",
-      "Regular tightenings or cramps","Bleeding or watery fluid",
-      "Burning urine or fever","You can't bear weight"]},
-    helped:{title:"What helped us",items:[
-      "Knees together for every turn and transfer",
-      "Pillow between the knees at night","Sitting down to get dressed",
-      "Asking for a pelvic-health physio referral"]},
-    quick:"Pelvic pain is usually mechanical and manageable. New heavy pressure before term is not something to keep re-checking online \u2014 ring the unit."
-  },
-  originalQuestions:[
-    "Hurts my pregnant wife in a spot just above her vagina on right side (22 May 2025, asked twice)",
-    "Is it normal to feel discomfort when pregnant near the vagina above (23 May 2025)",
-    "Pregnant wife has a bruise like feeling near the vagina area is this normal (24 May 2025)",
-    "At 25 weeks pregnant with twins my wife feels she's going to give birth coz she feels the pressure is this normal (24 May 2025)",
-    "My wife is feeling a lot of pressure she is 27 weeks pregnant with twins (6 June 2025)",
-    "So it's normal to feel pelvic pressure then of pain 5/10 (6 June 2025)",
-    "Is it normal the whole day to feel this pressure (6 June 2025)"],
-  sources:["RAW-20250522-682f78db-01","RAW-20250522-682f78db-02","RAW-20250523-6830a885-04",
-           "RAW-20250524-6831aee5-01","RAW-20250524-6831aee5-04","RAW-20250606-68432069-01",
-           "RAW-20250606-68432069-03","RAW-20250606-68432069-09"],
-  medical:true,
-  related:["pregnancy-belly-pain","pregnancy-hip-pain","waters-breaking-without-pain"]
-},
-
-{
-  id:"pregnancy-hip-pain", topic:"health", icon:"cross", featured:false,
-  title:"My hip hurts a lot in pregnancy \u2014 is that still normal?",
-  ages:["Second trimester","Third trimester"], read:3,
-  stage:"Second trimester", subcategory:"Pregnancy pain",
-  summary:"Hip pain is common. \u201cA lot\u201d is the word that changes the answer \u2014 severity deserves an examination, not an automatic reassurance.",
-  keywords:["hip pain pregnancy","severe hip pain","pelvic girdle","sciatica pregnancy","sleeping with hip pain"],
-  body:`
-<p>Our question was four words longer than it needed to be and still contained the important bit: <em>"My pregnant wife hip hurts a lot is this normal"</em>. The answer we got opened with reassurance. It shouldn't have \u2014 not before asking a single thing about <em>a lot</em>.</p>
-<h2>Common, yes. Automatically fine, no.</h2>
-<p>Hip and pelvic pain in pregnancy is genuinely common. Loosened joints, a shifting centre of gravity, more weight, and a lot of hours spent lying on one side all contribute. Most of it is muscular or pelvic-girdle related.</p>
-<p>But "common" and "severe" are different words. Severe pain earns an examination, because the treatment depends on which structure is actually involved \u2014 muscular, joint, or nerve \u2014 and you can't tell those apart from a sentence.</p>
-<h2>Worth trying while you wait for an appointment</h2>
-<ul>
-<li><strong>Change position often.</strong> The hip that hurts is usually the one you've been lying on for six hours.</li>
-<li><strong>Pillow between the knees,</strong> and one supporting the bump, so the top leg isn't dragging the pelvis forward all night.</li>
-<li><strong>Stop doing the one movement that clearly triggers it.</strong> There's usually one.</li>
-<li><strong>Ask about pain relief</strong> with your maternity clinician or a pharmacist rather than guessing from the box.</li>
-<li><strong>Ask about pelvic-health physiotherapy.</strong> This is the referral that actually changes things.</li>
-</ul>
-<div class="quiet">If you can't put weight on it, that isn't a pillow problem. That's a phone call.</div>`,
-  callout:{title:"Get it assessed promptly if",items:[
-    "The pain is severe or came on suddenly",
-    "You can't bear weight on that leg",
-    "There's been a fall or any injury",
-    "Fever, or weakness or numbness in the leg",
-    "One-sided leg swelling, calf pain, or breathlessness",
-    "Tightenings, bleeding or fluid leakage alongside it"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Usually",items:[
-      "Loosened pelvic joints","A shifted centre of gravity",
-      "Hours spent lying on one side","Muscular strain from carrying more weight"]},
-    warn:{title:"Assess promptly if",items:[
-      "Severe or sudden onset","Can't bear weight","After a fall",
-      "Fever, weakness or numbness","One-sided leg swelling or calf pain"]},
-    helped:{title:"Worth trying meanwhile",items:[
-      "Pillow between the knees","Switch sides more often",
-      "Drop the one movement that triggers it","Push for a physio referral"]},
-    quick:"Common doesn't mean ignore it. If it hurts a lot, get it looked at \u2014 the fix depends on what's actually causing it."
-  },
-  originalQuestions:["My pregnant wife hip hurts a lot is this normal (24 May 2025)"],
-  sources:["RAW-20250524-6831a218-01"],
-  medical:true,
-  related:["pelvic-pressure-pregnancy","pregnancy-belly-pain","hungry-and-full"]
-},
-
-{
-  id:"hungry-and-full", topic:"feeding", icon:"bottle", featured:false,
-  title:"Hungry and full at the same time \u2014 how?",
-  ages:["Second trimester","Third trimester"], read:3,
-  stage:"Second trimester", subcategory:"Pregnancy nutrition",
-  summary:"Pregnancy raises appetite while shrinking the space and slowing digestion. Both signals are real, and they arrive together.",
-  keywords:["hungry and full","appetite pregnancy","full quickly","reflux pregnancy","small meals"],
-  body:`
-<p>It sounded contradictory enough that we checked: hungry, and full, simultaneously. It isn't a contradiction. It's two separate systems disagreeing.</p>
-<h2>What's going on</h2>
-<ul>
-<li><strong>Appetite goes up.</strong> There's more demand, and the hunger signal reflects that honestly.</li>
-<li><strong>The space goes down.</strong> The uterus pushes upward on the stomach, so it fills sooner than it used to. Twins accelerate this considerably.</li>
-<li><strong>Digestion slows.</strong> Food sits around longer, which means the last meal may still be there when the next hunger signal arrives.</li>
-<li><strong>Bloating and reflux</strong> add a feeling of fullness that has nothing to do with how much you've actually eaten.</li>
-</ul>
-<h2>What tends to work</h2>
-<ul>
-<li>Smaller meals, more often, rather than three big ones you can't finish.</li>
-<li>Foods that are worth the limited space \u2014 nutrient-dense beats voluminous.</li>
-<li>Drinking <em>between</em> meals rather than with them, if fluid makes the fullness worse.</li>
-<li>Not lying flat straight after eating, if reflux is part of it.</li>
-</ul>
-<div class="quiet">Pregnancy asking for food while simultaneously announcing there's nowhere to put it. That is roughly the whole experience.</div>
-<h2>Where it stops being ordinary</h2>
-<p>Feeling full quickly is one thing. Not being able to eat or drink enough is another. If meals are consistently being abandoned, or there's persistent vomiting, real pain, or weight going the wrong way, that's worth raising rather than working around.</p>`,
-  callout:{title:"Worth mentioning to your team if",items:[
-    "Persistent vomiting, or you can't keep fluids down",
-    "Significant abdominal pain",
-    "Weight loss, or consistently not meeting intake needs",
-    "Difficulty swallowing",
-    "Black or bloody stools, or feeling generally unwell"]},
-  panel:{
-    eyebrow:"Feeding \u2022 Pregnancy",
-    normal:{title:"Usually",items:[
-      "Higher appetite","Less stomach room","Slower digestion",
-      "Bloating and reflux faking fullness"]},
-    warn:{title:"Mention it if",items:[
-      "Persistent vomiting or dehydration","Real pain","Weight loss",
-      "Trouble swallowing","Black or bloody stools"]},
-    helped:{title:"What tends to work",items:[
-      "Small meals, spaced out","Nutrient-dense over bulky",
-      "Fluids between meals, not with them","Stay upright after eating"]},
-    quick:"Two honest signals arriving at once. Eat smaller and more often, and flag it only if you genuinely can't keep intake up."
-  },
-  originalQuestions:["My pregnant wife feels hungry and full at the same time is this normal (23 May 2025)"],
-  sources:["RAW-20250523-6830a885-01"],
+<h2>Can she sleep through them?</h2>
+<p>Yes. A comfortable baby can go down flat on her back on a firm clear surface while still hiccupping. You do not have to wait them out. This is the single most useful thing in this guide at 12:40am.</p>
+<h2>When they're worth mentioning</h2>
+<p>It isn't about how many minutes. It's about whether they come with something else — trouble feeding, being genuinely distressed by them, changes in breathing or colour, frequent vomiting, or poor weight gain. Hiccups alongside any of that is a different conversation.</p>`,
+  callout:{title:"Worth mentioning if",items:["She's genuinely distressed by them rather than indifferent","They come with difficulty feeding, or she keeps stopping mid-feed","Frequent vomiting alongside them","Any change in breathing or colour during an episode","She isn't gaining weight as expected"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's nothing",items:["Very common, several times a day","They did it in the womb too","Stop on their own","Most babies aren't bothered at all"]},warn:{title:"Call your doctor if",items:["She's genuinely distressed","Feeding is affected","Frequent vomiting with them","Breathing or colour changes"]},helped:{title:"What helped us",items:["Hold her upright a while","Pause the feed if she's unsettled","One gentle burp, not six positions","Put her down anyway — she can sleep through them"]},quick:"Common, harmless, and she can go down to sleep still hiccupping. Watch her face, not the clock — if she's unbothered, so are you."},
+  originalQuestions:["Asked the best position for hiccups, whether patting helps, how long to keep trying (24 August 2025)",`"No she just hiccups." (24 August 2025)`],
+  sources:["RAW-20250824-68aa5aee-01","RAW-20250824-68aa5aee-08"],
   medical:false,
-  related:["heartburn-and-burping","pregnancy-belly-pain","dark-stool-on-iron"]
+  related:["safe-sleep-newborn","spit-up-while-asleep","newborn-noises-at-night"]
 },
-
 {
-  id:"low-blood-pressure-pregnancy", topic:"health", icon:"cross", featured:false,
-  title:"Is a blood pressure of 102/55 okay in pregnancy?",
-  ages:["Second trimester","Third trimester"], read:3,
-  stage:"Second trimester", subcategory:"Pregnancy monitoring",
-  summary:"A single reading can't be judged on its own. How she feels matters more than either number.",
-  keywords:["low blood pressure pregnancy","102/55","dizzy pregnancy","blood pressure reading","home monitor"],
+  id:"blocked-nose-newborn",
+  topic:"health",
+  icon:"cross",
+  featured:true,
+  title:"How do you unblock a newborn's nose?",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Newborn body",
+  summary:"Saline and patience, mostly. And no — you do not turn the baby upside down, however logical that briefly seems at 2am.",
+  keywords:["blocked nose baby","newborn congestion","saline drops baby","nasal aspirator","stuffy nose newborn"],
   body:`
-<p>We had one reading and six words of question: <em>"Blood pressure of 102 55 when pregnant is ok"</em>. It's a good example of how a home monitor turns two numbers into a full diagnostic crisis in about four seconds.</p>
-<h2>Why the number alone doesn't answer it</h2>
-<p>Readings in that range are unremarkable for plenty of people in pregnancy, particularly in the middle trimester when blood pressure often runs lower than usual. But whether <em>this</em> reading matters depends on things the number doesn't contain:</p>
+<p>Our questions went: how do you blow a baby's nose, then what do you do after the saline drops, and then — inevitably — could you just turn her upside down and let gravity handle it?</p>
+<p>You cannot. Please don't. But we're keeping the question in, because at 2am it felt like brilliant engineering and somebody else is going to have the same idea.</p>
+<h2>Why they get so blocked</h2>
+<p>Newborn nasal passages are tiny, and babies breathe through their noses by preference. A small amount of congestion that wouldn't register in an adult makes feeding genuinely difficult, because she can't suck and mouth-breathe at the same time.</p>
+<div class="quiet">Which is why the useful question isn't "is she blocked" but "is it stopping her feeding or sleeping." If it isn't, you can leave it alone.</div>
+<h2>What actually works</h2>
 <ul>
-<li>What her readings usually are \u2014 a drop from her own baseline means more than a comparison to a chart.</li>
-<li>Whether she feels well, or dizzy, faint, weak or breathless.</li>
-<li>Whether the measurement was any good \u2014 right cuff size, arm supported at heart height, sitting quietly first.</li>
-<li>Hydration, when she last ate, and whether she'd just stood up.</li>
+<li><strong>Saline drops or spray</strong> made for infants. A drop or two per nostril softens things.</li>
+<li><strong>Gentle suction</strong> afterwards, with a proper aspirator, if it's genuinely interfering. Have someone show you first, and follow the instructions on the device.</li>
+<li><strong>Before feeds</strong> is the moment it's most worth doing.</li>
+<li><strong>Humidity</strong> — a humidifier, or steam from a running shower with her in the room, not in the bathroom itself.</li>
+<li><strong>Don't overdo the suction.</strong> Repeated aggressive suctioning irritates the lining and makes the swelling worse.</li>
 </ul>
-<div class="quiet">The real question isn't "is 102/55 low". It's "is she dizzy, faint, unwell, dehydrated or bleeding". Those you can actually answer.</div>
-<h2>If it reads low and she feels fine</h2>
+<h2>What not to do</h2>
 <ul>
-<li>Rest quietly for five minutes and repeat it, if home monitoring is something your team has asked you to do.</li>
-<li>Write down the reading, the pulse, and how she felt. A pattern is worth far more than one snapshot.</li>
-<li>Stand up slowly. No driving or walking unsupported while dizzy.</li>
-<li>Keep fluids going.</li>
-</ul>
-<p>And follow whatever monitoring instructions your obstetric team has actually given you. Those beat any general range, including this one.</p>`,
-  callout:{title:"Contact your maternity team if",items:[
-    "Repeated low readings alongside dizziness, faintness or weakness",
-    "Palpitations or breathlessness",
-    "Any bleeding, or vomiting and an inability to keep fluids down",
-    "A marked change from her usual pattern",
-    "Collapse, chest pain or severe breathlessness \u2014 that's urgent help, now"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Often fine if",items:[
-      "She feels well","It matches her usual readings",
-      "Mid-pregnancy, when BP often runs lower","One-off after standing or a warm room"]},
-    warn:{title:"Contact the team if",items:[
-      "Low readings with dizziness or faintness","Palpitations or breathlessness",
-      "Bleeding or persistent vomiting","A clear change from her baseline"]},
-    helped:{title:"Do this first",items:[
-      "Rest 5 minutes, repeat the reading","Check cuff size and arm position",
-      "Log the number, the pulse and the symptoms","Stand up slowly"]},
-    quick:"One reading isn't an assessment. Judge how she feels, log the pattern, and follow your team's instructions over any published range."
-  },
-  originalQuestions:["Blood pressure of 102 55 when pregnant is ok (3 June 2025)"],
-  sources:["RAW-20250603-683e96f0-01"],
-  medical:true,
-  related:["pregnancy-belly-pain","flying-late-pregnancy","dark-stool-on-iron"]
-},
-
-{
-  id:"flying-late-pregnancy", topic:"health", icon:"cross", featured:false,
-  title:"Numbness and pulling pain after a flight at 29 weeks",
-  ages:["Third trimester"], read:4,
-  stage:"Third trimester", subcategory:"Pregnancy travel",
-  summary:"Flying can genuinely make swelling, pressure and aching worse. It doesn't get to explain every symptom that turns up afterwards.",
-  keywords:["flying pregnant","numbness above belly button","pulling pain","travel third trimester","29 weeks flying"],
-  body:`
-<p>Off the plane at 29 weeks and 5 days with twins, Lia had numbness above her belly button, then a pulling pain. We asked two things at once: was that normal, and what does flying at this stage feel like anyway.</p>
-<p>The second question got answered enthusiastically. The first one \u2014 the one that mattered \u2014 got buried under a general list. Don't let that happen to you.</p>
-<h2>What travel does legitimately worsen</h2>
-<ul>
-<li>Swelling in the feet, ankles and hands, from hours of sitting still.</li>
-<li>Muscular aching and back discomfort from cramped seats.</li>
-<li>Dehydration, which cabin air is very good at causing.</li>
-<li>Plain exhaustion, which makes everything else feel worse.</li>
-<li>Pelvic pressure, from sitting in one position too long.</li>
-</ul>
-<h2>The bit worth internalising</h2>
-<div class="quiet">A symptom that appears after a flight is not automatically caused by the flight. New numbness or new pain late in pregnancy is a symptom first and a travel story second.</div>
-<p>Skin numbness over a stretched bump is often mechanical and unremarkable. But numbness that spreads, or arrives with weakness, is a different thing. And "pulling pain" in a late twin pregnancy needs its location and pattern pinned down before anyone reassures anyone.</p>
-<h2>What to do</h2>
-<ul>
-<li>Note when it started and whether resting or changing position helps.</li>
-<li>Check specifically for tightenings, pelvic pressure, backache, any discharge change, any fluid, and fetal movement.</li>
-<li>Drink properly and stop doing anything strenuous while you sort it out.</li>
-<li>Follow your own team's travel and compression advice rather than a generic week cut-off from the internet \u2014 airline rules and medical advice are two different things, and yours may differ from both.</li>
+<li><strong>Don't turn her upside down.</strong> It doesn't drain anything useful and it's not safe.</li>
+<li><strong>Don't use decongestant drops</strong> meant for adults or older children.</li>
+<li><strong>Don't tilt the cot.</strong> Congestion doesn't change safe sleep.</li>
+<li><strong>Don't use saline as a test</strong> to find out whether she's blocked. Use it when she is.</li>
 </ul>`,
-  callout:{title:"Contact your maternity team promptly for",items:[
-    "Persistent or worsening pain, or regular tightenings",
-    "Bleeding, watery fluid, or reduced or changed movement",
-    "Breathlessness, chest pain, faintness",
-    "Severe headache or visual changes",
-    "One-sided leg pain or swelling, or calf tenderness",
-    "Sudden weakness, or numbness that is spreading"]},
-  panel:{
-    eyebrow:"Health \u2022 Third trimester",
-    normal:{title:"Travel can worsen",items:[
-      "Swelling in feet, ankles, hands","Muscular aching and backache",
-      "Dehydration","Fatigue","Pelvic pressure from sitting still"]},
-    warn:{title:"Contact promptly for",items:[
-      "Persistent pain or regular tightenings","Bleeding or watery fluid",
-      "Reduced movement","Breathlessness or chest pain",
-      "One-sided leg pain or swelling"]},
-    helped:{title:"Sort out first",items:[
-      "When it started, what eases it","Tightenings? Fluid? Movement?",
-      "Hydrate and rest","Ring your team, not the airline policy page"]},
-    quick:"Flying explains swelling and aching. It does not get to explain new numbness or new pain \u2014 those get assessed on their own merits."
-  },
-  originalQuestions:[
-    "Is it normal to feel numb above belly button after flying when pregnant (24 June 2025)",
-    "My wife has just flown with twins and she now feels pulling pain. She is 29 weeks and 5 days (24 June 2025)",
-    "What does flying when pregnant after the 29th week feel like (24 June 2025)"],
-  sources:["RAW-20250624-685a9b57-01","RAW-20250624-685a9b57-07","RAW-20250624-685a9b57-08"],
+  callout:{title:"Get her seen if",items:["Breathing looks like hard work — chest pulling in, nostrils flaring, grunting","Any pause in breathing, or blue or grey colour","She's not feeding properly because of it","She has a fever, or she's unusually sleepy or hard to rouse","She's under three months and has any fever at all"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's just",items:["Tiny nasal passages block easily","Babies prefer to breathe through the nose","Noisy without being unwell","Worst at feed times"]},warn:{title:"Call your doctor if",items:["Chest pulling in, flaring nostrils, grunting","Pauses, or blue or grey colour","She can't feed properly","Fever, especially under three months"]},helped:{title:"What helped us",items:["Saline drops just before feeds","Gentle suction, not repeated suction","A humidifier at night","Never upside down — we did ask"]},dont:{title:"Don't",items:["Don't turn her upside down to drain it — we did ask","Don't use decongestant drops meant for adults or older children","Don't suction repeatedly — it swells the lining and makes it worse","Don't tilt the cot. Congestion doesn't change safe sleep"]},quick:"Saline before feeds, gentle suction only if it's genuinely in the way, and humidity at night. Don't invert her, don't tilt the cot, don't use adult drops."},
+  originalQuestions:[`Asked how to "blow" a baby's nose and what to do after saline drops (20 August 2025)`,"Asked whether gravity could do the job by turning the baby upside down (20 August 2025)"],
+  sources:["RAW-20250820-68a61a70-01","RAW-20250820-68a61a70-04"],
   medical:true,
-  related:["pelvic-pressure-pregnancy","low-blood-pressure-pregnancy","hospital-bag-csection-nicu"]
+  related:["sleeping-with-mouth-open","fast-breathing-newborn","safe-sleep-newborn"]
 },
-
 {
-  id:"waters-breaking-without-pain", topic:"health", icon:"cross", featured:true,
-  title:"Watery discharge with no pain \u2014 could that be my waters?",
-  ages:["Third trimester"], read:2,
-  stage:"Third trimester", subcategory:"Signs of labour",
-  summary:"Yes. Waters can break with no contractions and no pain at all. This is a ring-them-now, not a look-it-up.",
-  keywords:["waters breaking","watery discharge","no pain","ruptured membranes","third trimester leaking"],
+  id:"newborn-noises-at-night",
+  topic:"sleeping",
+  icon:"moon",
+  featured:true,
+  title:"She makes so much noise — is she even asleep?",
+  ages:["0–1 month","2–3 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"First nights",
+  summary:"Newborn sleep is astonishingly loud. Grunting, squeaking, kicking and thrashing are usually a baby deeply asleep, not a baby about to wake.",
+  keywords:["newborn noisy sleep","grunting baby","baby squeaks at night","first night home","active sleep"],
   body:`
-<p>This is the shortest guide here, deliberately.</p>
-<p>Watery fluid in late pregnancy can be several things \u2014 increased normal discharge, urine leakage, or the waters. Only one of those needs urgent action, and the absence of pain does not rule it out. <strong>Waters can break without any contractions.</strong></p>
-<h2>What to do now</h2>
+<p>Our first night home produced a run of questions in about ninety minutes: the little sounds, the hiccups, the noisy sleep, the kicking and arm-waving, how fast to change a dirty nappy, whether a light has to stay on, and finally — she is making so much noise that she won't settle.</p>
+<p>She was asleep. We were the ones not settling.</p>
+<h2>Newborn sleep is loud</h2>
+<p>Babies spend a large proportion of their sleep in an active phase where they grunt, squeak, snuffle, sigh, kick, fling their arms about and pull faces. It looks and sounds exactly like someone on the edge of waking. It usually isn't.</p>
+<div class="quiet">The most useful thing anyone told us: wait. Don't respond to the first sound. A lot of the noise resolves itself in ninety seconds, and picking her up mid-cycle is how you turn a noise into an actual waking.</div>
+<h2>The practical answers we needed that night</h2>
 <ul>
-<li><strong>Call your maternity unit.</strong> Not later. Now.</li>
-<li>Put on a pad so you can see the amount, the colour and whether it keeps coming.</li>
-<li>Note the time it started, and whether there's any smell.</li>
-<li><strong>Don't put anything inside the vagina</strong> \u2014 no tampons, no checking.</li>
-<li>Then do exactly what the unit tells you.</li>
+<li><strong>Does a light have to stay on?</strong> No. A night light is for you, not for her. Dim is better for everyone.</li>
+<li><strong>How fast do you change a dirty nappy?</strong> Poo, reasonably promptly. A wet one can often wait for the next feed.</li>
+<li><strong>Do you burp a sleeping baby?</strong> If she's settled and comfortable, no.</li>
+<li><strong>Should you check her breathing constantly?</strong> You will anyway. But learn the actual warning signs instead, so you know what you're looking for rather than watching everything at once.</li>
 </ul>
-<div class="quiet">We asked this one at a point where threatened preterm labour was already in the recent history. If that's your situation too, the threshold for calling should be lower, not higher.</div>
-<p>If the fluid is green, brown or bloodstained, if you have a fever, or if movements have reduced, say so on the phone straight away rather than waiting to be asked.</p>`,
-  callout:{title:"Ring the maternity unit immediately",items:[
-    "Any watery fluid in late pregnancy, with or without pain",
-    "Say so straight away if it's green, brown or bloodstained",
-    "Mention any fever, or any reduction in movements",
-    "Don't wait to see whether it happens again"]},
-  panel:{
-    eyebrow:"Health \u2022 Third trimester",
-    normal:{title:"It could be",items:[
-      "Normal discharge, which does increase late on",
-      "A small urine leak","Or the waters \u2014 which is why you call"]},
-    warn:{title:"Say this on the phone",items:[
-      "Time it started, amount, colour","Green, brown or bloodstained fluid",
-      "Any fever","Any change in movements"]},
-    helped:{title:"While you call",items:[
-      "Put on a pad, not a tampon","Nothing inside the vagina",
-      "Note the colour and smell","Follow the unit's instructions exactly"]},
-    quick:"No pain doesn't mean not your waters. Call the unit, use a pad, put nothing inside, and let them decide."
-  },
-  originalQuestions:["Third trimester water came out like a discharge but no pain (15 July 2025)"],
-  sources:["RAW-20250715-687630c1-01"],
+<h2>The noises that aren't just noise</h2>
+<p>What you're listening for isn't volume. It's effort. Grunting with every single breath, breathing that looks laboured, the chest pulling in under the ribs, nostrils flaring, any pause, or a change in colour. Those are different from a baby making a racket while sound asleep.</p>
+<p>If you're not sure — and on the first night you won't be — record ten seconds on your phone. It's far more useful to a clinician than trying to describe it, and it stops you second-guessing yourself at 4am.</p>`,
+  callout:{title:"Get advice straight away for",items:["Grunting with every breath, or breathing that looks like hard work","The chest pulling in under the ribs, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","A baby who is floppy, very hard to rouse, or won't feed"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's active sleep",items:["Grunting, squeaking, snuffling","Kicking and flinging her arms","Faces that look like distress","Sounds exactly like waking, isn't"]},warn:{title:"Call your doctor if",items:["Grunting with every single breath","Chest pulling in, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","Floppy, very hard to rouse, or won't feed"]},helped:{title:"What helped us",items:["Wait ninety seconds before responding","Dim light — it's for you, not her","Don't burp a settled sleeping baby","Film ten seconds if unsure — better than describing it"]},quick:"Newborn sleep is astonishingly loud and most of it means nothing. Listen for effort rather than volume, and wait before you reach in."},
+  originalQuestions:["Asked about little sounds, noisy active sleep, kicking and arm movements (21 August 2025)","Asked how quickly to change a dirty nappy and whether a light must stay on (21 August 2025)","Reported she was making so much noise that she would not settle (21 August 2025)"],
+  sources:["RAW-20250821-68a74ea1-07","RAW-20250821-68a76ce2-14","RAW-20250821-68a76ce2-23","RAW-20250821-68a76ce2-25","RAW-20250821-68a76ce2-27"],
   medical:true,
-  related:["pelvic-pressure-pregnancy","hospital-bag-csection-nicu","pregnancy-belly-pain"]
+  related:["safe-sleep-newborn","fast-breathing-newborn","nappy-changes-at-night"]
 },
-
 {
-  id:"itchy-hands-pregnancy", topic:"health", icon:"cross", featured:false,
-  title:"Itchy, red hands in pregnancy",
-  ages:["Second trimester","Third trimester"], read:2,
-  stage:"Third trimester", subcategory:"Pregnancy skin",
-  summary:"Usually irritation. But itchy palms in pregnancy is one of the specific things worth reporting rather than treating with moisturiser.",
-  keywords:["itchy hands pregnancy","itchy palms","cholestasis","red hands","itching at night pregnant"],
+  id:"milk-from-the-nose",
+  topic:"health",
+  icon:"cross",
+  featured:false,
+  title:"Milk came out of her nose while she was asleep",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"Feeding and spit-up",
+  summary:"Alarming to watch, usually harmless. The mouth and nose connect at the back of the throat, so milk occasionally takes the wrong exit.",
+  keywords:["milk out of nose baby","nasal regurgitation","baby spit up nose","posseting"],
   body:`
-<p>Our question was five words: <em>"Itchy and red hands pregnancy normal"</em>. Most of the time the answer is yes \u2014 irritation, eczema, heat, soap, or hands that are simply drier than usual.</p>
-<h2>The one thing worth ruling out</h2>
-<p>Itching that involves the <strong>palms of the hands or the soles of the feet</strong>, particularly when it's worse at night and there's no obvious rash to explain it, is the pattern associated with obstetric cholestasis \u2014 a liver condition of pregnancy. It's uncommon, it's diagnosed with a blood test, and it's managed. It just needs to be looked for rather than moisturised over.</p>
-<div class="quiet">The distinguishing detail is usually the palms and soles, and no visible rash. Itchy red knuckles after washing up is a different story.</div>
-<h2>Worth mentioning at your next contact</h2>
+<p>Milk coming out of a sleeping baby's nose is one of those sights that empties your stomach. It looks like she's choking, or drowning, or something has gone badly wrong.</p>
+<p>Usually none of those. The mouth and the nasal passages join at the back of the throat, so when milk comes back up it sometimes takes the nasal route instead of the oral one. Small babies do this. It's plumbing, not pathology.</p>
+<h2>What to do in the moment</h2>
 <ul>
-<li>Whether the palms or soles are involved.</li>
-<li>Whether it's worse at night.</li>
-<li>Whether there's a visible rash, or just itching.</li>
-<li>How long it's been going on.</li>
-<li>Any yellowing of the eyes or skin, dark urine or pale stools.</li>
+<li><strong>Pick her up.</strong> Upright, so you can see her face and her airway.</li>
+<li><strong>Wipe it away gently</strong> from outside the nostrils. Don't try to suction it out or poke about.</li>
+<li><strong>Watch her breathing and her colour</strong> for a minute or two.</li>
+<li>Once she's settled and comfortable, back down she goes — flat, on her back, firm clear surface. That doesn't change.</li>
 </ul>
-<p>For ordinary irritation, the boring measures do work: a fragrance-free emollient, gloves for cleaning products, cooler water, and keeping the room from getting too warm at night.</p>`,
-  callout:{title:"Report to your maternity team if",items:[
-    "Itching on the palms or the soles of the feet",
-    "Itching that's persistent, severe, or worse at night",
-    "Itching without any rash to explain it",
-    "Yellowing of the skin or eyes, dark urine, or pale stools",
-    "Facial swelling or breathing difficulty \u2014 that's urgent, now"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Usually",items:[
-      "Dry skin or irritation","Contact with soaps or cleaning products",
-      "Heat","Eczema flaring in pregnancy"]},
-    warn:{title:"Report it if",items:[
-      "Palms or soles involved","Worse at night","No rash, just itching",
-      "Jaundice, dark urine or pale stools"]},
-    helped:{title:"For plain irritation",items:[
-      "Fragrance-free emollient","Gloves for cleaning",
-      "Cooler water","A cooler bedroom"]},
-    quick:"Palms and soles, worse at night, no rash \u2014 that combination gets reported. Everything else is usually just dry, cross skin."
-  },
-  originalQuestions:["Itchy and red hands pregnancy normal (16 July 2025)"],
-  sources:["RAW-20250716-68773be3-01"],
+<div class="quiet">The instinct after this is to prop the cot up. Don't. Inclining isn't recommended and isn't safer, and this is exactly the moment people do it.</div>
+<h2>When it isn't just plumbing</h2>
+<p>One episode with a baby who recovers immediately and carries on is a story you'll tell later. Recurrent nasal regurgitation, or milk coming down the nose at most feeds, is worth raising — it can point to reflux, to how she's feeding, or occasionally to something anatomical worth checking.</p>
+<p>And anything with breathing difficulty, persistent choking, colour change or a baby who doesn't recover promptly is not a wait-and-see. That's now.</p>`,
+  callout:{title:"Get help immediately for",items:["Difficulty breathing, or persistent choking or coughing","Blue or grey colour","A baby who doesn't recover promptly, or is floppy or unresponsive","Learn infant choking first aid before you need it — a short course is worth the evening"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's plumbing",items:["Mouth and nose connect at the back of the throat","Milk occasionally takes the wrong route","One episode, quick recovery","Looks far worse than it is"]},warn:{title:"Call for help now if",items:["Breathing difficulty or persistent choking","Blue or grey colour","Doesn't recover promptly","Floppy or unresponsive"]},helped:{title:"What helps",items:["Pick her up, keep her face visible","Wipe outside only, don't suction","Watch breathing and colour for a minute","Back down flat afterwards — don't prop the cot"]},dont:{title:"Don't",items:["Don't try to suction it out of her nose — wipe the outside only","Don't prop the cot afterwards, however strongly you want to","Don't put her back down until you've watched her breathing settle"]},quick:"Milk takes the wrong exit sometimes — it's plumbing. Pick her up, wipe, watch her breathing, then straight back down flat."},
+  originalQuestions:["Noticed a little milk coming from her nose while she was asleep (23 August 2025)"],
+  sources:["RAW-20250823-68a9590b-01"],
   medical:true,
-  related:["pregnancy-belly-pain","dark-stool-on-iron","nosebleed-in-pregnancy"]
+  related:["spit-up-while-asleep","safe-sleep-newborn","blocked-nose-newborn"]
 },
-
 {
-  id:"dark-stool-on-iron", topic:"health", icon:"cross", featured:false,
-  title:"Very dark poo on iron \u2014 side effect or warning sign?",
-  ages:["Second trimester","Third trimester"], read:3,
-  stage:"Third trimester", subcategory:"Pregnancy digestion",
-  summary:"Iron darkens stool, routinely. Black and tarry is a different description, and it's the one that needs a doctor.",
-  keywords:["dark stool iron","black poo pregnancy","iron supplement side effects","tarry stool","sideral"],
+  id:"spit-up-while-asleep",
+  topic:"feeding",
+  icon:"bottle",
+  featured:false,
+  title:"She spat up two hours after her feed",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Feeding and spit-up",
+  summary:"Small spit-ups can arrive long after a feed and mean nothing much. The word that changes the answer is forceful.",
+  keywords:["spit up baby","posseting","vomit newborn","reflux baby","clear saliva baby"],
   body:`
-<p>Ours arrived as three words in the middle of a completely different conversation: <em>"Poop is very dark"</em>. No colour chart, no other detail. And yet the distinction it needed turned out to matter quite a lot.</p>
-<h2>The ordinary explanation</h2>
-<p>Iron supplements very commonly turn stool dark green to near-black. It's harmless, it's expected, and it usually shows up within a few days of starting. Constipation often comes along with it.</p>
-<h2>The description that changes things</h2>
-<p>The word doing the work here isn't "dark". It's <strong>tarry</strong>.</p>
+<p>Ariadne spat up a small amount while asleep, about two hours after her last feed. What made it feel manageable rather than frightening was having something to compare it to — the forceful vomiting we'd seen earlier on a specialist formula, which had stopped when we came off it. She'd also put on 90g in two days.</p>
+<p>That's the whole framework, really. Not the episode. The context around it.</p>
+<h2>What's ordinary</h2>
 <ul>
-<li><strong>Dark, but normal texture</strong> \u2014 typically the iron.</li>
-<li><strong>Black, sticky, tarry, unusually foul-smelling</strong> \u2014 that can indicate bleeding higher up in the gut, and needs assessing rather than assuming.</li>
+<li><strong>Small amounts,</strong> dribbled rather than launched.</li>
+<li><strong>Well after a feed,</strong> not just immediately. Milk sits around for a while.</li>
+<li><strong>Milky or slightly curdled.</strong> Curdled just means it met stomach acid.</li>
+<li><strong>A bit of clear saliva</strong> on its own, which is also fine.</li>
+<li><strong>A baby who isn't bothered.</strong> This is the big one. A happy spitter is a laundry problem.</li>
 </ul>
-<div class="quiet">Iron being the obvious explanation is exactly what makes this worth checking. The convenient answer is right most of the time, which is precisely why it shouldn't be assumed.</div>
-<h2>Before you call</h2>
-<ul>
-<li>Note the colour <em>and</em> the texture and smell.</li>
-<li>List every supplement and medicine currently being taken \u2014 the exact products, not "the pregnancy ones".</li>
-<li>Note any abdominal pain, vomiting, dizziness, weakness, or visible blood.</li>
-</ul>
-<p>For plain iron-related darkness with constipation, more fluids, more fibre, and asking your team whether the dose, the timing or the preparation can be adjusted are all reasonable next steps.</p>`,
-  callout:{title:"Get medical advice promptly for",items:[
-    "Black, tarry or sticky stool, especially if foul-smelling",
-    "Visible blood in stool, or vomiting blood",
-    "Significant abdominal pain",
-    "Faintness, marked weakness, or feeling unwell",
-    "Anything where bleeding is suspected \u2014 that's an urgent assessment"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Usually the iron",items:[
-      "Dark green to near-black colour","Normal texture",
-      "Starts within days of the supplement","Often with constipation"]},
-    warn:{title:"Get advice for",items:[
-      "Black, sticky or tarry stool","Foul-smelling","Visible blood",
-      "Abdominal pain, faintness or weakness"]},
-    helped:{title:"Note before calling",items:[
-      "Colour, texture and smell","Every exact supplement and medicine",
-      "Any pain, vomiting or dizziness","When it started"]},
-    quick:"Dark is the iron. Black and tarry is a phone call \u2014 don't let the obvious explanation do the diagnosing."
-  },
-  originalQuestions:["Poop is very dark (1 July 2025)"],
-  sources:["RAW-20250701-68638aae-02"],
+<div class="quiet">The rule of thumb that helped: it always looks like more than it is. Tip a tablespoon of milk onto a muslin and see how far it spreads. That's usually what you're looking at.</div>
+<h2>What changes the answer</h2>
+<p><strong>Force.</strong> Milk that shoots out rather than dribbles is a different thing, especially if it's happening repeatedly.</p>
+<p><strong>Colour.</strong> Green or yellow-green, or anything with blood in it, gets checked promptly.</p>
+<p><strong>The whole baby.</strong> Is she gaining weight? Is she distressed by it? Is she feeding well? Is her tummy swollen?</p>
+<p>The weight trend does most of the work here. A baby gaining steadily and behaving normally is almost never a baby with a problem, whatever the muslins look like.</p>
+<h2>What we'd not do</h2>
+<p>Prop the cot. It's the obvious response and it isn't recommended — a small baby slides down an incline into a worse position. Reflux doesn't change safe sleep unless your own team has given you a specific written plan.</p>`,
+  callout:{title:"Get her checked for",items:["Forceful or projectile vomiting, especially if it's repeated","Green, yellow-green, or bloody vomit","Not gaining weight, or losing it","Real distress with feeds, or refusing to feed","A swollen or firm tummy, or unusual sleepiness"]},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's fine",items:["Small amounts, dribbled not launched","Even a couple of hours after a feed","Milky or curdled","A little clear saliva on its own","A baby who isn't bothered by it"]},warn:{title:"Call your doctor if",items:["Forceful or projectile, repeatedly","Green, yellow-green or bloody","Not gaining weight","Distress with feeds, or refusing","Swollen tummy, or unusually sleepy"]},helped:{title:"What helped us",items:["Watching the weight trend, not the muslins","A tablespoon of milk spreads a long way","Comparing it to what forceful actually looked like","Not propping the cot, however tempting"]},dont:{title:"Don't",items:["Don't incline the cot or use a wedge — she slides into a worse position","Don't switch formula or cut foods on your own to fix it","Don't judge it by the muslins — judge it by the weight trend"]},quick:"Small and dribbled is laundry. Forceful, green, bloody, or a baby who isn't gaining — that's the version that gets checked."},
+  originalQuestions:["Reported she spat up a small amount while asleep about two hours after a feed, and a 90g weight gain over two days (24 August 2025)","Saw her spit a little saliva, and clarified it was transparent (17 August 2025)"],
+  sources:["RAW-20250824-68ab97d7-10","RAW-20250824-68ab97d7-13","RAW-20250817-68a1a61a-01","RAW-20250817-68a1a61a-02"],
   medical:true,
-  related:["heartburn-and-burping","hungry-and-full","itchy-hands-pregnancy"]
+  related:["milk-from-the-nose","safe-sleep-newborn","feeding-on-demand"]
 },
-
 {
-  id:"nosebleed-in-pregnancy", topic:"health", icon:"cross", featured:false,
-  title:"A nosebleed in pregnancy",
-  ages:["First trimester","Second trimester","Third trimester"], read:2,
-  stage:"Third trimester", subcategory:"Pregnancy symptoms",
-  summary:"More common in pregnancy than out of it. The first-aid technique matters more than the cause \u2014 and most people do it wrong.",
-  keywords:["nosebleed pregnancy","nose bleed pregnant","first aid nosebleed","epistaxis pregnancy"],
+  id:"fast-breathing-newborn",
+  topic:"health",
+  icon:"cross",
+  featured:false,
+  title:"She's breathing really fast — then she isn't",
+  ages:["0–1 month","2–3 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Newborn body",
+  summary:"Newborn breathing is genuinely irregular — bursts of fast, then slower, sometimes short pauses. What matters is effort, not speed.",
+  keywords:["newborn fast breathing","baby breathing pattern","periodic breathing","rapid breathing baby"],
   body:`
-<p>The entire history we supplied was: pregnant wife, nosebleed, first time, small amount. That turned out to be enough, which doesn't happen often.</p>
-<h2>Why they're more common now</h2>
-<p>Blood volume increases in pregnancy and the lining of the nose becomes more congested and more fragile. Add air conditioning, dry air or a bit of enthusiastic nose-blowing during a cold, and vessels give way more easily than they used to.</p>
-<h2>The first aid, done properly</h2>
+<p>Nobody warns you that newborn breathing looks wrong. It speeds up, slows down, occasionally pauses for a few seconds, then picks up again. Watching it for the first time, at night, is genuinely unnerving.</p>
+<h2>How to actually check</h2>
+<p>Counting while she's crying, feeding or wriggling tells you nothing. Do it while she's calm and preferably asleep, and count for a <strong>full minute</strong> — fifteen seconds times four will be wrong, because the rate isn't steady.</p>
+<div class="quiet">Newborns breathe considerably faster than adults, and a resting rate in the region of forty breaths a minute is unremarkable. If you've counted eighty while she's screaming, you've measured screaming.</div>
+<h2>Effort matters more than speed</h2>
+<p>This is the thing to internalise, because it's what a clinician is actually assessing:</p>
 <ul>
-<li><strong>Sit up and lean slightly forward.</strong> Not back \u2014 tilting back sends blood down the throat.</li>
-<li><strong>Pinch the soft part of the nose,</strong> below the bony bridge. Not the bridge itself.</li>
-<li><strong>Hold for a full 10 to 15 minutes without letting go to check.</strong> This is the step nearly everyone gets wrong. Releasing at three minutes to see how it's going restarts the clock.</li>
-<li>Breathe through the mouth.</li>
-<li>Afterwards, avoid blowing or picking the nose for a while.</li>
+<li><strong>Is the chest pulling in</strong> under the ribs or at the base of the throat with each breath?</li>
+<li><strong>Are her nostrils flaring</strong> wide with each breath?</li>
+<li><strong>Is she grunting</strong> on every single breath out?</li>
+<li><strong>What colour is she</strong> — around the lips especially?</li>
+<li><strong>Is she still feeding?</strong> A baby working hard to breathe stops being able to feed properly.</li>
 </ul>
-<div class="quiet">If they keep coming back, dry air is often the culprit. Saline spray and a humidifier do more than you'd expect.</div>`,
-  callout:{title:"Seek medical advice if",items:[
-    "The bleeding is heavy, or won't stop after 15 minutes of sustained pressure",
-    "It followed a head injury",
-    "Nosebleeds keep returning",
-    "There's faintness, breathing difficulty, or unusual bruising elsewhere",
-    "Severe bleeding or feeling unwell \u2014 that's emergency help"]},
-  panel:{
-    eyebrow:"Health \u2022 Pregnancy",
-    normal:{title:"Usually",items:[
-      "Increased blood volume","A more congested, fragile nasal lining",
-      "Dry air or air conditioning","A cold, and a lot of nose-blowing"]},
-    warn:{title:"Get advice if",items:[
-      "Heavy, or not stopping after 15 minutes","After a head injury",
-      "Recurring","Faintness, or unusual bruising"]},
-    helped:{title:"The technique",items:[
-      "Sit up, lean slightly forward","Pinch the soft part, not the bridge",
-      "10\u201315 minutes, no peeking","Mouth-breathe, then leave the nose alone"]},
-    quick:"Lean forward, pinch the soft part, hold it for the full quarter of an hour. Checking early is what makes them last."
-  },
-  originalQuestions:[
-    "Reported that Lia had a nosebleed (8 July 2025)",
-    "Clarified that it was the first time and only a small amount (8 July 2025)"],
-  sources:["RAW-20250708-686d7c38-01","RAW-20250708-686d7c38-02"],
+<p>A fast but easy breathing pattern in a pink, feeding, settled baby is very different from a slower one where she's visibly working for it.</p>
+<h2>Pauses</h2>
+<p>Short pauses of a few seconds, followed by normal breathing, are common in newborns and especially in babies born early. Long pauses, pauses with colour change, or pauses where she goes floppy are not, and those are urgent.</p>
+<p>If you can, film it. Twenty seconds of video answers questions that five minutes of description can't, and it means you're not relying on memory at 3am.</p>`,
+  callout:{title:"Emergency help for",items:["Blue or grey colour, especially around the lips","A pause in breathing with colour change or floppiness","Chest pulling in hard, nostrils flaring, grunting on every breath","Persistent fast breathing at rest, in a calm baby","A baby who has stopped feeding, or is very hard to rouse"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's normal variation",items:["Faster than adults by a long way","Irregular — bursts, then slower","Short pauses of a few seconds","Common in babies born early"]},warn:{title:"Call for help now if",items:["Blue or grey, especially the lips","A pause with colour change or floppiness","Chest pulling in, flaring, grunting every breath","Fast at rest in a calm baby","Stopped feeding"]},helped:{title:"What helps",items:["Only count when she's calm","Count a full minute, not fifteen seconds","Look at effort, not just speed","Film twenty seconds if unsure"]},dont:{title:"Don't",items:["Don't count while she's crying, feeding or wriggling","Don't count fifteen seconds and multiply — the rate isn't steady","Don't rely on the number alone. Effort matters more than speed"]},quick:"Count for a full minute while she's calm, and judge effort over speed. Chest pulling in, flaring nostrils and grunting matter far more than the number."},
+  originalQuestions:["Noticed intermittent quick breathing (24 August 2025)"],
+  sources:["RAW-20250824-68ab97d7-01"],
   medical:true,
-  related:["itchy-hands-pregnancy","pregnancy-belly-pain","low-blood-pressure-pregnancy"]
+  related:["newborn-noises-at-night","blocked-nose-newborn","sleeping-with-mouth-open"]
 },
-
 {
-  id:"heartburn-and-burping", topic:"health", icon:"cross", featured:false,
-  title:"More toilet trips, more acidity, more burping",
-  ages:["Third trimester"], read:3,
-  stage:"Third trimester", subcategory:"Pregnancy digestion",
-  summary:"A late-pregnancy digestive cluster is usually mechanical. \u201cEverything else is the same\u201d is genuinely useful information \u2014 just not a diagnosis.",
-  keywords:["heartburn pregnancy","burping","frequent bowel movements","acidity third trimester","twins digestion"],
+  id:"newborn-trembles-and-jerks",
+  topic:"health",
+  icon:"cross",
+  featured:false,
+  title:"Her body shook for a second — is that okay?",
+  ages:["0–1 month","2–3 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Newborn body",
+  summary:"Newborns startle, jitter and twitch constantly. The useful distinction is whether it stops when you hold the limb — and whether she's aware.",
+  keywords:["newborn shaking","baby jitters","startle reflex","baby twitching sleep","tremor newborn"],
   body:`
-<p>Third trimester, twins. Since the day before: more trips to the toilet, more acidity, more burping. Our entire follow-up history was the sentence <em>"Everything else is the same"</em> \u2014 concise, actually useful, and still not quite enough to run a gastroenterology clinic on.</p>
-<h2>The mechanical explanation</h2>
+<p>Our question was six words: <em>"If baby body shakes a bit it's ok."</em> Which is exactly how you ask it when you've just watched it happen and your brain has stopped working.</p>
+<p>The honest answer is that "shakes" covers several very different things, and the difference between them is learnable in about a minute.</p>
+<h2>The ordinary ones</h2>
 <ul>
-<li><strong>Reflux and burping:</strong> the valve at the top of the stomach relaxes in pregnancy, and there's a great deal of upward pressure. Twins make both worse.</li>
-<li><strong>Bowel changes:</strong> hormones alter gut transit, and a heavy uterus presses on the bowel. Late on, things can also loosen as the body prepares.</li>
-<li><strong>Everything at once</strong> is common in the third trimester precisely because it's all the same underlying cause.</li>
+<li><strong>The startle reflex.</strong> Arms fling out, then back in, often at a noise or when she's put down. Dramatic, completely normal, fades over the first months.</li>
+<li><strong>Jitteriness.</strong> A fine trembling of the chin or hands, often when she's crying, cold or being undressed.</li>
+<li><strong>Sleep twitching.</strong> Little jerks of an arm or leg during active sleep. Extremely common.</li>
 </ul>
-<h2>What helps</h2>
+<h2>The test that actually helps</h2>
+<div class="quiet">Gently hold the limb that's shaking. Ordinary jitteriness stops when you hold it. Movement that carries on regardless is the kind worth reporting.</div>
+<p>The other question is whether she's aware. Jittery babies are awake and responsive, and it settles when they're comforted, fed or warmed. Movement that comes with a blank, unresponsive stare is a different report.</p>
+<h2>What to note if it happens again</h2>
 <ul>
-<li>Smaller meals, and nothing substantial within a couple of hours of lying down.</li>
-<li>Sleeping propped up rather than flat.</li>
-<li>Identifying the triggers \u2014 usually fatty, spicy, or very acidic food, and it's usually obvious which.</li>
-<li>Keeping fluids up, especially if trips to the toilet have increased.</li>
-<li><strong>Ask which antacid</strong> is appropriate rather than picking one off the shelf. Some interfere with iron absorption, which matters a lot if she's on iron.</li>
+<li>Which part of her, and both sides or one?</li>
+<li>How long — seconds, or going on and on?</li>
+<li>Rhythmic and repetitive, or irregular?</li>
+<li>Was she awake, asleep, feeding, cold, being moved?</li>
+<li>Her breathing and colour during it.</li>
+<li>Her eyes — fixed staring, or flickering?</li>
+<li>Did it stop when you touched or held her?</li>
 </ul>
-<div class="quiet">Worth tracking: whether stools are actually loose, and whether any of the tightening sensations are becoming regular. Late-pregnancy digestive upset and early labour can overlap more than you'd like.</div>`,
-  callout:{title:"Seek advice for",items:[
-    "Persistent diarrhoea, or an inability to keep fluids down",
-    "Fever, or blood in stool",
-    "Severe abdominal pain, or vomiting",
-    "Reduced movements, regular tightenings, bleeding or fluid leakage",
-    "Signs of dehydration"]},
-  panel:{
-    eyebrow:"Health \u2022 Third trimester",
-    normal:{title:"Usually",items:[
-      "A relaxed valve at the top of the stomach","Upward pressure from the uterus",
-      "Hormonal changes to gut transit","All three arriving together"]},
-    warn:{title:"Seek advice for",items:[
-      "Persistent diarrhoea or dehydration","Fever or blood",
-      "Severe pain or vomiting","Regular tightenings, bleeding or fluid"]},
-    helped:{title:"What helps",items:[
-      "Smaller meals, none before lying down","Sleep propped up",
-      "Find the trigger foods","Ask which antacid \u2014 some block iron"]},
-    quick:"Usually one mechanical cause producing three symptoms. Track whether stools are truly loose and whether tightenings turn regular."
-  },
-  originalQuestions:[
-    "Asked whether frequent bowel movements, more acidity and burping were normal in the third trimester with twins (27 June 2025)",
-    "Everything else is the same (27 June 2025)"],
-  sources:["RAW-20250627-685ec3ef-01","RAW-20250627-685ec3ef-02"],
+<p>And film it. Genuinely, film it. A ten-second video is worth more than any description you'll manage, and it means the doctor is looking at what happened rather than at your memory of it.</p>`,
+  callout:{title:"Get urgent help for",items:["Rhythmic, repetitive movement that carries on when you hold the limb","A blank stare, or reduced responsiveness during it","Any change in breathing or colour","Eyes rolling, fixed staring, or flickering","Stiffening of the whole body, or a baby who seems unwell afterwards"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's a startle",items:["The startle reflex — arms out, then in","Jittery chin or hands when crying or cold","Little twitches during active sleep","She's awake, aware and settles"]},warn:{title:"Call for help now if",items:["Rhythmic movement that doesn't stop when held","Blank stare, less responsive","Breathing or colour change","Eyes rolling or flickering","Whole body stiffening"]},helped:{title:"What helps",items:["Hold the limb — jitters stop, seizures don't","Is she aware and responsive?","Does comforting or feeding settle it?","Film ten seconds — it's worth more than words"]},quick:"Hold the limb. If it stops, it's jitteriness. If it carries on, or she's not responsive with it, that's the version needing urgent assessment."},
+  originalQuestions:[`"If baby body shakes a bit it's ok" (24 August 2025)`],
+  sources:["RAW-20250824-68aaa2d9-09"],
   medical:true,
-  related:["dark-stool-on-iron","hungry-and-full","pelvic-pressure-pregnancy"]
+  related:["newborn-noises-at-night","fast-breathing-newborn","safe-sleep-newborn"]
 },
-
 {
-  id:"hospital-bag-csection-nicu", topic:"getting-ready", icon:"heart", featured:true,
-  title:"The hospital bag when a C-section \u2014 or NICU \u2014 is on the cards",
-  ages:["Third trimester"], read:5,
-  stage:"Third trimester", subcategory:"Preparing for birth",
-  summary:"One list becomes four the moment you actually think about it. Here's the version that accounts for surgery and for a baby who may not be in the room with you.",
-  keywords:["hospital bag","c-section bag","nicu bag","what to pack","maternity pads","partner bag"],
+  id:"sleeping-with-mouth-open",
+  topic:"sleeping",
+  icon:"moon",
+  featured:false,
+  title:"She sleeps with her mouth open",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"First nights",
+  summary:"On its own, an observation rather than a problem. It's worth a look at the rest of her breathing before you decide it means anything.",
+  keywords:["baby sleeps mouth open","mouth breathing baby","blocked nose sleep","newborn breathing sleep"],
   body:`
-<p>We asked for "a C-section bag for wife and husband" and then immediately had to ask three more questions: how many maternity pads, how many nappies, and what changes if the baby goes to NICU. It began as one list and needed a mother version, a father version, a surgery version, a nappy calculation and a NICU rewrite. Naturally.</p>
-<h2>Start here, before you buy anything</h2>
-<p><strong>Ask the hospital what's included.</strong> Packages vary enormously \u2014 some supply pads, nappies, gowns and formula; some supply nothing. Buying quantities before you've asked is how you end up with sixty nappies you don't need and no phone charger.</p>
-<h2>For the mother, after a C-section</h2>
+<p>Ariadne slept with her mouth open and we wanted to know whether that meant her nose was blocked. Reasonable question — babies prefer to breathe through their noses, so an open mouth suggests something.</p>
+<p>Sometimes. Often it's just a relaxed, deeply asleep baby with a slack jaw.</p>
+<h2>Look at everything else first</h2>
+<p>An open mouth on its own doesn't tell you much. What tells you something is the pattern around it:</p>
 <ul>
-<li><strong>High-waisted knickers,</strong> several pairs, dark, sized well above the incision line. This is the single most-recommended item and the most commonly forgotten.</li>
-<li>Loose clothing that doesn't sit on the scar. Nothing with a waistband.</li>
-<li>Maternity pads \u2014 confirm the quantity with the hospital, but plan for more than you think.</li>
-<li>Slip-on shoes. Bending is not on the menu.</li>
-<li>Toiletries, lip balm, hair ties.</li>
-<li>Documents, insurance paperwork, and a written list of current medications.</li>
-<li>A long phone charging cable. Hospital sockets are never where the bed is.</li>
+<li>Is her breathing easy, or does it look like work?</li>
+<li>Any snuffling, snorting or whistling from her nose?</li>
+<li>Nostrils flaring, or the chest pulling in?</li>
+<li>What's her colour like?</li>
+<li>Is she feeding normally? This is the tell — a baby who can't breathe through her nose struggles to feed, because she can't do both at once.</li>
 </ul>
-<h2>For the supporting parent</h2>
-<p>Pack an actual bag rather than assuming you'll pop home. With surgery and a possible NICU admission, "popping home" may not happen for a while.</p>
+<div class="quiet">Feeding is your best sensor. A congested baby who's feeding well is a congested baby you can leave alone.</div>
+<h2>One thing not to do</h2>
+<p>We were tempted to squirt saline in to see whether it came out the other side — using it as a test rather than a treatment. Don't. Saline and suction are for when there's actual congestion getting in her way, not for diagnosing curiosity.</p>
+<h2>When to raise it</h2>
+<p>Persistent mouth-breathing night after night, ongoing noisy breathing, or feeding that's getting harder is worth mentioning. So is loud snoring, or any pause in her breathing.</p>`,
+  callout:{title:"Mention it if",items:["It's happening every night rather than occasionally","Persistent noisy or snorting breathing","Feeding is becoming harder","Loud snoring, or any pause in breathing","Any sign of increased effort — flaring, chest pulling in, grunting"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's just a slack jaw",items:["A deeply asleep baby with a slack jaw","Mild congestion she's coping with","Occasional rather than constant","Feeding still going fine"]},warn:{title:"Call your doctor if",items:["Every night rather than sometimes","Persistent noisy breathing","Feeding getting harder","Snoring or pauses","Flaring, chest pulling in, grunting"]},helped:{title:"What helped us",items:["Is her breathing easy or effortful?","Is she still feeding well?","Saline only if she's actually blocked","Don't use saline as a test"]},dont:{title:"Don't",items:["Don't squirt saline in to test whether she's blocked","Don't prop her up or tilt the cot to help her breathe","Don't act on the open mouth alone — look at the whole breathing pattern"]},quick:"On its own it's an observation. Check her breathing effort and whether she's still feeding well — feeding is the best sensor you've got."},
+  originalQuestions:["Noticed she slept with her mouth open and asked how to tell whether her nose was blocked (24 August 2025)"],
+  sources:["RAW-20250824-68aaeaaa-01","RAW-20250824-68aaeaaa-02","RAW-20250825-68abf33f-01"],
+  medical:true,
+  related:["blocked-nose-newborn","fast-breathing-newborn","newborn-noises-at-night"]
+},
+{
+  id:"nappy-changes-at-night",
+  topic:"sleeping",
+  icon:"moon",
+  featured:false,
+  title:"She's wet but asleep — do I wake her?",
+  ages:["0–1 month","2–3 months","4–6 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"First nights",
+  summary:"Poo gets changed promptly. A wet nappy can usually wait until she's up anyway. Modern nappies are better at this than your anxiety suggests.",
+  keywords:["night nappy change","wake baby to change nappy","wet nappy sleeping","how often change nappy"],
+  body:`
+<p>We asked how often a clean nappy needs changing, and then got to the real question at 3am: she's weed, but she's asleep — does that wait?</p>
+<p>Usually, yes.</p>
+<h2>The working rule</h2>
 <ul>
-<li>Change of clothes, toiletries, and something comfortable to sleep in a chair in.</li>
-<li>Your own charger and cable.</li>
-<li>Snacks and a water bottle \u2014 hospital catering does not include you.</li>
-<li>Cash and cards, including small change for parking and machines.</li>
-<li>The documents, if you're the one doing the admin.</li>
+<li><strong>Poo:</strong> change it reasonably promptly. It's the thing that irritates skin.</li>
+<li><strong>Wet:</strong> can generally wait until the next feed or waking, if she's comfortable and her skin is fine.</li>
+<li><strong>Genuinely clean and dry:</strong> doesn't need changing to a schedule at all. There's no clock rule.</li>
 </ul>
-<h2>What changes if the baby goes to NICU</h2>
-<div class="quiet">This is the rewrite people don't see coming. A NICU admission reduces some of what you'd pack and makes other things far more important.</div>
+<div class="quiet">Nappies are extremely absorbent now. Waking a sleeping newborn to change a slightly damp one costs you both far more than it gains.</div>
+<h2>When to change it anyway</h2>
 <ul>
-<li><strong>Less newborn clothing and fewer nappies</strong> immediately \u2014 the unit typically handles this, and tiny babies may not be dressed at first.</li>
-<li><strong>Pumping supplies become the priority.</strong> Ask the unit what it supplies, what it requires, and how expressed milk must be labelled and stored.</li>
-<li><strong>Labels.</strong> For bottles, for containers, for everything.</li>
-<li><strong>A notebook.</strong> You'll be given numbers, times and names constantly, and you will not remember them.</li>
-<li>Ask about visiting hours, who is allowed in, and what the unit needs from you.</li>
-<li>Comfortable clothing for long sitting, and layers \u2014 units are often kept warm.</li>
+<li>Any sign of nappy rash or sore skin — then wet gets changed promptly too.</li>
+<li>If it's leaking, or so full it's swollen.</li>
+<li>If she's clearly uncomfortable.</li>
+<li>If she was born early or has fragile skin, or if your team has given you a specific routine.</li>
 </ul>
-<p>Ask the NICU directly what they supply and what they want from you. They answer this question several times a week and they'd much rather answer it before than after.</p>`,
-  callout:{title:"Ask the hospital these, in advance",items:[
-    "What does the package include \u2014 pads, nappies, gowns, formula?",
-    "How long is the standard stay after a C-section, and what does extending cost?",
-    "If the baby goes to NICU, what does the unit supply?",
-    "What are the rules for expressed milk \u2014 labelling, storage, transport?",
-    "Visiting hours, and who is permitted in the unit"]},
-  panel:{
-    eyebrow:"Getting Ready \u2022 Third trimester",
-    normal:{title:"Mother \u2014 C-section",items:[
-      "High-waisted knickers, several pairs","Loose clothes, no waistbands",
-      "Maternity pads","Slip-on shoes","Documents and medication list",
-      "A long charging cable"]},
-    warn:{title:"Supporting parent",items:[
-      "A real overnight bag, not an optimistic one","Own charger",
-      "Snacks and water","Cash for parking and machines"]},
-    helped:{title:"If NICU is possible",items:[
-      "Fewer clothes and nappies at first","Pumping supplies and labels",
-      "A notebook for numbers and names","Ask the unit what it supplies"]},
-    quick:"Confirm what the hospital provides before buying quantities. Pack a genuine bag for the partner. If NICU is a possibility, swap baby clothes for pumping kit, labels and a notebook."
-  },
-  originalQuestions:[
-    "Requested a C-section bag for wife and husband (15 July 2025)",
-    "Asked how many maternity pads and nappies were needed (15 July 2025)",
-    "Asked what changed if the baby was in NICU and requested a revised list (15 July 2025)"],
-  sources:["RAW-20250715-68768350-01","RAW-20250715-68768350-05"],
+<h2>The other thing nappies are doing</h2>
+<p>They're your intake monitor. Wet nappies are how you know she's getting enough milk, especially in the early weeks, so it's worth actually noticing them rather than changing on autopilot.</p>
+<p>If you've been asked to record them, do — and if you notice a real drop in wet nappies, that's a call rather than a note.</p>
+<h2>Making night changes less disruptive</h2>
+<ul>
+<li>Change her before the feed rather than after, so she can fall asleep at the end of it.</li>
+<li>Dim light, no talking, no eye contact games. Boring is the goal.</li>
+<li>Everything within reach before you start.</li>
+</ul>`,
+  callout:{title:"Worth a call if",items:["A noticeable drop in wet nappies — fewer than expected in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling with cream","Blood or mucus in her poo","No poo at all alongside a swollen tummy or vomiting"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it can wait",items:["Poo — change promptly","Wet — can wait for the next feed","Clean and dry — no clock rule at all","Modern nappies hold a lot"]},warn:{title:"Call your doctor if",items:["Fewer wet nappies than you'd expect in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling","Blood or mucus in her poo","No poo at all with a swollen tummy or vomiting"]},helped:{title:"What helped us",items:["We let the wet ones wait until the next feed","Poo changed straight away","Changed before the feed, so she fell asleep after","Dim light, no chat, everything in reach","Counted the wet ones — they're your intake monitor"]},dont:{title:"Don't",items:["Don't wake a sleeping newborn for a slightly damp nappy","Don't leave poo until the next feed — that one gets changed","Don't change on autopilot without noticing how many wet ones there are"]},quick:"Poo promptly, wet can wait. Don't wake a sleeping newborn for a damp nappy — but do keep an eye on how many wet ones she's producing."},
+  originalQuestions:["Asked how often to change a nappy if it was clean (24 August 2025)","Clarified she had urinated but was asleep — could the change wait? (24–25 August 2025)"],
+  sources:["RAW-20250824-68aaa2d9-10","RAW-20250824-68ab8989-02","RAW-20250825-68acd842-02","RAW-20250825-68acd842-04"],
+  medical:true,
+  related:["newborn-noises-at-night","safe-sleep-newborn","feeding-on-demand"]
+},
+{
+  id:"feeding-on-demand",
+  topic:"feeding",
+  icon:"bottle",
+  featured:true,
+  title:"Feeding on demand — but she wants it again already",
+  ages:["0–1 month","2–3 months"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Newborn feeding",
+  summary:"Responsive feeding means following her cues, not the clock. But if you've been given a schedule for a reason, that schedule wins.",
+  keywords:["feeding on demand","responsive feeding","newborn feeding frequency","cluster feeding","every two hours"],
+  body:`
+<p>We asked whether a newborn should be fed on demand, and then immediately stress-tested it: what if she wants milk more often than every two hours?</p>
+<h2>What on demand actually means</h2>
+<p>Watching her rather than the clock. Early cues are subtle — rooting, turning her head, hands to mouth, stirring and fussing. Crying is a late cue, and a baby who's got to crying is harder to feed than one you caught earlier.</p>
+<p>Newborns feed a lot. Eight to twelve times in twenty-four hours is ordinary, and it isn't evenly spaced. Cluster feeding — several feeds bunched close together, usually in the evening — is normal and is not a sign that anything is wrong with your milk or your baby.</p>
+<div class="quiet">Wanting to feed again after ninety minutes doesn't mean the last feed failed. Small stomach, fast digestion, and sometimes she just wants to be close to you. That's allowed to be a reason.</div>
+<h2>The important exception</h2>
+<p>On demand assumes a healthy, term, well-growing baby who wakes and feeds effectively. If any of that isn't true — born early, sleepy, jaundiced, slow to gain, or on a plan from a neonatal team — then <strong>the plan wins.</strong> That may mean minimum frequencies, measured volumes, or waking her for feeds even when she isn't asking.</p>
+<p>That was us. And it's worth saying clearly, because "feed on demand" is given out as universal advice and it isn't. A sleepy baby who doesn't demand can quietly under-feed.</p>
+<h2>What to watch instead of the clock</h2>
+<ul>
+<li>Wet nappies — the most reliable everyday signal.</li>
+<li>Weight, over weeks rather than days.</li>
+<li>Whether she seems settled after feeds, at least some of the time.</li>
+<li>Whether feeds are effective, not just frequent.</li>
+</ul>`,
+  callout:{title:"Speak to your midwife or team if",items:["She's too sleepy to wake for feeds, or feeds very briefly and drops off","A drop in wet nappies","She isn't back to birth weight by around two weeks, or isn't gaining","Feeding is painful, or she can't stay latched","You've been given a feeding plan and can't keep to it — say so rather than adjusting it alone"]},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's just how newborns feed",items:["Eight to twelve feeds in 24 hours","Not evenly spaced at all","Cluster feeding, often in the evening","Wanting more after ninety minutes"]},warn:{title:"Call your midwife if",items:["Too sleepy to wake for feeds","Fewer wet nappies","Not back to birth weight by two weeks","Feeding is painful","You can't keep to a plan you've been given"]},helped:{title:"What helped us",items:["Early cues, not crying — crying is late","Wet nappies, daily","Weight over weeks, not days","If there's a plan, the plan wins"]},quick:"Follow her cues, not the clock — but if she was born early or you've been given a schedule, that schedule beats on-demand every time."},
+  originalQuestions:["Asked whether a baby should be fed on demand at the beginning (1 August 2025)","Asked what happens if the baby wants to feed more often than every two hours (1 August 2025)"],
+  sources:["RAW-20250801-688c98c5-01","RAW-20250801-688c98c5-02"],
+  medical:true,
+  related:["timing-feeds-start-or-finish","newborn-weight-loss","spit-up-while-asleep"]
+},
+{
+  id:"timing-feeds-start-or-finish",
+  topic:"feeding",
+  icon:"bottle",
+  featured:false,
+  title:"Every three hours — from when she starts, or finishes?",
+  ages:["0–1 month","2–3 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"Newborn feeding",
+  summary:"From the start. It's a tiny rule that quietly reorganises your entire day and night, and nobody tells you.",
+  keywords:["feed timing","every three hours","feed interval","when does next feed start"],
+  body:`
+<p>This is the smallest question in this whole batch and it changed more of our week than most of the big ones.</p>
+<p>If a feed takes half an hour, and the plan says every three hours — does the clock start when she begins drinking, or when she finishes?</p>
+<h2>From the start</h2>
+<p>Feeding intervals are normally counted <strong>start to start</strong>. Begins at 12:00, next feed starts at 15:00. Not 15:30.</p>
+<div class="quiet">Get this wrong and every feed drifts a little later than the last. Over a day that's an hour or more of slippage, and you end up wondering why the schedule keeps sliding away from you. It was us, not her.</div>
+<h2>Why it matters more than it sounds</h2>
+<ul>
+<li>It affects total feeds in 24 hours, which is the number that actually counts.</li>
+<li>It keeps night feeds where you planned them rather than creeping later.</li>
+<li>It makes your records mean something when someone asks how often she's feeding.</li>
+</ul>
+<h2>When not to just follow the clock</h2>
+<p>If you've been given a written plan — for a baby born early, or one being monitored — that plan is what counts, and it should say. Ask them directly if it doesn't.</p>
+<p>And don't solve problems by quietly shifting the timings. If feeds are taking unusually long, if she's not finishing volumes, if she's hard to wake, or if she's vomiting — those are things to report, not things to schedule around. We were tempted. Tell them instead.</p>`,
+  callout:{title:"Tell your team rather than adjusting the clock if",items:["Feeds are taking much longer than expected","She isn't finishing the volumes she's meant to","She's very hard to wake for feeds","She's vomiting, or refusing feeds","You're consistently unable to keep to the interval"]},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's start to start",items:["Counted start to start","12:00 feed, next starts 15:00","Not from when she finishes","Your own written plan overrides this"]},warn:{title:"Call your team if",items:["Feeds taking much longer","Not finishing volumes","Very hard to wake","Vomiting or refusing"]},helped:{title:"What helped us",items:["Start to start stopped our whole day drifting","We'd been counting from the end, and slipping an hour","Made our feed records actually mean something","We asked rather than adjusting the plan ourselves"]},dont:{title:"Don't",items:["Don't count from the end of the feed — your whole day will drift later","Don't fix a feeding problem by quietly shifting the timings","Don't override a written plan from your team with a general rule"]},quick:"Start to start. A feed at 12:00 on a three-hour plan means the next begins at 15:00 — otherwise your whole day quietly slides later."},
+  originalQuestions:["Asked whether the three-hour interval begins when she starts drinking or when she finishes (22 August 2025)"],
+  sources:["RAW-20250822-68a8b9cf-01"],
   medical:false,
-  related:["waters-breaking-without-pain","flying-late-pregnancy","pelvic-pressure-pregnancy"]
+  related:["feeding-on-demand","nappy-changes-at-night","newborn-weight-loss"]
+},
+{
+  id:"newborn-weight-loss",
+  topic:"feeding",
+  icon:"bottle",
+  featured:false,
+  title:"She's lost weight since birth",
+  ages:["0–1 month"],
+  read:3,
+  stage:"0–1 month",
+  subcategory:"Newborn feeding",
+  summary:"Expected in the first days, and mostly fluid rather than substance. What matters is when it turns around, not the number itself.",
+  keywords:["newborn weight loss","birth weight","back to birth weight","baby not gaining"],
+  body:`
+<p>We wanted to understand why newborns weigh less after birth, and where ordinary loss ends and worrying loss begins. It's one of the first numbers you're handed, and it goes in the wrong direction.</p>
+<h2>Why it happens</h2>
+<p>Babies are born with extra fluid on board and lose some of it in the first days. Milk supply is also still arriving, so intake takes a few days to catch up. Some early loss is expected, not a failure of anything.</p>
+<div class="quiet">It's genuinely hard to be handed a lower number on day three when everything in you wants that line to go up. Almost every parent has that moment.</div>
+<h2>The shape to look for</h2>
+<ul>
+<li>Loss over the first few days.</li>
+<li>A low point, then it turns around.</li>
+<li>Back to birth weight somewhere around two weeks.</li>
+<li>Then steady gain along her own line.</li>
+</ul>
+<p>The turning point and the trend matter far more than any individual weighing. Scales differ, clothes differ, and a full nappy weighs something.</p>
+<h2>Why we won't give you a percentage</h2>
+<p>You'll find a specific threshold quoted all over the internet, and it may not apply to your baby. How it's judged depends on gestation, how the birth went, when she was weighed, feeding method, and whether she's being monitored.</p>
+<p>Ariadne was born early and in neonatal care, and the general figure was simply the wrong yardstick — her team had their own chart and their own targets. If your baby is under any kind of specialist care, ask <em>them</em> what they're expecting, and what number would concern them. Then you know what you're watching for instead of comparing against a stranger's baby.</p>
+<h2>What to watch day to day</h2>
+<p>Wet nappies, poo changing colour and consistency over the first week, feeding that seems effective, and a baby who's alert at least some of the time. Those tell you more between weighings than the scale does.</p>`,
+  callout:{title:"Speak to your midwife or team if",items:["She hasn't started gaining by around day five","She's not back to birth weight by around two weeks","Fewer wet nappies than expected","She's very sleepy, hard to wake, or feeding poorly","She looks yellow — jaundice with poor feeding needs checking promptly"]},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's expected",items:["Some loss over the first few days","Mostly fluid, not substance","A low point, then it turns around","Back to birth weight around two weeks"]},warn:{title:"Call your midwife if",items:["No gain by around day five","Not back to birth weight by two weeks","Fewer wet nappies","Very sleepy or feeding poorly","Looking yellow"]},helped:{title:"What helped us",items:["The turning point, not the number","Wet nappies daily","Poo changing through the first week","Her team's chart, not a general percentage"]},dont:{title:"Don't",items:["Don't measure her against a percentage you found online","Don't read anything into a single weighing — scales and nappies vary","Don't wait and see if she isn't gaining by around day five"]},quick:"Early loss is expected and mostly fluid. Watch for the turn-around by about day five and birth weight by two weeks — and get your target from your own team."},
+  originalQuestions:["Asked why newborns lose weight and how much loss is too much (20 July 2025)"],
+  sources:["RAW-20250720-687cdea6-01"],
+  medical:true,
+  related:["feeding-on-demand","timing-feeds-start-or-finish","nappy-changes-at-night"]
+},
+{
+  id:"newborns-and-blinking",
+  topic:"development",
+  icon:"blocks",
+  featured:false,
+  title:"Do newborns blink less than we do?",
+  ages:["0–1 month","2–3 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"Newborn senses",
+  summary:"Yes, considerably. That unnerving unbroken stare is a real thing and it's completely ordinary.",
+  keywords:["newborn blinking","baby staring","does baby blink","newborn eyes"],
+  body:`
+<p>Babies seem to stare for extraordinary stretches without blinking, and once you've noticed it you can't stop noticing it. We asked whether they genuinely blink less.</p>
+<p>They do — considerably less than adults. Nobody is entirely certain why. Suggestions include that their eyes are less exposed, that they're taking in less visual information, and that tear production is still getting going.</p>
+<div class="quiet">The stare feels like being assessed by someone who has already made up their mind about you. It is not that. She is working out what a face is.</div>
+<h2>Don't count the blinks</h2>
+<p>A blink rate isn't a useful measurement. It changes with how awake she is, the light, whether she's concentrating, and whether her eyes are comfortable. Counting will only make you anxious about a number that means nothing.</p>
+<h2>What's worth noticing instead</h2>
+<ul>
+<li>Redness, or discharge that keeps coming back.</li>
+<li>An eye that looks cloudy, or a pupil that doesn't look dark.</li>
+<li>Eyes that don't move together, or one that seems stuck.</li>
+<li>An eye that won't close properly.</li>
+<li>Any sign she's in pain — rubbing, squeezing shut, distress in bright light.</li>
+<li>A staring episode where she's also unresponsive, which is a different thing entirely.</li>
+</ul>
+<p>A bit of sticky eye in the early weeks is extremely common and usually a blocked tear duct rather than an infection — but get it looked at rather than deciding that yourself, particularly in the first weeks.</p>`,
+  callout:{title:"Get her eyes checked if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that doesn't look dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent, not an eye question"]},
+  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's normal",items:["Newborns blink far less than adults","The long unbroken stare is normal","Rate changes with light and alertness","A little sticky eye is common"]},warn:{title:"Call your doctor if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that isn't dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent"]},helped:{title:"What helped us",items:["Don't count blinks — it means nothing","Look at the eye, not the rate","Sticky eye: get it seen, don't self-diagnose","Enjoy the stare. She's learning your face"]},quick:"They genuinely blink far less, and the stare is normal. Look at how the eye itself appears rather than counting anything."},
+  originalQuestions:["Asked whether babies genuinely blink less, having noticed long stretches of staring (23 August 2025)"],
+  sources:["RAW-20250823-68aa0a45-01"],
+  medical:false,
+  related:["is-that-a-real-smile","newborn-noises-at-night","sleeping-with-mouth-open"]
+},
+{
+  id:"is-that-a-real-smile",
+  topic:"development",
+  icon:"blocks",
+  featured:false,
+  title:"Was that a real smile, or just wind?",
+  ages:["0–1 month","2–3 months"],
+  read:2,
+  stage:"0–1 month",
+  subcategory:"Newborn senses",
+  summary:"Early smiles are usually spontaneous rather than social. Which does not make them count for nothing — and you're allowed to take it personally.",
+  keywords:["newborn smile","first smile","social smile","reflex smile baby","when do babies smile"],
+  body:`
+<p>Amir saw Ariadne smile several times in the incubator and wanted to know whether she meant it.</p>
+<p>Scientifically? Probably an early reflex. Smiles in the first weeks tend to happen during sleep or as spontaneous movements rather than as a response to you.</p>
+<p>Practically? She smiled several times in the incubator, and that was quite sufficient evidence that she knew exactly what she was doing.</p>
+<h2>When the social smile arrives</h2>
+<p>The deliberate, aimed-at-your-face, whole-body smile usually turns up somewhere around six to eight weeks. It's unmistakable when it happens — it's a response, and you'll know because it's directed at you and you can get her to do it again.</p>
+<div class="quiet">If your baby was born early, count from her due date rather than her birthday. A baby born seven weeks early may social-smile around thirteen weeks after birth and be exactly on time. Nobody explains this well, and it causes a lot of unnecessary worry.</div>
+<h2>Why the reflex ones still matter</h2>
+<p>Here's the thing about arguing whether it counts: you smiled back. You talked to her. Your voice changed. You leaned in closer.</p>
+<p>She may not have intended it, but the loop it started is real, and it's happening weeks before she can do anything about it on purpose. That's not sentimentality — it's how the whole thing gets going.</p>
+<h2>When to mention it</h2>
+<p>If there's no social smiling by around three months corrected, mention it — not as an emergency, but as something worth raising alongside eye contact, response to your voice, and how she settles when you pick her up. Those things get looked at together, not one at a time.</p>`,
+  callout:{title:"Worth raising if",items:["No social smiling by around three months, corrected for prematurity","She doesn't seem to make eye contact, or follow your face","She doesn't respond to your voice","Any loss of a skill she previously had","Anything that's been niggling at you — bring it to the next check rather than sitting on it"]},
+  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's a reflex, early on",items:["Early smiles are spontaneous, often in sleep","Social smile around six to eight weeks","Aimed at you, and repeatable","Count from the due date if she was early"]},warn:{title:"Call your doctor if",items:["No social smile by around three months, corrected","No eye contact, or not following your face","No response to your voice","Any skill she previously had and has lost"]},helped:{title:"What helped us",items:["Smiling back matters even if she didn't mean it","The loop starts before she can do it on purpose","Corrected age causes needless worry — use it","You're allowed to take it personally"]},dont:{title:"Don't",items:["Don't count from her birthday if she was born early — use her due date","Don't compare her to another baby of the same age in weeks","Don't dismiss a niggle because she's 'probably just early' — say it at the next check"]},quick:"Early ones are usually reflex; the real social smile lands around six to eight weeks, or later if she was early. Smile back anyway — it counts."},
+  originalQuestions:["Had seen her smile several times in the incubator and asked whether she was doing it deliberately (16 August 2025)"],
+  sources:["RAW-20250816-68a057a3-09"],
+  medical:false,
+  related:["newborns-and-blinking","newborn-noises-at-night","feeding-on-demand"]
 }
 ];
 
