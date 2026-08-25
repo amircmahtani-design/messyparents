@@ -1664,32 +1664,9 @@
     checkAndSubscribeExistingBatch();
   }
 
-  /* ---- persistent diagnostic panel: shows all state at once for 30 seconds
-          so one screenshot captures everything --- */
-  const diagLines = [];
-  function ensureDiagPanel() {
-    let p = document.getElementById("mpcDiag");
-    if (p) return p;
-    p = document.createElement("div");
-    p.id = "mpcDiag";
-    p.style.cssText =
-      "position:fixed;bottom:12px;left:12px;right:12px;z-index:2000;" +
-      "background:rgba(20,25,33,.94);color:#fff;padding:12px 14px;border-radius:10px;" +
-      "font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.5;" +
-      "max-height:60vh;overflow:auto;box-shadow:0 4px 20px rgba(0,0,0,.4)";
-    document.body.appendChild(p);
-    // Auto-hide after 60s
-    setTimeout(() => { if (p && p.parentNode) p.parentNode.removeChild(p); }, 60000);
-    return p;
-  }
-  function diag(msg, kind) {
-    const stamp = ((Date.now() - PAGE_START_TIME) / 1000).toFixed(1) + "s";
-    const prefix = kind === "success" ? "✓ " : kind === "error" ? "✗ " : "  ";
-    diagLines.push("[" + stamp + "] " + prefix + msg);
-    const p = ensureDiagPanel();
-    p.textContent = diagLines.join("\n") + "\n\n(tap to dismiss)";
-    p.onclick = () => { if (p.parentNode) p.parentNode.removeChild(p); };
-  }
+  /* ---- diag() is now silent — the restore system works reliably so we
+          don't need the visible diagnostic panel anymore ---- */
+  function diag(msg, kind) { /* no-op */ }
   const PAGE_START_TIME = Date.now();
 
   /* ---- bootstrap: also install dots + gallery + batch once the studio DOM is up ---- */
