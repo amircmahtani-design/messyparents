@@ -1596,7 +1596,7 @@ const HOOK_KEY = "mpc.netlifyBuildHook";
 
 function renderSeoFields(){
   const d = (state.seo || {});
-  $("#seo_detail").checked    = d.showDetail === true;
+  $("#seo_detail").checked    = d.showDetail !== false;      // default on
   $("#seo_related").checked   = d.showRelated !== false;      // default on
   $("#seo_questions").checked = d.showQuestions === true;
   $("#seo_crumbs").checked    = d.showBreadcrumbs === true;

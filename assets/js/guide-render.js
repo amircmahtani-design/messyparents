@@ -222,10 +222,19 @@
       callout = '<div class="callout"><h3>' + (g.callout.title || "Call your doctor if") + "</h3><ul>" +
         g.callout.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul></div>";
     }
+    /* The guide's prose has its own <h2>s. Left alone they would sit at the
+       same level as "The longer version" that introduces them, which reads as
+       a flat list of equal sections to a screen reader and to a crawler
+       working out what the page is about. Demoting them one level makes the
+       structure match the meaning. Only the tags change; not a word moves. */
+    var body = String(g.body)
+      .replace(/<(\/?)h3\b/gi, "<$1h4")
+      .replace(/<(\/?)h2\b/gi, "<$1h3");
+
     return '<section class="g-detail article" aria-labelledby="detail-h">\n' +
       '  <div class="article-inner">\n' +
       '    <h2 id="detail-h">' + esc(t("detail.heading", "The longer version")) + "</h2>\n" +
-      '    <div class="article-body">' + g.body + callout + "</div>\n" +
+      '    <div class="article-body">' + body + callout + "</div>\n" +
       "  </div>\n</section>";
   }
 

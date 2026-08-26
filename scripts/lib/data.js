@@ -312,7 +312,12 @@ async function load({ preferBundled = false } = {}) {
        See SEO_AI_ARCHITECTURE.md → "The four switches". */
     sections: {
       related:     seoDefaults.showRelated     !== false,   // default ON
-      detail:      seoDefaults.showDetail      === true,    // default OFF
+      /* Default ON. Every guide carries 150-350 words of original prose that
+         the panel template never displayed, so the indexable page used to be
+         ~130 words of bullets. This renders it below the panel, which is sized
+         to the viewport — so first paint is unchanged and you only reach it by
+         scrolling. Untick it in Studio to turn it back off. */
+      detail:      seoDefaults.showDetail      !== false,   // default ON
       questions:   seoDefaults.showQuestions   === true,    // default OFF
       breadcrumbs: seoDefaults.showBreadcrumbs === true     // default OFF
     },

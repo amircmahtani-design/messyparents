@@ -221,6 +221,10 @@ h3{font-size:1.3rem}
 
 .article-body{margin-top:22px;font-size:1.05rem}
 .article-body h2{font-size:clamp(1.45rem,2.4vw,1.85rem);margin:32px 0 10px}
+/* Section headings inside "The longer version". The guide's own headings are
+   demoted one level there so they nest under it, so h3 needs the size h2 had. */
+.article-body h3{font-family:var(--display);font-size:clamp(1.3rem,2.1vw,1.6rem);margin:28px 0 9px}
+.article-body h4{font-family:var(--display);font-size:1.15rem;margin:22px 0 8px}
 .article-body p{margin:0 0 16px}
 .article-body ul,.article-body ol{margin:0 0 18px;padding-left:21px}
 .article-body li{margin-bottom:8px}
