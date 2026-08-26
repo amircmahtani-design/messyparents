@@ -131,11 +131,85 @@
 .g-extra .article{padding:0}
 .g-extra .article-inner{width:min(100%,700px);margin-inline:auto}
 .g-extra section + section{margin-top:34px;padding-top:26px;border-top:1.6px solid var(--line-soft)}
-.g-extra h2{font-family:var(--display);font-size:clamp(1.4rem,2.2vw,1.75rem);margin:0 0 14px}
+/* Headings below the panel are hand-lettered, like the guide above them.
+   They used to be Baloo 2, which read as a different document beginning
+   rather than the same guide continuing. */
+.g-extra h2{font-family:var(--hand);font-weight:400;
+  font-size:clamp(1.5rem,2.4vw,1.95rem);letter-spacing:.3px;margin:0 0 14px}
+.g-extra .article-body h3,
+.g-extra .article-body h4{font-family:var(--hand);font-weight:400;letter-spacing:.3px}
+/* The prose itself stays in the body face. Patrick Hand is right for a
+   headline and for four bullet points; it is tiring for 250 words. */
 
-/* The longer version: the guide's own prose, styled exactly like the article
-   template that already ships in style.css. */
-.g-detail{margin-top:40px;padding-top:28px;border-top:1.6px solid var(--line-soft)}
+/* ---- The longer version ---------------------------------------------------
+   Folded away by default. The prose is still in the HTML — Google indexes a
+   closed <details> normally and the AI crawlers read markup rather than
+   clicking — so nothing is hidden from search. It is only folded away from the
+   reader until they ask for it. */
+.g-detail{margin-top:40px;padding-top:34px;border-top:1.6px solid var(--line-soft)}
+
+.g-detail-fold summary{
+  display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;
+  padding:2px 0;border-radius:10px;
+}
+.g-detail-fold summary::-webkit-details-marker{display:none}
+.g-detail-fold summary h2{margin:0}
+.g-detail-fold summary:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+
+/* The chevron. Rotates when the section opens, so the control says which way
+   it is going without any words. */
+.g-fold-hint{
+  width:26px;height:26px;flex:0 0 auto;border-radius:50%;
+  border:1.6px solid var(--line);display:grid;place-items:center;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.g-fold-hint::before{
+  content:"";width:7px;height:7px;margin-top:-3px;
+  border-right:2px solid var(--ink-hand-soft);border-bottom:2px solid var(--ink-hand-soft);
+  transform:rotate(45deg);
+}
+.g-detail-fold summary:hover .g-fold-hint{border-color:var(--blue);background:#fff}
+.g-detail-fold[open] .g-fold-hint{transform:rotate(180deg)}
+
+/* Air between the heading and the prose when it opens. */
+.g-detail-fold .article-body{margin-top:22px}
+
+@media (prefers-reduced-motion:reduce){
+  .g-fold-hint{transition:none}
+}
+
+/* ---- Previous / next ------------------------------------------------------
+   Quiet arrows either side of the guide on a wide screen, and a plain pair of
+   links under it on a phone, where nothing should float over the text. */
+.g-steps{width:min(1180px,calc(100% - 48px));margin:0 auto;
+  display:flex;justify-content:space-between;gap:14px}
+.g-step{display:inline-flex;align-items:center;gap:11px;text-decoration:none;
+  color:var(--ink-hand-soft);font-family:var(--hand);font-size:1.02rem;
+  border:1.6px solid var(--line);border-radius:999px;background:var(--cream-soft);
+  padding:9px 18px;max-width:46%;
+  transition:transform .14s ease,border-color .16s ease,color .16s ease,background .16s ease}
+.g-step:hover{transform:translateY(-2px);border-color:var(--blue);color:var(--blue);background:#fff}
+.g-step.is-empty{visibility:hidden}
+.g-step-arrow{font-size:1.15rem;line-height:1;flex:0 0 auto}
+.g-step-text{display:flex;flex-direction:column;min-width:0}
+.g-step-dir{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--body);font-weight:700;opacity:.6}
+.g-step-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g-step--next{margin-left:auto;flex-direction:row-reverse;text-align:right}
+
+/* On a wide screen they sit against the edges of the viewport, vertically
+   centred, out of the reading column entirely. Titles collapse to just the
+   arrow so nothing shouts. */
+@media (min-width:1100px){
+  .g-steps{position:fixed;inset:0 auto 0 0;width:100%;pointer-events:none;
+    align-items:center;padding:0 14px;margin:0;z-index:5}
+  .g-step{pointer-events:auto;padding:0;width:52px;height:52px;border-radius:50%;
+    justify-content:center;background:rgba(255,255,255,.82);backdrop-filter:blur(3px);
+    box-shadow:0 2px 10px rgba(33,29,24,.09)}
+  .g-step-text{display:none}
+  .g-step-arrow{font-size:1.5rem}
+  .g-step:hover{transform:scale(1.06)}
+}
 
 /* Where this one came from — the real questions behind the guide. */
 .g-origin ul,.g-refs ul{margin:0;padding-left:20px;font-size:1.02rem;line-height:1.55}

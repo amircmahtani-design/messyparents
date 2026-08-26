@@ -231,11 +231,27 @@
       .replace(/<(\/?)h3\b/gi, "<$1h4")
       .replace(/<(\/?)h2\b/gi, "<$1h3");
 
+    /* Collapsed by default, using <details> rather than a scripted toggle.
+
+       The reason this matters beyond taste: the prose stays in the HTML
+       either way. Google indexes content inside a closed accordion normally —
+       that has been its position since mobile-first indexing, because so much
+       mobile content lives behind expanders — and the AI crawlers read the
+       markup rather than clicking anything. So nothing is hidden from search
+       or from a retrieval engine; it is only folded away from the reader
+       until they ask for it.
+
+       <details> also needs no JavaScript, which keeps it working on a page
+       whose whole point is that it does not need any, and it stays keyboard
+       and screen-reader accessible for free. */
     return '<section class="g-detail article" aria-labelledby="detail-h">\n' +
       '  <div class="article-inner">\n' +
-      '    <h2 id="detail-h">' + esc(t("detail.heading", "The longer version")) + "</h2>\n" +
-      '    <div class="article-body">' + body + callout + "</div>\n" +
-      "  </div>\n</section>";
+      '    <details class="g-detail-fold">\n' +
+      '      <summary><h2 id="detail-h">' +
+      esc(t("detail.heading", "The longer version")) +
+      '</h2><span class="g-fold-hint" aria-hidden="true"></span></summary>\n' +
+      '      <div class="article-body">' + body + callout + "</div>\n" +
+      "    </details>\n  </div>\n</section>";
   }
 
   /* ---- where this guide came from --------------------------------------
@@ -290,6 +306,39 @@
       "    </div>\n  </a>";
   }
 
+  /* ---- previous / next --------------------------------------------------
+     Arrows either side of the guide, in the library's own order.
+
+     Real <a href> elements written by the build, not a scripted control, so a
+     crawler follows them and every guide gains two more inbound links from its
+     neighbours. That matters at 300+ guides, where the ones nothing links to
+     are the ones that never get found. "Read next" at the bottom is topical;
+     this is sequential, and the two do different jobs.
+
+     The title goes in aria-label and in a tooltip rather than on screen, so
+     the control stays a quiet arrow and does not compete with the guide. */
+  function prevNextHTML(prev, next, opts) {
+    if (!prev && !next) return "";
+    opts = opts || {};
+    var t = opts.t || function (k, f) { return f; };
+
+    var link = function (g, dir, glyph, label) {
+      if (!g) return '<span class="g-step g-step--' + dir + ' is-empty" aria-hidden="true"></span>';
+      return '<a class="g-step g-step--' + dir + '" href="' + guideUrl(g) + '"' +
+        ' rel="' + dir + '" title="' + esc(g.title) + '"' +
+        ' aria-label="' + esc(label) + ": " + esc(g.title) + '">' +
+        '<span class="g-step-arrow" aria-hidden="true">' + glyph + "</span>" +
+        '<span class="g-step-text"><span class="g-step-dir">' + esc(label) + "</span>" +
+        '<span class="g-step-title">' + esc(g.title) + "</span></span></a>";
+    };
+
+    return '<nav class="g-steps" aria-label="' +
+      esc(t("steps.label", "Previous and next guide")) + '">' +
+      link(prev, "prev", "\u2190", t("steps.prev", "Previous")) +
+      link(next, "next", "\u2192", t("steps.next", "Next")) +
+      "</nav>";
+  }
+
   /* ---- related guides --------------------------------------------------- */
 
   function relatedHTML(g, list, opts) {
@@ -310,6 +359,7 @@
     esc: esc, img: img, assetPath: assetPath,
     guideUrl: guideUrl, hash: hash, guideHash: guideHash,
     panelMarkup: panelMarkup, cardHTML: cardHTML, relatedHTML: relatedHTML,
+    prevNextHTML: prevNextHTML,
     crumbTrail: crumbTrail, crumbHTML: crumbHTML,
     detailHTML: detailHTML, questionsHTML: questionsHTML, referencesHTML: referencesHTML,
     BADGE: BADGE
