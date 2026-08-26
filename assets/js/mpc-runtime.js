@@ -64,6 +64,34 @@
            "&w=" + (width || 800) + "&fm=webp&q=78";
   };
 
+  /* ---- illustrations fading in ------------------------------------------
+     Text paints almost immediately now that the CSS travels inside the HTML,
+     so an illustration landing a few hundred ms later pops rather than
+     arrives. Adding .is-in on load runs the fade in style.css.
+
+     Deliberately does nothing when the image is already complete: adding the
+     class then would animate from transparent something the browser has
+     already painted, which is a flash, not a fade. And nothing here is
+     load-bearing — if this never runs, the illustrations appear exactly as
+     they do now. */
+  var ILLUS = ".hero-art img, .page-hero-art img, .about-art img, .band-art img";
+  function fadeIllustrations() {
+    var imgs = document.querySelectorAll(ILLUS);
+    for (var i = 0; i < imgs.length; i++) {
+      (function (img) {
+        if (img.complete && img.naturalWidth) return;   /* already painted */
+        img.addEventListener("load", function () {
+          img.classList.add("is-in");
+        }, { once: true });
+      })(imgs[i]);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fadeIllustrations);
+  } else {
+    fadeIllustrations();
+  }
+
   MPC.esc = esc;
   MPC.inline = inline;
 
