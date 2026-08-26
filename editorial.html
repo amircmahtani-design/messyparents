@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/tokens.css?v=dcd2bfa4bf">
-<link rel="stylesheet" href="/assets/css/style.css?v=23f4dcc071">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/style.css?v=11">
 <!-- MPC:SEO:START -->
 <title>How we write these — The Messy Parents Collection</title>
 <meta name="description" content="Where the questions come from, how the guides get written and checked, what we are not qualified to tell you, and how to tell us we have got something wrong.">
@@ -59,8 +59,8 @@
       <span aria-current="page">How we write these</span>
     </nav>
 
-    <h1 data-page-title>How we write these</h1>
-    <p class="lede" data-page-subtitle>Where the questions come from, what we check them against, and what we are not
+    <h1 data-page-title data-mpc-text="page.title">How we write these</h1>
+    <p class="lede" data-page-subtitle data-mpc-text="page.intro">Where the questions come from, what we check them against, and what we are not
       qualified to tell you.</p>
 
     <div class="article-body">
@@ -138,6 +138,12 @@
   </div>
 </footer>
 
-<script src="/assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/guides.js?v=10"></script>
+<script src="/assets/js/mpc-store.js?v=10"></script>
+<script>
+var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();
+MPCStore.pagesReady.then(function(){ MPCStore.applyPage("editorial"); });
+</script>
 </body>
 </html>

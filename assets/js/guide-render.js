@@ -248,8 +248,8 @@
       '  <div class="article-inner">\n' +
       '    <details class="g-detail-fold">\n' +
       '      <summary><h2 id="detail-h">' +
-      esc(t("detail.heading", "The longer version")) +
-      '</h2><span class="g-fold-hint" aria-hidden="true"></span></summary>\n' +
+      esc(t("detail.heading", "Want the fuller answer?")) +
+      '</h2><span class="g-fold-chev" aria-hidden="true"></span></summary>\n' +
       '      <div class="article-body">' + body + callout + "</div>\n" +
       "    </details>\n  </div>\n</section>";
   }
@@ -322,20 +322,24 @@
     opts = opts || {};
     var t = opts.t || function (k, f) { return f; };
 
-    var link = function (g, dir, glyph, label) {
+    /* The chevron is drawn in CSS rather than set as a character, so it keeps
+       its exact weight and size whatever the reader's font settings do. The
+       guide's title rides along in aria-label and title, so the control stays
+       a quiet arrow on screen while still announcing where it goes. */
+    var link = function (g, dir, label) {
       if (!g) return '<span class="g-step g-step--' + dir + ' is-empty" aria-hidden="true"></span>';
       return '<a class="g-step g-step--' + dir + '" href="' + guideUrl(g) + '"' +
         ' rel="' + dir + '" title="' + esc(g.title) + '"' +
         ' aria-label="' + esc(label) + ": " + esc(g.title) + '">' +
-        '<span class="g-step-arrow" aria-hidden="true">' + glyph + "</span>" +
+        '<span class="g-step-chev" aria-hidden="true"></span>' +
         '<span class="g-step-text"><span class="g-step-dir">' + esc(label) + "</span>" +
         '<span class="g-step-title">' + esc(g.title) + "</span></span></a>";
     };
 
     return '<nav class="g-steps" aria-label="' +
       esc(t("steps.label", "Previous and next guide")) + '">' +
-      link(prev, "prev", "\u2190", t("steps.prev", "Previous")) +
-      link(next, "next", "\u2192", t("steps.next", "Next")) +
+      link(prev, "prev", t("steps.prev", "Previous")) +
+      link(next, "next", t("steps.next", "Next")) +
       "</nav>";
   }
 

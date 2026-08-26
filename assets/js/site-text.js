@@ -158,6 +158,39 @@ window.SITE_TEXT = {
     ]
   },
 
+  /* ---- How we write these ---------------------------------------------
+     The editorial page. It is linked from the footer of every page, and it is
+     what a reader — or a search engine working out whether the site is worth
+     trusting — checks before deciding. Worth keeping current, which means
+     being editable. */
+  editorial: {
+    label: "How we write these",
+    intro: "Where the questions come from, what they are checked against, and what you are careful to say you are not.",
+    fields: [
+      { key:"page.title", label:"Page heading", default:"How we write these" },
+      { key:"page.intro", label:"Line under the heading", multiline:true,
+        default:"Where the questions come from, what we check them against, and what we are not qualified to tell you." },
+      { key:"editorial.questions.h", label:"Section — The questions are real ones", default:"The questions are real ones" },
+      { key:"editorial.questions.body", label:"The questions are real ones — the words", multiline:true,
+        default:"Every guide on this site started as something we actually asked, usually at an unreasonable hour, usually badly. We keep a note of the original wording and the date it was asked. Some of those questions were, in hindsight, quite silly — we have kept those in too, because at 2am they did not feel silly, and somebody else is going to ask the same thing tonight.\n\nWe do not invent questions to fill gaps, and we do not split one question into five pages to cover more search terms. One real question, one guide." },
+      { key:"editorial.write.h", label:"Section — How a guide gets written", default:"How a guide gets written" },
+      { key:"editorial.write.body", label:"How a guide gets written — the words", multiline:true,
+        default:"Each guide is written to be read by someone who has slept for four hours and is holding a baby. That means the answer comes first, in plain words, before any explanation. Then what is usually going on, then what we actually tried, then when to stop reading and call someone.\n\nThe “what helped us” parts are exactly that: what helped us. They are not recommendations and they are not evidence. Your baby is a different baby." },
+      { key:"editorial.check.h", label:"Section — What we check against", default:"What we check against" },
+      { key:"editorial.check.body", label:"What we check against — the words", multiline:true,
+        default:"Anything that touches safety — sleep position, fevers, breathing, feeding volumes, red flags — is checked against current guidance from national health services and paediatric bodies before it goes up. Where a guide leans on a specific piece of guidance, we link to it on the guide itself rather than asking you to take our word for it.\n\nWhere guidance differs between countries, we say so instead of picking the one that makes the guide tidier." },
+      { key:"editorial.not.h", label:"Section — What we are not", default:"What we are not" },
+      { key:"editorial.not.body", label:"What we are not — the words", multiline:true,
+        default:"We are not doctors, midwives, health visitors, paediatricians, nurses or lactation consultants. Nobody here holds a medical qualification of any kind, and nothing on this site has been reviewed by someone who does. We will not pretend otherwise to look more authoritative, and you should be suspicious of any parenting site that does.\n\nNothing here replaces advice from someone who can actually see your baby. If your instinct says something is wrong, act on it — that instinct is genuinely good information, and no one who does this professionally will mind you asking.\n\nIf something is an emergency, do not read a website. Call your local emergency number." },
+      { key:"editorial.updates.h", label:"Section — Updates and corrections", default:"Updates and corrections" },
+      { key:"editorial.updates.body", label:"Updates and corrections — the words", multiline:true,
+        default:"Guidance changes, and we get things wrong. When a guide is changed in a way that alters its meaning, the updated date on the guide changes with it. Small fixes — a typo, a clearer sentence — do not reset anything.\n\nIf you think something here is wrong, out of date, or dangerous, please tell us and we will look at it properly. Corrections to anything safety-related get made the same day or the guide comes down until we have sorted it out." },
+      { key:"editorial.ai.h", label:"Section — On being quoted", default:"On being quoted" },
+      { key:"editorial.ai.body", label:"On being quoted — the words", multiline:true,
+        default:"These guides are public and free, and we are glad when search engines or AI assistants surface them — that is a parent finding an answer, which is the entire point. We would ask two things: quote the safety sections accurately, and keep the link, so that anyone who wants the full context and the caveats can find them." }
+    ]
+  },
+
   /* ---- Page-not-found -------------------------------------------------- */
   notfound: {
     label: "“Page not found”",
@@ -177,6 +210,19 @@ window.SITE_TEXT = {
     intro: "The fixed wording that appears on every guide, new ones included. Each guide's own content is edited under Guides on the left.",
     fields: [
       { key:"quick.label", label:"Blue box — label before the answer", js:true, default:"The quick answer:" },
+      /* The fold under the guide, and the two arrows either side of it. All
+         written by the renderer rather than sitting in the markup, so they are
+         marked js:true and read with t("the.key", "fallback"). */
+      { key:"detail.heading", label:"Fuller answer — the bar you tap to open it", js:true,
+        default:"Want the fuller answer?" },
+      { key:"related.heading", label:"Heading above the suggested guides", js:true,
+        default:"Read next" },
+      { key:"steps.prev", label:"Previous-guide arrow — what a screen reader says", js:true,
+        default:"Previous" },
+      { key:"steps.next", label:"Next-guide arrow — what a screen reader says", js:true,
+        default:"Next" },
+      { key:"steps.label", label:"The two arrows — what a screen reader calls the pair", js:true,
+        default:"Previous and next guide" },
       { key:"note.line1", label:"Notepad badge — first line",  js:true, default:"BY ARI" },
       { key:"note.line2", label:"Notepad badge — second line", js:true, default:"& PAPA" },
       { key:"note.image", type:"image", label:"Notepad badge picture",

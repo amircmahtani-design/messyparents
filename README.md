@@ -1,62 +1,85 @@
-# Guide page: collapsible longer version + previous/next arrows
+# Guide page: the fuller-answer bar, edge arrows, and an editable editorial page
 
-**4 files. Deploy on the site you have live now — this is independent of the
-speed-up work and does not touch it.**
+**7 files. Deploy on the site you have live now.** Includes the redirect hotfix.
+Independent of the speed-up work.
 
 ```
-scripts/build.js            (your current one, plus 4 lines)
+scripts/build.js            your current one + the hotfix + 4 lines
 assets/js/guide-render.js
 assets/css/guide.css
+assets/js/site-text.js
+studio/index.html
+editorial.html
 ```
 
-`scripts/build.js` here is built on top of the redirect hotfix you already
-deployed, so it keeps that fix.
+---
 
-## 1. The longer version now folds away
+## 1. "Want the fuller answer?"
 
-It is a `<details>` element, closed by default. Tap the heading to open it.
+One quiet bar across the width of the guide, tapped to open. Centred label,
+chevron that flips when it opens. **"More detail" and "3 min read" are gone** —
+the bar says one thing.
 
-**The prose stays in the HTML either way.** Google indexes content inside a
-closed accordion normally — that has been its position since mobile-first
-indexing, because so much mobile content lives behind expanders — and the AI
-crawlers read markup rather than clicking. So you keep the search and citation
-value and lose the wall of text. Measured on `wont-nap`: 632 words still in the
-page with every script stripped out.
+Folded by default, and the prose is still in the HTML either way: Google indexes
+a closed `<details>` normally, and the AI crawlers read markup rather than
+clicking. Measured on `wont-nap`: 631 words still in the page with every script
+stripped out. No JavaScript, keyboard and screen-reader accessible for free.
 
-No JavaScript involved, so it works on a page whose whole point is that it does
-not need any, and it is keyboard and screen-reader accessible for free.
+The label is still a real `<h2>`, so the prose sits under a heading in the
+document outline. It just does not look like one.
 
-## 2. Spacing and font
+## 2. The arrows
 
-- The gap under the rule went from 28px to 34px, and there are now 22px between
-  the heading and the prose when it opens.
-- `.g-extra` headings are hand-lettered now, like the guide above them. They
-  were Baloo 2, which read as a different document starting rather than the same
-  guide continuing.
-- **The prose itself is still in the body face.** Patrick Hand is right for a
-  headline and for four bullet points; it is tiring for 250 words of paragraphs.
-  If you want it handwritten too, say so and it is one line.
+Bare chevrons pinned to the left and right edges of the viewport, vertically
+centred, well outside the reading column — no pill, no shadow, no circle. They
+nudge on hover. Drawn in CSS rather than set as a character, so their weight and
+size stay exact whatever the reader's font settings do.
 
-## 3. Previous / next arrows
+On a phone they become a plain labelled pair under the guide, because nothing
+should float over text on a small screen.
 
-- **Wide screens:** two quiet circular arrows pinned to the left and right edges
-  of the viewport, vertically centred, outside the reading column.
-- **Phones:** a plain pair of links under the guide with the neighbouring titles,
-  since nothing should float over text on a small screen.
+Real `<a href>` links written by the build, so every guide gains two inbound
+links from its neighbours — which is what stops guides becoming orphans as the
+library grows past 300.
 
-They follow the library's own order, and the first and last guides correctly get
-only one arrow.
+## 3. All of it editable — Studio → Site → Text → The guide template
 
-These are real `<a href>` links written by the build, not a scripted control.
-That matters at 300+ guides: every guide now gains two more inbound links from
-its neighbours, and the guides nothing links to are the ones that never get
-found. "Read next" at the bottom is topical; this is sequential. Different jobs.
+```
+Fuller answer — the bar you tap to open it     Want the fuller answer?
+Heading above the suggested guides             Read next
+Previous-guide arrow — screen reader text      Previous
+Next-guide arrow — screen reader text          Next
+The two arrows — screen reader name            Previous and next guide
+```
 
-## Check after deploying
+These sit alongside the ones already there (the blue box label, the notepad
+badge). Change the bar to "The long version", "Tell me more", anything — it
+applies to every guide at once, old and new.
 
-1. A guide page: the longer version is folded, opens on tap, closes again.
-2. Arrows appear either side on desktop, as links underneath on a phone.
-3. First guide has only a next arrow; last has only a previous.
-4. `/guides/drinking-less-milk/` still loads (the redirect fix is still in).
+## 4. "How we write these" is editable too
 
-Tested here against your live repo: build clean, 0 errors, all 66 checks pass.
+Studio → Site → **How we write these**. Fourteen boxes: the page heading, the
+line under it, and the six sections with their headings and their words, every
+one pre-filled with exactly what is on the page now.
+
+It needed three things, all of which the codebase already documented:
+a `editorial` entry in `assets/js/site-text.js`, one line adding the page to
+Studio's list, and tags on the heading and intro in `editorial.html` — the only
+two strings on that page that were never marked editable.
+
+### Where the link should live — my recommendation
+
+**Keep it in the footer; do not add a sixth nav tab.** The nav carries the five
+things a tired parent needs at 3am, and a sixth item makes the mobile menu worse
+for everyone to serve a page most visitors will never open. It is already linked
+from the footer of every page, which is what search and answer engines actually
+look for.
+
+**One change worth making:** link it from the About page as well — that is where
+somebody goes when deciding whether to trust you. One line; say the word.
+
+---
+
+Tested against your live repo with the hotfix applied: build clean, 0 errors,
+all 66 checks pass, one h1, five h2s, five internal guide links, 631 words
+without JavaScript.
