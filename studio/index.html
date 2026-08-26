@@ -129,9 +129,12 @@
 <body>
 
 <!-- data + config for local/preview mode -->
-<script src="../assets/js/firebase-config.js"></script>
-<script src="../assets/js/guides.js?v=11"></script>
-<script src="../assets/js/site-text.js"></script>
+<script src="../assets/js/firebase-config.js?v=9c062a317d"></script>
+<!-- The bundled guide catalogue. Studio is an editing environment, so it is
+     the one surface that legitimately loads the complete content. It moved out
+     of assets/js/ when the public site stopped shipping it to readers. -->
+<script src="../data/guides-bundle.js"></script>
+<script src="../assets/js/site-text.js?v=72039504fc"></script>
 <script>
 /* ------------------------------------------------------------------------
    SAFETY NET — the "How we write these" fields.
@@ -1240,6 +1243,10 @@ function fillForm(g){
   syncDont();
   $("#f_quick").value = p.quick || "";
   longDraft = Array.isArray(g.longform) ? g.longform.map(r => ({ h:r.h||"", t:r.t||"" })) : [];
+  /* A guide with nothing written yet opens with one empty card, so the boxes
+     are there to type into rather than behind a button. Blank sections are
+     dropped on save, so this costs nothing if it goes unused. */
+  if(!longDraft.length && !(g.body && String(g.body).trim())) longDraft = [{ h:"", t:"" }];
   renderLongform();
   /* An old guide still has HTML prose and no sections: offer to convert it. */
   const hasLegacy = !longDraft.length && !!(g.body && String(g.body).trim());
@@ -1637,19 +1644,22 @@ let longDraft = [];
 function renderLongform(){
   const host = $("#f_long_list");
   if(!host) return;
+  /* Same card as the guide's three columns: a tagged panel, a labelled
+     Heading box, then a labelled text box. The only difference is that this
+     one takes prose rather than bullets, so the box is bigger and there is no
+     "one per line" hint to mislead. */
   host.innerHTML = longDraft.map((row, i) => `
-    <div class="slot" data-long="${i}" style="margin-bottom:10px">
-      <div class="rowbtns" style="justify-content:space-between;align-items:center">
-        <strong style="font-size:.9rem;opacity:.7">Section ${i+1}</strong>
-        <span>
-          <button class="btn sm ghost" type="button" data-lact="up"   ${i===0?"disabled":""}>&uarr;</button>
-          <button class="btn sm ghost" type="button" data-lact="down" ${i===longDraft.length-1?"disabled":""}>&darr;</button>
-          <button class="btn sm danger" type="button" data-lact="del">Remove</button>
-        </span>
-      </div>
-      <input type="text" data-lfield="h" placeholder="Section heading"
-             value="${esc(row.h||"")}" style="margin-bottom:6px">
-      <textarea rows="5" data-lfield="t" placeholder="The words. A blank line starts a new paragraph.">${esc(row.t||"")}</textarea>
+    <div class="col-card" data-long="${i}" style="margin-bottom:12px">
+      <span class="tag">\u00b6 Section ${i+1}</span>
+      <span style="float:right">
+        <button class="btn sm ghost" type="button" data-lact="up"   ${i===0?"disabled":""} title="Move up">&uarr;</button>
+        <button class="btn sm ghost" type="button" data-lact="down" ${i===longDraft.length-1?"disabled":""} title="Move down">&darr;</button>
+        <button class="btn sm danger" type="button" data-lact="del" title="Remove this section">Remove</button>
+      </span>
+      <div class="field"><label>Heading</label>
+        <input type="text" data-lfield="h" value="${esc(row.h||"")}"></div>
+      <div class="field"><label>The words <span class="hint">&mdash; a blank line starts a new paragraph</span></label>
+        <textarea data-lfield="t" rows="8">${esc(row.t||"")}</textarea></div>
     </div>`).join("") ||
     `<p class="hint">No sections yet. Add one, or leave it empty and the bar will not appear on the guide.</p>`;
 }

@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css?v=dcd2bfa4bf">
-<link rel="stylesheet" href="assets/css/style.css?v=23f4dcc071">
+<link rel="stylesheet" href="assets/css/style.css?v=3923130a64">
 <style>
   /* When the parent is searching, float the matches above the browse/age rows */
   .rows.searching{display:flex;flex-direction:column}
@@ -121,7 +121,7 @@
     <div class="row" id="topicRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">1</span><span data-mpc-text="row.topic">Browse by topic</span></p>
       <div class="row-body">
-        <div class="pills" id="topicPills"><!--MPC:PILLS:START--><button class="pill" type="button" data-topic="feeding" aria-pressed="false"><img src="/assets/img/icons/feeding.webp" alt="" aria-hidden="true"><span>Feeding</span></button><button class="pill" type="button" data-topic="sleeping" aria-pressed="false"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"><span>Sleeping</span></button><button class="pill" type="button" data-topic="development" aria-pressed="false"><img src="/assets/img/icons/development.webp" alt="" aria-hidden="true"><span>Development</span></button><button class="pill" type="button" data-topic="health" aria-pressed="false"><img src="/assets/img/icons/health.webp" alt="" aria-hidden="true"><span>Health</span></button><button class="pill" type="button" data-topic="sanity" aria-pressed="false"><img src="/assets/img/icons/sanity.webp" alt="" aria-hidden="true"><span>Parent Sanity</span></button><!--MPC:PILLS:END--></div>
+        <div class="pills" id="topicPills"><!--MPC:PILLS:START--><a class="pill" href="/topics/feeding/" data-topic="feeding" aria-pressed="false"><img src="/assets/img/icons/feeding.webp" alt="" aria-hidden="true"><span>Feeding</span></a><a class="pill" href="/topics/sleeping/" data-topic="sleeping" aria-pressed="false"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"><span>Sleeping</span></a><a class="pill" href="/topics/development/" data-topic="development" aria-pressed="false"><img src="/assets/img/icons/development.webp" alt="" aria-hidden="true"><span>Development</span></a><a class="pill" href="/topics/health/" data-topic="health" aria-pressed="false"><img src="/assets/img/icons/health.webp" alt="" aria-hidden="true"><span>Health</span></a><a class="pill" href="/topics/sanity/" data-topic="sanity" aria-pressed="false"><img src="/assets/img/icons/sanity.webp" alt="" aria-hidden="true"><span>Parent Sanity</span></a><!--MPC:PILLS:END--></div>
         <!-- Shown only on small screens, once step 1 is answered. -->
         <button class="pill row-summary" type="button" id="topicSummary" data-row="topic"
                 aria-controls="topicPills" aria-expanded="true"></button>
@@ -130,7 +130,7 @@
     <div class="row" id="ageRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">2</span><span data-mpc-text="row.age">How old is your little one?</span></p>
       <div class="row-body">
-        <div class="pills" id="agePills"><!--MPC:PILLS:START--><button class="pill pill--age" type="button" data-age="0–1 month" aria-pressed="false">0–1 month</button><button class="pill pill--age" type="button" data-age="2–3 months" aria-pressed="false">2–3 months</button><button class="pill pill--age" type="button" data-age="4–6 months" aria-pressed="false">4–6 months</button><button class="pill pill--age" type="button" data-age="7–9 months" aria-pressed="false">7–9 months</button><button class="pill pill--age" type="button" data-age="10–12 months" aria-pressed="false">10–12 months</button><button class="pill pill--age" type="button" data-age="12–18 months" aria-pressed="false">12–18 months</button><button class="pill pill--age" type="button" data-age="18–24 months" aria-pressed="false">18–24 months</button><!--MPC:PILLS:END--></div>
+        <div class="pills" id="agePills"><!--MPC:PILLS:START--><a class="pill pill--age" href="/ages/0-1-month/" data-age="0–1 month" aria-pressed="false">0–1 month</a><a class="pill pill--age" href="/ages/2-3-months/" data-age="2–3 months" aria-pressed="false">2–3 months</a><a class="pill pill--age" href="/ages/4-6-months/" data-age="4–6 months" aria-pressed="false">4–6 months</a><a class="pill pill--age" href="/ages/7-9-months/" data-age="7–9 months" aria-pressed="false">7–9 months</a><a class="pill pill--age" href="/ages/10-12-months/" data-age="10–12 months" aria-pressed="false">10–12 months</a><a class="pill pill--age" href="/ages/12-18-months/" data-age="12–18 months" aria-pressed="false">12–18 months</a><a class="pill pill--age" href="/ages/18-24-months/" data-age="18–24 months" aria-pressed="false">18–24 months</a><!--MPC:PILLS:END--></div>
         <button class="pill row-summary" type="button" id="ageSummary" data-row="age"
                 aria-controls="agePills" aria-expanded="true"></button>
       </div>
@@ -196,6 +196,6 @@
 <script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
 <script src="assets/js/mpc-catalogue.js?v=b92087110c" defer></script>
 
-<script src="assets/js/home.js?v=a520e7a579" defer></script>
+<script src="assets/js/home.js?v=36d8f757ed" defer></script>
 </body>
 </html>

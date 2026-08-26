@@ -33,6 +33,15 @@
 
 "use strict";
 
+/* Age labels contain an en-dash ("0–1 month"). Same slug the build uses, so a
+   pill's href and the generated page agree. */
+const ageSlug = (label) =>
+  String(label || "")
+    .toLowerCase()
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const esc = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;")
   .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -371,15 +380,31 @@ function applyBooks(html, books, img) {
 function applyPills(html, topics, ages, selected) {
   selected = selected || {};
 
+  /* ONE set of pills, and they are real links.
+
+     They used to be <button>s, and crawlers do not click buttons — so the
+     twelve topic and age landing pages had nothing pointing at them and a
+     second row of plain links had to be baked at the bottom of the page purely
+     to make them reachable. Two rows of the same thing, one of them there for
+     a machine.
+
+     As <a href> the pill is the link. The page script intercepts the click and
+     filters in place exactly as before, so the behaviour a reader gets is
+     unchanged — but a crawler follows it, and if the JavaScript ever fails the
+     click still lands on a working topic page instead of doing nothing.
+
+     aria-pressed stays, so the pressed styling and the screen-reader state are
+     the same as they were. */
   const topicPills = topics.map((t) =>
-    `<button class="pill" type="button" data-topic="${esc(t.id)}" aria-pressed="${t.id === selected.topic}">` +
-    `${t.iconHTML || ""}<span>${esc(t.label)}</span></button>`).join("");
+    `<a class="pill" href="/topics/${esc(t.id)}/" data-topic="${esc(t.id)}"` +
+    ` aria-pressed="${t.id === selected.topic}">` +
+    `${t.iconHTML || ""}<span>${esc(t.label)}</span></a>`).join("");
 
   const agePills = ages.map((a) =>
-    `<button class="pill pill--age" type="button" data-age="${esc(a)}" aria-pressed="${a === selected.age}">` +
-    `${esc(a)}</button>`).join("");
+    `<a class="pill pill--age" href="/ages/${esc(ageSlug(a))}/" data-age="${esc(a)}"` +
+    ` aria-pressed="${a === selected.age}">${esc(a)}</a>`).join("");
 
-  const bake = (id, markup) => new RegExp(
+  const bake = (id) => new RegExp(
     `(<div[^>]*\\bid="${id}"[^>]*>)(?:<!--MPC:PILLS:START-->[\\s\\S]*?<!--MPC:PILLS:END-->)?`);
 
   html = html.replace(bake("topicPills"),

@@ -21,7 +21,14 @@ const vm = require("vm");
 const { makeWindow, makeEl } = require("./dom-stub");
 
 const ROOT = path.resolve(__dirname, "..");
-const readJson = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
+/* A missing data file is the failure this suite exists to catch, so it has to
+   report it rather than die on a stack trace. */
+const MISSING = [];
+const readJson = (p) => {
+  const full = path.join(ROOT, p);
+  if (!fs.existsSync(full)) { MISSING.push(p); return { guides: [], text: {} }; }
+  return JSON.parse(fs.readFileSync(full, "utf8"));
+};
 const readJs = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
 
 let pass = 0, fail = 0;
@@ -55,6 +62,21 @@ async function main() {
   /* ---------------------------------------------------------------------
      1. The catalogue.
      ------------------------------------------------------------------ */
+  if (MISSING.length) {
+    console.log("\nGenerated data\n--------------");
+    for (const f of MISSING) {
+      check(`${f} was generated`, false,
+        "the browse pages fetch this by name; without it search and every " +
+        "filter quietly return nothing, and the page still looks fine");
+    }
+    console.log("\n" + "=".repeat(60));
+    console.log(`${pass} passed, ${fail} failed`);
+    failures.forEach(f => console.log("  \u2717 " + f));
+    console.log("=".repeat(60));
+    console.log("\nRun `npm run build` first — these files are its output.");
+    process.exit(1);
+  }
+
   console.log("\nCatalogue\n---------");
   const win = makeWindow({ json });
   win.MPC_FACETS = facets;
@@ -119,6 +141,20 @@ async function main() {
         `first was ${hits[0].id}`);
     }
   }
+  /* Typing letter by letter. "mil" must find the milk guides before the whole
+     word is there — that is what searching feels like to use, and it is a
+     prefix match on the title, so it has to work from the index alone before
+     the search text has even loaded. */
+  const TYPING = [["m", 2], ["mi", 2], ["mil", 1], ["milk", 1]];
+  for (const [q, atLeast] of TYPING) {
+    const hits = C.search(q, {});
+    check(`Typing "${q}" returns results`, hits.length >= atLeast,
+      `${hits.length} hits`);
+  }
+  check('Typing "mil" surfaces a milk guide first',
+    /milk/i.test((C.search("mil", {})[0] || {}).title || ""),
+    (C.search("mil", {})[0] || {}).title);
+
   check("A nonsense query returns nothing",
     C.search("qwertyuiop", {}).length === 0);
   check("Search and filter combine",
@@ -131,6 +167,29 @@ async function main() {
   check("A card built in the browser matches the one baked into the page",
     guidesHtml.includes(card.split("\n")[0]),
     card.split("\n")[0].slice(0, 90));
+
+  for (const f of MISSING) {
+    check(`${f} was generated`, false,
+      "the browse pages fetch this by name; without it search and every filter " +
+      "quietly return nothing, and the page still looks fine");
+  }
+
+  /* The failure that took search down: guides.html shipped as the Stage 2
+     page while the build was still the older one, so /data/guide-index.json
+     was never written. The fetch 404s, the catalogue falls back to an empty
+     list — deliberately, so a failed fetch costs filtering rather than the
+     page — and every query and every pill quietly returns nothing.
+
+     Nothing about that looks broken from the outside, which is why it went
+     unnoticed. So: assert the files the pages ask for are actually there. */
+  {
+    const pages = ["index.html", "guides.html"];
+    const needsIndex = pages.filter(f =>
+      /mpc-catalogue\.js/.test(fs.readFileSync(path.join(ROOT, f), "utf8")));
+    check("Pages that fetch the index only ship when the build writes it",
+      !needsIndex.length || fs.existsSync(path.join(ROOT, "data/guide-index.json")),
+      `${needsIndex.join(", ")} load the catalogue but no index exists`);
+  }
 
   /* ---------------------------------------------------------------------
      2. The page scripts — do they run at all.
@@ -192,6 +251,26 @@ async function main() {
       w.byId.resultsCount.textContent);
   } catch (e) {
     check("guides-search.js runs without throwing", false, e.message);
+  }
+
+  /* Arriving from the Popular page's search box, which submits to
+     guides.html?q=... rather than filtering in place. That is the journey a
+     reader actually takes when they type into it, so it gets its own test. */
+  try {
+    const w = pageWindow(["grid", "resultsTitle", "resultsCount", "resetBtn",
+      "q", "searchForm", "topicRow", "ageRow", "topicSummary", "ageSummary", "year"]);
+    w.location = { search: "?q=fev", pathname: "/guides.html" };
+    vm.runInContext(readJs("assets/js/guides-search.js"), w);
+    for (let i = 0; i < 8; i++) await tick();
+    check('Arriving with ?q=fev prefills the box', w.byId.q.value === "fev");
+    check('Arriving with ?q=fev renders matches',
+      /class="card"/.test(w.byId.grid.innerHTML),
+      w.byId.grid.innerHTML.slice(0, 80) || "(empty)");
+    check('Arriving with ?q=fev finds the fever guide',
+      /fever/i.test(w.byId.grid.innerHTML),
+      (w.byId.grid.innerHTML.match(/<h3>([^<]*)<\/h3>/g) || []).slice(0, 2).join(" | "));
+  } catch (e) {
+    check("The ?q= journey works", false, e.message);
   }
 
   /* Popular — should do nothing when the grids are already baked. */

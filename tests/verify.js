@@ -164,8 +164,18 @@ section("Crawlable links and honesty checks");
   check("Every guide is linked from /guides.html", orphans.length === 0,
     `${orphans.length} orphaned: ${orphans.slice(0, 3).map(g => g.id).join(", ")}`);
 
-  check("Topic landing pages are linked", /href="\/topics\//.test(guidesHtml));
-  check("Age landing pages are linked", /href="\/ages\//.test(guidesHtml));
+  /* The landing pages used to be reachable only through a second row of plain
+     links baked at the bottom of the page, because the filter pills were
+     <button>s and a crawler cannot follow a button. The pills are <a href> now
+     and are the only links needed — so this checks the PILLS carry them, which
+     is what makes the extra row safe to delete. */
+  const topicPillLinks = (guidesHtml.match(/<a class="pill"[^>]*href="\/topics\//g) || []).length;
+  const agePillLinks = (guidesHtml.match(/<a class="pill pill--age"[^>]*href="\/ages\//g) || []).length;
+  check("Topic landing pages are linked from the filter pills", topicPillLinks > 0,
+    `${topicPillLinks} found`);
+  check("Age landing pages are linked from the filter pills", agePillLinks > 0,
+    `${agePillLinks} found`);
+  check("No duplicated second row of browse links", !/class="browse-links"/.test(guidesHtml));
 
   /* No guide has a real date yet, so no page may claim one. */
   let invented = 0;
@@ -531,6 +541,12 @@ section("Performance architecture");
       const name = f.replace(".html", "");
       check(`${name}: filter pills are in the HTML`,
         (html.match(/class="pill(?: pill--age)?"/g) || []).length >= 10);
+      /* The collapsed row summary is itself a .pill and is legitimately a
+         button — it opens a row, it does not go anywhere. Only the filter
+         pills need to be links. */
+      check(`${name}: every filter pill is a followable link`,
+        (html.match(/<a class="pill[^>]*data-(?:topic|age)=/g) || []).length >= 10 &&
+        !/<button[^>]*class="pill"[^>]*data-(?:topic|age)=/.test(html));
       check(`${name}: facet counts are inline, not fetched`,
         /window\.MPC_FACETS=/.test(html));
     }

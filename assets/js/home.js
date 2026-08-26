@@ -139,8 +139,13 @@
     var sum = e.target.closest(".row-summary");
     if (sum) { openRow[sum.dataset.row] = true; syncRows(); return; }
 
+    /* The pills are real links now, so a crawler can follow them and the
+       twelve landing pages are reachable without a second row of them baked at
+       the bottom of the page. Intercept the click and filter in place; if this
+       script ever fails to run, the click falls through to the topic page. */
     var btn = e.target.closest(".pill");
     if (!btn) return;
+    if (btn.tagName === "A") e.preventDefault();
     if (btn.dataset.topic) { topic = (topic === btn.dataset.topic) ? null : btn.dataset.topic; openRow.topic = false; }
     if (btn.dataset.age) { age = (age === btn.dataset.age) ? null : btn.dataset.age; openRow.age = false; }
     document.querySelectorAll("[data-topic]").forEach(function (b) {
