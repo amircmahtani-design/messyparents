@@ -1,15 +1,40 @@
-# Netlify cache rules. Images, fonts and icons never change without changing
-# their filename, so they can be cached hard. HTML must not be, or a deploy
-# would not reach anyone who had visited before.
+# Netlify cache rules.
+#
+# Images, fonts and icons never change without changing their filename, so they
+# can be cached hard. HTML must not be, or a deploy would not reach anyone who
+# had visited before.
 
 /assets/img/*
   Cache-Control: public, max-age=31536000, immutable
 
+# CSS and JS used to be cached for a week with hand-maintained ?v=11 query
+# strings, which had already drifted out of step between pages (guides.js was
+# ?v=9 on four pages and ?v=10 on two). Every reference is now stamped by
+# scripts/build.js with a hash of the file's actual contents, so the URL
+# changes if and only if the file does. That makes a year safe: a returning
+# reader re-downloads a stylesheet only when it has genuinely changed, and gets
+# the new one immediately when it has, with no version bump to remember.
 /assets/css/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=31536000, immutable
 
 /assets/js/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=31536000, immutable
+
+# The generated public data files. These are NOT fingerprinted — the pages
+# fetch them by a fixed name — so they must revalidate, or a newly published
+# guide would be missing from search until a browser cache expired.
+#
+# stale-while-revalidate is what makes that cheap: the browser uses its copy
+# immediately and refreshes it in the background, so a search never waits for
+# the network but is never far behind either.
+/data/*.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
+
+# The build-time fallback catalogue. Not referenced by any public page — only
+# by the Netlify build and by Studio — but it is in the published tree, so it
+# is explicitly kept out of the index.
+/data/guides-bundle.js
+  X-Robots-Tag: noindex, nofollow
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
@@ -54,3 +79,13 @@
 
 /editor/*
   X-Robots-Tag: noindex, nofollow
+
+# Illustration reference sheets: 20MB of source material for the
+# image-generation pipeline, fetched by Studio and by the Netlify functions
+# from the deployed origin, so they cannot simply be deleted without breaking
+# generation. No public page requests them and nothing should index them.
+# Studio has a tool to move them to Firebase Storage; until that is run, this
+# at least keeps them out of search results.
+/assets/img/refs/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=31536000, immutable

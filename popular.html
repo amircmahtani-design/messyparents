@@ -20,13 +20,10 @@
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Guide illustrations are served from Firebase Storage; opening the
-     connection early saves the handshake when the first one is needed. -->
-<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/style.css?v=11">
+<link rel="stylesheet" href="assets/css/tokens.css?v=dcd2bfa4bf">
+<link rel="stylesheet" href="assets/css/style.css?v=23f4dcc071">
 <!-- MPC:SEO:START -->
 <title>Popular guides — The Messy Parents Collection</title>
 <meta name="description" content="The parenting questions we get asked most.">
@@ -44,6 +41,7 @@
 <meta name="twitter:description" content="The parenting questions we get asked most.">
 <meta name="twitter:image" content="https://themessyparentscollection.com/assets/img/family.webp">
 <!-- MPC:SEO:END -->
+<!-- MPC:FACETS:START --><script>window.MPC_FACETS={"topics":[{"id":"feeding","label":"Feeding"},{"id":"sleeping","label":"Sleeping"},{"id":"development","label":"Development"},{"id":"health","label":"Health"},{"id":"sanity","label":"Parent Sanity"}],"ages":["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"],"icons":{"feeding":"<img src=\"/assets/img/icons/feeding.webp\" alt=\"\" aria-hidden=\"true\">","sleeping":"<img src=\"/assets/img/icons/sleeping.webp\" alt=\"\" aria-hidden=\"true\">","development":"<img src=\"/assets/img/icons/development.webp\" alt=\"\" aria-hidden=\"true\">","health":"<img src=\"/assets/img/icons/health.webp\" alt=\"\" aria-hidden=\"true\">","sanity":"<img src=\"/assets/img/icons/sanity.webp\" alt=\"\" aria-hidden=\"true\">"},"counts":{"topic":{"feeding":8,"sleeping":8,"development":4,"health":8,"sanity":3},"age":{"0–1 month":22,"2–3 months":24,"4–6 months":18,"7–9 months":13,"10–12 months":8,"12–18 months":6,"18–24 months":4}},"total":31};window.MPC_T={};</script><!-- MPC:FACETS:END -->
 </head>
 <body data-mpc-page="popular">
 <a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
@@ -74,7 +72,7 @@
       </form>
     </div>
     <div class="page-hero-art">
-      <img id="pageHeroImg" data-default="assets/img/family.webp" alt="A happy, well-loved family" width="1000" height="747" fetchpriority="high" decoding="async">
+      <img id="pageHeroImg" data-default="assets/img/family.webp" alt="A happy, well-loved family" width="1000" height="747" class="ready" src="assets/img/family.webp" data-src-original="assets/img/family.webp" loading="eager" fetchpriority="high" decoding="async">
     </div>
   </section>
 
@@ -192,32 +190,9 @@
   </div>
 </footer>
 
-<script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/guides.js?v=9"></script>
-<script src="assets/js/mpc-store.js?v=10"></script>
-<script>/* The Studio-edited copyright line writes its own year, so this span
-   may already be gone by the time this runs. */
-var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();</script>
+<script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
+<script src="assets/js/mpc-catalogue.js?v=b92087110c" defer></script>
 
-<script>
-// Apply the hero image + title fast (doesn't need the full guides list).
-MPCStore.pagesReady.then(function(){ MPCStore.applyPage("popular"); });
-
-MPCStore.ready.then(function(){
-  /* Both grids are written into the HTML by the Netlify build, so they are
-     already correct on arrival in the normal case. gridAlreadyCorrect() checks
-     that and leaves the DOM alone rather than rebuilding it. */
-  const feat = GUIDES.filter(g => g.featured);
-  const featEl = document.getElementById("featured");
-  if(!(window.gridAlreadyCorrect && gridAlreadyCorrect(featEl, feat)))
-    featEl.innerHTML = feat.map(cardHTML).join("");
-
-  const seen = new Set(feat.map(g => g.id));
-  const one = TOPICS.map(t => GUIDES.find(g => g.topic === t.id && !seen.has(g.id))).filter(Boolean);
-  const oneEl = document.getElementById("byTopic");
-  if(!(window.gridAlreadyCorrect && gridAlreadyCorrect(oneEl, one)))
-    oneEl.innerHTML = one.map(cardHTML).join("");
-});
-</script>
+<script src="assets/js/popular.js?v=e94f9c1d81" defer></script>
 </body>
 </html>

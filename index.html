@@ -20,13 +20,10 @@
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Guide illustrations are served from Firebase Storage; opening the
-     connection early saves the handshake when the first one is needed. -->
-<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/style.css?v=11">
+<link rel="stylesheet" href="assets/css/tokens.css?v=dcd2bfa4bf">
+<link rel="stylesheet" href="assets/css/style.css?v=23f4dcc071">
 <style>
   /* When the parent is searching, float the matches above the browse/age rows */
   .rows.searching{display:flex;flex-direction:column}
@@ -83,6 +80,7 @@
 <meta name="twitter:image" content="https://themessyparentscollection.com/assets/img/family.webp">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://themessyparentscollection.com/#organization","name":"The Messy Parents Collection","url":"https://themessyparentscollection.com/","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","logo":{"@type":"ImageObject","url":"https://themessyparentscollection.com/assets/img/logo.png","caption":"The Messy Parents Collection"}},{"@type":"WebSite","@id":"https://themessyparentscollection.com/#website","url":"https://themessyparentscollection.com/","name":"The Messy Parents Collection","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","inLanguage":"en","publisher":{"@id":"https://themessyparentscollection.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://themessyparentscollection.com/guides.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}]}</script>
 <!-- MPC:SEO:END -->
+<!-- MPC:FACETS:START --><script>window.MPC_FACETS={"topics":[{"id":"feeding","label":"Feeding"},{"id":"sleeping","label":"Sleeping"},{"id":"development","label":"Development"},{"id":"health","label":"Health"},{"id":"sanity","label":"Parent Sanity"}],"ages":["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"],"icons":{"feeding":"<img src=\"/assets/img/icons/feeding.webp\" alt=\"\" aria-hidden=\"true\">","sleeping":"<img src=\"/assets/img/icons/sleeping.webp\" alt=\"\" aria-hidden=\"true\">","development":"<img src=\"/assets/img/icons/development.webp\" alt=\"\" aria-hidden=\"true\">","health":"<img src=\"/assets/img/icons/health.webp\" alt=\"\" aria-hidden=\"true\">","sanity":"<img src=\"/assets/img/icons/sanity.webp\" alt=\"\" aria-hidden=\"true\">"},"counts":{"topic":{"feeding":8,"sleeping":8,"development":4,"health":8,"sanity":3},"age":{"0–1 month":22,"2–3 months":24,"4–6 months":18,"7–9 months":13,"10–12 months":8,"12–18 months":6,"18–24 months":4}},"total":31};window.MPC_T={};</script><!-- MPC:FACETS:END -->
 </head>
 <body data-mpc-page="home">
 <a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
@@ -114,7 +112,7 @@
         </form>
       </div>
       <div class="hero-art rise">
-        <img id="pageHeroImg" data-default="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747" fetchpriority="high" decoding="async">
+        <img id="pageHeroImg" data-default="assets/img/family.webp" alt="Two tired parents and a delighted baby on a well-loved sofa" width="1000" height="747" class="ready" src="assets/img/family.webp" data-src-original="assets/img/family.webp" loading="eager" fetchpriority="high" decoding="async">
       </div>
     </div>
   </section>
@@ -123,7 +121,7 @@
     <div class="row" id="topicRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">1</span><span data-mpc-text="row.topic">Browse by topic</span></p>
       <div class="row-body">
-        <div class="pills" id="topicPills"></div>
+        <div class="pills" id="topicPills"><!--MPC:PILLS:START--><button class="pill" type="button" data-topic="feeding" aria-pressed="false"><img src="/assets/img/icons/feeding.webp" alt="" aria-hidden="true"><span>Feeding</span></button><button class="pill" type="button" data-topic="sleeping" aria-pressed="false"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"><span>Sleeping</span></button><button class="pill" type="button" data-topic="development" aria-pressed="false"><img src="/assets/img/icons/development.webp" alt="" aria-hidden="true"><span>Development</span></button><button class="pill" type="button" data-topic="health" aria-pressed="false"><img src="/assets/img/icons/health.webp" alt="" aria-hidden="true"><span>Health</span></button><button class="pill" type="button" data-topic="sanity" aria-pressed="false"><img src="/assets/img/icons/sanity.webp" alt="" aria-hidden="true"><span>Parent Sanity</span></button><!--MPC:PILLS:END--></div>
         <!-- Shown only on small screens, once step 1 is answered. -->
         <button class="pill row-summary" type="button" id="topicSummary" data-row="topic"
                 aria-controls="topicPills" aria-expanded="true"></button>
@@ -132,7 +130,7 @@
     <div class="row" id="ageRow">
       <p class="eyebrow"><span class="step" aria-hidden="true">2</span><span data-mpc-text="row.age">How old is your little one?</span></p>
       <div class="row-body">
-        <div class="pills" id="agePills"></div>
+        <div class="pills" id="agePills"><!--MPC:PILLS:START--><button class="pill pill--age" type="button" data-age="0–1 month" aria-pressed="false">0–1 month</button><button class="pill pill--age" type="button" data-age="2–3 months" aria-pressed="false">2–3 months</button><button class="pill pill--age" type="button" data-age="4–6 months" aria-pressed="false">4–6 months</button><button class="pill pill--age" type="button" data-age="7–9 months" aria-pressed="false">7–9 months</button><button class="pill pill--age" type="button" data-age="10–12 months" aria-pressed="false">10–12 months</button><button class="pill pill--age" type="button" data-age="12–18 months" aria-pressed="false">12–18 months</button><button class="pill pill--age" type="button" data-age="18–24 months" aria-pressed="false">18–24 months</button><!--MPC:PILLS:END--></div>
         <button class="pill row-summary" type="button" id="ageSummary" data-row="age"
                 aria-controls="agePills" aria-expanded="true"></button>
       </div>
@@ -195,146 +193,9 @@
   </div>
 </footer>
 
-<script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/guides.js?v=9"></script>
-<script src="assets/js/mpc-store.js?v=10"></script>
-<script>/* The Studio-edited copyright line writes its own year, so this span
-   may already be gone by the time this runs. */
-var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();</script>
+<script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
+<script src="assets/js/mpc-catalogue.js?v=b92087110c" defer></script>
 
-<script>
-// Apply the editable hero image fast (doesn't need the full guides list).
-MPCStore.pagesReady.then(function(){ MPCStore.applyPage("home"); });
-
-MPCStore.ready.then(function(){
-  const CAP = 4;
-  const grid=document.getElementById("grid"), title=document.getElementById("resultsTitle"),
-        hint=document.getElementById("resultsHint"), reset=document.getElementById("resetBtn"),
-        more=document.getElementById("seeAll"), form=document.getElementById("heroSearch"),
-        input=document.getElementById("heroQ");
-  const topicRow=document.getElementById("topicRow"), ageRow=document.getElementById("ageRow"),
-        topicSummary=document.getElementById("topicSummary"),
-        ageSummary=document.getElementById("ageSummary");
-  let topic=null, age=null, q="";
-
-  /* A collapsed row only re-opens when the parent taps its summary line to
-     change that choice; picking a value closes it again. */
-  const openRow = {topic:false, age:false};
-
-  document.getElementById("topicPills").innerHTML = TOPICS.map(t =>
-    `<button class="pill" type="button" data-topic="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join("");
-  document.getElementById("agePills").innerHTML = AGES.map(a =>
-    `<button class="pill pill--age" type="button" data-age="${a}" aria-pressed="false">${a}</button>`).join("");
-
-  function describe(n){
-    const bits = [];
-    if(q) bits.push("\u201c" + q + "\u201d");
-    if(topic) bits.push(topicById(topic).label);
-    if(age) bits.push(age);
-    return n + " guide" + (n===1?"":"s") + " for " + bits.join(", ");
-  }
-
-  const plural = n => n + " guide" + (n===1 ? "" : "s");
-
-  function fillSummary(btn, icon, label, n){
-    btn.innerHTML = (icon || "")
-      + `<span class="rs-label">${MPCStore.esc(label)}</span>`
-      + `<span class="rs-count">&middot; ${plural(n)}</span>`
-      + `<span class="rs-change">${MPCStore.esc(MPCStore.t("results.change", "Change"))}</span>`;
-  }
-
-  /* Collapse an answered step down to one line, so the guides move up into
-     view without anything sliding out from under the finger. The counts are
-     the full match totals, not the four that fit in the grid. */
-  function syncRows(){
-    const showTopic = !topic || openRow.topic;
-    if(topic){
-      const t = topicById(topic);
-      fillSummary(topicSummary, t.icon, t.label, searchGuides(q, {topic}).length);
-    }
-    topicRow.classList.toggle("is-collapsed", !showTopic);
-    topicSummary.setAttribute("aria-expanded", String(showTopic));
-
-    const showAge = !age || openRow.age;
-    if(age) fillSummary(ageSummary, "", age, searchGuides(q, {topic, age}).length);
-    ageRow.classList.toggle("is-collapsed", !showAge);
-    ageSummary.setAttribute("aria-expanded", String(showAge));
-  }
-
-  function render(flash){
-    const active = q || topic || age;
-    document.querySelector(".rows").classList.toggle("searching", !!q);   // matches jump to top while typing
-    document.body.classList.toggle("filtering-active", !!active);         // drop the hero art on phones
-    const list = active ? searchGuides(q, {topic, age}) : GUIDES.filter(g => g.featured);
-    const shown = list.slice(0, CAP);
-    title.textContent = q ? MPCStore.t("results.search", "Closest matches")
-      : (active ? MPCStore.t("results.filtered", "Matching guides")
-                : MPCStore.t("results.default", "Popular guides"));
-    reset.hidden = !active;
-    hint.textContent = active ? describe(list.length) : "";
-
-    if(list.length > CAP){
-      const pr = new URLSearchParams();
-      if(q) pr.set("q", q);
-      if(topic) pr.set("topic", topic);
-      if(age) pr.set("age", age);
-      more.href = "guides.html?" + pr.toString();
-      more.textContent = MPCStore.t("results.seeAll", "See all {n} \u2192")
-        .replace(/\{n\}/g, list.length);
-      more.hidden = false;
-    } else { more.hidden = true; }
-
-    /* The build already wrote these exact cards into the HTML. Rebuilding
-       them would discard a correct DOM and reflow the page for nothing. */
-    if(window.gridAlreadyCorrect && gridAlreadyCorrect(grid, shown)) return;
-    grid.innerHTML = shown.length ? shown.map(cardHTML).join("")
-      : `<div class="empty"><p><strong>${MPCStore.esc(MPCStore.t("empty.title", "Nothing matches that yet."))}</strong></p>
-         <p>${MPCStore.inline(MPCStore.t("empty.body", "Try a single word, or [browse all guides](guides.html)."))}</p></div>`;
-
-    if(flash){ grid.classList.remove("updated"); void grid.offsetWidth; grid.classList.add("updated"); }
-    syncRows();
-  }
-
-  document.addEventListener("click", e => {
-    // The summary line is itself a .pill, so deal with it before the pills.
-    const sum = e.target.closest(".row-summary");
-    if(sum){ openRow[sum.dataset.row] = true; syncRows(); return; }
-
-    const btn = e.target.closest(".pill");
-    if(!btn) return;
-    if(btn.dataset.topic){ topic = (topic===btn.dataset.topic) ? null : btn.dataset.topic; openRow.topic = false; }
-    if(btn.dataset.age)  { age   = (age===btn.dataset.age)     ? null : btn.dataset.age;   openRow.age   = false; }
-    document.querySelectorAll("[data-topic]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.topic===topic)));
-    document.querySelectorAll("[data-age]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.age===age)));
-    render(true);
-  });
-
-  input.addEventListener("input", () => { q = input.value.trim(); render(true); });
-  form.addEventListener("submit", e => { e.preventDefault(); q = input.value.trim(); render(true); });
-
-  reset.addEventListener("click", () => {
-    topic = age = null; q = ""; input.value = "";
-    openRow.topic = openRow.age = false;
-    document.querySelectorAll(".pill").forEach(b=>b.setAttribute("aria-pressed","false"));
-    render(false);
-    input.focus();
-  });
-
-  render(false);
-
-  // Studio edits (and a slow data load) fire this; redraw so the scripted
-  // strings above pick up the new wording without a refresh.
-  window.addEventListener("mpc:textchange", function(){ render(false); setPlaceholder(); });
-
-  // the long placeholder gets cut off on phones
-  const setPlaceholder = () => {
-    input.placeholder = window.innerWidth < 620
-      ? MPCStore.t("search.placeholderShort", "Search the guides\u2026")
-      : MPCStore.t("search.placeholder", "What do you need help with?");
-  };
-  setPlaceholder();
-  window.addEventListener("resize", setPlaceholder);
-});
-</script>
+<script src="assets/js/home.js?v=a520e7a579" defer></script>
 </body>
 </html>
