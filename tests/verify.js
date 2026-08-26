@@ -18,6 +18,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const zlib = require("zlib");
 
 const ROOT = path.resolve(__dirname, "..");
 const R = require("../assets/js/guide-render.js");
@@ -36,21 +37,31 @@ function section(title) { console.log("\n" + title + "\n" + "-".repeat(title.len
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 const readIf = (rel) => exists(rel) ? fs.readFileSync(path.join(ROOT, rel), "utf8") : null;
 
-/* Load the bundled guides the same way the site does. */
+/* The bundled catalogue, from its build-time-only home. It used to be
+   assets/js/guides.js, which was also the public site's UI layer and had to be
+   evaluated inside a fake DOM. It is data now, so require() is enough. */
 function loadClient() {
-  const src = fs.readFileSync(path.join(ROOT, "assets/js/guides.js"), "utf8");
+  delete require.cache[require.resolve("../data/guides-bundle.js")];
+  return require("../data/guides-bundle.js");
+}
+
+/* The card renderer the browser uses, lifted out of mpc-catalogue.js and run
+   against the same facet shape the build writes inline. If this and the
+   build's cardHTML ever drift, the baked-hash handshake fails and every grid
+   silently rebuilds and reorders itself on every single visit. */
+function loadBrowserCardRenderer(topics, icons) {
+  const src = fs.readFileSync(path.join(ROOT, "assets/js/mpc-catalogue.js"), "utf8");
   const ctx = {
-    console,
-    document: {
-      addEventListener() {}, querySelector() { return null; },
-      querySelectorAll() { return []; },
-      documentElement: { style: { setProperty() {} } }
+    console, fetch: () => Promise.reject(new Error("no network in verify")),
+    MPC_FACETS: {
+      topics: topics.map(t => ({ id: t.id, label: t.label })),
+      ages: [], icons, counts: { topic: {}, age: {} }, total: 0
     }
   };
   ctx.window = ctx;
   vm.createContext(ctx);
   vm.runInContext(src, ctx, { timeout: 5000 });
-  return ctx;
+  return ctx.MPC.catalogue;
 }
 
 const client = loadClient();
@@ -65,9 +76,16 @@ const GUIDES = client.GUIDES;
    ======================================================================== */
 section("Card markup parity (build vs browser)");
 {
+  const browser = loadBrowserCardRenderer(client.TOPICS, client.ICONS);
   let mismatches = 0, sample = "";
   for (const g of GUIDES) {
-    const fromClient = client.cardHTML(g);
+    /* The browser now draws from the generated index, not from the guide
+       document, so it is given only the fields the index actually carries.
+       That is the real test: if cardHTML needed something the index does not
+       ship, this is where it shows up. */
+    const fromClient = browser.cardHTML({
+      id: g.id, slug: g.slug, title: g.title, topic: g.topic, read: g.read
+    });
     const fromBuild = R.cardHTML(g, {
       iconHTML: client.ICONS[g.topic] || client.ICONS.feeding,
       topicLabel: (id) => client.topicById(id).label
@@ -262,7 +280,7 @@ section("Sitemap, robots, redirects");
     red.trim().split("\n").filter(l => l.trim() && !l.trim().startsWith("#")).pop()
       .includes("/guide.html  200"));
   check("A guide that does not exist marks itself noindex",
-    /noindex, follow/.test(readIf("assets/js/guide-page.js") || ""));
+    /noindex, follow/.test(readIf("assets/js/guide.js") || ""));
 
   const llms = readIf("llms.txt") || "";
   check("llms.txt exists and lists guides", llms.includes("## Guides") &&
@@ -304,6 +322,308 @@ section("Hand-written pages");
   check("Home page carries Organization + WebSite schema",
     /"Organization"/.test(idx) && /"WebSite"/.test(idx));
   check("Home page grid has real cards", (idx.match(/class="card"/g) || []).length >= 4);
+}
+
+/* ==========================================================================
+   8. PERFORMANCE ARCHITECTURE
+
+   These are the checks that stop this work being undone by accident. Every one
+   of them describes something that used to be true and must never be true
+   again — most importantly, that opening one guide downloaded the complete
+   text of every guide.
+
+   They are cheap, they read what the build actually wrote, and they fail
+   loudly rather than degrading quietly, because the failure mode here is
+   invisible: the site still works, it is just slow again.
+   ======================================================================== */
+section("Performance architecture");
+{
+  const PUBLIC_PAGES = [
+    "index.html", "guides.html", "popular.html", "about.html",
+    "books.html", "editorial.html", "404.html", "guide.html"
+  ];
+  const GENERATED = [];
+  for (const g of GUIDES.slice(0, 5)) {
+    const f = path.join("guides", (g.seo && g.seo.slug) || g.id, "index.html");
+    if (exists(f)) GENERATED.push(f);
+  }
+  const topicSample = fs.existsSync(path.join(ROOT, "topics"))
+    ? fs.readdirSync(path.join(ROOT, "topics")).slice(0, 2)
+        .map(d => path.join("topics", d, "index.html")).filter(exists)
+    : [];
+  const ALL = PUBLIC_PAGES.concat(GENERATED, topicSample);
+
+  /* ---- the headline rule ---------------------------------------------- */
+  {
+    /* The bundled catalogue is 109KB at 31 guides and would be well over a
+       megabyte at 500. No public page may reference it — only the Node build
+       and the two editing surfaces, which are noindexed. */
+    const offenders = ALL.filter(f => {
+      const html = readIf(f) || "";
+      return /src="[^"]*(?:assets\/js\/guides\.js|guides-bundle\.js)/.test(html);
+    });
+    check("No public page ships the complete guide catalogue",
+      offenders.length === 0, offenders.join(", "));
+  }
+
+  {
+    /* The Firebase SDK is ~300KB from gstatic and used to be booted on every
+       page by mpc-store.js, purely to read data that was already in the HTML. */
+    const offenders = ALL.filter(f => {
+      const html = readIf(f) || "";
+      return /mpc-store\.js|firebase-config\.js|firebasejs\/|firebase-app\.js/.test(html);
+    });
+    check("No public page loads the Firebase SDK or the CMS data layer",
+      offenders.length === 0, offenders.join(", "));
+  }
+
+  {
+    /* A whole-collection read is the thing that does not scale: it is one
+       request that grows with the library, on a page that needs one document. */
+    const runtime = ["assets/js/mpc-runtime.js", "assets/js/mpc-catalogue.js",
+      "assets/js/guide.js", "assets/js/home.js", "assets/js/guides-search.js",
+      "assets/js/popular.js"];
+    const offenders = runtime.filter(f => {
+      const js = readIf(f) || "";
+      return /getDocs\s*\(|collection\s*\(\s*db|documents\/guides\?|:runQuery[\s\S]{0,400}collectionId/.test(js)
+        && !/limit"?\s*:\s*1/.test(js);
+    });
+    check("No public script performs a whole-collection Firestore read",
+      offenders.length === 0, offenders.join(", "));
+  }
+
+  {
+    /* Studio's preview shim is the DOM half of the old data layer. It is
+       legitimate, but only inside an iframe Studio controls. */
+    const offenders = ALL.filter(f => /mpc-preview\.js/.test(readIf(f) || ""));
+    check("The Studio preview shim is not referenced by a public page",
+      offenders.length === 0, offenders.join(", "));
+  }
+
+  /* ---- a guide page must be self-sufficient ---------------------------- */
+  {
+    let heavy = 0, noFs = 0, sample = "";
+    for (const f of GENERATED) {
+      const html = readIf(f) || "";
+      const srcs = [...html.matchAll(/<script[^>]*\bsrc="([^"]+)"/g)].map(m => m[1]);
+      /* Two files: the shared runtime and the guide behaviour. The renderer is
+         fetched on demand and a generated page never needs it. */
+      if (srcs.length > 2) { heavy++; if (!sample) sample = `${f}: ${srcs.join(" ")}`; }
+      if (!/window\.MPC_GUIDE_ID/.test(html)) noFs++;
+    }
+    check("A generated guide page loads at most two scripts", heavy === 0, sample);
+    check("Every generated guide page knows its own id", noFs === 0, `${noFs} do not`);
+
+    /* Budgeted on transferred bytes, because that is what a phone on a train
+       actually waits for. These files are heavily commented on purpose — the
+       comments explain why the old architecture was wrong — and comments
+       compress to almost nothing.
+
+       The number that matters is not the absolute size but that it is now a
+       CONSTANT. It was ~158KB uncompressed and grew with every guide added. */
+    let raw = 0, gz = 0;
+    for (const f of ["assets/js/mpc-runtime.js", "assets/js/guide.js"]) {
+      const src = readIf(f) || "";
+      raw += Buffer.byteLength(src);
+      gz += zlib.gzipSync(Buffer.from(src), { level: 9 }).length;
+    }
+    check(`Guide-page JS transfers under 12KB gzipped (${(gz / 1024).toFixed(1)}KB, ` +
+      `${(raw / 1024).toFixed(1)}KB raw)`, gz < 12 * 1024, `${gz} bytes gzipped`);
+
+    /* The renderer is 16KB and a generated page must never need it. */
+    check("The renderer is not on the critical path of a guide page",
+      GENERATED.every(f => !/<script[^>]*src="[^"]*guide-render\.js/.test(readIf(f) || "")));
+  }
+
+  /* ---- the generated data files ---------------------------------------- */
+  {
+    const idxRaw = readIf("data/guide-index.json");
+    const searchRaw = readIf("data/guide-search.json");
+    check("data/guide-index.json is generated", !!idxRaw);
+    check("data/guide-search.json is generated", !!searchRaw);
+
+    if (idxRaw && searchRaw) {
+      const idx = JSON.parse(idxRaw);
+      const srch = JSON.parse(searchRaw);
+      const live = GUIDES.filter(g => !(g.seo && g.seo.noindex));
+
+      check("The index contains every indexable guide",
+        idx.guides.length === live.length,
+        `${idx.guides.length} indexed vs ${live.length} guides`);
+
+      /* The whole point of the split. If a body ever leaks in here, the
+         browse pages are back to downloading the library. */
+      const FORBIDDEN = ["body", "panel", "callout", "originalQuestions",
+        "sources", "medical", "seo", "references"];
+      const leaked = new Set();
+      for (const row of idx.guides) {
+        for (const k of Object.keys(row)) if (FORBIDDEN.includes(k)) leaked.add(k);
+      }
+      check("The index carries no article content", leaked.size === 0,
+        `leaked: ${[...leaked].join(", ")}`);
+
+      const anyLong = idx.guides.some(r =>
+        Object.values(r).some(v => typeof v === "string" && v.length > 300));
+      check("No index field is article-sized", !anyLong);
+
+      /* Budgets, per guide, so a regression shows up at 31 rather than at 300. */
+      const idxPer = Buffer.byteLength(idxRaw) / Math.max(1, idx.guides.length);
+      const srchPer = Buffer.byteLength(searchRaw) / Math.max(1, idx.guides.length);
+      check(`Index stays under 300 B/guide (${Math.round(idxPer)} B)`, idxPer < 300);
+      check(`Search text stays under 700 B/guide (${Math.round(srchPer)} B)`, srchPer < 700);
+
+      /* At 500 guides these are the numbers that matter. */
+      const at500 = (idxPer * 500) / 1024;
+      check(`Index would be under 200KB at 500 guides (${at500.toFixed(0)}KB)`, at500 < 200);
+
+      const excerpts = Object.values(srch.text).map(r => (r.t || "").length);
+      const longest = Math.max(0, ...excerpts);
+      check(`Search excerpts are capped (longest ${longest} chars)`, longest <= 260);
+
+      /* Provenance must not leak into a public file. There is already a test
+         that it never reaches a page; this extends it to the data layer. */
+      check("No internal source ids in the public data",
+        !/RAW-\d{8}/.test(idxRaw) && !/RAW-\d{8}/.test(searchRaw));
+    }
+  }
+
+  /* ---- the browse pages ------------------------------------------------ */
+  {
+    for (const f of ["index.html", "guides.html"]) {
+      const html = readIf(f) || "";
+      const name = f.replace(".html", "");
+      check(`${name}: filter pills are in the HTML`,
+        (html.match(/class="pill(?: pill--age)?"/g) || []).length >= 10);
+      check(`${name}: facet counts are inline, not fetched`,
+        /window\.MPC_FACETS=/.test(html));
+    }
+    const topicPage = topicSample[0] ? (readIf(topicSample[0]) || "") : "";
+    if (topicPage) {
+      check("Landing pages arrive with their filter already lit",
+        /aria-pressed="true"/.test(topicPage));
+    }
+  }
+
+  /* ---- resource hints and caching -------------------------------------- */
+  {
+    /* Every page opened a connection to firebasestorage.googleapis.com and no
+       page ever fetched from it: illustrations are rewritten to
+       /.netlify/images, which is this origin. */
+    const offenders = ALL.filter(f =>
+      /preconnect[^>]*firebasestorage/.test(readIf(f) || ""));
+    check("No page preconnects to a host it never uses",
+      offenders.length === 0, offenders.join(", "));
+
+    /* THE TYPOGRAPHY IS NOT A PERFORMANCE LEVER.
+
+       Baloo 2 is requested at 600, 700 and 800 and only ever renders at 700,
+       so trimming it looks like free savings. It is not: a browser downloads a
+       font file only when an element actually needs that weight, so the two
+       unused weights were never fetched — they were only declared. The whole
+       saving is about 260 bytes of text in a third-party stylesheet that is
+       hard-cached anyway.
+
+       Against that: if a future guide, a Studio-authored block or a restored
+       .book-num ever renders the display face at another weight, the browser
+       would substitute 700 and the heading would visibly thicken. A non-zero
+       risk to the site's look for a rounding error in transfer size is a bad
+       trade, so the font request is pinned exactly as it shipped.
+
+       This check asserts the request is UNCHANGED. If it fails, somebody has
+       altered the typography — which may be right, but it should be a
+       deliberate design decision, not a performance one. */
+    const FONT_URL = "https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800" +
+      "&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap";
+    const fontPages = ALL.filter(f => /fonts\.googleapis\.com\/css2/.test(readIf(f) || ""));
+    const altered = fontPages.filter(f => !(readIf(f) || "").includes(FONT_URL));
+    check(`The font request is untouched on all ${fontPages.length} pages that use it`,
+      altered.length === 0, altered.join(", "));
+
+    const stamped = ALL.filter(f => {
+      const html = readIf(f) || "";
+      const refs = [...html.matchAll(/(?:href|src)="[^"]*assets\/(?:css|js)\/[^"]+"/g)];
+      return refs.length && refs.some(m => !/\?v=[a-f0-9]{6,}/.test(m[0]));
+    });
+    check("Every CSS and JS reference carries a content hash",
+      stamped.length === 0, stamped.join(", "));
+
+    const headers = readIf("_headers") || "";
+    check("Hashed assets are cached as immutable",
+      /\/assets\/js\/\*\n\s*Cache-Control:[^\n]*immutable/.test(headers) &&
+      /\/assets\/css\/\*\n\s*Cache-Control:[^\n]*immutable/.test(headers));
+    check("The data files revalidate rather than sticking",
+      /\/data\/\*\.json\n\s*Cache-Control:[^\n]*max-age=300/.test(headers));
+    check("Generated HTML still revalidates on every visit",
+      /\/guides\/\*\n\s*Cache-Control:[^\n]*must-revalidate/.test(headers));
+  }
+
+  /* ---- the LCP image --------------------------------------------------- */
+  {
+    let missing = [];
+    for (const f of ["index.html", "guides.html", "popular.html"]) {
+      const html = readIf(f) || "";
+      const m = /<img[^>]*\bid="pageHeroImg"[^>]*>/.exec(html);
+      if (!m || !/\ssrc="/.test(m[0])) missing.push(f);
+    }
+    /* It used to ship with no src at all, resolved from Firestore after the
+       SDK had booted — so the largest image on the page could not be found by
+       the preload scanner. */
+    check("The hero image has a real src in the initial HTML",
+      missing.length === 0, missing.join(", "));
+
+    const lazyLcp = ["index.html", "guides.html", "popular.html"].filter(f => {
+      const m = /<img[^>]*\bid="pageHeroImg"[^>]*>/.exec(readIf(f) || "");
+      return m && /loading="lazy"/.test(m[0]);
+    });
+    check("The LCP image is never lazy-loaded", lazyLcp.length === 0, lazyLcp.join(", "));
+  }
+
+  /* ---- the guide-being-written-right-now path -------------------------
+     Amir adds guides continuously, so the surface that renders a guide with no
+     generated page yet is not an edge case — it is the normal state of the
+     newest guide for a minute or two after every save. It has to work. */
+  {
+    const fallback = readIf("guide.html") || "";
+    check("guide.html can reach Firestore for an unbuilt guide",
+      /window\.MPC_FS=\{[^}]*"p":/.test(fallback),
+      "without this every newly saved guide shows 'We can't find that one'");
+    check("guide.html has an empty #article for the fallback to fill",
+      /<div id="article"><\/div>/.test(fallback));
+    check("guide.html carries no baked guide id",
+      !/window\.MPC_GUIDE_ID/.test(fallback));
+    check("guide.html loads the guide script",
+      /<script[^>]*src="[^"]*assets\/js\/guide\.js/.test(fallback));
+    check("The legacy/draft surface stays out of the index",
+      /<meta name="robots" content="noindex/.test(fallback));
+
+    const red = readIf("_redirects") || "";
+    check("Unknown slugs still rewrite to it rather than 404ing",
+      /\/guides\/\*\s+\/guide\.html\s+200/.test(red));
+
+    /* Studio's live preview drives guide.html?draft=1 and the real guide URL. */
+    const gjs = readIf("assets/js/guide.js") || "";
+    check("Studio can still push a draft into a guide page",
+      /window\.__renderPreview/.test(gjs));
+    check("A draft preview does not try to look itself up",
+      /params\.get\("draft"\)[\s\S]{0,60}return/.test(gjs));
+  }
+
+  /* ---- crawler parity is unaffected by all of the above ---------------- */
+  {
+    let thin = 0;
+    for (const f of GENERATED) {
+      const html = readIf(f) || "";
+      /* Strip every script, then check the article is still there. This is the
+         no-JavaScript view: what Googlebot, OAI-SearchBot and Bingbot get. */
+      const noJs = html.replace(/<script[\s\S]*?<\/script>/g, "");
+      const hasPanel = /class="gpanel/.test(noJs);
+      const hasH1 = /<h1[\s>]/.test(noJs);
+      const words = noJs.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+      if (!hasPanel || !hasH1 || words < 120) thin++;
+    }
+    check("With every script removed, a guide page still has its article",
+      thin === 0, `${thin} pages are thin without JS`);
+  }
 }
 
 /* ======================================================================== */

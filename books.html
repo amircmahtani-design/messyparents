@@ -14,13 +14,10 @@
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Guide illustrations are served from Firebase Storage; opening the
-     connection early saves the handshake when the first one is needed. -->
-<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/style.css?v=11">
+<link rel="stylesheet" href="assets/css/tokens.css?v=dcd2bfa4bf">
+<link rel="stylesheet" href="assets/css/style.css?v=23f4dcc071">
 <!-- MPC:SEO:START -->
 <title>Our books — The Messy Parents Collection</title>
 <meta name="description" content="The Ari &amp;amp; Papa books: honest, short chapters on the first two years.">
@@ -65,7 +62,7 @@
   <section class="wrap" style="margin-top:24px">
     <!-- Book cards (cover on top, summary below) are rendered here from the
          list you manage in Studio; falls back to the built-in books offline. -->
-    <div class="book-grid" id="bookGrid"></div>
+    <div class="book-grid" id="bookGrid"><!--MPC:BOOKS:START--><article class="book-card"><div class="book-cover"><div class="book-cover-empty" aria-hidden="true"><span>Ari &amp; Papa: The First Hundred Nights</span></div></div><div class="book-body"><span class="status status--out">Out now</span><h3>Ari &amp; Papa: The First Hundred Nights</h3><p class="book-summary">The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed.</p></div></article><article class="book-card"><div class="book-cover"><div class="book-cover-empty" aria-hidden="true"><span>Ari &amp; Papa: Everyone Says It Gets Easier</span></div></div><div class="book-body"><span class="status ">Coming soon</span><h3>Ari &amp; Papa: Everyone Says It Gets Easier</h3><p class="book-summary">Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething.</p></div></article><article class="book-card"><div class="book-cover"><div class="book-cover-empty" aria-hidden="true"><span>The Messy Parents Handbook</span></div></div><div class="book-body"><span class="status ">In progress</span><h3>The Messy Parents Handbook</h3><p class="book-summary">Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something.</p></div></article><!--MPC:BOOKS:END--></div>
 
     <!-- No inline margin here: on phones the couple illustration deliberately
          overhangs the top of the band, and the clearance it needs is set in
@@ -95,19 +92,8 @@
   </div>
 </footer>
 
-<script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/guides.js?v=9"></script>
-<script src="assets/js/mpc-store.js?v=10"></script>
-<script>/* The Studio-edited copyright line writes its own year, so this span
-   may already be gone by the time this runs. */
-var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();</script>
+<script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
 
-<script>
-  // Render the built-in books immediately so the page is never empty, then
-  // swap in the list you manage in Studio once it has loaded from Firestore.
-  MPCStore.applyBooks("bookGrid");
-  MPCStore.ready.then(function(){ MPCStore.applyBooks("bookGrid"); });
-</script>
 
 </body>
 </html>

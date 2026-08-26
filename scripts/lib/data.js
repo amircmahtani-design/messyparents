@@ -77,26 +77,55 @@ async function fetchCollection(cfg, name) {
   return out;
 }
 
-/* Read the bundled guides.js by evaluating it with just enough of a fake DOM
-   that its trailing DOMContentLoaded handler does not throw. */
+/* Read the bundled fallback copy.
+
+   This used to live at assets/js/guides.js and had to be evaluated inside a
+   fake DOM, because that same file was also the public site's UI layer: it
+   ended with a DOMContentLoaded handler that wired up the mobile nav. Data and
+   behaviour in one file is exactly why every reader was being sent the whole
+   catalogue.
+
+   It is now data/guides-bundle.js — data only, a plain CommonJS module, never
+   served to a browser. require() is enough. The vm path is kept as a fallback
+   so a half-applied deploy cannot break the build. */
 function readBundledGuides() {
-  const src = fs.readFileSync(path.join(ROOT, "assets/js/guides.js"), "utf8");
-  const ctx = {
-    console,
-    document: {
-      addEventListener() {}, querySelector() { return null; },
-      querySelectorAll() { return []; },
-      documentElement: { style: { setProperty() {} } }
-    }
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(src, ctx, { timeout: 5000 });
-  return {
-    guides: ctx.GUIDES || [],
-    topics: (ctx.TOPICS || []).map(t => ({ id: t.id, label: t.label })),
-    ages: ctx.AGES || []
-  };
+  try {
+    delete require.cache[require.resolve("../../data/guides-bundle.js")];
+    const b = require("../../data/guides-bundle.js");
+    return {
+      guides: b.GUIDES || [],
+      topics: (b.TOPICS || []).map(t => ({ id: t.id, label: t.label })),
+      ages: b.AGES || []
+    };
+  } catch (e) {
+    return readLegacyBundle();
+  }
+}
+
+/* The pre-split location, evaluated with just enough of a fake DOM that its
+   trailing DOMContentLoaded handler does not throw. */
+function readLegacyBundle() {
+  try {
+    const src = fs.readFileSync(path.join(ROOT, "assets/js/guides.js"), "utf8");
+    const ctx = {
+      console,
+      document: {
+        addEventListener() {}, querySelector() { return null; },
+        querySelectorAll() { return []; },
+        documentElement: { style: { setProperty() {} } }
+      }
+    };
+    ctx.window = ctx;
+    vm.createContext(ctx);
+    vm.runInContext(src, ctx, { timeout: 5000 });
+    return {
+      guides: ctx.GUIDES || [],
+      topics: (ctx.TOPICS || []).map(t => ({ id: t.id, label: t.label })),
+      ages: ctx.AGES || []
+    };
+  } catch (e) {
+    return { guides: [], topics: [], ages: [] };
+  }
 }
 
 /* ---------------------------------------------------------------------------
