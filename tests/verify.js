@@ -691,6 +691,31 @@ section("Performance architecture");
     check("No Studio variable is used above where it is declared",
       late.length === 0, late.join(" | "));
 
+    /* Every function Studio's inline script CALLS must be one it defines, or
+       one the browser provides. `renderLongform()` called esc() when Studio's
+       escaper is escS() — a ReferenceError thrown inside fillForm(), which
+       killed the section boxes AND everything after it, including loading the
+       red box. Nothing in the UI said so.
+
+       This is deliberately narrow: it checks the handful of short helper names
+       that are easy to mistype, not every identifier. */
+    {
+      const js = blocks.join("\n");
+      const defined = new Set();
+      for (const m of js.matchAll(/(?:function\s+|(?:const|let|var)\s+)([A-Za-z_$][\w$]*)\s*(?:\(|=)/g)) {
+        defined.add(m[1]);
+      }
+      const BUILTIN = new Set(["esc", "escS", "escapeHtml", "itemsToLines",
+        "linesToItems", "markDirty", "renderLongform", "sectionsFromHTML"]);
+      const missing = [];
+      for (const name of BUILTIN) {
+        const called = new RegExp(`(?<![\\w$.])${name}\\s*\\(`).test(js);
+        if (called && !defined.has(name)) missing.push(name);
+      }
+      check("Studio calls no helper it does not define", missing.length === 0,
+        `${missing.join(", ")} called but never defined`);
+    }
+
     /* And the two escapes that only show up as literal text in the browser. */
     /* A \\uXXXX inside a JS string is fine; one sitting in markup renders as
        literal text, which is how "\\u26a0 Speak to your doctor if" reached the

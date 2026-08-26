@@ -1271,9 +1271,9 @@ function renderLongform(){
         <button class="btn sm danger" type="button" data-lact="del" title="Remove this section">Remove</button>
       </span>
       <div class="field"><label>Heading</label>
-        <input type="text" data-lfield="h" value="${esc(row.h||"")}"></div>
+        <input type="text" data-lfield="h" value="${escS(row.h||"")}"></div>
       <div class="field"><label>The words <span class="hint">&mdash; a blank line starts a new paragraph</span></label>
-        <textarea data-lfield="t" rows="8">${esc(row.t||"")}</textarea></div>
+        <textarea data-lfield="t" rows="8">${escS(row.t||"")}</textarea></div>
     </div>`).join("") ||
     `<p class="hint">No sections yet. Add one, or leave it empty and the bar will not appear on the guide.</p>`;
 }
@@ -1725,7 +1725,7 @@ $("#p_upload").addEventListener("change", async e => {
    ====================================================================== */
 
 $("#f_long_add") && $("#f_long_add").addEventListener("click", () => {
-  longDraft.push({ h:"", t:"" }); renderLongform(); markDirty();
+  longDraft.push({ h:"", t:"" }); renderLongform(); pushPreview();
 });
 
 $("#f_long_list") && $("#f_long_list").addEventListener("click", (e) => {
@@ -1735,14 +1735,16 @@ $("#f_long_list") && $("#f_long_list").addEventListener("click", (e) => {
   if(act==="del")  longDraft.splice(i,1);
   if(act==="up"   && i>0) longDraft.splice(i-1,0,longDraft.splice(i,1)[0]);
   if(act==="down" && i<longDraft.length-1) longDraft.splice(i+1,0,longDraft.splice(i,1)[0]);
-  renderLongform(); markDirty();
+  renderLongform(); pushPreview();
 });
 
 $("#f_long_list") && $("#f_long_list").addEventListener("input", (e) => {
   const f = e.target.closest("[data-lfield]"); if(!f) return;
   const i = +f.closest("[data-long]").dataset.long;
   longDraft[i][f.dataset.lfield] = f.value;
-  markDirty();
+  /* Debounced, like every other text field in Studio: re-rendering the preview
+     iframe on every keystroke would make typing feel sticky. */
+  schedulePreview();
 });
 
 
