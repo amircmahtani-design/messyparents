@@ -437,9 +437,9 @@
            you should have to remember to create. Leave the bullets empty and it
            simply does not render on the page. -->
       <div class="col-card" id="calloutCard" style="margin-top:14px">
-        <span class="tag warn">⚠ Speak with your doctor if</span>
+        <span class="tag warn">⚠ Speak to your doctor if</span>
         <div class="field"><label>Heading</label>
-          <input id="f_c_title" type="text" placeholder="Speak with your doctor if"></div>
+          <input id="f_c_title" type="text" placeholder="Call your doctor if"></div>
         <div class="field"><label>Bullets <span class="hint">&mdash; one per line. Leave empty to hide this box on the guide.</span></label>
           <textarea id="f_c_items" rows="5"></textarea></div>
       </div>
@@ -634,12 +634,6 @@ const PAGES = [
 const GUIDE_HERO = { w:1120, h:620, label:"Guide illustration — fills a 560 × 310 space beside the title. Transparent PNGs look best." };
 const PAGE_HERO  = { w:880,  h:680, label:"Page illustration — fills a 440 × 340 space beside the title. Transparent PNGs look best." };
 const HOME_HERO  = { w:1000, h:747, label:"Homepage illustration — fills the big space beside the headline. Transparent PNGs look best." };
-
-/* The house wording for the red box at the foot of the fuller answer. Every
-   guide opens with this already in the field; change it on a guide where a
-   different call is the right one (a midwife, a health visitor, A&E) and the
-   change sticks to that guide only. */
-const CALLOUT_TITLE = "Speak with your doctor if";
 
 /* Which illustration slots each page exposes. About has three; the others keep
    a single hero image (stored in the legacy top-level "image" field). */
@@ -1321,12 +1315,8 @@ function fillForm(g){
   renderLongform();
 
   /* The red box. Always present, never added — every guide should be able to
-     say when to stop reading and call someone.
-
-     The heading arrives already typed rather than as a grey placeholder, so
-     the standard wording is what ships unless it is deliberately changed.
-     A placeholder looked identical on screen and saved nothing. */
-  $("#f_c_title").value = (g.callout && g.callout.title) || CALLOUT_TITLE;
+     say when to stop reading and call someone. */
+  $("#f_c_title").value = (g.callout && g.callout.title) || "";
   $("#f_c_items").value = itemsToLines(g.callout && g.callout.items);
 
 
@@ -1410,7 +1400,7 @@ function draftGuide(){
 
   const _ci = linesToItems($("#f_c_items").value);
   if(_ci.length){
-    g.callout = { title: ($("#f_c_title").value.trim() || CALLOUT_TITLE), items:_ci };
+    g.callout = { title: ($("#f_c_title").value.trim() || "Call your doctor if"), items:_ci };
   } else { delete g.callout; }
 
   /* --- Search metadata -------------------------------------------------
