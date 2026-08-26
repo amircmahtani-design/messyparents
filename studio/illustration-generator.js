@@ -33,7 +33,14 @@
 #genPanel .gp-btn.ghost{background:transparent}
 #genPanel .gp-btn[disabled]{opacity:.5;cursor:default}
 #genPanel .gp-msg{font-size:13px;color:#41505f;margin-bottom:10px;min-height:18px;font-weight:600}
-#genPanel .gp-qa{margin:0;padding:10px;background:#111;color:#c6f6c6;font-size:11px;line-height:1.4;border-radius:8px;max-height:220px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
+#genPanel .gp-qa{margin:8px 0 0;padding:10px;background:#111;color:#c6f6c6;font-size:11px;line-height:1.4;border-radius:8px;max-height:220px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
+#genPanel .gp-qa-summary{cursor:pointer;font-size:13px;font-weight:700;color:#41505f;padding:6px 0;user-select:none;list-style:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#genPanel .gp-qa-summary::-webkit-details-marker{display:none}
+#genPanel .gp-qa-summary::after{content:"▸";color:#6b7684;font-size:11px}
+#genPanel .gp-qa-details[open] .gp-qa-summary::after{content:"▾"}
+#genPanel .gp-qa-verdict{font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px}
+#genPanel .gp-qa-verdict.good{background:#dcfce7;color:#166534}
+#genPanel .gp-qa-verdict.bad{background:#fef3c7;color:#92400e}
 #genPanel .gp-images{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}
 #genPanel .gp-img-col{min-width:0}
 #genPanel .gp-img-label{font-size:12px;color:#6b7684;margin-bottom:6px;font-weight:700}
@@ -132,11 +139,6 @@
 
   <div class="gp-msg" id="gpMsg">Ready.</div>
 
-  <div id="gpQAWrap" class="gp-hidden" style="margin-top:12px">
-    <div class="gp-img-label">QA verdict</div>
-    <pre id="gpQAPre" class="gp-qa"></pre>
-  </div>
-
   <div id="gpChangeWrap" class="gp-change gp-hidden">
     <div class="gp-change-label">💬 Tell me what to change (plain English)</div>
     <div class="gp-change-row">
@@ -146,6 +148,14 @@
     </div>
     <div class="gp-change-hint">This is usually all you need — it keeps everything else the same and just applies your fix.</div>
   </div>
+
+  <!-- QA sits BELOW the change box on purpose: the change box is the thing you
+       reach for nine times out of ten, so it must never be pushed off-screen by
+       a long QA readout. Open the details below when you want the detail. -->
+  <details id="gpQAWrap" class="gp-hidden gp-qa-details" style="margin-top:12px">
+    <summary class="gp-qa-summary">🔍 QA verdict <span class="gp-qa-verdict" id="gpQAVerdict"></span></summary>
+    <pre id="gpQAPre" class="gp-qa"></pre>
+  </details>
 
   <div id="gpBriefWrap" class="gp-brief gp-hidden">
     <details>
@@ -284,6 +294,17 @@
     document.getElementById("gpBriefTA").value = JSON.stringify(d.brief || {}, null, 2);
     document.getElementById("gpChangeInput").value = "";
     show("gpQAWrap"); show("gpBriefWrap"); show("gpChangeWrap");
+
+    // Collapse the QA readout when it's clean — open it only when there's
+    // something to look at, so a passing check never costs you a scroll.
+    const flagged = d.status === "awaiting-approval-with-issues";
+    const qaWrap = document.getElementById("gpQAWrap");
+    const verdictEl = document.getElementById("gpQAVerdict");
+    if (verdictEl) {
+      verdictEl.textContent = flagged ? "⚠ issues flagged" : "✓ all clear";
+      verdictEl.className = "gp-qa-verdict " + (flagged ? "bad" : "good");
+    }
+    if (qaWrap && qaWrap.tagName === "DETAILS") qaWrap.open = flagged;
     show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
     hide("gpCancelBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
@@ -1194,6 +1215,7 @@
   border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; overflow: hidden;
 }
 #batchResults .r-preview img { width: 100%; display: block; }
+#batchResults .r-qa-details[open] > summary { margin-bottom: 4px; }
 #batchResults .r-qa {
   margin: 0 0 10px 0; padding: 10px; background: #f7f8fa; color: #1f2733;
   font-size: 12px; line-height: 1.5; border-radius: 6px;
@@ -1206,6 +1228,7 @@
   padding: 10px 16px; border-radius: 8px; font-family: inherit;
   font-weight: 700; cursor: pointer; margin-top: 10px;
 }
+#batchNewBtn { padding: 14px 20px; font-size: 15px; min-height: 48px; width: 100%; margin-top: 12px; }
 #batchPill {
   position: fixed; bottom: 20px; right: 20px; z-index: 60;
   background: #3f6fa3; color: #fff; padding: 12px 18px; border-radius: 999px;
@@ -1249,6 +1272,7 @@
       <div id="batchProgressBar"><div></div></div>
       <div id="batchResults"></div>
       <button type="button" id="batchAbortBtn">Abort batch</button>
+      <button type="button" id="batchNewBtn" class="gp-btn primary" style="display:none">🚀 Start another batch</button>
     </div>
   </div>
 </div>
@@ -1262,15 +1286,23 @@
     selection: new Set(),
     topics: new Set(),
     unsub: null,
-    activeBatchId: null
+    activeBatchId: null,
+    lastBatchDoc: null
   };
+
+  // Which result rows the user has open, so live re-renders don't close them.
+  const batchExpanded = new Set();
 
   function openBatchModal() {
     document.getElementById("batchModal").classList.add("open");
     document.body.style.overflow = "hidden";
-    // If a batch is already running, subscribe & show progress
-    checkAndSubscribeExistingBatch().then(() => {
-      if (!batchState.activeBatchId) loadGuidesForBatch();
+    checkAndSubscribeExistingBatch().then(live => {
+      if (live) return;                       // running batch — progress view
+      // Not running. If we still hold the last finished run in memory, show it
+      // again so a half-finished review isn't lost by closing the modal — the
+      // "Start another batch" button is there whenever you're done with it.
+      if (batchState.lastBatchDoc) renderBatchProgress(batchState.lastBatchDoc);
+      else loadGuidesForBatch();
     });
   }
   function closeBatchModal() {
@@ -1432,8 +1464,36 @@
         subscribeToBatch(doc.id);
         return true;
       }
+      // Nothing running. THIS is the line that was missing: activeBatchId used
+      // to keep pointing at the finished batch forever, so openBatchModal()
+      // never called loadGuidesForBatch() again and you were stuck looking at
+      // the completed run with no way back to the picker.
+      batchState.activeBatchId = null;
+      if (batchState.unsub) { try { batchState.unsub(); } catch(_) {} batchState.unsub = null; }
     } catch (_) {}
     return false;
+  }
+
+  /** Tear down a finished batch and go back to the guide picker so another
+      run can be started without reloading Studio. */
+  async function resetBatchToSetup() {
+    // Unsubscribe FIRST — otherwise a late snapshot from the finished batch
+    // re-renders the progress view over the top of the picker.
+    if (batchState.unsub) { try { batchState.unsub(); } catch(_) {} batchState.unsub = null; }
+    batchState.activeBatchId = null;
+    batchState.lastBatchDoc = null;
+    batchState.selection.clear();
+    batchExpanded.clear();
+    document.getElementById("batchProgress").style.display = "none";
+    document.getElementById("batchSetup").style.display = "block";
+    const startBtn = document.getElementById("batchStartBtn");
+    startBtn.disabled = true;
+    startBtn.textContent = "🚀 Start batch";
+    document.getElementById("batchPill").classList.remove("show");
+    // Refresh hero statuses so guides you just approved show up green and the
+    // "Missing only" quick pick is accurate for the next run.
+    await refreshSidebarDots();
+    await loadGuidesForBatch();
   }
 
   async function subscribeToBatch(batchId) {
@@ -1447,6 +1507,7 @@
   }
 
   function renderBatchProgress(batch) {
+    batchState.lastBatchDoc = batch;
     document.getElementById("batchSetup").style.display = "none";
     document.getElementById("batchProgress").style.display = "block";
     const total = (batch.guideIds || []).length;
@@ -1507,19 +1568,33 @@
           if (isOpen) {
             body.style.display = "none";
             row.querySelector(".r-expand").textContent = "▸";
+            batchExpanded.delete(gid);
           } else {
             renderBatchExpanded(body, gid, r);
             body.style.display = "block";
             row.querySelector(".r-expand").textContent = "▾";
+            batchExpanded.add(gid);
           }
         });
+        // A snapshot from a still-running batch rebuilds this whole list. Put
+        // back anything you already had open so reviewing doesn't keep
+        // collapsing under you while later guides finish.
+        if (batchExpanded.has(gid)) {
+          const body = row.querySelector(".r-body");
+          renderBatchExpanded(body, gid, r);
+          body.style.display = "block";
+          row.querySelector(".r-expand").textContent = "▾";
+        }
       }
       grid.appendChild(row);
     });
 
-    // Abort button visibility
+    // Abort while it runs; "Start another batch" once it doesn't.
+    const isLive = (batch.status === "running" || batch.status === "queued");
     const abortBtn = document.getElementById("batchAbortBtn");
-    abortBtn.style.display = (batch.status === "running" || batch.status === "queued") ? "inline-block" : "none";
+    abortBtn.style.display = isLive ? "inline-block" : "none";
+    const newBtn = document.getElementById("batchNewBtn");
+    if (newBtn) newBtn.style.display = isLive ? "none" : "block";
 
     // Floating pill
     const pill = document.getElementById("batchPill");
@@ -1612,7 +1687,6 @@
       <div class="r-preview">
         ${result.url ? `<img src="${escapeHtml(result.url)}" alt="proposed illustration">` : `<div style="padding:20px;color:#6b7684;font-size:12px">No image URL</div>`}
       </div>
-      <pre class="r-qa">${escapeHtml(qaText)}</pre>
       <div class="r-actions">
         <button type="button" class="gp-btn primary" data-act="approve">Approve &amp; save</button>
         <button type="button" class="gp-btn ghost" data-act="regen">Regenerate</button>
@@ -1620,6 +1694,10 @@
         <button type="button" class="gp-btn ghost" data-act="reject">Reject</button>
       </div>
       <div class="r-msg" style="font-size:12px;color:#6b7684;margin-top:8px;min-height:14px"></div>
+      <details class="r-qa-details" style="margin-top:10px">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:#41505f;padding:4px 0">🔍 QA verdict</summary>
+        <pre class="r-qa">${escapeHtml(qaText)}</pre>
+      </details>
     `;
     const msg = bodyEl.querySelector(".r-msg");
 
@@ -1727,6 +1805,7 @@
     });
     document.getElementById("batchStartBtn").addEventListener("click", startBatch);
     document.getElementById("batchAbortBtn").addEventListener("click", abortBatch);
+    document.getElementById("batchNewBtn").addEventListener("click", resetBatchToSetup);
     document.getElementById("batchPill").addEventListener("click", openBatchModal);
     document.querySelectorAll("#batchQuickPicks button").forEach(b => {
       b.addEventListener("click", () => applyQuickPick(b.dataset.quick));
@@ -1734,6 +1813,303 @@
 
     // On boot, subscribe to any already-running batch (so pill shows immediately)
     checkAndSubscribeExistingBatch();
+  }
+
+  /* ==========================================================================
+     FEATURE: collapsible sections
+     ------------------------------------------------------------------------
+     The guide editor is one long unbroken column of fields, so getting to the
+     bottom of a guide means scrolling past everything above it. This groups
+     the existing fields into named sections you can fold shut, with the open /
+     closed state remembered between guides and between visits.
+
+     It works by MOVING the existing DOM nodes into wrappers — no field is
+     recreated, no id changes, so every save / load / validation path in
+     index.html keeps working untouched. Collapsing uses display:none on the
+     wrapper, and a hidden input still reports its value, so a folded section
+     saves exactly as it did before.
+
+     The sidebar topic groups get the same treatment, with one safeguard: the
+     group holding the currently-selected guide always springs open, which is
+     what keeps the last-guide restore and the batch "Open in editor" jump
+     visible after they fire.
+     ====================================================================== */
+
+  const SEC_CSS = `
+.mpc-sec{border:1px solid #e3e6ea;border-radius:12px;background:#fff;margin-bottom:12px;overflow:hidden}
+.mpc-sec-head{display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;background:#f7f8fa;
+  border:0;border-bottom:1px solid #e3e6ea;cursor:pointer;font-family:inherit;font-size:14.5px;
+  font-weight:800;color:#1f2733;text-align:left;min-height:48px}
+.mpc-sec-head:hover{background:#eef1f5}
+.mpc-sec-head .mpc-sec-chev{color:#6b7684;font-size:12px;transition:transform .15s ease;flex-shrink:0}
+.mpc-sec-head .mpc-sec-title{flex:1;min-width:0}
+.mpc-sec-head .mpc-sec-note{font-weight:600;font-size:11.5px;color:#6b7684}
+.mpc-sec-body{padding:14px 14px 2px}
+.mpc-sec.closed .mpc-sec-body{display:none}
+.mpc-sec.closed .mpc-sec-head{border-bottom-color:transparent}
+.mpc-sec.closed .mpc-sec-chev{transform:rotate(-90deg)}
+.mpc-sec-body > .field:last-child,
+.mpc-sec-body > .col-card:last-child{margin-bottom:12px}
+
+.mpc-sec-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.mpc-sec-bar button{background:#fff;border:1px solid #e3e6ea;border-radius:8px;padding:7px 12px;
+  font-family:inherit;font-size:12.5px;font-weight:700;color:#41505f;cursor:pointer;min-height:36px}
+.mpc-sec-bar button:hover{border-color:#c9ced6}
+
+/* Search & sharing is already a <details>; make it read like the rest. */
+#seoCard.col-card{border:1px solid #e3e6ea;border-radius:12px;background:#fff;padding:0;margin-bottom:12px}
+#seoCard > summary{padding:13px 14px;background:#f7f8fa;border-bottom:1px solid #e3e6ea;
+  font-size:14.5px;font-weight:800;color:#1f2733;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px}
+#seoCard > summary::-webkit-details-marker{display:none}
+#seoCard > summary::before{content:"▸";color:#6b7684;font-size:12px}
+#seoCard[open] > summary::before{content:"▾"}
+#seoCard > summary:hover{background:#eef1f5}
+#seoCard > *:not(summary){margin-left:14px;margin-right:14px}
+#seoCard[open]{padding-bottom:2px}
+
+/* Sidebar topic groups */
+.grp{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.grp:hover{color:#41505f}
+.grp .mpc-grp-chev{font-size:9px;transition:transform .15s ease}
+.grp.mpc-grp-closed .mpc-grp-chev{transform:rotate(-90deg)}
+.grp .mpc-grp-count{margin-left:auto;font-size:10px;opacity:.7;letter-spacing:0}
+.gitem.mpc-grp-hidden{display:none}
+`;
+
+  const SEC_KEY = "mpc.studio.sections.v1";
+  const GRP_KEY = "mpc.studio.groups.v1";
+
+  function loadSet(key) {
+    try { return new Set(JSON.parse(localStorage.getItem(key) || "[]")); }
+    catch (_) { return new Set(); }
+  }
+  function saveSet(key, set) {
+    try { localStorage.setItem(key, JSON.stringify(Array.from(set))); } catch (_) {}
+  }
+
+  let closedSections = loadSet(SEC_KEY);
+  let closedGroups   = loadSet(GRP_KEY);
+
+  /** Move every sibling from startEl to endEl (inclusive) into a new
+      collapsible section inserted where startEl used to be. */
+  function wrapRange(startEl, endEl, key, title, note) {
+    if (!startEl || !endEl) return null;
+    const parent = startEl.parentElement;
+    if (!parent) return null;
+    // Both ends must be siblings and in the right order. If Studio's markup
+    // ever moves, we skip the section rather than swallow everything down to
+    // the Save button.
+    if (endEl.parentElement !== parent) return null;
+    if (startEl !== endEl &&
+        !(startEl.compareDocumentPosition(endEl) & Node.DOCUMENT_POSITION_FOLLOWING)) return null;
+
+    const sec = document.createElement("div");
+    sec.className = "mpc-sec";
+    sec.dataset.secKey = key;
+    sec.innerHTML = `
+      <button type="button" class="mpc-sec-head">
+        <span class="mpc-sec-chev">▾</span>
+        <span class="mpc-sec-title">${escapeHtml(title)}</span>
+        ${note ? `<span class="mpc-sec-note">${escapeHtml(note)}</span>` : ""}
+      </button>
+      <div class="mpc-sec-body"></div>
+    `;
+    parent.insertBefore(sec, startEl);
+    const body = sec.querySelector(".mpc-sec-body");
+
+    // Walk forward from startEl, moving nodes across until endEl has moved.
+    let node = startEl;
+    while (node) {
+      const next = node.nextSibling;
+      const isLast = (node === endEl);
+      body.appendChild(node);
+      if (isLast) break;
+      node = next;
+    }
+
+    if (closedSections.has(key)) sec.classList.add("closed");
+    sec.querySelector(".mpc-sec-head").addEventListener("click", () => {
+      const nowClosed = sec.classList.toggle("closed");
+      if (nowClosed) closedSections.add(key); else closedSections.delete(key);
+      saveSet(SEC_KEY, closedSections);
+    });
+    return sec;
+  }
+
+  function setAllSections(closed) {
+    document.querySelectorAll("#editor .mpc-sec").forEach(sec => {
+      sec.classList.toggle("closed", closed);
+      const k = sec.dataset.secKey;
+      if (closed) closedSections.add(k); else closedSections.delete(k);
+    });
+    const seo = document.getElementById("seoCard");
+    if (seo) seo.open = !closed;
+    saveSet(SEC_KEY, closedSections);
+  }
+
+  function installEditorSections() {
+    const editor = document.getElementById("editor");
+    if (!editor || editor.dataset.mpcSectioned === "1") return;
+    // Wait until the illustration panel has been injected, otherwise it lands
+    // outside the section we just built around the hero fields.
+    if (!document.getElementById("genPanel")) return;
+    if (!document.getElementById("f_title") || !document.getElementById("f_quick")) return;
+    editor.dataset.mpcSectioned = "1";
+
+    const fieldOf = id => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      let n = el;
+      while (n && n.parentElement !== editor) n = n.parentElement;
+      return n;
+    };
+
+    // 1) The basics — title through the featured / read-time row.
+    wrapRange(fieldOf("f_title"), fieldOf("f_featured"),
+              "basics", "📝 The basics", "title, summary, eyebrow, topic");
+
+    // 2) Hero image — the path field, the AI panel, and the upload box.
+    wrapRange(fieldOf("f_hero"), document.getElementById("genWrap"),
+              "hero", "🖼️ Hero image", "upload or generate the illustration");
+
+    // 3) The three coloured columns plus the optional Don't strip.
+    const firstCol = document.getElementById("f_n_title")
+      ? document.getElementById("f_n_title").closest(".col-card") : null;
+    wrapRange(firstCol, document.getElementById("dontCard"),
+              "columns", "🗂️ The three columns", "green, yellow, amber, don't");
+
+    // 4) The fuller answer (carries the doctor callout inside it).
+    wrapRange(fieldOf("f_long_list"), fieldOf("f_long_list"),
+              "longform", "📖 The fuller answer", "the longer write-up");
+
+    // 5) The quick answer box.
+    wrapRange(fieldOf("f_quick"), fieldOf("f_quick"),
+              "quick", "💬 The quick answer box", "");
+
+    // 6) Search & sharing is already a <details> — just remember its state.
+    const seo = document.getElementById("seoCard");
+    if (seo && !seo.dataset.mpcWired) {
+      seo.dataset.mpcWired = "1";
+      seo.open = !closedSections.has("seo");
+      seo.addEventListener("toggle", () => {
+        if (seo.open) closedSections.delete("seo"); else closedSections.add("seo");
+        saveSet(SEC_KEY, closedSections);
+      });
+    }
+
+    // Expand / collapse all, pinned above the first section.
+    const bar = document.createElement("div");
+    bar.className = "mpc-sec-bar";
+    bar.innerHTML = `
+      <button type="button" data-sec-all="open">Expand all</button>
+      <button type="button" data-sec-all="close">Collapse all</button>
+    `;
+    editor.insertBefore(bar, editor.firstChild);
+    bar.querySelector('[data-sec-all="open"]').addEventListener("click", () => setAllSections(false));
+    bar.querySelector('[data-sec-all="close"]').addEventListener("click", () => setAllSections(true));
+  }
+
+  /* ---- sidebar topic groups ---- */
+
+  let applyingGroups = false;
+  let groupsDirty = false;
+
+  function applyGroupCollapse() {
+    const list = document.getElementById("list");
+    if (!list) return;
+    // Our own writes re-enter through the observer. Swallow those, but
+    // remember that something came in so a real re-render isn't lost.
+    if (applyingGroups) { groupsDirty = true; return; }
+    applyingGroups = true;
+    try {
+      const searchEl = document.getElementById("q");
+      const searching = !!(searchEl && searchEl.value.trim());
+
+      // Pass one: label every group and note which one holds the active guide.
+      let activeKey = null;
+      let cur = null;
+      Array.from(list.children).forEach(el => {
+        if (el.classList.contains("grp")) {
+          if (!el.dataset.grpKey) {
+            el.dataset.grpKey = el.textContent.trim();
+            const count = document.createElement("span");
+            count.className = "mpc-grp-count";
+            const chev = document.createElement("span");
+            chev.className = "mpc-grp-chev";
+            chev.textContent = "▾";
+            el.textContent = "";
+            el.appendChild(chev);
+            el.appendChild(document.createTextNode(el.dataset.grpKey));
+            el.appendChild(count);
+          }
+          cur = el;
+          cur.__count = 0;
+        } else if (el.classList.contains("gitem") && cur) {
+          cur.__count++;
+          if (el.classList.contains("active")) activeKey = cur.dataset.grpKey;
+        }
+      });
+
+      // The group holding the selected guide is never left folded shut —
+      // that's what keeps the restore and the batch jump visible.
+      if (activeKey && closedGroups.has(activeKey)) {
+        closedGroups.delete(activeKey);
+        saveSet(GRP_KEY, closedGroups);
+      }
+
+      // Pass two: fold.
+      let closed = false;
+      Array.from(list.children).forEach(el => {
+        if (el.classList.contains("grp")) {
+          const key = el.dataset.grpKey;
+          closed = !searching && closedGroups.has(key);
+          el.classList.toggle("mpc-grp-closed", closed);
+          const c = el.querySelector(".mpc-grp-count");
+          if (c) c.textContent = closed ? (el.__count || 0) : "";
+        } else if (el.classList.contains("gitem")) {
+          el.classList.toggle("mpc-grp-hidden", closed);
+        }
+      });
+    } finally {
+      setTimeout(() => {
+        applyingGroups = false;
+        if (groupsDirty) { groupsDirty = false; applyGroupCollapse(); }
+      }, 0);
+    }
+  }
+
+  function installSidebarGroups() {
+    const list = document.getElementById("list");
+    if (!list || list.dataset.mpcGroups === "1") return;
+    list.dataset.mpcGroups = "1";
+
+    list.addEventListener("click", e => {
+      const grp = e.target.closest(".grp");
+      if (!grp || !list.contains(grp)) return;
+      const key = grp.dataset.grpKey;
+      if (!key) return;
+      if (closedGroups.has(key)) closedGroups.delete(key); else closedGroups.add(key);
+      saveSet(GRP_KEY, closedGroups);
+      applyGroupCollapse();
+    });
+
+    const obs = new MutationObserver(() => applyGroupCollapse());
+    obs.observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+
+    const searchEl = document.getElementById("q");
+    if (searchEl) searchEl.addEventListener("input", () => setTimeout(applyGroupCollapse, 0));
+
+    applyGroupCollapse();
+  }
+
+  function installSections() {
+    if (!document.getElementById("mpc-sec-css")) {
+      const st = document.createElement("style");
+      st.id = "mpc-sec-css"; st.textContent = SEC_CSS;
+      document.head.appendChild(st);
+    }
+    installEditorSections();
+    installSidebarGroups();
   }
 
   /* ---- diag() is now silent — the restore system works reliably so we
@@ -1748,6 +2124,7 @@
     installSidebarDots();
     installGallery();
     installBatch();
+    installSections();
     watchActiveGuide();
     processPendingJump();
     if (!bootToastShown) {
@@ -1773,6 +2150,9 @@
     tries++;
     inject();
     bootExtras();
-    if (document.getElementById("genPanel") && document.getElementById("batchBtn") && tries > 5 || tries > 30) clearInterval(iv);
+    const ready = document.getElementById("genPanel")
+      && document.getElementById("batchBtn")
+      && document.querySelector("#editor .mpc-sec");
+    if ((ready && tries > 5) || tries > 30) clearInterval(iv);
   }, 300);
 })();
