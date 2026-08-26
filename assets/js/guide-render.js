@@ -262,7 +262,7 @@
     if (!prose.trim()) return "";
     var callout = "";
     if (g.callout && g.callout.items && g.callout.items.length) {
-      callout = '<div class="callout"><h3>' + (g.callout.title || "Call your doctor if") + "</h3><ul>" +
+      callout = '<div class="callout"><h3>' + (g.callout.title || "Speak with your doctor if") + "</h3><ul>" +
         g.callout.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul></div>";
     }
     /* The guide's prose has its own <h2>s. Left alone they would sit at the
