@@ -437,7 +437,7 @@
            you should have to remember to create. Leave the bullets empty and it
            simply does not render on the page. -->
       <div class="col-card" id="calloutCard" style="margin-top:14px">
-        <span class="tag warn">\u26a0 Speak to your doctor if</span>
+        <span class="tag warn">⚠ Speak to your doctor if</span>
         <div class="field"><label>Heading</label>
           <input id="f_c_title" type="text" placeholder="Call your doctor if"></div>
         <div class="field"><label>Bullets <span class="hint">&mdash; one per line. Leave empty to hide this box on the guide.</span></label>
@@ -1227,6 +1227,57 @@ document.addEventListener("change", function(e){
   if(e.target && e.target.id === "f_d_on") syncDont();
 });
 
+/* Split a guide's old HTML prose into heading + words. Used when a guide that
+   predates this editor is opened, so its writing appears in the boxes instead
+   of being locked away behind markup Studio could not show. */
+function sectionsFromHTML(html){
+  const src = String(html || "").trim();
+  if(!src) return [];
+  const doc = new DOMParser().parseFromString("<div>"+src+"</div>", "text/html");
+  const rows = []; let cur = null;
+  doc.querySelector("div").childNodes.forEach(n => {
+    if(n.nodeType !== 1) return;
+    const tag = n.tagName.toLowerCase();
+    if(/^h[1-4]$/.test(tag)){ cur = { h:n.textContent.trim(), t:"" }; rows.push(cur); return; }
+    let txt;
+    if(tag === "ul" || tag === "ol"){
+      txt = Array.from(n.querySelectorAll("li"))
+        .map(li => "\u2022 " + li.textContent.trim()).join("\n");
+    } else {
+      txt = (n.textContent || "").trim();
+    }
+    if(!txt) return;
+    if(!cur){ cur = { h:"", t:"" }; rows.push(cur); }
+    cur.t = cur.t ? cur.t + "\n\n" + txt : txt;
+  });
+  return rows;
+}
+
+let longDraft = [];
+
+function renderLongform(){
+  const host = $("#f_long_list");
+  if(!host) return;
+  /* Same card as the guide's three columns: a tagged panel, a labelled
+     Heading box, then a labelled text box. The only difference is that this
+     one takes prose rather than bullets, so the box is bigger and there is no
+     "one per line" hint to mislead. */
+  host.innerHTML = longDraft.map((row, i) => `
+    <div class="col-card" data-long="${i}" style="margin-bottom:12px">
+      <span class="tag">¶ Section ${i+1}</span>
+      <span style="float:right">
+        <button class="btn sm ghost" type="button" data-lact="up"   ${i===0?"disabled":""} title="Move up">&uarr;</button>
+        <button class="btn sm ghost" type="button" data-lact="down" ${i===longDraft.length-1?"disabled":""} title="Move down">&darr;</button>
+        <button class="btn sm danger" type="button" data-lact="del" title="Remove this section">Remove</button>
+      </span>
+      <div class="field"><label>Heading</label>
+        <input type="text" data-lfield="h" value="${esc(row.h||"")}"></div>
+      <div class="field"><label>The words <span class="hint">&mdash; a blank line starts a new paragraph</span></label>
+        <textarea data-lfield="t" rows="8">${esc(row.t||"")}</textarea></div>
+    </div>`).join("") ||
+    `<p class="hint">No sections yet. Add one, or leave it empty and the bar will not appear on the guide.</p>`;
+}
+
 function fillForm(g){
   const p = g.panel || {};
   $("#f_title").value = g.title || "";
@@ -1472,6 +1523,11 @@ function blankGuide(){
     }
   };
 }
+/* Declared above the functions that use it: Studio drives the preview during
+   start-up, and a let referenced before its declaration is a ReferenceError
+   that stops the whole script. */
+let pvReady = false, pvTimer = null;
+
 function addGuide(){
   state.current = null; state.currentPage = null; state.currentSection = null;
   state.isNew = true; state.orig = blankGuide();
@@ -1500,7 +1556,6 @@ async function deleteGuideById(id){
   }
 }
 
-let pvReady = false, pvTimer = null;
 function pushPreview(){
   if(!pvReady) return;
   const g = draftGuide();
@@ -1668,57 +1723,6 @@ $("#p_upload").addEventListener("change", async e => {
    — which the renderer turns into the page. Plain text in, escaped on the way
    out, so a stray angle bracket cannot break a guide.
    ====================================================================== */
-
-/* Split a guide's old HTML prose into heading + words. Used when a guide that
-   predates this editor is opened, so its writing appears in the boxes instead
-   of being locked away behind markup Studio could not show. */
-function sectionsFromHTML(html){
-  const src = String(html || "").trim();
-  if(!src) return [];
-  const doc = new DOMParser().parseFromString("<div>"+src+"</div>", "text/html");
-  const rows = []; let cur = null;
-  doc.querySelector("div").childNodes.forEach(n => {
-    if(n.nodeType !== 1) return;
-    const tag = n.tagName.toLowerCase();
-    if(/^h[1-4]$/.test(tag)){ cur = { h:n.textContent.trim(), t:"" }; rows.push(cur); return; }
-    let txt;
-    if(tag === "ul" || tag === "ol"){
-      txt = Array.from(n.querySelectorAll("li"))
-        .map(li => "\u2022 " + li.textContent.trim()).join("\n");
-    } else {
-      txt = (n.textContent || "").trim();
-    }
-    if(!txt) return;
-    if(!cur){ cur = { h:"", t:"" }; rows.push(cur); }
-    cur.t = cur.t ? cur.t + "\n\n" + txt : txt;
-  });
-  return rows;
-}
-
-let longDraft = [];
-
-function renderLongform(){
-  const host = $("#f_long_list");
-  if(!host) return;
-  /* Same card as the guide's three columns: a tagged panel, a labelled
-     Heading box, then a labelled text box. The only difference is that this
-     one takes prose rather than bullets, so the box is bigger and there is no
-     "one per line" hint to mislead. */
-  host.innerHTML = longDraft.map((row, i) => `
-    <div class="col-card" data-long="${i}" style="margin-bottom:12px">
-      <span class="tag">\u00b6 Section ${i+1}</span>
-      <span style="float:right">
-        <button class="btn sm ghost" type="button" data-lact="up"   ${i===0?"disabled":""} title="Move up">&uarr;</button>
-        <button class="btn sm ghost" type="button" data-lact="down" ${i===longDraft.length-1?"disabled":""} title="Move down">&darr;</button>
-        <button class="btn sm danger" type="button" data-lact="del" title="Remove this section">Remove</button>
-      </span>
-      <div class="field"><label>Heading</label>
-        <input type="text" data-lfield="h" value="${esc(row.h||"")}"></div>
-      <div class="field"><label>The words <span class="hint">&mdash; a blank line starts a new paragraph</span></label>
-        <textarea data-lfield="t" rows="8">${esc(row.t||"")}</textarea></div>
-    </div>`).join("") ||
-    `<p class="hint">No sections yet. Add one, or leave it empty and the bar will not appear on the guide.</p>`;
-}
 
 $("#f_long_add") && $("#f_long_add").addEventListener("click", () => {
   longDraft.push({ h:"", t:"" }); renderLongform(); markDirty();

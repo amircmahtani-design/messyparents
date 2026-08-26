@@ -661,6 +661,45 @@ section("Performance architecture");
       /params\.get\("draft"\)[\s\S]{0,60}return/.test(gjs));
   }
 
+  /* ---- Studio's own script must not trip over itself -------------------
+     `let longDraft = []` was declared below fillForm(), which uses it. Studio
+     selects a guide during start-up, so the load ran while the variable was
+     still in its temporal dead zone: a ReferenceError that aborted the load
+     (no section boxes) AND stopped top-level execution, so the "+ Add another
+     section" listener never attached. One cause, two symptoms, and nothing in
+     the console unless you were looking.
+
+     This checks every let/const at the top level of Studio's inline script is
+     declared before the first function that mentions it. */
+  {
+    const studio = readIf("studio/index.html") || "";
+    const blocks = [...studio.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)]
+      .map(m => m[1]).filter(b => b.trim());
+    const late = [];
+    for (const b of blocks) {
+      for (const m of b.matchAll(/^(?:let|const)\s+([A-Za-z_$][\w$]*)\s*=/gm)) {
+        const name = m[1], declAt = m.index;
+        /* the first function body above the declaration that names it */
+        const before = b.slice(0, declAt);
+        const re = new RegExp(`\\b${name}\\b`);
+        for (const fn of before.matchAll(/^(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(/gm)) {
+          const body = before.slice(fn.index, before.indexOf("\n}", fn.index));
+          if (re.test(body.slice(body.indexOf("{")))) { late.push(`${name} used by ${fn[1]}()`); break; }
+        }
+      }
+    }
+    check("No Studio variable is used above where it is declared",
+      late.length === 0, late.join(" | "));
+
+    /* And the two escapes that only show up as literal text in the browser. */
+    /* A \\uXXXX inside a JS string is fine; one sitting in markup renders as
+       literal text, which is how "\\u26a0 Speak to your doctor if" reached the
+       screen. Only the markup outside <script> is checked. */
+    const markup = studio.replace(/<script[\s\S]*?<\/script>/g, "");
+    check("No literal \\uXXXX escapes in Studio's markup",
+      !/\\u[0-9a-fA-F]{4}/.test(markup));
+  }
+
   /* ---- crawler parity is unaffected by all of the above ---------------- */
   {
     let thin = 0;
