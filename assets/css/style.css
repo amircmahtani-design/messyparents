@@ -418,9 +418,17 @@ html.illus-ready .hero-art img{opacity:1}
 
 /* --- Motion / responsive ------------------------------------------------- */
 
-.rise{opacity:0;transform:translateY(12px);animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards}
+/* The entrance animation used to fade in from opacity:0. Chrome excludes
+   opacity:0 elements from Largest Contentful Paint entirely, so the hero
+   illustration — the biggest thing on the page — was disqualified as an LCP
+   candidate and the header logo won by default, carrying 1,040ms of render
+   delay with it.
+
+   Same movement, no fade: the slide is the part you see anyway, and transform
+   does not affect LCP eligibility. */
+.rise{transform:translateY(12px);animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards}
 .rise:nth-child(2){animation-delay:.07s}
-@keyframes rise{to{opacity:1;transform:none}}
+@keyframes rise{to{transform:none}}
 
 /* Desktop: scale the top of the page to the screen height so the hero,
    the filter rows and the band all fit in one view. */
@@ -533,7 +541,7 @@ html.illus-ready .hero-art img{opacity:1}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
     transition-duration:.001ms !important;scroll-behavior:auto !important}
-  .rise{opacity:1;transform:none}
+  .rise{transform:none;animation:none}
 }
 
 /* --- Topic pills: emoji icon + tidy wrapping ---------------------------- */
