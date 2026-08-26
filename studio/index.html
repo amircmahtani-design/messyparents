@@ -130,11 +130,7 @@
 
 <!-- data + config for local/preview mode -->
 <script src="../assets/js/firebase-config.js"></script>
-<!-- The bundled guide catalogue. Studio is an editing environment, so it is
-     the one surface that legitimately loads the complete content — see
-     SEO_AI_ARCHITECTURE.md. It moved out of assets/js/ when the public site
-     stopped shipping it to readers. -->
-<script src="../data/guides-bundle.js"></script>
+<script src="../assets/js/guides.js?v=11"></script>
 <script src="../assets/js/site-text.js"></script>
 
 <div class="top">
@@ -979,52 +975,12 @@ function draftPageData(){
   return data;
 }
 
-
-/* ------------------------------------------------------------------------
-   PREVIEW SHIM
-
-   The preview iframe shows the real deployed page, which no longer carries
-   MPCStore — everything it used to apply at runtime is baked into the HTML by
-   the build now. A draft has not been baked yet, so Studio injects the
-   DOM-applying half of the old data layer into the iframe and pushes the
-   draft through it exactly as before.
-
-   Same origin, so this is a plain script append. Resolves once, per document;
-   a reload of the iframe re-injects on the next call.
-   --------------------------------------------------------------------- */
-function previewWindow(){
-  const fr = $("#pv");
-  if(!fr) return null;
-  let win;
-  try{ win = fr.contentWindow; }catch(e){ return null; }
-  if(!win || !win.document) return null;
-  if(win.MPCStore && win.MPCStore.applyText) return win;
-  try{
-    const d = win.document;
-    if(!d.getElementById("mpc-preview-shim")){
-      const sc = d.createElement("script");
-      sc.id = "mpc-preview-shim";
-      sc.src = "/assets/js/mpc-preview.js";
-      /* Re-push once it has parsed, since the caller that triggered this
-         injection ran too early to use it. */
-      sc.onload = () => {
-        if(typeof pushPagePreview === "function") pushPagePreview();
-        if(typeof pushSiteTextPreview === "function") pushSiteTextPreview();
-        if(typeof pushFooterPreview === "function") pushFooterPreview();
-      };
-      (d.head || d.documentElement).appendChild(sc);
-    }
-  }catch(e){/* iframe not ready yet — the next push will retry */}
-  return (win.MPCStore && win.MPCStore.applyText) ? win : null;
-}
-
 let pvPageReady=false;
 /* Live preview: apply the current draft straight into the iframe (no reload,
    so the new image replaces the old one instantly with no flash of the old). */
 function pushPagePreview(){
   if(!pvPageReady) return;
-  const win = previewWindow();
-  if(!win) return;
+  const win=$("#pv").contentWindow;
   try{
     win.MPC_PAGES = win.MPC_PAGES || {};
     win.MPC_PAGES[state.currentPage] = draftPageData();
@@ -1089,7 +1045,6 @@ async function savePage(){
     // Full overwrite (not merge) so a Reset or a moved bottom slot actually
     // clears the old value instead of leaving a stale image behind.
     await fs.setDoc(fs.doc(db,"pages",id), data);
-    autoRebuild("pages");
     state.pagesData[id]=data;
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
     pushPagePreview();
@@ -1604,7 +1559,6 @@ $("#save").addEventListener("click", async () => {
       g.order = maxOrder + 1;
     }
     const note = await saveGuide(g);
-    autoRebuild("guide", isNew);
     state.orig = g;
     if(isNew){
       state.guides.push(g);
@@ -1639,76 +1593,6 @@ $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.or
    publish it. Paste it once per device instead.
    ====================================================================== */
 const HOOK_KEY = "mpc.netlifyBuildHook";
-
-/* ------------------------------------------------------------------------
-   AUTOMATIC REBUILD ON SAVE
-
-   Saving writes to Firestore, which is the source of truth. The static half
-   of the site — the generated guide page, the sitemap, llms.txt, the topic and
-   age pages, the related links, and now the search index the browse pages read
-   — is produced by scripts/build.js on deploy.
-
-   That gap used to be covered by every reader downloading the whole Firestore
-   collection on every page, which is exactly what this work removed. So the
-   rebuild has to happen on its own instead of being remembered.
-
-   It is debounced by 90 seconds. Editing a batch of guides fires ONE build
-   after the last save rather than one per save, which matters because Netlify
-   build minutes are finite and a build takes a minute or two anyway.
-
-   The hook URL still lives only in this browser's localStorage. A build hook
-   is a write-only URL that triggers a deploy, and meta/* is publicly readable,
-   so putting it in Firestore would publish it. Nothing here changes that.
-   --------------------------------------------------------------------- */
-const AUTO_REBUILD_DELAY = 90000;
-let _rebuildTimer = null, _rebuildPending = false;
-
-function autoRebuild(reason, isNew){
-  let url = "";
-  try{ url = localStorage.getItem(HOOK_KEY) || ""; }catch(e){}
-  if(!/^https:\/\/api\.netlify\.com\/build_hooks\//.test(url)){
-    /* No hook pasted on this device, so nothing will rebuild on its own. Say
-       so plainly rather than leaving it to be discovered later — the public
-       site is static now, so the rebuild is what publishes. */
-    showRebuildState("Saved. No build hook on this device \u2014 Site \u2192 Search & AI.");
-    setTimeout(() => showRebuildState(""), 12000);
-    return;
-  }
-
-  _rebuildPending = true;
-  showRebuildState(isNew
-    ? "New guide saved. It is live at its own address now; the guide list and "+
-      "search update when the rebuild finishes."
-    : "Saved. Rebuild queued\u2026");
-  clearTimeout(_rebuildTimer);
-  _rebuildTimer = setTimeout(async () => {
-    _rebuildPending = false;
-    try{
-      // Build hooks accept a POST with no body and answer with an empty 200.
-      // no-cors keeps the browser from blocking it; there is nothing to read.
-      await fetch(url, { method:"POST", mode:"no-cors" });
-      showRebuildState("Rebuilding the search pages\u2026");
-      setTimeout(() => showRebuildState(""), 120000);
-    }catch(err){
-      showRebuildState("Could not reach Netlify \u2014 use Site \u2192 Search & AI to retry.");
-    }
-  }, AUTO_REBUILD_DELAY);
-}
-
-/* A quiet status line, so a rebuild is never a mystery. */
-function showRebuildState(txt){
-  let el = document.getElementById("rebuildState");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "rebuildState";
-    el.style.cssText = "position:fixed;left:12px;bottom:12px;z-index:99;font:600 12px/1.4 system-ui;"+
-      "background:#2b2622;color:#fbf0d3;padding:6px 11px;border-radius:999px;opacity:.92";
-    document.body.appendChild(el);
-  }
-  el.textContent = txt || "";
-  el.style.display = txt ? "block" : "none";
-}
-
 
 function renderSeoFields(){
   const d = (state.seo || {});
@@ -1753,10 +1637,9 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
   try{
     const {fs, db} = state.fb;
     await fs.setDoc(fs.doc(db, "meta", "seo"), data);
-    autoRebuild("seo");
     state.seo = data;
     msg.className = "msg ok";
-    msg.textContent = "Saved. A rebuild will start shortly.";
+    msg.textContent = "Saved. These take effect on the next rebuild.";
   }catch(err){
     msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
   }finally{ btn.disabled = false; }
@@ -1779,7 +1662,6 @@ $("#seo_rebuild") && $("#seo_rebuild").addEventListener("click", async () => {
     await fetch(url, { method: "POST", mode: "no-cors" });
     msg.className = "msg ok";
     msg.textContent = "Rebuild started. Give it a minute or two.";
-    clearTimeout(_rebuildTimer);   // this one supersedes any queued automatic build
   }catch(err){
     msg.className = "msg err"; msg.textContent = "Could not reach Netlify: " + (err.message || err);
   }finally{ btn.disabled = false; }
@@ -1845,8 +1727,7 @@ function pushSiteTextPreview(){
   if(!pvSiteTextReady) return;
   const id = state.currentTextDoc;
   try{
-    const win = previewWindow();
-    if(!win) return;
+    const win=$("#pv").contentWindow;
     win.MPC_PAGES = win.MPC_PAGES || {};
     win.MPC_PAGES[id] = Object.assign({}, win.MPC_PAGES[id], { text: draftText(id) });
     win.MPCStore.applyText(win.MPC_PAGES);
@@ -1873,9 +1754,7 @@ function draftFooter(){
 }
 function pushFooterPreview(){
   if(!pvFooterReady) return;
-  const win = previewWindow();
-  if(!win) return;
-  try{ win.MPCStore.applyFooter(draftFooter()); }
+  try{ $("#pv").contentWindow.MPCStore.applyFooter(draftFooter()); }
   catch(e){/* iframe not ready — ignore */}
 }
 
@@ -1981,7 +1860,6 @@ $("#saveTopics").addEventListener("click", async ()=>{
   try{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","topics"), { items, updated:Date.now() });
-    autoRebuild("topics");
     state.topics=items.map(x=>({...x})); renderTopicRows();
     if(state.current) $("#f_topic").innerHTML=topicOptionsHTML(state.orig&&state.orig.topic);
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
@@ -2056,7 +1934,6 @@ $("#saveBooks").addEventListener("click", async ()=>{
   try{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
-    autoRebuild("books");
     state.booksList=items.map(x=>({...x})); renderBookRows();
     msg.className="msg ok"; msg.textContent="Saved — live on the site.";
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
@@ -2082,7 +1959,6 @@ $("#saveSiteText").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     const data=Object.assign({}, state.pagesData[id], { text:draftText(id) });
     await fs.setDoc(fs.doc(db,"pages",id), data);
-    autoRebuild("pages");
     state.pagesData[id]=data;
     msg.className="msg ok"; msg.textContent="Saved — live across the site.";
     pushSiteTextPreview();
@@ -2102,7 +1978,6 @@ $("#saveFooter").addEventListener("click", async ()=>{
   try{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","footer"), Object.assign({}, data, { updated:Date.now() }));
-    autoRebuild("footer");
     state.footer=data;
     msg.className="msg ok"; msg.textContent="Saved — live on every page.";
     pushFooterPreview();

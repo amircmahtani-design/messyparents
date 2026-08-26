@@ -25,56 +25,15 @@
 
 const fs = require("fs");
 const path = require("path");
-const crypto = require("crypto");
 
 const S = require("./lib/site");
 const { load, plain, clamp } = require("./lib/data");
 const H = require("./lib/head");
 const { runAudit, writeAuditPage } = require("./lib/audit");
 const R = require("../assets/js/guide-render.js");
-const B = require("./lib/bake");
-const PD = require("./lib/publicdata");
 
 const ROOT = path.resolve(__dirname, "..");
 const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
-
-/* ---------------------------------------------------------------------------
-   ASSET VERSIONING
-
-   The stylesheets and scripts were cached for a week, with hand-maintained
-   `?v=11` query strings that had to be remembered on every edit and were
-   already out of step across pages (guides.js was ?v=9 on four pages and ?v=10
-   on two).
-
-   Every reference is now stamped with a hash of the file's actual contents, so
-   the URL changes if and only if the file does. That makes them safe to cache
-   for a year as immutable (see _headers), which means a returning reader
-   re-downloads a stylesheet only when it has genuinely changed — and gets the
-   new one immediately when it has, with no manual version bump to forget.
-   ------------------------------------------------------------------------ */
-const assetHashes = new Map();
-function assetHash(rel) {
-  if (assetHashes.has(rel)) return assetHashes.get(rel);
-  let h = "0";
-  try {
-    h = crypto.createHash("sha1")
-      .update(fs.readFileSync(path.join(ROOT, rel)))
-      .digest("hex").slice(0, 10);
-  } catch (e) { /* referenced but missing: leave it unversioned */ }
-  assetHashes.set(rel, h);
-  return h;
-}
-
-/* Rewrite every /assets/** reference in a page to carry its content hash.
-   Any hand-written ?v= is replaced, so the two schemes cannot disagree. */
-function stampAssets(html) {
-  return html.replace(
-    /((?:href|src)=")(\/?(?:\.\.\/)?assets\/(?:css|js)\/[A-Za-z0-9._-]+\.(?:css|js))(?:\?[^"]*)?"/g,
-    (m, pre, url) => {
-      const rel = url.replace(/^\.\.\//, "").replace(/^\//, "");
-      return `${pre}${url}?v=${assetHash(rel)}"`;
-    });
-}
 
 const log = (...a) => console.log("[seo]", ...a);
 const problems = [];
@@ -140,7 +99,7 @@ const descOf = (html) => {
 async function main() {
   const t0 = Date.now();
   const data = await load();
-  const { guides, topics, ages, settings, meta } = data;
+  const { guides, topics, ages, settings } = data;
 
   data.warnings.forEach(note);
   log(`${guides.length} guides from ${data.source}`);
@@ -148,60 +107,6 @@ async function main() {
   if (!guides.length) {
     note("No guides available from any source. Leaving the existing site untouched.");
     return;
-  }
-
-  /* -------------------------------------------------------------------------
-     WHEN FIRESTORE COULD NOT BE READ
-
-     This used to be a soft landing: the build fell back to the bundled copy,
-     and anything newer than that copy still appeared on the live site anyway,
-     because every page read the guides collection in the browser.
-
-     That is no longer true. The public site is static, so what this build
-     writes IS the site. A build that falls back to the bundle after Amir has
-     added guides publishes a site that is missing them from the guide list,
-     the search index, the topic and age pages and the sitemap. The guides
-     themselves still resolve — _redirects rewrites their URLs to guide.html,
-     which fetches them one document at a time — but they are effectively
-     unfindable until a good build runs.
-
-     So this is now shouted rather than mentioned, and there is a switch for
-     refusing to publish at all. Set MPC_REQUIRE_FIRESTORE=1 in Netlify's
-     environment variables and a failed read exits non-zero, which makes
-     Netlify keep the PREVIOUS deploy live instead of replacing it with a
-     regressed one. That is off by default, because the original decision —
-     never fail a deploy — was deliberate and is Amir's to change.
-     ---------------------------------------------------------------------- */
-  if (data.source !== "firestore") {
-    const bundleAge = (function () {
-      try {
-        const st = fs.statSync(path.join(ROOT, "data/guides-bundle.js"));
-        return Math.round((Date.now() - st.mtimeMs) / 86400000);
-      } catch (e) { return null; }
-    })();
-
-    note(`Firestore could not be read — built from ${data.source} instead.`);
-    console.warn("[seo] ==========================================================");
-    console.warn("[seo]  THIS BUILD DID NOT SEE FIRESTORE.");
-    console.warn("[seo]");
-    console.warn(`[seo]  It published ${guides.length} guides from the ${data.source} copy` +
-      (bundleAge != null ? `, last changed ${bundleAge} day(s) ago.` : "."));
-    console.warn("[seo]  Any guide added or edited in Studio since then is NOT in the");
-    console.warn("[seo]  guide list, the search index, the landing pages or the sitemap.");
-    console.warn("[seo]  Their own URLs still work.");
-    console.warn("[seo]");
-    console.warn("[seo]  Fix: trigger another deploy. If it keeps happening, check the");
-    console.warn("[seo]  Firebase project and the key in assets/js/firebase-config.js.");
-    console.warn("[seo]  To make a failed read keep the previous deploy live instead of");
-    console.warn("[seo]  publishing this one, set MPC_REQUIRE_FIRESTORE=1 in Netlify.");
-    console.warn("[seo] ==========================================================");
-
-    if (process.env.MPC_REQUIRE_FIRESTORE === "1") {
-      console.error("[seo] MPC_REQUIRE_FIRESTORE=1 — refusing to publish a build that " +
-        "could not read Firestore. The previous deploy stays live.");
-      process.exitCode = 1;
-      return;
-    }
   }
 
   const byId = new Map(guides.map(g => [g.id, g]));
@@ -231,120 +136,9 @@ async function main() {
 
   const renderOpts = (g) => ({ t, iconHTML: iconFor(g), topicLabel, iconFor });
 
-  /* =========================================================================
-     BAKING — Studio's editable content, resolved here instead of in the
-     browser.
-
-     Everything below this line used to require the Firebase SDK, a Firestore
-     connection and a read of the `pages` and `meta` collections before a
-     public page could show the right words, footer, hero illustration, topic
-     pills or book list. It is the same data, applied once per deploy, from the
-     same source. See scripts/lib/bake.js.
-     ====================================================================== */
-
-  /* The merged text map for a page: site-wide values, then that page's own,
-     which win. Same precedence as buildTextMap() in the old mpc-store.js. */
-  function textFor(pageId) {
-    const site = (data.pages.site && data.pages.site.text) || {};
-    const own = (data.pages[pageId] && data.pages[pageId].text) || {};
-    const out = {};
-    for (const src of [site, own]) {
-      for (const k of Object.keys(src)) {
-        const v = src[k];
-        if (v != null && String(v).trim() !== "") out[k] = String(v);
-      }
-    }
-    return out;
-  }
-
-  /* The handful of strings that page scripts build themselves (result counts,
-     empty states, the "See all" link) rather than reading out of the markup.
-     Those cannot be baked into an element, so they are written inline as a
-     small object. Filtered to the prefixes the scripts actually use, so a long
-     prose override on some other key is not shipped with them. */
-  const SCRIPT_TEXT = /^(results|empty|related|search)\./;
-  function scriptText(pageId) {
-    const all = textFor(pageId), out = {};
-    for (const k of Object.keys(all)) if (SCRIPT_TEXT.test(k)) out[k] = all[k];
-    return out;
-  }
-
-  const facetData = PD.facets(guides, topics, ages, (id) => {
-    const g = guides.find(x => x.topic === id);
-    return g ? iconFor(g) : `<img src="/assets/img/icons/${id}.webp" alt="" aria-hidden="true">`;
-  });
-
-  const pillTopics = topics.map(tp => ({
-    id: tp.id, label: tp.label, iconHTML: facetData.icons[tp.id] || ""
-  }));
-
-  /* Firestore project + key, inline. guide.js needs these for the two
-     off-path cases (a guide with no generated page yet, and the once-per-
-     session freshness check) and fetches ONE document over REST with them.
-     They are the same public values that were already being served in
-     firebase-config.js — which every page loaded, and which is now loaded by
-     none of them. */
-  const fbCfg = (function () {
-    try {
-      const src = read("assets/js/firebase-config.js");
-      const p = /projectId:\s*"([^"]+)"/.exec(src);
-      const k = /apiKey:\s*"([^"]+)"/.exec(src);
-      return (p && k) ? { p: p[1], k: k[1] } : null;
-    } catch (e) { return null; }
-  })();
-  const fsInline = fbCfg
-    ? `<script>window.MPC_FS=${JSON.stringify(fbCfg)};</script>`
-    : "";
-
-  /* Applied to every generated and hand-written page. */
-  function bakeCommon(html, pageId) {
-    html = B.applyText(html, textFor(pageId));
-    html = B.applyFooter(html, settings.footer);
-    html = stampAssets(html);
-    return html;
-  }
-
-  /* Inline data for the browse scripts: pills, counts, and the script-built
-     strings. A few hundred bytes, present before the deferred scripts run, so
-     nothing pops in afterwards. */
-  function inlineFacets(html, pageId) {
-    const payload = `<script>window.MPC_FACETS=${JSON.stringify(facetData)};` +
-      `window.MPC_T=${JSON.stringify(scriptText(pageId))};</script>`;
-    if (/<!--\s*MPC:FACETS:START\s*-->/.test(html)) {
-      return html.replace(/<!--\s*MPC:FACETS:START\s*-->[\s\S]*?<!--\s*MPC:FACETS:END\s*-->/,
-        `<!-- MPC:FACETS:START -->${payload}<!-- MPC:FACETS:END -->`);
-    }
-    return html.replace(/<\/head>/i,
-      `<!-- MPC:FACETS:START -->${payload}<!-- MPC:FACETS:END -->\n</head>`);
-  }
-
   /* ---- 1. Guide pages -------------------------------------------------- */
 
-  /* Baked once, not once per guide: the header, footer and editable wording
-     are identical on all of them.
-
-     MPC_FS goes into the TEMPLATE, not into each generated page, because the
-     surface that needs it most is guide.html itself. A guide saved in Studio
-     since the last deploy has no generated page, so _redirects rewrites its
-     clean URL here — and without the project id and key, guide.js has nothing
-     to look the guide up with and would show "We can't find that one" for a
-     guide that exists. That is precisely the failure this architecture was
-     built to avoid (see "HTTP status codes" in SEO_AI_ARCHITECTURE.md). */
-  const guideTpl = fsInline
-    ? bakeCommon(absolutise(read("guide.html")), "guide")
-        .replace(/<script>window\.MPC_FS=[\s\S]*?<\/script>\s*/g, "")
-        .replace("</head>", fsInline + "\n</head>")
-    : bakeCommon(absolutise(read("guide.html")), "guide");
-
-  /* guide.html is served, not just used as a template: _redirects rewrites any
-     unknown /guides/<slug>/ to it so a guide saved since the last deploy still
-     renders. So it needs the same baked wording, the same hashed asset URLs and
-     the same Firestore config as everything else. Writing it back is safe to
-     repeat — applyText restores from data-mpc-default before re-applying,
-     stampAssets replaces any existing ?v=, and the MPC_FS block is stripped
-     before it is re-added. */
-  write("guide.html", guideTpl);
-
+  const guideTpl = absolutise(read("guide.html"));
   let built = 0;
 
   for (const g of guides) {
@@ -402,8 +196,7 @@ async function main() {
       html = marker(html, "EXTRA", extras.join("\n"));
 
       /* The rendered guide, and the id so the client script knows which guide
-         it is looking at without a query string. MPC_FS is already in the
-         template above. */
+         it is looking at without a query string. */
       html = html.replace(
         '<div id="article"></div>',
         `<div id="article">\n${R.panelMarkup(g, renderOpts(g))}\n</div>\n` +
@@ -418,51 +211,9 @@ async function main() {
   }
   log(`${built} guide pages written`);
 
-  /* ---- 1b. Remove pages for guides that no longer exist -----------------
-     On Netlify this is usually a no-op: every deploy starts from a fresh
-     checkout, so there is nothing stale to find. It matters in two cases
-     that do happen.
-
-     A slug renamed in Studio leaves its old directory behind on any tree the
-     build runs against twice. That directory still contains a complete,
-     indexable page with its own canonical — a duplicate of the guide at its
-     new address, which is exactly what the redirect machinery exists to
-     prevent. And a deleted guide leaves a page nothing links to but search
-     engines still hold.
-
-     Only directories this build knows how to produce are ever removed, and
-     only under /guides, /topics and /ages. Nothing else is touched. */
-  function prune(dir, keep, label) {
-    const full = path.join(ROOT, dir);
-    if (!fs.existsSync(full)) return 0;
-    let removed = 0;
-    for (const entry of fs.readdirSync(full, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      if (keep.has(entry.name)) continue;
-      /* Only ever delete something that looks like our own output. */
-      const page = path.join(full, entry.name, "index.html");
-      if (!fs.existsSync(page)) continue;
-      try {
-        fs.rmSync(path.join(full, entry.name), { recursive: true, force: true });
-        removed++;
-      } catch (e) { note(`Could not remove stale ${label} /${entry.name}/ — ${e.message}`); }
-    }
-    return removed;
-  }
-
-  const staleGuides = prune("guides", new Set(guides.map(g => g.slug)), "guide");
-  if (staleGuides) log(`${staleGuides} stale guide page(s) removed`);
-
   /* ---- 2. Topic and age landing pages ---------------------------------- */
 
-  /* Baked once for all twelve landing pages: the wording, the footer, the
-     hero illustration and the asset hashes are identical across them. Only
-     the pills (which reflect the prefilter) and the cards differ. */
-  const listTpl = inlineFacets(
-    B.applyHero(
-      bakeCommon(absolutise(read("guides.html")), "guides"),
-      data.pages.guides, R.img),
-    "guides");
+  const listTpl = absolutise(read("guides.html"));
 
   function landingPage({ url, file, h1, intro, list, prefilter, description }) {
     let html = listTpl;
@@ -484,10 +235,6 @@ async function main() {
     /* Real cards in the HTML, plus the hash of what was baked so the client
        can leave them alone when they are already correct. */
     html = bakeGrid(html, "grid", list);
-    /* The filter row, with this page's own filter already lit. It used to be
-       built in the browser from TOPICS and AGES, which meant the whole guide
-       catalogue had to load before five buttons could appear. */
-    html = B.applyPills(html, pillTopics, ages, prefilter);
     /* A landing page is a leaf, not a hub: it must not repeat the full
        topic/age link list that lives on /guides.html. */
     html = marker(html, "BROWSELINKS", "");
@@ -540,9 +287,6 @@ async function main() {
       list, prefilter: { age }
     });
   }
-  const staleT = prune("topics", new Set(topics.map(tp => tp.id)), "topic");
-  const staleA = prune("ages", new Set(ages.map(a => S.ageSlug(a))), "age");
-  if (staleT || staleA) log(`${staleT} stale topic page(s), ${staleA} stale age page(s) removed`);
   log(`${topicPages.length} topic pages, ${agePages.length} age pages`);
 
   /* ---- 3. Crawlable links on the hand-written pages -------------------- */
@@ -578,16 +322,13 @@ async function main() {
   function bakePage(file, bake, meta) {
     try {
       let html = read(file);
-      const pageId = (/<body[^>]*\sdata-mpc-page="([^"]*)"/.exec(html) || [])[1] || "";
       html = injectHead(html, H.metaBlock(Object.assign({
         title: titleOf(html),
         description: descOf(html),
         type: "website",
         verification: settings.verification
       }, meta)));
-      /* Editable wording, footer and hashed asset URLs on every page. */
-      html = bakeCommon(html, pageId);
-      if (bake) html = bake(html, pageId);
+      if (bake) html = bake(html);
       write(file, html);
     } catch (e) { note(`${file}: ${e.message}`); }
   }
@@ -595,35 +336,19 @@ async function main() {
   const featured = guides.filter(g => g.featured && !g.noindex);
   const homeList = featured.slice(0, 4);
   bakePage("index.html",
-    (html, pageId) => {
-      html = bakeGrid(html, "grid", homeList);
-      html = B.applyPills(html, pillTopics, ages, {});
-      /* The hero used to ship with no src at all — the real one lived in
-         Firestore and was applied after Firebase had booted. It is the LCP
-         element here, so it is now written into the HTML where the browser's
-         preload scanner can find it before any script runs. */
-      html = B.applyHero(html, data.pages.home, R.img);
-      return inlineFacets(html, pageId);
-    },
+    (html) => bakeGrid(html, "grid", homeList),
     { canonical: "/", schema: H.homeSchema() });
 
   const seen = new Set(featured.map(g => g.id));
   const oneEach = topics.map(tp =>
     guides.find(g => g.topic === tp.id && !seen.has(g.id) && !g.noindex)).filter(Boolean);
   bakePage("popular.html",
-    (html, pageId) => {
-      html = bakeGrid(bakeGrid(html, "featured", featured), "byTopic", oneEach);
-      html = B.applyHero(html, data.pages.popular, R.img);
-      return inlineFacets(html, pageId);
-    },
+    (html) => bakeGrid(bakeGrid(html, "featured", featured), "byTopic", oneEach),
     { canonical: "/popular.html" });
 
   const allList = guides.filter(g => !g.noindex);
-  bakePage("guides.html", (html, pageId) => {
+  bakePage("guides.html", (html) => {
     html = bakeGrid(html, "grid", allList);
-    html = B.applyPills(html, pillTopics, ages, {});
-    html = B.applyHero(html, data.pages.guides, R.img);
-    html = inlineFacets(html, pageId);
     return marker(html, "BROWSELINKS",
       `<nav class="browse-links" aria-label="Browse by topic and age">
         <p><span>Browse by topic:</span> ${topicPages.map(p =>
@@ -633,15 +358,9 @@ async function main() {
       </nav>`);
   }, { canonical: "/guides.html" });
 
-  /* The About page's four illustration slots and the Our Books grid were both
-     rendered in the browser from Firestore. Same data, baked. */
-  bakePage("about.html",
-    (html) => B.applyAbout(html, data.pages.about, R.img),
-    { canonical: "/about.html" });
-  bakePage("books.html",
-    (html) => B.applyBooks(html, meta.books && meta.books.items, R.img),
-    { canonical: "/books.html" });
-
+  for (const f of ["about.html", "books.html"]) {
+    bakePage(f, null, { canonical: "/" + f });
+  }
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) {
     bakePage("editorial.html", null, { canonical: "/editorial.html" });
   }
@@ -649,29 +368,8 @@ async function main() {
   try {
     let nf = read("404.html");
     nf = injectHead(nf, `<meta name="robots" content="noindex, follow">`);
-    nf = bakeCommon(nf, "notfound");
     write("404.html", nf);
   } catch (e) { note("404.html: " + e.message); }
-
-  /* ---- 3b. The generated public data files ------------------------------
-     The whole point of the exercise: what a browse page reads instead of the
-     complete guide catalogue. See scripts/lib/publicdata.js for the shape and
-     the budget. */
-  const indexList = guides.filter(g => !g.noindex);
-  const idxJson = JSON.stringify(PD.guideIndex(indexList));
-  const searchJson = JSON.stringify(PD.guideSearch(indexList));
-  const settingsJson = JSON.stringify(
-    PD.siteSettings(settings, topics, ages, (id) => facetData.icons[id] || ""));
-
-  write("data/guide-index.json", idxJson);
-  write("data/guide-search.json", searchJson);
-  write("data/site-settings.json", settingsJson);
-
-  const kb = (s) => (Buffer.byteLength(s) / 1024).toFixed(1);
-  const per = (s) => Math.round(Buffer.byteLength(s) / Math.max(1, indexList.length));
-  log(`guide-index.json ${kb(idxJson)}KB (${per(idxJson)} B/guide), ` +
-      `guide-search.json ${kb(searchJson)}KB (${per(searchJson)} B/guide), ` +
-      `site-settings.json ${kb(settingsJson)}KB`);
 
   /* ---- 4. sitemap.xml -------------------------------------------------- */
 
@@ -949,10 +647,4 @@ async function indexNow(guides) {
 main().catch(err => {
   console.error("[seo] BUILD STEP FAILED — the site is being published unchanged.");
   console.error(err && err.stack || err);
-}).finally(() => {
-  /* Always 0, so a problem in this script cannot take the live site down —
-     EXCEPT when the Firestore guard above has deliberately asked to fail, in
-     which case failing is the safer outcome: Netlify keeps the last good
-     deploy rather than replacing it with an incomplete one. */
-  process.exit(process.exitCode === 1 ? 1 : 0);
-});
+}).finally(() => process.exit(0));

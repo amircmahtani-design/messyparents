@@ -14,10 +14,13 @@
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Guide illustrations are served from Firebase Storage; opening the
+     connection early saves the handshake when the first one is needed. -->
+<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css?v=dcd2bfa4bf">
-<link rel="stylesheet" href="assets/css/style.css?v=23f4dcc071">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 <!-- MPC:SEO:START -->
 <meta name="robots" content="noindex, follow">
 <!-- MPC:SEO:END -->
@@ -61,7 +64,14 @@
   </div>
 </footer>
 
-<script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/guides.js?v=9"></script>
+<!-- Loaded here only so the footer stays in step with the rest of the site
+     when it is edited in Studio. -->
+<script src="assets/js/mpc-store.js?v=10"></script>
+<script>/* The Studio-edited copyright line writes its own year, so this span
+   may already be gone by the time this runs. */
+var _y=document.getElementById("year"); if(_y) _y.textContent=new Date().getFullYear();</script>
 
 </body>
 </html>

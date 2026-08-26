@@ -111,34 +111,21 @@ web UI, Netlify does the rest.
 
 ```
 scripts/
-  build.js            the build
-  lib/site.js         domain, entity name, URL shapes — one source of truth
-  lib/data.js         loads guides and normalises them into one model
-  lib/head.js         <head> tags and JSON-LD
-  lib/audit.js        validation + the audit page
-  lib/bake.js         Studio's editable content, applied at deploy time
-  lib/publicdata.js   the small generated JSON the browse pages read
-data/
-  guides-bundle.js    the build's fallback catalogue — never served to a reader
+  build.js          the build
+  lib/site.js       domain, entity name, URL shapes — one source of truth
+  lib/data.js       loads guides and normalises them into one model
+  lib/head.js       <head> tags and JSON-LD
+  lib/audit.js      validation + the audit page
 assets/js/
-  guide-render.js     THE RENDERER — runs in Node and in the browser
-  mpc-runtime.js      the tiny shared public runtime (no data, no Firebase)
-  mpc-catalogue.js    search and filtering against the generated index
-  guide.js            guide page behaviour in the browser
-  home.js             home page
-  guides-search.js    all-guides, and the topic/age landing pages
-  popular.js          popular page
-  mpc-preview.js      Studio's live-preview shim — never served to a reader
+  guide-render.js   THE RENDERER — runs in Node and in the browser
+  guide-page.js     guide page behaviour in the browser
 ```
 
 Data is read in this order, and it falls through on any failure:
 
 1. **Firestore** over the REST API, using the same public API key the browser
    uses (`guides` is `allow read: if true`).
-2. **`data/guides-bundle.js`**, the bundled copy. This used to live at
-   `assets/js/guides.js` and was loaded by every public page; it is a
-   build-time input now. Build-time fallback data is good. Shipping it to every
-   reader was not.
+2. **`assets/js/guides.js`**, the bundled copy the browser already falls back to.
 3. **`data/guides.json`**, the seed file.
 
 ### The build cannot fail a deploy
@@ -232,88 +219,29 @@ test for it.
 
 ## What happens when you add or edit a guide
 
-This used to be a story about two clocks. It is now a story about one, because
-the public site no longer reads Firestore.
+Two things update on different clocks, and it matters to know which is which.
 
-**On save:**
+**Immediately, no deploy needed** — because these read Firestore in the browser:
 
-1. The guide is written to Firestore, which is the source of truth.
-2. Studio queues a Netlify build hook, debounced by 90 seconds — so editing a
-   batch of guides fires **one** build after the last save, not one per save.
-3. The build regenerates everything: the guide's own page, its entry in the
-   sitemap and `llms.txt`, its place on the topic and age landing pages, the
-   "Read next" links on other guides, the redirects if the slug changed, the
-   search index, and the SEO audit.
-4. A minute or two later the CDN is serving it.
+- the guide appears in the grids on Home, Popular and All Guides
+- edits to an existing guide show on its page
+- topic pills, ages, search and filtering all include it
 
-A small status pill in the corner of Studio says which stage it is at, so a
-rebuild is never a mystery. Paste the build hook once per device (Site → Search
-& AI); until you do, nothing is triggered and the manual **Rebuild the search
-pages** button works exactly as before.
+**On the next deploy** — because these are generated files:
 
-**Why this changed.** Previously the grids on Home, Popular and All Guides
-updated the instant you saved, because every one of those pages downloaded the
-entire guides collection from Firestore on load. That is a real convenience,
-and it was being paid for by every reader on every page — 113KB of bundled
-article bodies at 31 guides, and about 1.7MB at 500. See
-[Performance](#performance) for what that looked like in practice.
+- the guide's own page at `/guides/<slug>/` with its title, description,
+  canonical, Open Graph tags and Article schema
+- its entry in `sitemap.xml` and `llms.txt`
+- its place on the topic and age landing pages
+- its "Read next" links on other guides
 
-**The gap is still covered.** A guide saved but not yet rebuilt has no
-generated page, so `_redirects` rewrites it to `guide.html`, which fetches
-**that one document** over the Firestore REST API and renders it. It is
-readable and shareable immediately; what it lacks until the build lands is its
-own metadata and its sitemap entry, so it is not yet properly indexable.
+In between, a brand-new guide still works: the fallback rule renders it from
+Firestore. What it lacks is its own metadata and its sitemap entry — so it is
+readable and shareable, just not yet properly indexable.
 
-And a generated page whose guide has been edited since the deploy catches
-itself up: once the browser is idle, once per session, `guide.js` re-checks the
-hash the build stamped on the panel against live data with the same
-single-document read. If they match — the normal case — nothing happens.
-
----
-
-### Adding guides continuously
-
-Guides are added all the time, so the state of the newest one is not an edge
-case — it is the normal condition of the site for a minute or two after every
-save. What each surface does in that window:
-
-| Surface | A guide saved 30 seconds ago |
-|---|---|
-| `/guides/<slug>/` | **Works.** No generated page yet, so `_redirects` rewrites to `guide.html`, which fetches that one document over REST and renders it. Shareable immediately. |
-| Guide list, search, topic and age pages | Appear after the rebuild. They read the generated index. |
-| Sitemap, `llms.txt`, "Read next" on other guides | After the rebuild. |
-| Studio's own list and preview | **Immediate.** Studio reads Firestore directly and always has. |
-| Editor's guide picker | Fills from the generated index, so after the rebuild; the guide's content is then fetched live, one document at a time. |
-
-`guide.html` therefore carries the Firestore project id and key, written in by
-the build. Without them a newly saved guide would show "We can't find that one"
-— which is the exact failure the fallback rewrite exists to prevent, so
-`npm run verify` asserts it is there.
-
-A slug that genuinely does not exist still marks itself `noindex, follow` and
-says so, and it does that **without** downloading the renderer first: the guide
-is looked up before any of the machinery for drawing it is fetched.
-
-### If a build cannot reach Firestore
-
-This used to be a soft landing. It is not any more, and the change is worth
-understanding.
-
-Previously a build that fell back to the bundled copy still produced a working
-site, because every page read the guides collection in the browser — anything
-newer than the bundle appeared anyway. Now the public site is static, so **what
-the build writes is the site.** A fallback build published after new guides
-were added is missing them from the guide list, the search index, the landing
-pages and the sitemap. Their own URLs still resolve through the rewrite, but
-nothing links to them.
-
-So the build now says so extremely loudly in the deploy log, including how old
-the bundled copy is. And there is a switch: set **`MPC_REQUIRE_FIRESTORE=1`**
-in Netlify's environment variables and a failed read exits non-zero, so Netlify
-keeps the previous deploy live rather than replacing it with an incomplete one.
-
-It is off by default, because "never fail a deploy" was a deliberate decision
-and reversing it is Amir's call, not the build's.
+**To close the gap:** Studio → Site → Search & AI → **Rebuild the search pages**.
+Takes a minute or two. Not urgent for one guide; worth doing after a batch, and
+before you would want Google to find them.
 
 ---
 
@@ -473,137 +401,19 @@ The audit flags guides nothing else links to. Currently two:
 
 ## Performance
 
-The SEO half of this site was solved before the performance half. A guide page
-arrived with its whole article in the HTML — and then loaded a content
-management system on top of it.
+- **~5KB of inline CSS removed from every guide page.** The panel styles moved
+  to `assets/css/guide.css`, hard-cached. At 300 guides that is 1.5MB of
+  duplication avoided, and a change reaches every guide at once.
+- **No Firestore round trip before first paint.** The content is in the HTML.
+- **No layout shift from hydration** — the hash check means the DOM is not
+  rebuilt when it is already correct.
+- **Illustrations carry `width`/`height`**, so they reserve their space.
+- **Landing pages load one category**, not the whole archive.
+- `_headers` caches assets hard, HTML not at all, crawler files for an hour.
 
-### What was wrong
-
-Every public page, including a generated guide page that needed nothing:
-
-```
-firebase-config.js     0.9KB
-guides.js            113.6KB   the complete catalogue, every article body
-guide-render.js       16.4KB
-mpc-store.js          21.5KB
-guide-page.js          7.6KB
-                     -------
-                    ~158KB of JavaScript
-```
-
-plus the Firebase SDK from gstatic, plus a Firestore connection, plus
-`getDocs(collection(db, "guides"))` — a download of every guide document,
-bodies included — after which it compared hashes, discovered the HTML it had
-already been served was correct, and did nothing.
-
-`guides.js` was about 3.6KB per guide. Extrapolated: **334KB at 100 guides,
-1.0MB at 300, 1.7MB at 500** — on every page.
-
-### The principle
-
-**Public site = static. Studio = dynamic.**
-
-Firestore is the content-management source. It is not something an ordinary
-reader has to load before the site works.
-
-```
-STUDIO → Firestore → Netlify build → static output → CDN → reader
-```
-
-### What a reader downloads now
-
-A generated guide page, measured with `tests/scale-test.js`:
-
-| | 31 guides | 100 | 300 | 500 |
-|---|---|---|---|---|
-| HTML (gzipped) | 4.9KB | 4.9KB | 4.9KB | 4.9KB |
-| JavaScript (gzipped) | 9.2KB | 9.2KB | 9.2KB | 9.2KB |
-| Requests | 7 | 7 | 7 | 7 |
-| *Bundled catalogue, before* | *104.7KB* | *334.4KB* | *1008.0KB* | *1686.5KB* |
-
-**Flat.** That is the whole point: a guide page's cost stopped being a function
-of how many guides exist.
-
-### The data files
-
-Browse pages need metadata — for search, filtering, recommendations — but not
-article bodies. So the build generates two files instead of one bundle:
-
-- **`/data/guide-index.json`** — id, slug, title, topic, read time, ages,
-  featured. Everything needed to draw a card and filter. ~178 bytes a guide.
-- **`/data/guide-search.json`** — summary, target keywords and a capped body
-  excerpt: the text a query is matched against. ~410 bytes a guide. Fetched
-  **only when somebody actually types**.
-
-Neither carries an article body, and `npm run verify` fails the build if one
-starts to.
-
-Loading is in three stages, so nothing is ever waited on:
-
-1. The page arrives. Cards are baked into the HTML; the filter pills and their
-   counts are inline in `MPC_FACETS`. Nothing is fetched. The page is finished.
-2. At idle, or on the first touch of a pill or the search box, the index loads.
-3. On the first keystroke, the search text loads. Until it lands, queries match
-   on titles alone — instant, already in memory — and re-score when it arrives.
-
-### Firestore on the public site
-
-Two paths, both single-document, both over the REST API with no SDK:
-
-- a guide saved in Studio since the last deploy, which has no generated page yet;
-- the once-per-session idle freshness check on a generated page, which skips
-  entirely on a metered or 2G connection.
-
-There are **no whole-collection reads anywhere on the public site**, and no
-public page loads the Firebase SDK. `verify.js` asserts both.
-
-### Baking
-
-Editable wording, the footer, hero illustrations, the About slots, the books
-list and the filter pills all used to be applied in the browser from Firestore.
-They are applied by `scripts/lib/bake.js` at deploy time now, from the same
-data. Nothing arrives late, so nothing flashes or shifts.
-
-The hero image mattered most: it used to ship with **no `src` at all**, only a
-`data-default`, resolved after Firebase had booted. It was the LCP element on
-three pages and could not be discovered by the browser's preload scanner. It is
-now written into the HTML.
-
-### Smaller things
-
-- **A preconnect to `firebasestorage.googleapis.com` on every page**, to a host
-  no page ever contacts — illustrations are rewritten to `/.netlify/images`,
-  which is this origin. Removed.
-- **The typography was left completely alone**, deliberately. Baloo 2 is
-  requested at 600, 700 and 800 and renders only at 700, so trimming it looks
-  like a free saving. It is not: a browser downloads a font file only when an
-  element actually needs that weight, so the two unused weights were never
-  fetched — they were only *declared*. The entire saving is about 260 bytes of
-  text in a third-party stylesheet that is hard-cached anyway. Against that, if
-  anything ever renders the display face at another weight the browser would
-  substitute 700 and the heading would visibly thicken. A non-zero risk to the
-  site's look for a rounding error in transfer size is a bad trade. The font
-  request is now pinned by a test, so altering it has to be a deliberate design
-  decision rather than a performance one.
-- **`fitGuide()` measured the panel six or seven times per load** on a chain of
-  timers, each clearing the transform and reading `scrollHeight` — a forced
-  synchronous layout, mostly to produce the same answer. It now measures when
-  something has actually changed, batched into one animation frame, reads
-  before writes, with a `ResizeObserver` covering the font swap and image
-  decode the timers were guessing at.
-- **Asset caching** was a week, with hand-maintained `?v=` strings already out
-  of step between pages. Every reference is now stamped with a content hash by
-  the build, so `immutable` for a year is safe.
-- **CSS is shared and hard-cached**, not inlined — 300 guide pages must not each
-  carry their own copy.
-
-### Studio is exempt, deliberately
-
-Studio loads the complete catalogue, because it is an editing environment and
-that is the correct trade there. It is `noindex` and nobody reaches it by
-accident. `data/guides-bundle.js` — the old `guides.js` — lives on as the
-build's Firestore fallback and Studio's seed source. No public page references
-it, and there is a test for that.
+The all-guides page renders all 31 cards server-side. At 300 that is around
+2,400 DOM nodes — acceptable, but if it ever feels slow the fix is to paginate
+the *visible* list while keeping every link crawlable.
 
 ---
 
@@ -642,33 +452,11 @@ inclusion, and every problem or to-do. `noindex`, robots-disallowed, and
 `X-Robots-Tag`-blocked. `test-results/seo-audit.json` is the machine-readable
 copy.
 
-**`npm run verify`** — 136 checks in two passes.
-
-`tests/verify.js` (98) reads what the build actually wrote to disk:
+**`npm run verify`** — 63 checks against what the build actually wrote to disk:
 card parity between build and browser, unique titles, correct canonicals, one
 `<h1>`, the answer present in the HTML, valid schema, no relative paths, no
 orphans, no fabricated dates, no leaked internal IDs, no ghost breadcrumbs,
-sitemap and robots correctness, no redirect chains, private surfaces private —
-plus a performance-architecture section that fails if any of this work is
-undone by accident: no public page shipping the catalogue, no Firebase SDK on a
-public page, no whole-collection read, no article bodies in the index, a budget
-on guide-page JavaScript, the hero image having a real `src`, and — the one
-that matters most — every generated guide page still containing its full
-article once every `<script>` is stripped out.
-
-`tests/runtime-sim.js` (38) executes the rewritten client scripts in Node
-against the JSON the build actually wrote, with a small DOM stub. It checks
-that filtering returns exactly the guides the bundle says it should, that real
-queries find and rank the right guide, that a card built in the browser is
-byte-identical to the baked one, and that a pre-rendered guide page touches
-neither the DOM nor the network on load. The Playwright audit is the right tool
-for rendering problems, but it needs a browser binary to be downloadable, and
-"the tests could not run" is a poor answer for scripts that were rewritten from
-scratch.
-
-**`node tests/scale-test.js`** — clones the real guides to 100, 300 and 500,
-runs the real build at each size, measures what a reader would download, and
-restores everything afterwards. See [Performance](#performance).
+sitemap and robots correctness, no redirect chains, private surfaces private.
 
 **`npm test`** — your existing Playwright audit, now including `editorial.html`
 and two generated pages.
@@ -685,11 +473,7 @@ expected shape. The to-dos are the content pass, not faults.
    Nothing is hardcoded; blank means no tag rather than a fake one.
 2. **Bing Webmaster Tools** — same, then submit the sitemap.
 3. **Netlify build hook** — create one in Site settings → Build & deploy →
-   Build hooks, paste into Studio once per device. This matters more than it
-   used to: the public site is static now, so the rebuild is what publishes. Once
-   the hook is set, Studio fires it automatically 90 seconds after your last
-   save, and a status pill tells you where it is up to. Without it, saves reach
-   Firestore but the generated pages wait for the next deploy.
+   Build hooks, paste into Studio once per device.
 4. **Turn on "The longer version"** — see above. One click, triples the
    indexable content.
 5. **Social profiles** — when they exist, add them to `sameAs` in
@@ -699,18 +483,7 @@ expected shape. The to-dos are the content pass, not faults.
    preserved, so `chat.openai.com`, `perplexity.ai`, `copilot.microsoft.com` and
    `claude.ai` will be distinguishable as referral sources.
 8. **Run `npm test` once after the first deploy** — the browser-level audit
-   needs a Playwright browser binary, which could not be downloaded in the
-   environment this work was done in. `npm run verify` covers the same ground
-   at the file and script level, but a real browser is a real browser.
-9. **Re-run PageSpeed on mobile** for `/`, `/guides.html` and
-   `/guides/blocked-nose-newborn/`. The local measurements are of payload and
-   request architecture; LCP, CLS, INP and TBT can only be measured live.
-10. **Consider moving `assets/img/refs/` to Firebase Storage.** It is 20MB of
-    illustration reference sheets, deployed on every build. Studio already has
-    the tool for it (Site → the refs migration panel). They are fetched by
-    Studio and by the Netlify functions from the deployed origin, so they
-    cannot simply be deleted — but no reader ever requests them, so this is
-    deploy weight, not reader weight, and it is not urgent.
+   could not be run here.
 
 ---
 
