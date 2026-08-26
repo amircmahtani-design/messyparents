@@ -61,11 +61,19 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap"></noscript>
-<link rel="stylesheet" href="/assets/css/tokens.css?v=dcd2bfa4bf">
-<link rel="stylesheet" href="/assets/css/style.css?v=3923130a64">
 <!-- The guide panel's own CSS. Was ~5KB inline in this file; now a shared,
      hard-cached stylesheet so 300 generated pages do not each carry a copy. -->
+<!-- MPC:CSS:START -->
+<!-- The stylesheets are inlined into this page at build time; see inlineCss()
+     in scripts/build.js for why and for the two ways it can go wrong.
+
+     The links below are the fallback, and they are what lives in the repo. If
+     the build never runs, or cannot read a stylesheet, the page ships exactly
+     like this and works exactly as it always has. -->
+<link rel="stylesheet" href="/assets/css/tokens.css?v=dcd2bfa4bf">
+<link rel="stylesheet" href="/assets/css/style.css?v=3923130a64">
 <link rel="stylesheet" href="/assets/css/guide.css?v=da7b0a1b65">
+<!-- MPC:CSS:END -->
 <script>window.MPC_FS={"p":"messy-parents","k":"AIzaSyAGHZgw1Thl82LTJTUcpceQXa-Fjwzdn_E"};</script>
 </head>
 <body data-mpc-page="guide">

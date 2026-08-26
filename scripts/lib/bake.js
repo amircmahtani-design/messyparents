@@ -387,7 +387,7 @@ function bookCardHTML(b, img) {
     : `<div class="book-cover-empty" aria-hidden="true"><span>${title}</span></div>`;
   return '<article class="book-card">' +
     `<div class="book-cover">${cover}</div>` +
-    `<div class="book-body">${status}<h3>${title}</h3>` +
+    `<div class="book-body">${status}<h2>${title}</h2>` +
     (summary ? `<p class="book-summary">${summary}</p>` : "") +
     "</div></article>";
 }

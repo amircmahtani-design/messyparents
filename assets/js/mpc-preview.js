@@ -137,7 +137,7 @@ function bookCardHTML(b){
   return '<article class="book-card">' +
     '<div class="book-cover">' + cover + '</div>' +
     '<div class="book-body">' + status +
-      '<h3>' + title + '</h3>' +
+      '<h2>' + title + '</h2>' +
       (summary ? '<p class="book-summary">' + summary + '</p>' : "") +
     '</div></article>';
 }

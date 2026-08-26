@@ -566,7 +566,7 @@ html.illus-ready .hero-art img{opacity:1}
   line-height:1.2;color:var(--blue-dark)}
 
 .book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px}
-.book-card h3{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:0}
+.book-card h2{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:0}
 /* Summary in the site's handwritten font — no box, so it reads like a warm
    note under the cover rather than a form field. */
 .book-summary{margin:2px 0 0;font-family:var(--hand);font-size:1.13rem;

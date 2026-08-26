@@ -296,11 +296,103 @@ async function main() {
     ? `<script>window.MPC_FS=${JSON.stringify(fbCfg)};</script>`
     : "";
 
+  /* ---- critical CSS, inlined ---------------------------------------------
+     First Contentful Paint was 2.7s on a phone against 0.7s on desktop, and
+     almost none of that was download: the two stylesheets are 11KB gzipped,
+     about 55ms of transfer. The cost was the round trip. The browser had to
+     receive the document, parse the head, ask for two more files, wait a full
+     RTT on a 150ms link, and only then could it draw anything — while ~110KB
+     of fonts competed for the same pipe.
+
+     Inlined, the CSS arrives inside the document. There is nothing to ask for
+     and nothing to wait on, so first paint happens as soon as the document is
+     parsed.
+
+     WHY THIS IS SAFE TO DO AT BUILD TIME, AND NOT BY HAND
+
+     The stylesheets stay the real files and the only copies anyone edits.
+     This reads them at deploy and pastes them in. There is no second source
+     of truth and nothing to keep in step — which is the whole reason not to
+     hand-maintain a "critical subset" instead. tokens.css exists because
+     three blues and two creams once drifted apart in separate files; this
+     would be that mistake again with worse consequences.
+
+     FAIL-SAFE
+
+     The repo always contains working stylesheet links inside the markers. If
+     a file cannot be read, this returns the HTML untouched and the page ships
+     with the links exactly as it does today. The worst case is the current
+     behaviour, never a page with no CSS at all.
+
+     IDEMPOTENT
+
+     The build rewrites files in the checkout, and guide.html is written back
+     over itself. After one pass the links are gone, so the file list is
+     carried on the style tag in data-mpc-css and read back on the next pass.
+
+     TWO THINGS THAT WOULD BREAK SILENTLY IF NOT HANDLED
+
+     1. url() is resolved against the DOCUMENT once inlined, not against
+        assets/css/. style.css asks for url("../img/paper.jpg"), which would
+        become /img/paper.jpg — a 404, and the paper texture would vanish.
+        Every relative url() is rewritten root-absolute here.
+     2. style.css opens with @import url("tokens.css"). Inlined that resolves
+        to /tokens.css, another 404. Any @import of a file being inlined is
+        dropped, since its contents are already in the block.
+
+     Comments are stripped from the inlined copy only — the files on disk keep
+     every word. On this codebase that is worth 4.7KB gzipped per page, which
+     is not a rounding error when it rides inside every document. */
+  const CSS_MARK = /(<!--\s*MPC:CSS:START\s*-->)([\s\S]*?)(<!--\s*MPC:CSS:END\s*-->)/;
+
+  function inlineCss(html, label) {
+    const m = CSS_MARK.exec(html);
+    if (!m) return html;                       /* no marker: nothing to do */
+
+    const inner = m[2];
+    const listed = (/data-mpc-css="([^"]*)"/.exec(inner) || [])[1];
+    const files = listed
+      ? listed.split(",").filter(Boolean)
+      : [...inner.matchAll(/href="([^"]*assets\/css\/[^"?]+\.css)[^"]*"/g)]
+          .map(x => x[1].replace(/^\//, ""));
+
+    if (!files.length) { note(`${label}: CSS marker found but no stylesheet listed — left as links.`); return html; }
+
+    let css = "";
+    for (const rel of files) {
+      let text;
+      try { text = read(rel); }
+      catch (e) { note(`${label}: could not read ${rel} (${e.message}) — CSS left as links.`); return html; }
+
+      text = text.replace(/\/\*[\s\S]*?\*\//g, "");          /* comments      */
+      /* Drop @imports of anything already being inlined; keep any other. */
+      text = text.replace(/@import\s+url\(\s*["']?([^"')]+)["']?\s*\)\s*;/g, (whole, target) => {
+        const abs = path.posix.normalize(path.posix.join(path.posix.dirname(rel), target));
+        return files.includes(abs) ? "" : whole;
+      });
+      /* Relative url() -> root-absolute, resolved from the stylesheet's own
+         folder before the document ever sees it. */
+      text = text.replace(/url\(\s*(["']?)(?!data:|https?:|\/|#)([^"')]+)\1\s*\)/g,
+        (whole, q, target) =>
+          `url("/${path.posix.normalize(path.posix.join(path.posix.dirname(rel), target))}")`);
+      text = text.replace(/\n\s*\n+/g, "\n").trim();
+      css += text + "\n";
+    }
+
+    if (!/--cream\s*:/.test(css)) {
+      note(`${label}: inlined CSS is missing the design tokens — left as links.`);
+      return html;
+    }
+    return html.replace(CSS_MARK,
+      `$1<style data-mpc-css="${files.join(",")}">\n${css}</style>$3`);
+  }
+
   /* Applied to every generated and hand-written page. */
   function bakeCommon(html, pageId) {
     html = B.applyText(html, textFor(pageId));
     html = B.applyFooter(html, settings.footer);
     html = stampAssets(html);
+    html = inlineCss(html, pageId || "page");
     return html;
   }
 

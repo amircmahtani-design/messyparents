@@ -31,7 +31,13 @@
 
   --ink:#211d18;                /* body text on the site                   */
   --ink-70:rgba(33,29,24,.74);
-  --ink-50:rgba(33,29,24,.52);
+  /* Named for what it was, not what it is: .52 measured 3.35:1 on --cream
+     and 3.41:1 on --cream-soft, and this token colours real text — card
+     meta lines, the footer, breadcrumbs, the search placeholder. WCAG AA
+     wants 4.5:1 for normal text and Lighthouse fails the page below it.
+     .64 measures 4.81:1 and 4.93:1, which clears it with room to spare
+     while staying visibly lighter than --ink-70. */
+  --ink-50:rgba(33,29,24,.64);
   --line:rgba(33,29,24,.62);
   --line-soft:rgba(33,29,24,.26);
 

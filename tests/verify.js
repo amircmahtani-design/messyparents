@@ -36,6 +36,14 @@ function check(name, condition, detail) {
 function section(title) { console.log("\n" + title + "\n" + "-".repeat(title.length)); }
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 const readIf = (rel) => exists(rel) ? fs.readFileSync(path.join(ROOT, rel), "utf8") : null;
+/* The stylesheets are inlined into every page now, so a page's HTML contains
+   the text of every CSS rule on the site. A check looking for markup — a
+   class name, an attribute — will happily match the SELECTOR instead and pass
+   or fail for the wrong reason. `.browse-links{...}` in the CSS is not the
+   browse-links block in the body. Use this for anything testing markup. */
+const readMarkup = (rel) => (readIf(rel) || "")
+  .replace(/<style[\s\S]*?<\/style>/g, "")
+  .replace(/<!--[\s\S]*?-->/g, "");
 
 /* The bundled catalogue, from its build-time-only home. It used to be
    assets/js/guides.js, which was also the public site's UI layer and had to be
@@ -232,7 +240,7 @@ section("Topic and age landing pages");
   check("No empty archive pages published", thin === 0, `${thin} are empty`);
 
   /* A landing page must not duplicate the hub's full link list. */
-  const t = readIf(`topics/${topics[0]}/index.html`) || "";
+  const t = readMarkup(`topics/${topics[0]}/index.html`);
   check("Landing pages do not repeat the browse-links block",
     !/browse-links/.test(t));
 }
@@ -550,7 +558,7 @@ section("Performance architecture");
       check(`${name}: facet counts are inline, not fetched`,
         /window\.MPC_FACETS=/.test(html));
     }
-    const topicPage = topicSample[0] ? (readIf(topicSample[0]) || "") : "";
+    const topicPage = topicSample[0] ? readMarkup(topicSample[0]) : "";
     if (topicPage) {
       /* data-on lights it, aria-current announces it. Not aria-pressed: that
          is only valid on a button, and these are links. */
@@ -636,6 +644,68 @@ section("Performance architecture");
       /\/guides\/\*\n\s*Cache-Control:[^\n]*must-revalidate/.test(headers));
   }
 
+  /* ---- contrast and heading order --------------------------------------
+     Both were real Lighthouse accessibility failures, and both are the kind
+     of thing a later tidy-up reintroduces without noticing. */
+  {
+    const tokens = readIf("assets/css/tokens.css") || "";
+    const a = parseFloat((/--ink-50:rgba\(33,29,24,([.\d]+)\)/.exec(tokens) || [])[1]);
+    /* .52 measured 3.35:1 on --cream. AA needs 4.5:1 for normal text and this
+       token colours card meta lines, the footer and breadcrumbs. */
+    check("--ink-50 is dark enough to pass AA on cream", a >= 0.62,
+      `alpha is ${a}`);
+
+    const skipped = [];
+    for (const f of PUBLIC_PAGES.concat(topicSample)) {
+      const levels = [...(readIf(f) || "").matchAll(/<h([1-6])\b/g)].map(m => +m[1]);
+      for (let i = 1; i < levels.length; i++) {
+        if (levels[i] > levels[i - 1] + 1) { skipped.push(`${f} (h${levels[i-1]} -> h${levels[i]})`); break; }
+      }
+    }
+    check("No page skips a heading level", skipped.length === 0, skipped.join(", "));
+  }
+
+  /* ---- critical CSS ----------------------------------------------------
+     FCP was 2.7s on mobile against 0.7s on desktop, and the cost was a round
+     trip rather than a download. The stylesheets are pasted into the document
+     at build time by inlineCss() in scripts/build.js. These checks exist
+     because every way that can go wrong is silent. */
+  {
+    const stillLinked = ALL.filter(f =>
+      /<link[^>]*rel="stylesheet"[^>]*assets\/css\//.test(
+        (readIf(f) || "").replace(/<!--[\s\S]*?-->/g, "")));
+    check("No page still blocks render on a stylesheet request",
+      stillLinked.length === 0, stillLinked.join(", "));
+
+    /* A style block that inlined the wrong thing, or nothing, looks fine in
+       the HTML and renders as an unstyled page. Check a token that only ever
+       comes from tokens.css, and a rule that only ever comes from style.css. */
+    const empty = ALL.filter(f => {
+      const html = readIf(f) || "";
+      return !/--cream\s*:\s*#fbf0d3/.test(html) || !/\.wrap\{width:min/.test(html);
+    });
+    check("Every page carries the real tokens and layout rules inline",
+      empty.length === 0, empty.join(", "));
+
+    /* url() resolves against the DOCUMENT once inlined, not against
+       assets/css/. A surviving relative path is a 404 for the paper texture
+       and nothing in the page would report it. */
+    const relativeUrls = ALL.filter(f =>
+      [...(readIf(f) || "").matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)]
+        .some(m => !/^(data:|https?:|\/|#)/.test(m[2])));
+    check("No inlined url() is left relative to the stylesheet",
+      relativeUrls.length === 0, relativeUrls.join(", "));
+
+    /* @import inlined verbatim would resolve to /tokens.css. */
+    const imports = ALL.filter(f => /@import/.test(readIf(f) || ""));
+    check("No @import survives inlining", imports.length === 0, imports.join(", "));
+
+    /* Guide pages need the third stylesheet as well as the two shared ones. */
+    const g = readIf("guides/wont-nap/index.html") || readIf("guide.html") || "";
+    check("Guide pages inline the guide panel CSS too",
+      /\.g-detail-fold/.test(g));
+  }
+
   /* ---- the LCP image --------------------------------------------------- */
   {
     let missing = [];
@@ -655,6 +725,17 @@ section("Performance architecture");
       return m && /loading="lazy"/.test(m[0]);
     });
     check("The LCP image is never lazy-loaded", lazyLcp.length === 0, lazyLcp.join(", "));
+
+    /* The LCP element on a phone is the header logo, not the hero
+       illustration — measured, not assumed. Lighthouse fails the page if it
+       is not marked high, so this is pinned. */
+    const unprioritised = ["index.html", "guides.html", "popular.html", "about.html"]
+      .filter(f => {
+        const m = /<a class="brand"[^>]*>\s*<img[^>]*>/.exec(readIf(f) || "");
+        return m && !/fetchpriority="high"/.test(m[0]);
+      });
+    check("The header logo keeps its high fetch priority",
+      unprioritised.length === 0, unprioritised.join(", "));
 
     /* A srcset pointing at a file that is not in the repo is worse than no
        srcset: the browser picks the candidate it thinks fits, gets a 404, and
