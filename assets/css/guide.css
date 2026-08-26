@@ -199,6 +199,12 @@
 
 @media (prefers-reduced-motion:reduce){.g-fold-chev{transition:none}}
 
+/* "Read next" is written straight onto <main> by the build, so it had no
+   column of its own: the heading, the cards and the rule above them all ran
+   into the window edges while the fuller answer and the prev/next pair stayed
+   inset. Same measure as .g-extra and .g-steps, so the three line up. */
+.gpage-related{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:0 0 36px}
+
 /* ---- Previous / next ------------------------------------------------------
    Below 1380px: a labelled pair under the guide, made of the same parts as the
    topic pills. Above it: soft round buttons out in the margin (see the media
