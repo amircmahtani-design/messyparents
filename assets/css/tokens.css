@@ -22,6 +22,44 @@
    pen. Reach for the one that matches what you are drawing.
    ========================================================================== */
 
+/* ---------------------------------------------------------------------------
+   THE THREE FACES, SERVED FROM THIS DOMAIN
+   ---------------------------------------------------------------------------
+   Loaded from Google until August 2026. Identical files, identical weights —
+   what changed is where they come from, not what they look like.
+
+   Inlining the stylesheets moved first paint about a second earlier while the
+   fonts still came from a third party on their old schedule. The gap between
+   fallback text and real text went from almost nothing to over a second, and
+   the reflow at the end of it measured 0.279 CLS. Served from here and
+   preloaded from the HTML, they arrive with the CSS.
+
+   EVERY WEIGHT BELOW IS IN USE. Checked, not assumed:
+     Baloo 2   600  .book-num (a span, so it inherits weight 400 and the
+                    browser resolves that to the nearest available, 600)
+     Baloo 2   700  h1-h4, .band p, .book-card h2
+     Baloo 2   800  reserved for display headings
+     Nunito    400  body copy
+     Nunito    600  .pill, .band-sub
+     Nunito    700  .card-meta, .status, general bold
+     Nunito    800  .search button, .article-body strong
+
+   The url() paths are relative to THIS FILE. inlineCss() in scripts/build.js
+   rewrites them root-absolute when it pastes this into a page, because once
+   inlined they would otherwise resolve against the document.
+
+   Latin subset. A glyph outside it falls back for that character alone, which
+   is the safe failure. See FONTS-STEP-BY-STEP.md to regenerate.
+   ------------------------------------------------------------------------ */
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/baloo2-600.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/baloo2-700.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/baloo2-800.woff2") format("woff2")}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/patrick-hand-400.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/nunito-400.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/nunito-600.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/nunito-700.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/nunito-800.woff2") format("woff2")}
+
 :root{
   /* ---- Paper and ink ------------------------------------------------- */
   --cream:#fbf0d3;              /* the site's page background              */
