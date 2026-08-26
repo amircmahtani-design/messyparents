@@ -597,34 +597,52 @@ section("Performance architecture");
        This check asserts the request is UNCHANGED. If it fails, somebody has
        altered the typography — which may be right, but it should be a
        deliberate design decision, not a performance one. */
-    const FONT_URL = "https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800" +
-      "&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap";
-    const fontPages = ALL.filter(f => /fonts\.googleapis\.com\/css2/.test(readIf(f) || ""));
-    const altered = fontPages.filter(f => !(readIf(f) || "").includes(FONT_URL));
-    check(`The font request is untouched on all ${fontPages.length} pages that use it`,
-      altered.length === 0, altered.join(", "));
+    /* Declared in tokens.css, served from assets/fonts, three preloaded from
+       the HTML. Every weight is genuinely used — .book-num resolves to Baloo
+       600, .search button and .article-body strong are Nunito 800 — so
+       dropping one is a typography decision, not a performance one. */
+    const FACES = ["baloo2-600", "baloo2-700", "baloo2-800", "patrick-hand-400",
+                   "nunito-400", "nunito-600", "nunito-700", "nunito-800"];
+    const tokensCss = readIf("assets/css/tokens.css") || "";
+    const undeclared = FACES.filter(n => !tokensCss.includes(`../fonts/${n}.woff2`));
+    check("Every face is declared in tokens.css", undeclared.length === 0,
+      undeclared.join(", "));
 
-    /* The same request, but it must not hold up the first paint. A plain
-       stylesheet link to a third-party origin blocks rendering: the page
-       stays blank through a DNS lookup, a TLS handshake and a round trip.
-       The media="print" / onload pattern downloads it at the same moment
-       without blocking, and the noscript copy covers JS being off.
+    /* A declared face with no file behind it does not fail loudly: the page
+       renders in Trebuchet and the system sans, which reads as a design
+       change rather than a bug. So the files are checked to exist. */
+    const missingFiles = FACES.filter(n => !exists(`assets/fonts/${n}.woff2`));
+    check("Every declared face has a file behind it", missingFiles.length === 0,
+      `missing from assets/fonts/: ${missingFiles.join(", ")}`);
 
-       Exactly one non-noscript stylesheet link, and it carries media="print".
-       Two would mean somebody added a blocking one back alongside it.
+    /* The point of self-hosting is that no public page reaches a third-party
+       font host at all. Comments are stripped first: they are prose, and
+       matching hostnames inside one is a mistake this file has made before.
+       Studio and the Editor keep their own font links and are not in ALL. */
+    const stillRemote = ALL.filter(f =>
+      /fonts\.(googleapis|gstatic)\.com/.test(
+        (readIf(f) || "").replace(/<!--[\s\S]*?-->/g, "")));
+    check("No public page loads a font from a third party",
+      stillRemote.length === 0, stillRemote.join(", "));
 
-       Comments are stripped first. They are prose, they mention tag names,
-       and matching markup inside one is how this check first went wrong. */
-    const blocking = fontPages.filter(f => {
-      const html = (readIf(f) || "")
-        .replace(/<!--[\s\S]*?-->/g, "")
-        .replace(/<noscript>[\s\S]*?<\/noscript>/g, "");
-      const sheets = (html.match(/<link[^>]*fonts\.googleapis\.com\/css2[^>]*>/g) || [])
-        .filter(l => /rel="stylesheet"/.test(l));
-      return sheets.length !== 1 || !/media="print"/.test(sheets[0]);
-    });
-    check("The font stylesheet never blocks the first paint",
-      blocking.length === 0, blocking.join(", "));
+    /* A font preload without crossorigin is fetched twice — silently, and it
+       doubles the cost of the thing being optimised. */
+    const badPreload = ALL.filter(f =>
+      ((readIf(f) || "").match(/<link[^>]*as="font"[^>]*>/g) || [])
+        .some(l => !/crossorigin/.test(l)));
+    check("Every font preload carries crossorigin",
+      badPreload.length === 0, badPreload.join(", "));
+
+    /* The @font-face url() is relative to tokens.css. Inlined it must come
+       out root-absolute or every face 404s and the whole site loses its type
+       with nothing reporting it. */
+    const brokenFontUrl = ALL.filter(f =>
+      /url\(["']?\.\.\/fonts\//.test(readIf(f) || ""));
+    check("Inlined font URLs are rewritten root-absolute",
+      brokenFontUrl.length === 0, brokenFontUrl.join(", "));
+
+    check("Self-hosted fonts are cached as immutable",
+      /\/assets\/fonts\/\*\n[\s\S]{0,120}?immutable/.test(readIf("_headers") || ""));
 
     const stamped = ALL.filter(f => {
       const html = readIf(f) || "";
