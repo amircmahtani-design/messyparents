@@ -129,8 +129,11 @@
    ========================================================================= */
 .g-extra{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:0 0 36px}
 .g-extra .article{padding:0}
-.g-extra .article-inner{width:min(100%,700px);margin-inline:auto}
-.g-extra section + section{margin-top:34px;padding-top:26px;border-top:1.6px solid var(--line-soft)}
+/* More of the width either side is used now: 700px left a lot of paper
+   empty on a desktop screen. */
+.g-extra .article-inner{width:min(100%,960px);margin-inline:auto}
+/* No rule between the guide and the fold: the bar is its own divider. */
+.g-extra section + section{margin-top:34px;padding-top:0;border-top:0}
 /* Headings below the panel are hand-lettered, like the guide above them.
    They used to be Baloo 2, which read as a different document beginning
    rather than the same guide continuing. */
@@ -143,9 +146,13 @@
    more line-height than the body face would need, because Patrick Hand is
    lighter and needs the room. */
 .g-detail-fold .article-body{
-  font-family:var(--hand);font-size:1.12rem;line-height:1.72;
+  margin-top:30px;
+  font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);line-height:1.75;
   color:var(--ink-hand);letter-spacing:.2px;
 }
+.g-detail-fold .article-body h3{font-size:clamp(1.5rem,2.2vw,1.85rem);margin:34px 0 10px}
+.g-detail-fold .article-body h4{font-size:clamp(1.3rem,1.8vw,1.5rem);margin:26px 0 8px}
+.g-detail-fold .article-body li{margin-bottom:10px}
 .g-detail-fold .article-body strong{font-weight:400;color:var(--blue-ink)}
 
 /* ---- The longer version ---------------------------------------------------
@@ -189,15 +196,14 @@
 .g-detail-fold[open] .g-fold-chev{transform:rotate(-135deg);margin-top:4px}
 
 /* Air between the bar and the prose when it opens. */
-.g-detail-fold .article-body{margin-top:30px}
 
 @media (prefers-reduced-motion:reduce){.g-fold-chev{transition:none}}
 
 /* ---- Previous / next ------------------------------------------------------
-   Bare chevrons at the edges of the screen, well outside the reading column.
-   Drawn in CSS so their weight and size stay exact whatever the reader's font
-   settings do. On a phone they become a plain labelled pair under the guide,
-   because nothing should float over text on a small screen. */
+   Below 1380px: a labelled pair under the guide, made of the same parts as the
+   topic pills. Above it: soft round buttons out in the margin (see the media
+   query further down). The chevron is drawn in CSS rather than set as a
+   character, so its weight stays exact whatever the reader's font settings do. */
 .g-steps{width:min(1180px,calc(100% - 48px));margin:0 auto 4px;
   display:flex;justify-content:space-between;gap:14px}
 .g-step{display:inline-flex;align-items:center;gap:11px;text-decoration:none;
@@ -222,19 +228,35 @@
 }
 .g-step--next .g-step-chev{transform:rotate(135deg)}
 
-@media (min-width:1100px){
-  /* Pinned to the edges of the viewport, vertically centred on the guide, out
-     of the reading column entirely. No pill, no shadow — just the chevron. */
+/* Round, soft, and made of the same parts as the topic pills: cream fill,
+   the site's hairline border, a lift on hover. They sit out in the margin
+   rather than jammed against the window edge.
+
+   The breakpoint is 1380px, not 1100. Below that the guide's own 1180px column
+   leaves too little margin and a floating arrow crowds the text — so on those
+   widths they stay as the labelled pair underneath, which is more useful
+   anyway. */
+@media (min-width:1380px){
   .g-steps{position:fixed;inset:0 auto 0 0;width:100%;pointer-events:none;
-    align-items:center;padding:0 26px;margin:0;z-index:5}
-  .g-step{pointer-events:auto;background:none;border:0;padding:10px;
-    max-width:none;color:var(--blue-band-line, #a9c4de)}
-  .g-step:hover{transform:none;background:none;color:var(--blue)}
+    align-items:center;padding:0 clamp(26px,3.2vw,72px);margin:0;z-index:5}
+  .g-step{
+    pointer-events:auto;width:66px;height:66px;padding:0;max-width:none;
+    border-radius:50%;justify-content:center;
+    background:var(--cream-soft);border:1.6px solid var(--line);
+    box-shadow:0 3px 12px rgba(33,29,24,.10);
+    color:var(--ink-hand-soft);
+  }
+  .g-step:hover{
+    transform:translateY(-3px);background:#fff;
+    border-color:var(--blue);color:var(--blue);
+    box-shadow:0 6px 18px rgba(33,29,24,.14);
+  }
   .g-step-text{display:none}
-  .g-step-chev{width:34px;height:34px;border-width:4px;
-    transition:transform .16s ease}
-  .g-step--prev:hover .g-step-chev{transform:rotate(-45deg) translate(3px,3px)}
-  .g-step--next:hover .g-step-chev{transform:rotate(135deg) translate(3px,3px)}
+  .g-step-chev{width:17px;height:17px;border-width:2.8px;
+    border-radius:1px;transition:transform .16s ease}
+  /* Nudge the chevron off-centre so it sits optically centred in the circle. */
+  .g-step--prev .g-step-chev{margin-left:5px}
+  .g-step--next .g-step-chev{margin-right:5px}
 }
 
 @media (max-width:1024px) and (min-width:821px){
@@ -267,112 +289,3 @@
 
    Each section is switched on or off in Studio (Site -> Search & AI).
    ========================================================================= */
-.g-extra{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:0 0 36px}
-.g-extra .article{padding:0}
-.g-extra .article-inner{width:min(100%,700px);margin-inline:auto}
-.g-extra section + section{margin-top:34px;padding-top:26px;border-top:1.6px solid var(--line-soft)}
-/* Headings below the panel are hand-lettered, like the guide above them.
-   They used to be Baloo 2, which read as a different document beginning
-   rather than the same guide continuing. */
-.g-extra h2{font-family:var(--hand);font-weight:400;
-  font-size:clamp(1.5rem,2.4vw,1.95rem);letter-spacing:.3px;margin:0 0 14px}
-.g-extra .article-body h3,
-.g-extra .article-body h4{font-family:var(--hand);font-weight:400;letter-spacing:.3px}
-/* The prose is hand-lettered too, so the fuller answer reads as the same guide
-   continuing rather than a different document beginning. Slightly larger and
-   more line-height than the body face would need, because Patrick Hand is
-   lighter and needs the room. */
-.g-detail-fold .article-body{
-  font-family:var(--hand);font-size:1.12rem;line-height:1.72;
-  color:var(--ink-hand);letter-spacing:.2px;
-}
-.g-detail-fold .article-body strong{font-weight:400;color:var(--blue-ink)}
-
-/* ---- The longer version ---------------------------------------------------
-   Folded away by default. The prose is still in the HTML — Google indexes a
-   closed <details> normally and the AI crawlers read markup rather than
-   clicking — so nothing is hidden from search. It is only folded away from the
-   reader until they ask for it. */
-.g-detail{margin-top:40px;padding-top:34px;border-top:1.6px solid var(--line-soft)}
-
-.g-detail-fold summary{
-  display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;
-  padding:2px 0;border-radius:10px;
-}
-.g-detail-fold summary::-webkit-details-marker{display:none}
-.g-detail-fold summary h2{margin:0}
-.g-detail-fold summary:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
-
-/* The chevron. Rotates when the section opens, so the control says which way
-   it is going without any words. */
-.g-fold-hint{
-  width:26px;height:26px;flex:0 0 auto;border-radius:50%;
-  border:1.6px solid var(--line);display:grid;place-items:center;
-  transition:transform .18s ease,border-color .18s ease,background .18s ease;
-}
-.g-fold-hint::before{
-  content:"";width:7px;height:7px;margin-top:-3px;
-  border-right:2px solid var(--ink-hand-soft);border-bottom:2px solid var(--ink-hand-soft);
-  transform:rotate(45deg);
-}
-.g-detail-fold summary:hover .g-fold-hint{border-color:var(--blue);background:#fff}
-.g-detail-fold[open] .g-fold-hint{transform:rotate(180deg)}
-
-/* Air between the heading and the prose when it opens. */
-.g-detail-fold .article-body{margin-top:22px}
-
-@media (prefers-reduced-motion:reduce){
-  .g-fold-hint{transition:none}
-}
-
-/* ---- Previous / next ------------------------------------------------------
-   Quiet arrows either side of the guide on a wide screen, and a plain pair of
-   links under it on a phone, where nothing should float over the text. */
-.g-steps{width:min(1180px,calc(100% - 48px));margin:0 auto;
-  display:flex;justify-content:space-between;gap:14px}
-.g-step{display:inline-flex;align-items:center;gap:11px;text-decoration:none;
-  color:var(--ink-hand-soft);font-family:var(--hand);font-size:1.02rem;
-  border:1.6px solid var(--line);border-radius:999px;background:var(--cream-soft);
-  padding:9px 18px;max-width:46%;
-  transition:transform .14s ease,border-color .16s ease,color .16s ease,background .16s ease}
-.g-step:hover{transform:translateY(-2px);border-color:var(--blue);color:var(--blue);background:#fff}
-.g-step.is-empty{visibility:hidden}
-.g-step-arrow{font-size:1.15rem;line-height:1;flex:0 0 auto}
-.g-step-text{display:flex;flex-direction:column;min-width:0}
-.g-step-dir{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
-  font-family:var(--body);font-weight:700;opacity:.6}
-.g-step-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.g-step--next{margin-left:auto;flex-direction:row-reverse;text-align:right}
-
-/* On a wide screen they sit against the edges of the viewport, vertically
-   centred, out of the reading column entirely. Titles collapse to just the
-   arrow so nothing shouts. */
-@media (min-width:1100px){
-  .g-steps{position:fixed;inset:0 auto 0 0;width:100%;pointer-events:none;
-    align-items:center;padding:0 14px;margin:0;z-index:5}
-  .g-step{pointer-events:auto;padding:0;width:52px;height:52px;border-radius:50%;
-    justify-content:center;background:rgba(255,255,255,.82);backdrop-filter:blur(3px);
-    box-shadow:0 2px 10px rgba(33,29,24,.09)}
-  .g-step-text{display:none}
-  .g-step-arrow{font-size:1.5rem}
-  .g-step:hover{transform:scale(1.06)}
-}
-
-/* Where this one came from — the real questions behind the guide. */
-.g-origin ul,.g-refs ul{margin:0;padding-left:20px;font-size:1.02rem;line-height:1.55}
-.g-origin li,.g-refs li{margin-bottom:9px;color:var(--ink-70)}
-.g-origin{font-family:var(--body)}
-
-/* Read next. `.related` and `.card-grid` are already styled in style.css; this
-   only positions the block inside the wider guide container. */
-.gpage-related{width:min(1180px,calc(100% - 48px));margin:0 auto 44px}
-.gpage-related .card-grid{margin-top:4px}
-
-/* Breadcrumbs above the panel (off by default — see Studio). `.crumb` styling
-   comes from style.css, which the article template already uses. */
-.gpage-crumb{width:min(1180px,calc(100% - 48px));margin:10px auto 0}
-.gpage-crumb .crumb{margin:0}
-
-@media (max-width:820px){
-  .g-extra,.gpage-related,.gpage-crumb{width:calc(100% - 32px)}
-}

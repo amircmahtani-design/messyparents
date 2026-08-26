@@ -25,6 +25,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const S = require("./lib/site");
 const { load, plain, clamp } = require("./lib/data");
@@ -38,6 +39,44 @@ const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
 const log = (...a) => console.log("[seo]", ...a);
 const problems = [];
 const note = (msg) => { problems.push(msg); console.warn("[seo] !", msg); };
+
+
+/* ---------------------------------------------------------------------------
+   ASSET VERSIONING
+
+   The stylesheets and scripts carry hand-written ?v= numbers and are cached for
+   a week. Change guide.css without remembering to bump its number and the URL
+   never changes, so every browser and the CDN keep serving the old file: the
+   new markup ships and the CSS to style it does not. That has now cost two
+   deploys, and it is the kind of mistake that is guaranteed to happen again.
+
+   So the number is no longer written by hand. Every /assets/ reference in a
+   generated page is stamped with a hash of the file's actual contents: the URL
+   changes if and only if the file does, and a change always reaches everyone
+   immediately.
+   ------------------------------------------------------------------------ */
+const _assetHashes = new Map();
+function assetHash(rel) {
+  if (_assetHashes.has(rel)) return _assetHashes.get(rel);
+  let h = "0";
+  try {
+    h = crypto.createHash("sha1")
+      .update(fs.readFileSync(path.join(ROOT, rel)))
+      .digest("hex").slice(0, 10);
+  } catch (e) { /* referenced but missing: leave it alone */ }
+  _assetHashes.set(rel, h);
+  return h;
+}
+
+/* Any hand-written ?v= is replaced, so the two schemes cannot disagree. */
+function stampAssets(html) {
+  return html.replace(
+    /((?:href|src)=")(\/?(?:\.\.\/)?assets\/(?:css|js)\/[A-Za-z0-9._-]+\.(?:css|js))(?:\?[^"]*)?"/g,
+    (m, pre, url) => {
+      const rel = url.replace(/^\.\.\//, "").replace(/^\//, "");
+      return `${pre}${url}?v=${assetHash(rel)}"`;
+    });
+}
 
 function write(rel, content) {
   const full = path.join(ROOT, rel);
@@ -138,7 +177,7 @@ async function main() {
 
   /* ---- 1. Guide pages -------------------------------------------------- */
 
-  const guideTpl = absolutise(read("guide.html"));
+  const guideTpl = stampAssets(absolutise(read("guide.html")));
   let built = 0;
 
   for (const g of guides) {
@@ -219,7 +258,7 @@ async function main() {
 
   /* ---- 2. Topic and age landing pages ---------------------------------- */
 
-  const listTpl = absolutise(read("guides.html"));
+  const listTpl = stampAssets(absolutise(read("guides.html")));
 
   function landingPage({ url, file, h1, intro, list, prefilter, description }) {
     let html = listTpl;
@@ -327,7 +366,7 @@ async function main() {
 
   function bakePage(file, bake, meta) {
     try {
-      let html = read(file);
+      let html = stampAssets(read(file));
       html = injectHead(html, H.metaBlock(Object.assign({
         title: titleOf(html),
         description: descOf(html),
@@ -370,6 +409,24 @@ async function main() {
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) {
     bakePage("editorial.html", null, { canonical: "/editorial.html" });
   }
+  /* ---- Studio and the Editor -------------------------------------------
+     Not public pages, so they are not baked or given metadata — but they ARE
+     served, and their <script> tags were the only ones on the site with no
+     cache-busting of any kind. /assets/js/* is cached for a week, so a change
+     to site-text.js or guides.js simply did not reach Studio until the cache
+     expired: the file on the server was right and the browser kept last week's.
+
+     That is exactly how the editorial page appeared in Studio with no text
+     boxes. Stamping them with the same content hash fixes it for good. */
+  for (const f of ["studio/index.html", "editor/index.html"]) {
+    try {
+      if (!fs.existsSync(path.join(ROOT, f))) continue;
+      const before = read(f);
+      const after = stampAssets(before);
+      if (after !== before) { write(f, after); log(`${f}: asset URLs stamped`); }
+    } catch (e) { note(`${f}: ${e.message}`); }
+  }
+
   /* A 404 must never invite indexing, whatever else it does. */
   try {
     let nf = read("404.html");

@@ -597,3 +597,23 @@ html.illus-ready .hero-art img{opacity:1}
   border:1.4px solid var(--line);border-radius:999px;padding:3px 11px;
   display:inline-block;margin:0 3px 3px 0;background:var(--card)}
 .browse-links a:hover{border-color:var(--blue);color:var(--blue)}
+
+
+/* ---------------------------------------------------------------------------
+   THE EDITORIAL PAGE
+
+   "How we write these" used the plain article template, so it read in the body
+   face while everything around it is hand-lettered. It is the page a reader
+   checks when deciding whether to trust the site, and looking like a different
+   website was not helping. Same face as the guides, at a size that carries it.
+   ------------------------------------------------------------------------ */
+body[data-mpc-page="editorial"] .article-body{
+  font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);
+  line-height:1.75;color:var(--ink-hand);letter-spacing:.2px;
+}
+body[data-mpc-page="editorial"] .article-body h2{
+  font-family:var(--hand);font-weight:400;letter-spacing:.3px;
+  font-size:clamp(1.55rem,2.4vw,1.95rem);margin:36px 0 12px;
+}
+body[data-mpc-page="editorial"] .article-body strong{font-weight:400;color:var(--blue-ink)}
+body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}

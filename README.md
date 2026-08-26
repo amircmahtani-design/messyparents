@@ -3,8 +3,8 @@
 **8 files.** Includes the redirect hotfix. Independent of the speed-up work.
 
 ```
-guide.html                  guide.css?v=1 -> ?v=2   (this is the fix, see below)
-scripts/build.js            your current one + the hotfix + 4 lines
+guide.html
+scripts/build.js            hotfix + prev/next + automatic asset hashing
 scripts/lib/data.js
 assets/js/guide-render.js
 assets/css/guide.css
@@ -15,21 +15,54 @@ editorial.html
 
 ---
 
-## First: why nothing happened last time. My mistake.
+## Why "How we write these" was blank — and why it now cannot be
 
-`guide.html` asks for `assets/css/guide.css?v=1`, and `_headers` caches CSS for
-a week. I changed the stylesheet but left the version at `1`, so the URL never
-changed — your browser and Netlify's CDN both kept serving the old file. The new
-markup shipped; the CSS to style it did not.
+`site-text.js` is cached for a week and Studio asked for it by a fixed name, so
+a freshly deployed copy sat on the server while your browser kept running last
+week's. The `editorial` entry existed in the file the whole time; the file never
+arrived. Studio fell back to "Edit the wording on this page." and drew nothing.
 
-(Asset URLs get hashed automatically in Stage 2, which is exactly why that
-change exists. On your current build it has to be bumped by hand.)
+Two fixes, because one was clearly not enough:
 
-It is `?v=2` now. If a change to `guide.css` ever seems not to arrive again,
-that number is the first thing to check.
+1. **The build now stamps Studio's own script URLs** with a hash of each file's
+   contents — `studio/index.html` and `editor/index.html` had no cache-busting
+   of any kind and the build had never touched them. Same for `guide.css`.
+2. **A safety net inside `studio/index.html`**: if `SITE_TEXT` arrives without
+   an editorial entry, Studio defines it itself. `studio/index.html` demonstrably
+   reaches you — the fuller-answer editor appeared — so the fields cannot fail
+   to show up again. Once the stamped copy lands, that block never runs.
 
-Worth confirming the deploy itself ran: Netlify -> Deploys -> newest -> the log
-should say `31 guide pages written`.
+Open Studio → **How we write these** and you get what the Home page gives you:
+a heading box, then a big text box, then a heading, then a text box, six times
+over, each pre-filled with what is on the page now.
+
+## The arrows
+
+Round and soft, made from the same parts as the topic pills: cream fill, the
+site's hairline border, a lift and a blue edge on hover. 66px, out in the margin
+rather than clipped against the window.
+
+The breakpoint moved from 1100px to **1380px**. Below that the guide's own
+1180px column leaves too little margin and a floating arrow crowds the text, so
+those widths keep the labelled pair underneath — which is more useful there
+anyway.
+
+**I also found why they looked wrong.** `guide.css` had a whole duplicated
+half from one of my earlier edits, so an older arrow rule was overriding the new
+one. 406 lines down to 291, zero duplicated rules, braces balanced.
+
+## The rest of what you asked for
+
+- **The line above "Want the fuller answer?" is gone.** The bar is its own
+  divider.
+- **More of the width is used**: the reading column went from 700px to 960px,
+  on the fuller answer and on the editorial page.
+- **Larger text**: the fuller answer's prose is now `clamp(1.2rem, 1.45vw,
+  1.34rem)` with 1.75 line-height, and its headings scale up to match.
+- **The editorial page reads like the rest of the site.** It was using the plain
+  article template, so it was set in the body face while everything around it is
+  hand-lettered — the page a reader checks to decide whether to trust you,
+  looking like a different website.
 
 ## The fuller answer is now written in Studio
 

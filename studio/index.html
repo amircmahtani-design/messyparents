@@ -132,6 +132,49 @@
 <script src="../assets/js/firebase-config.js"></script>
 <script src="../assets/js/guides.js?v=11"></script>
 <script src="../assets/js/site-text.js"></script>
+<script>
+/* ------------------------------------------------------------------------
+   SAFETY NET — the "How we write these" fields.
+
+   site-text.js is cached for a week and Studio requests it by a fixed name,
+   so a freshly deployed copy could sit on the server while this browser kept
+   running last week's. That is exactly why this page opened with no boxes and
+   only "Edit the wording on this page.": the entry existed in the file and the
+   file never arrived.
+
+   The build now stamps Studio's script URLs with a content hash, which fixes
+   it properly. This is the belt to that pair of braces: if SITE_TEXT arrives
+   without an editorial entry, define it here. Once the stamped copy lands this
+   block simply never runs.
+   --------------------------------------------------------------------- */
+(function(){
+  if(!window.SITE_TEXT) window.SITE_TEXT = {};
+  if(window.SITE_TEXT.editorial) return;           // the real file arrived
+  var S = [
+    ["questions","The questions are real ones"],
+    ["write","How a guide gets written"],
+    ["check","What we check against"],
+    ["not","What we are not"],
+    ["updates","Updates and corrections"],
+    ["ai","On being quoted"]
+  ];
+  var fields = [
+    { key:"page.title", label:"Page heading", default:"How we write these" },
+    { key:"page.intro", label:"Line under the heading", multiline:true, rows:3,
+      default:"Where the questions come from, what we check them against, and what we are not qualified to tell you." }
+  ];
+  S.forEach(function(x){
+    fields.push({ key:"editorial."+x[0]+".h", label:"Section \u2014 "+x[1], default:x[1] });
+    fields.push({ key:"editorial."+x[0]+".body", label:x[1]+" \u2014 the words",
+                  multiline:true, rows:8, default:"" });
+  });
+  window.SITE_TEXT.editorial = {
+    label:"How we write these",
+    intro:"A heading and its words, section by section. Leave a box empty to keep the wording that ships on the page.",
+    fields: fields
+  };
+})();
+</script>
 
 <div class="top">
   <span class="logo">MPC <b>Studio</b></span>
