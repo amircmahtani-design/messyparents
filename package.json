@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "description": "Seed/admin tooling for The Messy Parents Collection guides.",
   "scripts": {
+    "build": "node scripts/build.js",
+    "verify": "node tests/verify.js",
+    "check": "node scripts/build.js && node tests/verify.js",
     "seed": "node seed.js",
     "serve": "node tests/static-server.js",
     "test": "playwright test",

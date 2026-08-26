@@ -571,3 +571,25 @@ html.illus-ready .hero-art img{opacity:1}
 
 
 
+
+/* Footer links (About / How we write these). The disclaimer line is editable in
+   Studio and its innerHTML is replaced when a custom one is saved, so these sit
+   in their own span rather than inside it — otherwise saving a footer note in
+   Studio would silently delete them. */
+.foot-note .foot-links{display:flex;gap:14px;flex:none}
+.foot-note .foot-links a{color:var(--ink-70);text-decoration:underline;text-underline-offset:2px}
+.foot-note .foot-links a:hover{color:var(--blue)}
+
+/* --- Browse links (all-guides page) ---------------------------------------
+   Real <a> links to every topic and age page, written in by the build. The
+   pills above them are <button>s, and a crawler does not click buttons — so
+   without these the landing pages would exist with nothing leading to them.
+   Deliberately quiet: a footnote under the grid, not a second navigation. */
+.browse-links{margin:26px 0 4px;padding-top:18px;border-top:1.5px solid var(--line-soft);
+  font-size:.9rem;color:var(--ink-50);font-family:var(--body)}
+.browse-links p{margin:0 0 7px;line-height:1.9}
+.browse-links span{font-weight:700;color:var(--ink-70);margin-right:4px}
+.browse-links a{color:var(--ink-70);text-decoration:none;
+  border:1.4px solid var(--line);border-radius:999px;padding:3px 11px;
+  display:inline-block;margin:0 3px 3px 0;background:var(--card)}
+.browse-links a:hover{border-color:var(--blue);color:var(--blue)}

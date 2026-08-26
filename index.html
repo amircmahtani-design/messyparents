@@ -65,6 +65,24 @@
     body.filtering-active .rows{padding-top:8px}
   }
 </style>
+<!-- MPC:SEO:START -->
+<title>The Messy Parents Collection — short answers for long nights</title>
+<meta name="description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<link rel="canonical" href="https://themessyparentscollection.com/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Messy Parents Collection">
+<meta property="og:title" content="The Messy Parents Collection — short answers for long nights">
+<meta property="og:description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<meta property="og:url" content="https://themessyparentscollection.com/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://themessyparentscollection.com/assets/img/family.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Messy Parents Collection — short answers for long nights">
+<meta name="twitter:description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
+<meta name="twitter:image" content="https://themessyparentscollection.com/assets/img/family.webp">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://themessyparentscollection.com/#organization","name":"The Messy Parents Collection","url":"https://themessyparentscollection.com/","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","logo":{"@type":"ImageObject","url":"https://themessyparentscollection.com/assets/img/logo.png","caption":"The Messy Parents Collection"}},{"@type":"WebSite","@id":"https://themessyparentscollection.com/#website","url":"https://themessyparentscollection.com/","name":"The Messy Parents Collection","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","inLanguage":"en","publisher":{"@id":"https://themessyparentscollection.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://themessyparentscollection.com/guides.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}]}</script>
+<!-- MPC:SEO:END -->
 </head>
 <body data-mpc-page="home">
 <a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
@@ -121,7 +139,31 @@
     </div>
     <div class="row row--stack" id="resultsRow">
       <p class="eyebrow"><span id="resultsTitle" data-mpc-text="results.default">Popular guides</span></p>
-      <div class="card-grid" id="grid" aria-live="polite"></div>
+      <div class="card-grid" id="grid" aria-live="polite" data-baked-hash="2z8os2"><!--MPC:CARDS:START--><a class="card" href="/guides/drinking-less-milk/">
+    <div class="card-icon" aria-hidden="true"><img src="/assets/img/icons/feeding.webp" alt="" aria-hidden="true"></div>
+    <div class="card-text">
+      <h3>Why is my baby drinking less milk?</h3>
+      <p class="card-meta"><span class="topic">Feeding</span><span class="dot">•</span><span>3 min read</span></p>
+    </div>
+  </a><a class="card" href="/guides/wont-nap/">
+    <div class="card-icon" aria-hidden="true"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"></div>
+    <div class="card-text">
+      <h3>Why won't my baby nap?</h3>
+      <p class="card-meta"><span class="topic">Sleeping</span><span class="dot">•</span><span>3 min read</span></p>
+    </div>
+  </a><a class="card" href="/guides/sleep-regression/">
+    <div class="card-icon" aria-hidden="true"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"></div>
+    <div class="card-text">
+      <h3>Is this sleep regression?</h3>
+      <p class="card-meta"><span class="topic">Sleeping</span><span class="dot">•</span><span>3 min read</span></p>
+    </div>
+  </a><a class="card" href="/guides/safe-sleep-newborn/">
+    <div class="card-icon" aria-hidden="true"><img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true"></div>
+    <div class="card-text">
+      <h3>Where does she actually sleep? The rules, plainly</h3>
+      <p class="card-meta"><span class="topic">Sleeping</span><span class="dot">•</span><span>3 min read</span></p>
+    </div>
+  </a><!--MPC:CARDS:END--></div>
       <p class="row-note">
         <span class="hint" id="resultsHint"></span>
         <a class="link-reset" id="seeAll" href="guides.html" hidden>See all</a>
@@ -148,6 +190,7 @@
            is what shows if nothing has been saved. -->
       <span data-foot-copy>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
       <span data-foot-note>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
+      <span class="foot-links"><a href="/about.html">About us</a><a href="/editorial.html">How we write these</a></span>
     </div>
   </div>
 </footer>
@@ -241,6 +284,9 @@ MPCStore.ready.then(function(){
       more.hidden = false;
     } else { more.hidden = true; }
 
+    /* The build already wrote these exact cards into the HTML. Rebuilding
+       them would discard a correct DOM and reflow the page for nothing. */
+    if(window.gridAlreadyCorrect && gridAlreadyCorrect(grid, shown)) return;
     grid.innerHTML = shown.length ? shown.map(cardHTML).join("")
       : `<div class="empty"><p><strong>${MPCStore.esc(MPCStore.t("empty.title", "Nothing matches that yet."))}</strong></p>
          <p>${MPCStore.inline(MPCStore.t("empty.body", "Try a single word, or [browse all guides](guides.html)."))}</p></div>`;

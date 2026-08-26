@@ -145,9 +145,13 @@ function _escHtml(s){
 function topicIconMarkup(icon){
   const v = (icon == null ? "" : String(icon)).trim();
   if (!v) return '<span class="pill-ico" aria-hidden="true">📌</span>';   // 📌 fallback
-  if (/^(https?:|data:|\.?\/|assets\/)/i.test(v) || /\.(webp|png|jpe?g|svg|gif)$/i.test(v))
-    return '<img src="' + _escHtml(MPCStore.img(v, 120)) + '" alt="" aria-hidden="true"' +
-      MPCStore.imgFallback(v) + '>';
+  if (/^(https?:|data:|\.?\/|assets\/)/i.test(v) || /\.(webp|png|jpe?g|svg|gif)$/i.test(v)) {
+    // Root-absolute: these icons render on /guides/<slug>/ and /topics/<id>/
+    // as well as at the site root, so a relative path would break two of the three.
+    var abs = /^(https?:|data:|\/)/i.test(v) ? v : "/" + v.replace(/^\.?\//, "");
+    return '<img src="' + _escHtml(MPCStore.img(abs, 120)) + '" alt="" aria-hidden="true"' +
+      MPCStore.imgFallback(abs) + '>';
+  }
   return '<span class="pill-ico" aria-hidden="true">' + _escHtml(v) + '</span>';
 }
 

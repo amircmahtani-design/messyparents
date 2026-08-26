@@ -242,6 +242,54 @@
         </div>
       </div>
 
+      <!-- SEARCH & AI: site-wide settings for how the guides appear in Google,
+           ChatGPT Search, Bing/Copilot and other answer engines. -->
+      <div id="seoEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px">Search &amp; AI</h2>
+        <p class="field hint" style="margin:0 0 16px">How the guides appear in Google, ChatGPT Search, Bing and Copilot. These are site-wide defaults &mdash; any single guide can override them in its own <strong>Search</strong> section.</p>
+
+        <div class="col-card">
+          <span class="tag tip">What appears on a guide page</span>
+          <p class="field hint" style="margin:0 0 10px">Everything except breadcrumbs is rendered <em>below</em> the guide panel, which is sized to fit the screen &mdash; so nothing here changes what a reader sees first. They scroll to it.</p>
+          <label class="check-field"><input id="seo_detail" type="checkbox"> <span><strong>The longer version</strong> &mdash; show the guide&rsquo;s full write-up under the panel. <span class="hint">Every guide already has 150&ndash;350 words of prose that nothing currently displays. This is the single biggest thing you can do for search.</span></span></label>
+          <label class="check-field"><input id="seo_related" type="checkbox"> <span><strong>Read next</strong> &mdash; link the related guides at the bottom.</span></label>
+          <label class="check-field"><input id="seo_questions" type="checkbox"> <span><strong>Where this one came from</strong> &mdash; the real questions behind the guide, with the date asked.</span></label>
+          <label class="check-field"><input id="seo_crumbs" type="checkbox"> <span><strong>Breadcrumbs</strong> &mdash; Home &rsaquo; age &rsaquo; topic, above the guide. <span class="hint">This one <em>does</em> change the first thing on screen.</span></span></label>
+        </div>
+
+        <div class="col-card">
+          <span class="tag ok">Verification</span>
+          <p class="field hint" style="margin:0 0 10px">Paste the codes Google and Bing give you when you add the site. Leave blank until you have the real ones &mdash; a made-up code fails verification and stays on every page.</p>
+          <div class="field">
+            <label>Google Search Console <span class="hint">&mdash; the content value of the meta tag</span></label>
+            <input id="seo_google" type="text" placeholder="e.g. AbC123_xyz…">
+          </div>
+          <div class="field">
+            <label>Bing Webmaster Tools <span class="hint">&mdash; the msvalidate.01 value</span></label>
+            <input id="seo_bing" type="text" placeholder="e.g. 1A2B3C…">
+          </div>
+        </div>
+
+        <div class="col-card">
+          <span class="tag warn">Publish to the web</span>
+          <p class="field hint" style="margin:0 0 10px">Saving a guide updates the live site straight away. The <em>search-engine</em> copy &mdash; the real page at its own address, the sitemap &mdash; is rebuilt on deploy. Paste your Netlify build hook here once and this button rebuilds it on demand.</p>
+          <div class="field">
+            <label>Netlify build hook URL <span class="hint">&mdash; Netlify &rarr; Site settings &rarr; Build &amp; deploy &rarr; Build hooks</span></label>
+            <input id="seo_hook" type="text" placeholder="https://api.netlify.com/build_hooks/…">
+            <p class="hint" style="margin-top:6px">Stored on this device only, never in the site or the database.</p>
+          </div>
+          <div class="actions" style="margin-top:6px">
+            <button id="seo_rebuild" class="btn ghost" type="button">Rebuild the search pages</button>
+            <span id="seoHookMsg" class="msg"></span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="saveSeo" class="btn primary" type="button">Save</button>
+          <span id="seoMsg" class="msg"></span>
+        </div>
+      </div>
+
       <!-- MENU & SHARED TEXT / GUIDE LAYOUT: the same row editor as the pages -->
       <div id="siteTextEditor" class="editor hidden">
         <h2 style="margin:0 0 4px;font-size:19px" id="st_heading">Text</h2>
@@ -324,6 +372,69 @@
           <textarea id="f_quick" rows="3"></textarea>
         </div>
 
+        <!-- SEARCH: everything Google, ChatGPT Search and Bing read. All of it
+             is optional. Left blank, each falls back to something the guide
+             already says, so nothing here is ever invented. -->
+        <details class="col-card" id="seoCard">
+          <summary style="cursor:pointer;font-weight:700">Search &amp; sharing</summary>
+          <p class="field hint" style="margin:8px 0 12px">Leave anything blank and the guide falls back to its own words: the question becomes the title, the quick answer becomes the description. Fill these in when you do the proper SEO pass.</p>
+
+          <div class="field">
+            <label>Web address <span class="hint">&mdash; the last part of the URL</span></label>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span class="hint">/guides/</span>
+              <input id="f_slug" type="text" style="flex:1;min-width:160px" placeholder="blocked-nose-newborn">
+              <span class="hint">/</span>
+            </div>
+            <p class="hint" style="margin-top:6px" id="f_slugNote"></p>
+          </div>
+
+          <div class="field">
+            <label>Title in Google <span class="hint">&mdash; aim for under 60 characters</span></label>
+            <input id="f_seoTitle" type="text" placeholder="Leave blank to use the question itself">
+            <p class="hint" id="f_seoTitleLen"></p>
+          </div>
+
+          <div class="field">
+            <label>Description in Google <span class="hint">&mdash; 70&ndash;155 characters reads best</span></label>
+            <textarea id="f_seoDesc" rows="3" placeholder="Leave blank to use the quick answer"></textarea>
+            <p class="hint" id="f_seoDescLen"></p>
+          </div>
+
+          <div class="field">
+            <label>Illustration alt text <span class="hint">&mdash; what the picture shows, for screen readers and image search</span></label>
+            <input id="f_imageAlt" type="text">
+          </div>
+
+          <div class="field">
+            <label>Questions parents type <span class="hint">&mdash; one per line. A note to yourself; not published anywhere.</span></label>
+            <textarea id="f_keywords" rows="3"></textarea>
+          </div>
+
+          <div class="meta-row">
+            <div class="field" style="max-width:190px">
+              <label>First published</label>
+              <input id="f_published" type="date">
+            </div>
+            <div class="field" style="max-width:190px">
+              <label>Last meaningfully updated</label>
+              <input id="f_updated" type="date">
+            </div>
+          </div>
+          <p class="field hint" style="margin:-6px 0 12px">Left blank, no date is claimed at all &mdash; better than a made-up one. Saving a guide sets the updated date for you.</p>
+
+          <label class="check-field"><input id="f_noindex" type="checkbox"> <span>Hide from search engines <span class="hint">&mdash; the guide stays live and linkable, it just will not be indexed.</span></span></label>
+
+          <div class="field" style="margin-top:12px">
+            <label>Sections on this guide <span class="hint">&mdash; overrides the site setting in Site &rarr; Search &amp; AI</span></label>
+            <select id="f_showDetail">
+              <option value="">The longer version: use the site setting</option>
+              <option value="1">Always show it on this guide</option>
+              <option value="0">Never show it on this guide</option>
+            </select>
+          </div>
+        </details>
+
         <div class="actions">
           <button id="save" class="btn primary">Save</button>
           <button id="revert" class="btn ghost">Revert</button>
@@ -390,6 +501,12 @@ const state = { guides: [], current: null, orig: null, fb: null, currentPage: nu
 
 /* small helpers for the Topics / Books managers */
 const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+/* The public URL segment for a guide id. Studio previews guides on their real
+   address, so a renamed guide previews where it actually lives. */
+const guideSlug = id => {
+  const g = (state.guides || []).find(x => x.id === id);
+  return (g && g.seo && g.seo.slug) || id;
+};
 const slugify = s => String(s||"").toLowerCase().trim().replace(/['’]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
 const isImg = v => /^(https?:|data:|\.?\/|assets\/)/i.test(v||"") || /\.(webp|png|jpe?g|svg|gif)$/i.test(v||"");
 /* icons stored as a site-root path need "../" to load from inside /studio/ */
@@ -1054,8 +1171,50 @@ function fillForm(g){
   $("#f_d_items").value = itemsToLines(_d && _d.items);
   syncDont();
   $("#f_quick").value = p.quick || "";
+
+  const seo = g.seo || {};
+  $("#f_slug").value      = seo.slug || g.id || "";
+  $("#f_seoTitle").value  = seo.title || "";
+  $("#f_seoDesc").value   = seo.description || "";
+  $("#f_imageAlt").value  = seo.imageAlt || "";
+  $("#f_keywords").value  = itemsToLines(g.keywords);
+  $("#f_published").value = seo.publishedDate || "";
+  $("#f_updated").value   = seo.updatedDate || "";
+  $("#f_noindex").checked = !!seo.noindex;
+  $("#f_showDetail").value = seo.showDetail === true ? "1"
+                           : seo.showDetail === false ? "0" : "";
+  state.slugAtLoad = seo.slug || g.id || "";
+  syncSeoHints();
   refreshAutoTopic();
 }
+
+/* Live character counts, and a warning when a rename is about to move a page
+   that is already indexed. */
+function syncSeoHints(){
+  const g = state.orig || {};
+  const title = $("#f_seoTitle").value.trim() || $("#f_title").value.trim();
+  const desc  = $("#f_seoDesc").value.trim() ||
+    ($("#f_quick").value.trim() || $("#f_summary").value.trim());
+  const warn = (n, lo, hi) => n > hi ? " — too long, Google will cut it"
+                            : n && n < lo ? " — short; Google may write its own" : "";
+  $("#f_seoTitleLen").textContent = title.length + " characters" + warn(title.length, 25, 60);
+  $("#f_seoDescLen").textContent  = desc.length + " characters" + warn(desc.length, 70, 155);
+
+  const slug = $("#f_slug").value.trim();
+  const note = $("#f_slugNote");
+  if(state.isNew){ note.textContent = ""; return; }
+  if(slug && state.slugAtLoad && slug !== state.slugAtLoad){
+    note.innerHTML = "This changes the address. The old one " +
+      "<code>/guides/" + escS(state.slugAtLoad) + "/</code> will be redirected here " +
+      "permanently, so existing links and shares keep working.";
+  } else {
+    note.textContent = "";
+  }
+}
+["f_seoTitle","f_seoDesc","f_title","f_quick","f_summary","f_slug"].forEach(id => {
+  const el = $("#" + id);
+  if(el) el.addEventListener("input", syncSeoHints);
+});
 
 function draftGuide(){
   const g = JSON.parse(JSON.stringify(state.orig));
@@ -1079,6 +1238,41 @@ function draftGuide(){
     g.panel.dont = { title:($("#f_d_title").value || "Don’t"), items:_di };
   } else { delete g.panel.dont; }
   g.panel.quick  = $("#f_quick").value;
+
+  /* --- Search metadata -------------------------------------------------
+     All of it lives under one `seo` key so the whole search side of a guide
+     can be read, diffed and audited in one place, and so nothing here can
+     collide with an existing content field. */
+  const seo = Object.assign({}, g.seo || {});
+  const newSlug = slugify($("#f_slug").value) || slugify(g.title) || g.id;
+
+  /* A renamed slug must not orphan the old URL. The previous one is kept on
+     the guide, and the build turns every entry into a permanent redirect —
+     so a link someone shared a year ago still lands on the right guide. */
+  if(!state.isNew && state.slugAtLoad && newSlug !== state.slugAtLoad){
+    const prev = Array.isArray(seo.previousSlugs) ? seo.previousSlugs.slice() : [];
+    if(prev.indexOf(state.slugAtLoad) === -1) prev.push(state.slugAtLoad);
+    seo.previousSlugs = prev;
+  }
+  seo.slug        = newSlug;
+  seo.title       = $("#f_seoTitle").value.trim();
+  seo.description = $("#f_seoDesc").value.trim();
+  seo.imageAlt    = $("#f_imageAlt").value.trim();
+  seo.noindex     = $("#f_noindex").checked;
+  seo.publishedDate = $("#f_published").value || "";
+
+  const detail = $("#f_showDetail").value;
+  if(detail === "") delete seo.showDetail; else seo.showDetail = (detail === "1");
+
+  /* The updated date is set here rather than typed, so it is always true.
+     A date that was entered by hand is left exactly as entered. */
+  const typedUpdated = $("#f_updated").value || "";
+  seo.updatedDate = (typedUpdated && typedUpdated !== (g.seo && g.seo.updatedDate))
+    ? typedUpdated
+    : new Date().toISOString().slice(0, 10);
+
+  g.seo = seo;
+  g.keywords = linesToItems($("#f_keywords").value);
   return g;
 }
 
@@ -1216,7 +1410,7 @@ function selectGuide(id){
   pvReady = false;
   const pv = $("#pv");
   pv.onload = () => { pvReady = true; pushPreview(); };
-  pv.src = `../guide.html?id=${encodeURIComponent(id)}`;
+  pv.src = `/guides/${encodeURIComponent(guideSlug(id))}/`;
 }
 
 /* events */
@@ -1375,7 +1569,7 @@ $("#save").addEventListener("click", async () => {
       pvReady = false;
       const pv = $("#pv");
       pv.onload = () => { pvReady = true; pushPreview(); };
-      pv.src = `../guide.html?id=${encodeURIComponent(g.id)}`;
+      pv.src = `/guides/${encodeURIComponent((g.seo && g.seo.slug) || g.id)}/`;
     }else{
       const i = state.guides.findIndex(x=>x.id===g.id); if(i>=0) state.guides[i]=g;
     }
@@ -1385,6 +1579,93 @@ $("#save").addEventListener("click", async () => {
   finally{ btn.disabled = false; }
 });
 $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.orig); pushPreview(); $("#msg").textContent=""; } });
+
+/* ========================================================================
+   SEARCH & AI — site-wide SEO settings (meta/seo in Firestore)
+
+   These are read by scripts/build.js at deploy time. They decide which
+   optional sections appear on a guide page and hold the Search Console /
+   Bing verification codes.
+
+   The Netlify build hook is deliberately NOT stored here: it lives in this
+   browser's localStorage. A build hook is a write-only URL that triggers a
+   deploy, and meta/* is publicly readable, so putting it in Firestore would
+   publish it. Paste it once per device instead.
+   ====================================================================== */
+const HOOK_KEY = "mpc.netlifyBuildHook";
+
+function renderSeoFields(){
+  const d = (state.seo || {});
+  $("#seo_detail").checked    = d.showDetail === true;
+  $("#seo_related").checked   = d.showRelated !== false;      // default on
+  $("#seo_questions").checked = d.showQuestions === true;
+  $("#seo_crumbs").checked    = d.showBreadcrumbs === true;
+  $("#seo_google").value      = d.googleVerification || "";
+  $("#seo_bing").value        = d.bingVerification || "";
+  try{ $("#seo_hook").value = localStorage.getItem(HOOK_KEY) || ""; }catch(e){}
+  $("#seoMsg").textContent = ""; $("#seoMsg").className = "msg";
+  $("#seoHookMsg").textContent = ""; $("#seoHookMsg").className = "msg";
+}
+
+async function loadSeoSettings(){
+  if(MODE !== "firebase"){ state.seo = {}; return; }
+  try{
+    const {fs, db} = state.fb;
+    const snap = await fs.getDoc(fs.doc(db, "meta", "seo"));
+    state.seo = snap.exists() ? (snap.data() || {}) : {};
+  }catch(e){ state.seo = {}; }
+}
+
+$("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
+  const msg = $("#seoMsg"), btn = $("#saveSeo");
+  const data = {
+    showDetail:      $("#seo_detail").checked,
+    showRelated:     $("#seo_related").checked,
+    showQuestions:   $("#seo_questions").checked,
+    showBreadcrumbs: $("#seo_crumbs").checked,
+    googleVerification: $("#seo_google").value.trim(),
+    bingVerification:   $("#seo_bing").value.trim(),
+    updated: Date.now()
+  };
+  try{ localStorage.setItem(HOOK_KEY, $("#seo_hook").value.trim()); }catch(e){}
+
+  if(MODE !== "firebase"){
+    msg.className = "msg err"; msg.textContent = "Saving needs Firebase mode.";
+    return;
+  }
+  btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+  try{
+    const {fs, db} = state.fb;
+    await fs.setDoc(fs.doc(db, "meta", "seo"), data);
+    state.seo = data;
+    msg.className = "msg ok";
+    msg.textContent = "Saved. These take effect on the next rebuild.";
+  }catch(err){
+    msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
+  }finally{ btn.disabled = false; }
+});
+
+$("#seo_rebuild") && $("#seo_rebuild").addEventListener("click", async () => {
+  const msg = $("#seoHookMsg"), btn = $("#seo_rebuild");
+  const url = $("#seo_hook").value.trim();
+  if(!/^https:\/\/api\.netlify\.com\/build_hooks\//.test(url)){
+    msg.className = "msg err";
+    msg.textContent = "That does not look like a Netlify build hook URL.";
+    return;
+  }
+  try{ localStorage.setItem(HOOK_KEY, url); }catch(e){}
+  btn.disabled = true; msg.className = "msg"; msg.textContent = "Asking Netlify to rebuild…";
+  try{
+    // Build hooks accept a POST with no body and answer with an empty 200.
+    // no-cors keeps the browser from blocking it; we cannot read the response,
+    // which is fine because there is nothing in it.
+    await fetch(url, { method: "POST", mode: "no-cors" });
+    msg.className = "msg ok";
+    msg.textContent = "Rebuild started. Give it a minute or two.";
+  }catch(err){
+    msg.className = "msg err"; msg.textContent = "Could not reach Netlify: " + (err.message || err);
+  }finally{ btn.disabled = false; }
+});
 
 /* ========================================================================
    SITE SECTIONS — Topics manager + Books manager
@@ -1401,10 +1682,12 @@ function renderSiteList(){
     `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Book list</button>` +
     `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>` +
     `<button class="gitem ${cur==="sitetext"?"active":""}" data-section="sitetext">Menu</button>` +
-    `<button class="gitem ${cur==="guidelayout"?"active":""}" data-section="guidelayout">Guide layout</button>`;
+    `<button class="gitem ${cur==="guidelayout"?"active":""}" data-section="guidelayout">Guide layout</button>` +
+    `<button class="gitem ${cur==="seo"?"active":""}" data-section="seo">Search &amp; AI</button>`;
 }
 const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor",
-                      sitetext:"siteTextEditor", guidelayout:"siteTextEditor" };
+                      sitetext:"siteTextEditor", guidelayout:"siteTextEditor",
+                      seo:"seoEditor" };
 /* Which entry in site-text.js each standalone section edits, and where it is
    stored (a doc in the "pages" collection, same as the real pages). */
 const SITE_TEXT_SECTIONS = { sitetext:"site", guidelayout:"guide" };
@@ -1415,6 +1698,7 @@ function selectSection(which){
   if(which==="topics") renderTopicRows();
   else if(which==="books") renderBookRows();
   else if(which==="footer") renderFooterFields();
+  else if(which==="seo") renderSeoFields();
   else if(SITE_TEXT_SECTIONS[which]) renderSiteTextPanel(which);
   renderPageList(); renderSiteList(); renderList($("#q").value);
 }
@@ -1437,7 +1721,7 @@ function renderSiteTextPanel(which){
   const first = (state.guides[0] && state.guides[0].id) || "";
   const pv=$("#pv"); pvSiteTextReady=false;
   pv.onload=()=>{ pvSiteTextReady=true; pushSiteTextPreview(); };
-  pv.src = (id==="guide" && first) ? `../guide.html?id=${encodeURIComponent(first)}` : "../index.html";
+  pv.src = (id==="guide" && first) ? `/guides/${encodeURIComponent(guideSlug(first))}/` : "../index.html";
 }
 function pushSiteTextPreview(){
   if(!pvSiteTextReady) return;
@@ -1480,6 +1764,7 @@ async function loadMeta(){
   if(MODE!=="firebase"){
     state.topics = BUILTIN_TOPICS.map(x=>({...x}));
     state.booksList = BUILTIN_BOOKS.map(x=>({...x}));
+    state.seo = {};
     return;
   }
   const {fs, db}=state.fb;
@@ -1497,6 +1782,7 @@ async function loadMeta(){
     const f=await fs.getDoc(fs.doc(db,"meta","footer"));
     state.footer = f.exists() ? (f.data()||{}) : {};
   }catch(e){ state.footer = {}; }
+  await loadSeoSettings();
 }
 
 /* ---- Topics ---- */

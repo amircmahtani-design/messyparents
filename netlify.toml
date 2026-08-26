@@ -1,10 +1,27 @@
-# Static site — no build step. Netlify publishes the repo root and serves the functions.
+# Netlify publishes the repo root and serves the functions.
+#
+# The build step generates the crawlable half of the site: a real HTML page for
+# every guide at /guides/<slug>/, the topic and age landing pages, sitemap.xml,
+# robots.txt, llms.txt and _redirects. It runs HERE, on Netlify, not on anyone's
+# machine — there is no terminal to open and nothing to install.
+#
+# It reads guides from Firestore, exactly as the browser does, and falls back to
+# the bundled copy if that read fails. It is written so it cannot fail a deploy:
+# every step is guarded and it always exits 0. Worst case it publishes the site
+# unchanged and says so in this log.
 [build]
   publish = "."
-  command = "echo 'no build needed'"
+  command = "node scripts/build.js"
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Netlify's "pretty URLs" post-processing would also serve /about for
+# /about.html, quietly creating a second URL for every page and splitting their
+# ranking signals. Canonicals are declared against the .html form, so this is
+# turned off to keep one page on one URL.
+[build.processing.html]
+  pretty_urls = false
 
 [functions]
   directory = "netlify/functions"

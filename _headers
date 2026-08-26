@@ -16,3 +16,41 @@
 
 /
   Cache-Control: public, max-age=0, must-revalidate
+
+# Generated guide, topic and age pages are HTML: they must revalidate, or a
+# deploy would never reach anyone who had already visited.
+/guides/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/topics/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/ages/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Crawler-facing files. Short cache so a freshly published guide is discoverable
+# quickly, but not so short that every crawl is a cold fetch.
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+  Content-Type: application/xml; charset=utf-8
+
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+/llms.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain; charset=utf-8
+
+# The audit is disallowed in robots.txt and carries a noindex meta tag. This is
+# the third layer: an HTTP header, which applies even if the page is fetched by
+# something that ignores both.
+/seo-audit.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
+
+# The two editing surfaces are not public content.
+/studio/*
+  X-Robots-Tag: noindex, nofollow
+
+/editor/*
+  X-Robots-Tag: noindex, nofollow

@@ -5,12 +5,15 @@
 
 const AGES = ["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months","12–18 months","18–24 months"];
 
+/* Root-absolute on purpose. Guides now live at /guides/<slug>/ and the browse
+   pages at /topics/<id>/ and /ages/<slug>/, so a relative "assets/..." path
+   would resolve against the wrong directory and silently 404. */
 const ICONS = {
-  feeding:     `<img src="assets/img/icons/feeding.webp" alt="" aria-hidden="true">`,
-  sleeping:    `<img src="assets/img/icons/sleeping.webp" alt="" aria-hidden="true">`,
-  development: `<img src="assets/img/icons/development.webp" alt="" aria-hidden="true">`,
-  health:      `<img src="assets/img/icons/health.webp" alt="" aria-hidden="true">`,
-  sanity:      `<img src="assets/img/icons/sanity.webp" alt="" aria-hidden="true">`
+  feeding:     `<img src="/assets/img/icons/feeding.webp" alt="" aria-hidden="true">`,
+  sleeping:    `<img src="/assets/img/icons/sleeping.webp" alt="" aria-hidden="true">`,
+  development: `<img src="/assets/img/icons/development.webp" alt="" aria-hidden="true">`,
+  health:      `<img src="/assets/img/icons/health.webp" alt="" aria-hidden="true">`,
+  sanity:      `<img src="/assets/img/icons/sanity.webp" alt="" aria-hidden="true">`
 };
 
 const TOPICS = [
@@ -1348,8 +1351,15 @@ function searchGuides(query, opts){
 
 const iconFor = g => ICONS[g.topic] || ICONS.feeding;
 
+/* The permanent public URL for a guide. Every link on the site goes through
+   this one function, so changing the URL shape is a one-line change and no
+   page can be left pointing at the old one. `slug` is optional and defaults to
+   the Firestore document id, which is what every existing URL already uses —
+   so nothing moves unless a slug is deliberately changed in Studio. */
+const guideUrl = g => "/guides/" + ((g && (g.slug || g.id)) || "") + "/";
+
 function cardHTML(g){
-  return `<a class="card" href="guide.html?id=${g.id}">
+  return `<a class="card" href="${guideUrl(g)}">
     <div class="card-icon" aria-hidden="true">${iconFor(g)}</div>
     <div class="card-text">
       <h3>${g.title}</h3>
@@ -1360,6 +1370,31 @@ function cardHTML(g){
 
 function guideById(id){ return GUIDES.find(g => g.id === id); }
 
+/* --- Server-rendered grids ------------------------------------------------
+   The Netlify build writes real guide cards into the card grids, so a crawler
+   (and the reader) gets them in the HTML rather than after a round trip to
+   Firestore. It stamps a hash of that list onto the grid.
+
+   Before a page rebuilds a grid it asks this: is what you were served already
+   the right list? If so, leave the DOM alone — no flash, no layout shift, and
+   no work. The hash is cleared afterwards so any later render (a filter, a
+   search, a Studio edit) always applies normally.
+
+   Must match bakedHash() in scripts/build.js. */
+function bakedHash(list){
+  const s = list.map(g => g.id + ":" + g.title).join("|");
+  let h = 5381;
+  for(let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function gridAlreadyCorrect(el, list){
+  if(!el) return false;
+  const baked = el.getAttribute("data-baked-hash");
+  if(!baked) return false;
+  el.removeAttribute("data-baked-hash");      // one-shot: only the first paint
+  return baked === bakedHash(list);
+}
+
 /* Expose data + helpers for the Studio and data layer (non-breaking:
    pages still use the lexical globals; this just mirrors them on window). */
 try{
@@ -1367,6 +1402,9 @@ try{
     window.GUIDES = GUIDES; window.AGES = AGES; window.TOPICS = TOPICS;
     window.ICONS = ICONS; window.topicById = topicById;
     window.guideById = guideById; window.cardHTML = cardHTML;
+    window.guideUrl = guideUrl; window.iconFor = iconFor;
+    window.searchGuides = searchGuides;
+    window.gridAlreadyCorrect = gridAlreadyCorrect;
   }
 }catch(e){}
 
