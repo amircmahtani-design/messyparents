@@ -67,6 +67,27 @@
   MPC.esc = esc;
   MPC.inline = inline;
 
+  /* ---- filter pill state -----------------------------------------------
+     One definition, because the home page and the browse/landing pages both
+     light pills up and they must agree.
+
+     The pills carried aria-pressed until they became links. aria-pressed is
+     only allowed on a button, so on an anchor it is invalid ARIA — Lighthouse
+     fails the page for it, and a screen reader may ignore it, which means the
+     state it existed to announce was not dependably announced.
+
+     data-on drives the styling (the CSS matches on it). aria-current="true"
+     is allowed on a link and is how the current filter is announced; "not
+     current" is expressed by the attribute being absent, not by ="false",
+     so it is removed rather than set. Must match state() in
+     scripts/lib/bake.js, which writes the same two attributes at build time. */
+  MPC.pillState = function (el, on) {
+    if (!el) return;
+    el.setAttribute("data-on", String(!!on));
+    if (on) el.setAttribute("aria-current", "true");
+    else el.removeAttribute("aria-current");
+  };
+
   /* ---- the baked-grid handshake ----------------------------------------
      The build writes real cards into each grid and stamps a hash of that list
      onto it. Before a page rebuilds a grid it asks: is what you were served

@@ -242,13 +242,43 @@ function applyFooter(html, footer) {
    which is the single biggest LCP change in this work. `ready` goes on too,
    since the CSS keeps the image transparent until that class appears.
    ------------------------------------------------------------------------ */
+const REMOTE_IMG = /^https:\/\/firebasestorage\.googleapis\.com\//;
+
 function applyHero(html, pageCfg, img) {
   return html.replace(/<img\b([^>]*\bid="pageHeroImg"[^>]*)>/g, (full, attrs) => {
-    const chosen = (pageCfg && pageCfg.image) || getAttr(attrs, "data-default") || "";
+    const shipped = getAttr(attrs, "data-default") || "";
+    const chosen = (pageCfg && pageCfg.image) || shipped || "";
     if (!chosen) return full;
 
     let a = setAttr(attrs, "src", img(chosen, 1100));
     a = setAttr(a, "data-src-original", chosen);
+
+    /* ---- responsive sources ----------------------------------------------
+       index.html and popular.html ship a srcset of pre-sized copies of the
+       DEFAULT illustration, so a phone downloads an 800px picture instead of
+       the full-size one. That list is only correct while the default is what
+       is actually being shown.
+
+       The moment Studio points this slot at a different picture, the shipped
+       list describes the wrong image entirely — and srcset wins over src, so
+       the page would quietly keep serving the old illustration and the upload
+       would appear to have done nothing. So whenever the chosen image is not
+       the shipped default, the shipped list is thrown away and rebuilt:
+       through Netlify's image CDN for a Studio upload (it resizes on demand,
+       which is what MPC.img already does for the single src), and dropped
+       entirely for anything else, leaving src on its own as it was before.
+
+       Nothing is touched in the common case — no override, shipped default,
+       list left exactly as the HTML wrote it. */
+    if (chosen !== shipped) {
+      if (REMOTE_IMG.test(chosen)) {
+        a = setAttr(a, "srcset",
+          [560, 800, 1100].map(w => `${img(chosen, w)} ${w}w`).join(", "));
+      } else {
+        a = setAttr(a, "srcset", null);
+        a = setAttr(a, "sizes", null);
+      }
+    }
     /* Below the header but at the top of the page: this is the LCP candidate
        on the browse pages, so it must not be lazy. */
     a = setAttr(a, "loading", "eager");
@@ -393,16 +423,29 @@ function applyPills(html, topics, ages, selected) {
      unchanged — but a crawler follows it, and if the JavaScript ever fails the
      click still lands on a working topic page instead of doing nothing.
 
-     aria-pressed stays, so the pressed styling and the screen-reader state are
-     the same as they were. */
+     STATE: data-on for the styling, aria-current for the announcement.
+
+     These used to carry aria-pressed. That was correct while they were
+     buttons — but aria-pressed is only allowed on a button, and the moment
+     they became links it turned into invalid ARIA on every pill on every
+     browse and landing page. Lighthouse fails the whole page for it
+     (aria-allowed-attr), and a screen reader is entitled to ignore it, so the
+     state it was there to announce was not reliably announced either.
+
+     data-on carries the visual state (the CSS matches on it), and
+     aria-current="true" — which IS allowed on a link — announces the pill the
+     reader is currently filtered to. aria-current is written only when the
+     filter is on; an absent attribute is how "not current" is expressed. */
+  const state = (on) => ` data-on="${on}"` + (on ? ' aria-current="true"' : "");
+
   const topicPills = topics.map((t) =>
     `<a class="pill" href="/topics/${esc(t.id)}/" data-topic="${esc(t.id)}"` +
-    ` aria-pressed="${t.id === selected.topic}">` +
+    `${state(t.id === selected.topic)}>` +
     `${t.iconHTML || ""}<span>${esc(t.label)}</span></a>`).join("");
 
   const agePills = ages.map((a) =>
     `<a class="pill pill--age" href="/ages/${esc(ageSlug(a))}/" data-age="${esc(a)}"` +
-    ` aria-pressed="${a === selected.age}">${esc(a)}</a>`).join("");
+    `${state(a === selected.age)}>${esc(a)}</a>`).join("");
 
   const bake = (id) => new RegExp(
     `(<div[^>]*\\bid="${id}"[^>]*>)(?:<!--MPC:PILLS:START-->[\\s\\S]*?<!--MPC:PILLS:END-->)?`);

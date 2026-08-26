@@ -552,8 +552,12 @@ section("Performance architecture");
     }
     const topicPage = topicSample[0] ? (readIf(topicSample[0]) || "") : "";
     if (topicPage) {
+      /* data-on lights it, aria-current announces it. Not aria-pressed: that
+         is only valid on a button, and these are links. */
       check("Landing pages arrive with their filter already lit",
-        /aria-pressed="true"/.test(topicPage));
+        /data-on="true"/.test(topicPage) && /aria-current="true"/.test(topicPage));
+      check("No pill carries ARIA that is invalid on a link",
+        !/aria-pressed/.test(topicPage));
     }
   }
 
@@ -592,6 +596,28 @@ section("Performance architecture");
     check(`The font request is untouched on all ${fontPages.length} pages that use it`,
       altered.length === 0, altered.join(", "));
 
+    /* The same request, but it must not hold up the first paint. A plain
+       stylesheet link to a third-party origin blocks rendering: the page
+       stays blank through a DNS lookup, a TLS handshake and a round trip.
+       The media="print" / onload pattern downloads it at the same moment
+       without blocking, and the noscript copy covers JS being off.
+
+       Exactly one non-noscript stylesheet link, and it carries media="print".
+       Two would mean somebody added a blocking one back alongside it.
+
+       Comments are stripped first. They are prose, they mention tag names,
+       and matching markup inside one is how this check first went wrong. */
+    const blocking = fontPages.filter(f => {
+      const html = (readIf(f) || "")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/<noscript>[\s\S]*?<\/noscript>/g, "");
+      const sheets = (html.match(/<link[^>]*fonts\.googleapis\.com\/css2[^>]*>/g) || [])
+        .filter(l => /rel="stylesheet"/.test(l));
+      return sheets.length !== 1 || !/media="print"/.test(sheets[0]);
+    });
+    check("The font stylesheet never blocks the first paint",
+      blocking.length === 0, blocking.join(", "));
+
     const stamped = ALL.filter(f => {
       const html = readIf(f) || "";
       const refs = [...html.matchAll(/(?:href|src)="[^"]*assets\/(?:css|js)\/[^"]+"/g)];
@@ -629,6 +655,27 @@ section("Performance architecture");
       return m && /loading="lazy"/.test(m[0]);
     });
     check("The LCP image is never lazy-loaded", lazyLcp.length === 0, lazyLcp.join(", "));
+
+    /* A srcset pointing at a file that is not in the repo is worse than no
+       srcset: the browser picks the candidate it thinks fits, gets a 404, and
+       the largest image on the page never appears at all. So every candidate
+       is resolved against the disk, and a w-descriptor list is checked for the
+       `sizes` it is meaningless without. */
+    const brokenSrcset = [];
+    for (const f of ["index.html", "guides.html", "popular.html"]) {
+      const m = /<img[^>]*\bid="pageHeroImg"[^>]*>/.exec(readIf(f) || "");
+      if (!m) continue;
+      const set = (/\ssrcset="([^"]*)"/.exec(m[0]) || [])[1];
+      if (!set) continue;
+      if (!/\ssizes="/.test(m[0])) { brokenSrcset.push(`${f} (srcset with no sizes)`); continue; }
+      for (const cand of set.split(",")) {
+        const url = cand.trim().split(/\s+/)[0];
+        if (/^(https?:|\/\.netlify\/)/.test(url)) continue;   /* CDN-resolved */
+        if (!exists(url.replace(/^\//, ""))) brokenSrcset.push(`${f} → ${url}`);
+      }
+    }
+    check("Every responsive hero source is a file that exists",
+      brokenSrcset.length === 0, brokenSrcset.join(", "));
   }
 
   /* ---- the guide-being-written-right-now path -------------------------

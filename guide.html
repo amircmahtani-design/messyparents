@@ -36,7 +36,31 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- The font stylesheet used to block the first paint. Nothing on the page
+     could be drawn until a request to a third-party origin had gone out and
+     come back — on a phone that is a DNS lookup, a TLS handshake and a round
+     trip before a single word appears.
+
+     Same URL, same three faces, same weights: the typography is unchanged and
+     deliberately so (see tests/verify.js — the weights are pinned there on
+     purpose). What has changed is only HOW it is asked for. media="print"
+     does not apply to a screen, so the browser downloads it without holding
+     rendering up; onload then promotes it to media="all" and it takes effect.
+     The preload starts the download at the same instant the old blocking
+     stylesheet link would have, so nothing arrives later than it did before —
+     the page simply stops waiting for it. display=swap was already set, so
+     text was always going to appear in the fallback face first; now it
+     appears sooner.
+
+     The noscript copy below keeps the fonts working with JavaScript turned
+     off, where the onload never fires.
+
+     (Deliberately no angle-bracket tag names in this comment: the build and
+     the test suite both regex over this HTML, and a tag name written inside a
+     comment gets matched as if it were real markup.) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="/assets/css/tokens.css?v=dcd2bfa4bf">
 <link rel="stylesheet" href="/assets/css/style.css?v=3923130a64">
 <!-- The guide panel's own CSS. Was ~5KB inline in this file; now a shared,
@@ -49,7 +73,7 @@
 
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand" href="/index.html"><img src="/assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270" fetchpriority="high" decoding="async"></a>
+    <a class="brand" href="/index.html"><img src="/assets/img/logo.webp" alt="The Messy Parents Collection" width="620" height="270" srcset="/assets/img/logo-460.webp 460w, /assets/img/logo.webp 620w" sizes="(min-width:961px) 300px, 230px" fetchpriority="high" decoding="async"></a>
     <nav class="nav" id="nav">
       <a href="/index.html" data-mpc-text="nav.home">Home</a>
       <a href="/popular.html" data-mpc-text="nav.popular">Popular</a>

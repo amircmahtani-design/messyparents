@@ -137,9 +137,9 @@ h3{font-size:1.3rem}
   transition:transform .14s ease,background .16s ease,border-color .16s ease,color .16s ease}
 .pill:hover{transform:translateY(-2px)}
 .pill svg,.pill img{width:23px;height:23px;flex:0 0 auto;object-fit:contain}
-.pill[aria-pressed="true"]{border-color:var(--blue);color:var(--blue);background:#fff;
+.pill[data-on="true"]{border-color:var(--blue);color:var(--blue);background:#fff;
   box-shadow:inset 0 0 0 1px var(--blue)}
-.pill--age[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue);
+.pill--age[data-on="true"]{background:var(--blue);color:#fff;border-color:var(--blue);
   box-shadow:none}
 
 .row-note{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;

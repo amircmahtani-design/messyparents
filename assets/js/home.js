@@ -149,10 +149,10 @@
     if (btn.dataset.topic) { topic = (topic === btn.dataset.topic) ? null : btn.dataset.topic; openRow.topic = false; }
     if (btn.dataset.age) { age = (age === btn.dataset.age) ? null : btn.dataset.age; openRow.age = false; }
     document.querySelectorAll("[data-topic]").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.dataset.topic === topic));
+      MPC.pillState(b, b.dataset.topic === topic);
     });
     document.querySelectorAll("[data-age]").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.dataset.age === age));
+      MPC.pillState(b, b.dataset.age === age);
     });
     warm(function () { render(true); });
   });
@@ -180,7 +180,7 @@
     topic = age = null; q = "";
     if (input) input.value = "";
     openRow.topic = openRow.age = false;
-    document.querySelectorAll(".pill").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+    document.querySelectorAll(".pill").forEach(function (b) { MPC.pillState(b, false); });
     render(true);
   });
 })();
