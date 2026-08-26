@@ -66,55 +66,6 @@
 @font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/nunito-v32-latin-700.woff2") format("woff2")}
 @font-face{font-family:"Nunito";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/nunito-v32-latin-800.woff2") format("woff2")}
 
-
-/* ---------------------------------------------------------------------------
-   METRIC-MATCHED FALLBACKS
-   ---------------------------------------------------------------------------
-   Cumulative Layout Shift was 0.275, and 0.216 of it was one element: the hero
-   headline rewrapping when Baloo 2 replaced the substitute face.
-
-   Self-hosting the fonts did NOT fix this, and it was never going to. CLS
-   measures how BIG a shift is, not how late it happens. Making the fonts
-   arrive 600ms sooner moved the jump earlier; it did not make it smaller.
-
-   The only thing that shrinks it is making the substitute face occupy the same
-   space as the real one. That is what these do. Each fallback aliases a system
-   font and then overrides its metrics:
-
-     size-adjust        scales glyph widths, so lines WRAP at the same points
-     ascent-override    )
-     descent-override   ) fix the line-box height, so lines are the same height
-     line-gap-override  )
-
-   You need both halves. size-adjust alone leaves a vertical jump; the
-   overrides alone leave the text rewrapping. Together the swap moves nothing.
-
-   WHERE THE NUMBERS COME FROM
-
-   Measured, not looked up. The hhea and OS/2 tables were read out of the
-   actual woff2 files in assets/fonts, and the fallback metrics out of the
-   system copies of Arial (via Liberation Sans, which is metrically identical)
-   and DejaVu Sans. Formulae:
-
-     size-adjust     = webfont.xAvgCharWidth/upem  /  fallback.xAvgCharWidth/upem
-     ascent-override = webfont.ascender/upem  /  size-adjust
-
-   Two faces per family because the right answer depends on which font the
-   device actually has: Arial covers Windows, macOS and iOS; DejaVu covers most
-   Linux and headless Chrome. Each is exact for its own target. A device with
-   neither drops both faces and falls through to the stack unadjusted, exactly
-   as before — this can only help.
-
-   Tuned to the weight that dominates layout: Baloo at 700 (the h1 and every
-   card title), the other two at 400. If the font files are ever regenerated
-   these want recomputing from the new tables. */
-@font-face{font-family:"Baloo 2 Fallback Arial";src:local("Arial"),local("Helvetica"),local("Liberation Sans"),local("Arimo");size-adjust:83.16%;ascent-override:129.63%;descent-override:63.01%;line-gap-override:0.00%}
-@font-face{font-family:"Baloo 2 Fallback Dejavu";src:local("DejaVu Sans"),local("Verdana");size-adjust:95.10%;ascent-override:113.35%;descent-override:55.10%;line-gap-override:0.00%}
-@font-face{font-family:"Patrick Hand Fallback Arial";src:local("Arial"),local("Helvetica"),local("Liberation Sans"),local("Arimo");size-adjust:74.36%;ascent-override:140.12%;descent-override:41.96%;line-gap-override:0.00%}
-@font-face{font-family:"Patrick Hand Fallback Dejavu";src:local("DejaVu Sans"),local("Verdana");size-adjust:85.04%;ascent-override:122.53%;descent-override:36.69%;line-gap-override:0.00%}
-@font-face{font-family:"Nunito Fallback Arial";src:local("Arial"),local("Helvetica"),local("Liberation Sans"),local("Arimo");size-adjust:89.89%;ascent-override:112.47%;descent-override:39.27%;line-gap-override:0.00%}
-@font-face{font-family:"Nunito Fallback Dejavu";src:local("DejaVu Sans"),local("Verdana");size-adjust:102.79%;ascent-override:98.35%;descent-override:34.34%;line-gap-override:0.00%}
-
 :root{
   /* ---- Paper and ink ------------------------------------------------- */
   --cream:#fbf0d3;              /* the site's page background              */
@@ -162,12 +113,9 @@
      Only three faces in the whole universe. Patrick Hand carries almost
      everything that is meant to look handwritten; it ships in ONE weight, so
      bold text needs -webkit-text-stroke rather than font-weight. */
-  /* The Fallback faces are metric-matched clones of the real ones; see the
-     @font-face block above. They sit immediately after the web font so they
-     are what gets used during the swap window. */
-  --display:"Baloo 2", "Baloo 2 Fallback Arial", "Baloo 2 Fallback Dejavu", "Trebuchet MS", sans-serif;
-  --hand:"Patrick Hand", "Patrick Hand Fallback Arial", "Patrick Hand Fallback Dejavu", "Poppins", ui-rounded, system-ui, sans-serif;
-  --body:"Nunito", "Nunito Fallback Arial", "Nunito Fallback Dejavu", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Baloo 2", "Trebuchet MS", sans-serif;
+  --hand:"Patrick Hand", "Poppins", ui-rounded, system-ui, sans-serif;
+  --body:"Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --stroke-title:.8px;          /* how much weight a hand-lettered heading gets */
 
