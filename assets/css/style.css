@@ -232,7 +232,11 @@ h3{font-size:1.3rem}
 
 .callout{border:1.7px solid var(--orange);border-radius:var(--radius);
   background:#fff6f1;padding:20px 22px;margin:28px 0}
-.callout h3{font-family:var(--display);color:var(--orange);font-size:1.35rem;margin-bottom:9px}
+/* The heading sits tight to the top of the box. It is an h3 inside
+   .article-body, so it was picking up that rule's 28px top margin on top of
+   the box's own 20px of padding — 48px of empty paper above the first word,
+   which read as a mistake rather than as space. */
+.callout h3{font-family:var(--display);color:var(--orange);font-size:1.35rem;margin:0 0 9px}
 .callout p:last-child,.callout ul:last-child{margin-bottom:0}
 
 .quiet{border-left:4px solid var(--yellow);padding:3px 0 3px 16px;margin:24px 0;
