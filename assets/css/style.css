@@ -334,6 +334,35 @@ html.js .hero-art img.ready,
 html.illus-ready .about-art img,
 html.illus-ready .page-hero-art img,
 html.illus-ready .hero-art img{opacity:1}
+/* ---- illustrations fading in as they decode --------------------------
+   The page now paints its text almost immediately, so an illustration that
+   arrives 300ms later reads as a pop rather than as part of the load. This
+   softens that edge.
+
+   IMPORTANT: this must never be what makes an image visible. The rules above
+   already handle visibility (.ready, with the illus-ready timer as a safety
+   net), and an image that depends on JavaScript to appear is an image that
+   sometimes does not. So the animation is opt-in: mpc-runtime.js adds .is-in
+   only when it has attached to a load event that has not yet fired. If the
+   script never runs, or the image was already in cache, nothing is added and
+   the illustration simply appears as it does today.
+
+   The element is only at opacity 0 for the length of the animation, after it
+   has loaded — it is never a hidden LCP candidate that the browser has to
+   wait on. */
+@keyframes illus-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+html.js .hero-art img.is-in,
+html.js .page-hero-art img.is-in,
+html.js .about-art img.is-in,
+html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) both}
+
+@media (prefers-reduced-motion:reduce){
+  html.js .hero-art img.is-in,
+  html.js .page-hero-art img.is-in,
+  html.js .about-art img.is-in,
+  html.js .band-art img.is-in{animation:none}
+}
+
 /* Hide the art figure until it actually has an image (empty slots collapse). */
 .about-section:not(.has-art) .about-art{display:none}
 
