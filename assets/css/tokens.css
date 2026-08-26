@@ -48,17 +48,23 @@
    rewrites them root-absolute when it pastes this into a page, because once
    inlined they would otherwise resolve against the document.
 
+   The filenames carry the font version (v23, v32, v25) because that is what
+   google-webfonts-helper produces and renaming eight files by hand is eight
+   chances to mistype one. If a face is ever re-downloaded the version may
+   differ — change the name HERE and in the preload tags on the public pages,
+   and npm run verify will tell you if the two disagree.
+
    Latin subset. A glyph outside it falls back for that character alone, which
    is the safe failure. See FONTS-STEP-BY-STEP.md to regenerate.
    ------------------------------------------------------------------------ */
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/baloo2-600.woff2") format("woff2")}
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/baloo2-700.woff2") format("woff2")}
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/baloo2-800.woff2") format("woff2")}
-@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/patrick-hand-400.woff2") format("woff2")}
-@font-face{font-family:"Nunito";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/nunito-400.woff2") format("woff2")}
-@font-face{font-family:"Nunito";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/nunito-600.woff2") format("woff2")}
-@font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/nunito-700.woff2") format("woff2")}
-@font-face{font-family:"Nunito";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/nunito-800.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/baloo-2-v23-latin-600.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/baloo-2-v23-latin-700.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/baloo-2-v23-latin-800.woff2") format("woff2")}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/patrick-hand-v25-latin-regular.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/nunito-v32-latin-regular.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/nunito-v32-latin-600.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/nunito-v32-latin-700.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/nunito-v32-latin-800.woff2") format("woff2")}
 
 :root{
   /* ---- Paper and ink ------------------------------------------------- */
