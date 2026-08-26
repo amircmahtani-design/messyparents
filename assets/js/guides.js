@@ -728,6 +728,7 @@ var GUIDES = [
 
 {
   id:"safe-sleep-newborn",
+  longform:[{h:"We asked if she could sleep on her side",t:"We did ask. Twice, actually — once as a straight question and once with what we thought was a clever addition: what if one of us is watching her?\n\nThe answer we got back was fair, and it stuck with us. Watching isn't the safeguard it feels like, because sleep is precisely the time nobody is watching. You look at your phone. You doze off yourself. The whole point of the rule is that it has to hold when you're not there.\n\nSo we put her on her back. Every time. It's the one thing in this entire first month we never had a debate about twice."},{h:"The cot stayed flat, even when we badly wanted to tilt it",t:"This was the hard one. When milk came out of her nose one night, and again when she spat up in her sleep, propping the mattress up felt like the obvious kindness. Everything in you says gravity would help.\n\nWe kept reading the same thing from every direction: don't. A small baby on an incline slides down it, and ends up folded into a worse position than the one you were worried about. Wedges and positioners are sold on exactly the instinct we were having, which is what makes them so persuasive at two in the morning.\n\nUnless your own team has written you a specific plan for a specific reason, reflux doesn't change any of this. Ours didn't."},{h:"What our cot actually had in it",t:"Nothing. That still looked wrong to us for about a week — it seemed cold, like we'd forgotten something.\n\nA sleeping bag solved most of that feeling. No blanket to wriggle under, nothing to kick off, and one less thing to think about at three in the morning. Her feet went near the foot of the cot so she couldn't shuffle downwards.\n\nShe was in our room in her own space, which is the usual advice for the first six months and which we'd have done anyway. After a NICU stay you are not in a hurry to put your baby in another room."},{h:"The one that catches people out",t:"Falling asleep on a sofa holding her. It's not a decision anyone makes — it happens at the end of a night feed when you sit down for a second.\n\nWe got into the habit of feeding somewhere we could put her down safely afterwards, rather than somewhere comfortable enough to lose an hour in. Not because we were disciplined. Because we knew exactly how tired we were."}],
   topic:"sleeping",
   icon:"moon",
   featured:true,
@@ -738,25 +739,6 @@ var GUIDES = [
   subcategory:"Sleep environment",
   summary:"Flat, on her back, on a firm clear surface. Every single sleep. It's the one thing on this whole site that isn't a judgement call.",
   keywords:["safe sleep","back to sleep","cot setup","newborn sleep safety","incline cot reflux"],
-  body:`
-<p>Most of what we write here is nuance, context and it-depends. This one isn't. It's four rules and they don't bend.</p>
-<h2>The rules</h2>
-<ul>
-<li><strong>On her back.</strong> Every sleep, day and night, until she can roll over reliably on her own.</li>
-<li><strong>Flat.</strong> Not propped, not inclined, not in a wedge.</li>
-<li><strong>Firm surface.</strong> A proper cot or Moses basket mattress. Not a sofa, not a pillow, not your bed's soft bit.</li>
-<li><strong>Clear.</strong> Nothing else in there. No pillows, no duvets, no bumpers, no toys, no positioners, no rolled towels.</li>
-</ul>
-<div class="quiet">Feet-to-foot: her feet near the end of the cot, so she can't wriggle down under a blanket. A sleeping bag removes the problem entirely and is worth every penny.</div>
-<h2>The bit people get wrong</h2>
-<p>Reflux. It feels obvious that a baby who spits up should be tilted, and you'll find products sold on exactly that logic. Don't. Inclining the cot or using a positioner is not recommended, and it isn't safer — a small baby slumps down an incline into a position that compromises her airway.</p>
-<p>Unless your own specialist team has given you a specific written plan for a specific reason, reflux does not change the rules. Ours didn't.</p>
-<h2>Side sleeping</h2>
-<p>We asked whether she could sleep on her side if one of us was actively watching. The answer is that watching isn't the safeguard people assume — you will look away, or fall asleep, and the whole point is that sleep is when nobody is supervising.</p>
-<p>Supervised tummy time while she's awake is a completely different thing, and good for her. Awake, on you, on the floor, watched. That's not sleep.</p>
-<h2>Where</h2>
-<p>In your room, in her own sleep space, for the first six months. Not in your bed, not on a sofa or armchair — falling asleep with her on a sofa is one of the highest-risk things that happens by accident.</p>
-<p>If there's any chance you might doze off feeding her at 4am, plan for it. Feed somewhere you can put her down safely rather than somewhere you'll wake up an hour later still holding her.</p>`,
   callout:{title:"Get advice straight away for",items:["Blue, grey or unusually pale colour","Pauses in breathing, or breathing that looks like hard work","Grunting with every breath, nostrils flaring, or the chest pulling in","A baby who is floppy, very hard to wake, or not feeding","Any instinct that something is wrong — you don't need to justify it"]},
   panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's this simple",items:["On her back, every sleep","Flat — not propped or inclined","Firm mattress, not a sofa or your bed","Nothing else in the cot at all"]},warn:{title:"Call your doctor if",items:["Blue, grey or unusually pale colour","Any pause in breathing","Breathing that looks like hard work — chest pulling in, nostrils flaring","Floppy, very hard to wake, or not feeding","Any instinct that something is wrong"]},helped:{title:"What helped us",items:["A sleeping bag instead of blankets","Feet to the foot of the cot","Her own space in our room","We never tilted the cot, however tempting","Feeding somewhere we could put her down safely"]},dont:{title:"Don't",items:["Don't tilt or prop the cot, for reflux or anything else","No sleep positioners, wedges, bumpers, pillows or loose blankets","Don't put her down to sleep on her side, even if you're watching","Don't fall asleep holding her on a sofa or armchair"]},quick:"Back, flat, firm, clear — every sleep. Reflux doesn't change it, and side sleeping isn't made safe by watching, because sleep is exactly when nobody is watching."},
   originalQuestions:["Is it safe for a newborn to sleep on her side if a parent is actively watching? (24 August 2025)","Whether a light must stay on, and whether she could be put down while making noise (21 August 2025)"],
@@ -766,6 +748,7 @@ var GUIDES = [
 },
 {
   id:"newborn-hiccups",
+  longform:[{h:"It was just after midnight",t:"Ariadne got hiccups and we started asking questions. What's the best position. Does patting help. Which of those is better. How long before they stop.\n\nWe also managed to ask how long burping takes and then correct ourselves — sorry, I meant hiccups — which tells you roughly what state we were in.\n\nEventually the question came back to us: is anything else going on? And the honest answer, once we actually looked at her, was no. She just hiccups. That was the end of it."},{h:"She wasn't bothered. We were",t:"This is the thing we'd want to hand to anyone standing over a cot at half past midnight. Watch her face rather than the clock.\n\nHiccups look like something happening to a baby. Most of the time they aren't distressing her at all — she's doing it the way she did in the womb, and she has no opinion about it. The distress in the room was entirely ours.\n\nOnce we noticed that, the whole thing deflated."},{h:"You can put her down mid-hiccup",t:"We genuinely didn't know this and had been waiting them out. You don't have to. A comfortable baby goes down flat on her back and hiccups her way into sleep, and it's fine.\n\nThe useful stuff, if you want to do something: hold her upright a while, pause a feed if she seems unsettled by them, one gentle burp if you think she's swallowed air. That's the list. We were cycling through positions like we were tuning a radio, and none of it was doing anything."},{h:"When we'd have asked someone",t:"Not about the hiccups themselves — about what came with them. If she'd been genuinely upset by them rather than indifferent, if they'd been getting in the way of feeding, if there'd been frequent vomiting alongside, or any change in her breathing or colour.\n\nOn their own, at midnight, in a baby who's otherwise happy: they're just hiccups."}],
   topic:"health",
   icon:"cross",
   featured:true,
@@ -776,23 +759,6 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"They bother you far more than they bother her. She can be put down to sleep still hiccupping.",
   keywords:["newborn hiccups","baby hiccups","hiccups sleep","how long hiccups baby"],
-  body:`
-<p>Just after midnight, Ariadne got hiccups. We then worked through every possible follow-up in order: best position, does patting help, how long do we keep trying, are they harmful, and eventually — can we just put her down?</p>
-<p>Asked whether anything else was going on, the honest answer was: <em>"No she just hiccups."</em> So we put her down. That was the right call, and we could have got there twenty minutes earlier.</p>
-<h2>What they are</h2>
-<p>Extremely common, often several times a day, and almost always harmless. Babies hiccup in the womb too. They usually stop on their own without anybody doing anything.</p>
-<div class="quiet">Here's the thing nobody tells you at midnight: hiccups don't distress most babies at all. Watch her face. If she's unbothered, she's unbothered — you're the one who's upset.</div>
-<h2>If you want to do something</h2>
-<ul>
-<li>Hold her comfortably upright for a bit.</li>
-<li>Pause a feed if she seems unsettled by them, then carry on.</li>
-<li>A gentle burp, if you think she swallowed air. Gentle.</li>
-<li>That's it. Don't cycle through six positions trying to make them stop.</li>
-</ul>
-<h2>Can she sleep through them?</h2>
-<p>Yes. A comfortable baby can go down flat on her back on a firm clear surface while still hiccupping. You do not have to wait them out. This is the single most useful thing in this guide at 12:40am.</p>
-<h2>When they're worth mentioning</h2>
-<p>It isn't about how many minutes. It's about whether they come with something else — trouble feeding, being genuinely distressed by them, changes in breathing or colour, frequent vomiting, or poor weight gain. Hiccups alongside any of that is a different conversation.</p>`,
   callout:{title:"Worth mentioning if",items:["She's genuinely distressed by them rather than indifferent","They come with difficulty feeding, or she keeps stopping mid-feed","Frequent vomiting alongside them","Any change in breathing or colour during an episode","She isn't gaining weight as expected"]},
   panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's nothing",items:["Very common, several times a day","They did it in the womb too","Stop on their own","Most babies aren't bothered at all"]},warn:{title:"Call your doctor if",items:["She's genuinely distressed","Feeding is affected","Frequent vomiting with them","Breathing or colour changes"]},helped:{title:"What helped us",items:["Hold her upright a while","Pause the feed if she's unsettled","One gentle burp, not six positions","Put her down anyway — she can sleep through them"]},quick:"Common, harmless, and she can go down to sleep still hiccupping. Watch her face, not the clock — if she's unbothered, so are you."},
   originalQuestions:["Asked the best position for hiccups, whether patting helps, how long to keep trying (24 August 2025)",`"No she just hiccups." (24 August 2025)`],
@@ -802,6 +768,7 @@ var GUIDES = [
 },
 {
   id:"blocked-nose-newborn",
+  longform:[{h:"How do you even blow a baby's nose",t:"That was the question, more or less word for word. Then: fine, saline drops — and then what?\n\nAnd then, because it was late and it seemed briefly like excellent thinking: what if I just turn her upside down and let gravity do it?\n\nYou can't. Please don't. We're keeping it in because somebody else is going to have the same idea and it deserves to be answered by someone who has already had it."},{h:"Why it matters more than it would in you or me",t:"Her nasal passages are tiny, and a newborn would rather breathe through her nose. So a bit of congestion that wouldn't register in an adult becomes a real problem, because she can't suck and breathe through her mouth at the same time.\n\nWhich gave us the question that actually mattered. Not is she blocked — she often was — but is it stopping her feeding or sleeping. If it wasn't, we left it alone."},{h:"What we ended up doing",t:"Saline drops, a couple per nostril, just before a feed. That was the moment it was worth doing and mostly the only moment.\n\nGentle suction after, if it was genuinely in the way. Emphasis on gentle and on if. We learned quite quickly that going at it repeatedly irritates the lining and swells things up further, so you end up worse off than when you started.\n\nA humidifier at night helped more than we expected, especially with air conditioning running."},{h:"The things we didn't do",t:"No adult decongestant drops. Nothing meant for older children. No tilting the cot, because congestion doesn't change any of the sleep rules.\n\nAnd we stopped squirting saline in just to find out whether she was blocked. It's a treatment, not a test.\n\nWhat we watched for instead was effort. Breathing that looked like work — chest pulling in, nostrils flaring, grunting with each breath — or her not managing to feed. That's a phone call, not a saline drop."}],
   topic:"health",
   icon:"cross",
   featured:true,
@@ -812,27 +779,6 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"Saline and patience, mostly. And no — you do not turn the baby upside down, however logical that briefly seems at 2am.",
   keywords:["blocked nose baby","newborn congestion","saline drops baby","nasal aspirator","stuffy nose newborn"],
-  body:`
-<p>Our questions went: how do you blow a baby's nose, then what do you do after the saline drops, and then — inevitably — could you just turn her upside down and let gravity handle it?</p>
-<p>You cannot. Please don't. But we're keeping the question in, because at 2am it felt like brilliant engineering and somebody else is going to have the same idea.</p>
-<h2>Why they get so blocked</h2>
-<p>Newborn nasal passages are tiny, and babies breathe through their noses by preference. A small amount of congestion that wouldn't register in an adult makes feeding genuinely difficult, because she can't suck and mouth-breathe at the same time.</p>
-<div class="quiet">Which is why the useful question isn't "is she blocked" but "is it stopping her feeding or sleeping." If it isn't, you can leave it alone.</div>
-<h2>What actually works</h2>
-<ul>
-<li><strong>Saline drops or spray</strong> made for infants. A drop or two per nostril softens things.</li>
-<li><strong>Gentle suction</strong> afterwards, with a proper aspirator, if it's genuinely interfering. Have someone show you first, and follow the instructions on the device.</li>
-<li><strong>Before feeds</strong> is the moment it's most worth doing.</li>
-<li><strong>Humidity</strong> — a humidifier, or steam from a running shower with her in the room, not in the bathroom itself.</li>
-<li><strong>Don't overdo the suction.</strong> Repeated aggressive suctioning irritates the lining and makes the swelling worse.</li>
-</ul>
-<h2>What not to do</h2>
-<ul>
-<li><strong>Don't turn her upside down.</strong> It doesn't drain anything useful and it's not safe.</li>
-<li><strong>Don't use decongestant drops</strong> meant for adults or older children.</li>
-<li><strong>Don't tilt the cot.</strong> Congestion doesn't change safe sleep.</li>
-<li><strong>Don't use saline as a test</strong> to find out whether she's blocked. Use it when she is.</li>
-</ul>`,
   callout:{title:"Get her seen if",items:["Breathing looks like hard work — chest pulling in, nostrils flaring, grunting","Any pause in breathing, or blue or grey colour","She's not feeding properly because of it","She has a fever, or she's unusually sleepy or hard to rouse","She's under three months and has any fever at all"]},
   panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's just",items:["Tiny nasal passages block easily","Babies prefer to breathe through the nose","Noisy without being unwell","Worst at feed times"]},warn:{title:"Call your doctor if",items:["Chest pulling in, flaring nostrils, grunting","Pauses, or blue or grey colour","She can't feed properly","Fever, especially under three months"]},helped:{title:"What helped us",items:["Saline drops just before feeds","Gentle suction, not repeated suction","A humidifier at night","Never upside down — we did ask"]},dont:{title:"Don't",items:["Don't turn her upside down to drain it — we did ask","Don't use decongestant drops meant for adults or older children","Don't suction repeatedly — it swells the lining and makes it worse","Don't tilt the cot. Congestion doesn't change safe sleep"]},quick:"Saline before feeds, gentle suction only if it's genuinely in the way, and humidity at night. Don't invert her, don't tilt the cot, don't use adult drops."},
   originalQuestions:[`Asked how to "blow" a baby's nose and what to do after saline drops (20 August 2025)`,"Asked whether gravity could do the job by turning the baby upside down (20 August 2025)"],
@@ -842,6 +788,7 @@ var GUIDES = [
 },
 {
   id:"newborn-noises-at-night",
+  longform:[{h:"The first night home",t:"We had spent five weeks visiting a NICU. Then she was home, in a room with us, in the dark, and she would not stop making noise.\n\nWe asked about the little sounds. Whether the kicking and arm-waving was normal. How quickly to change a nappy if you've heard her poo. Whether a light had to stay on. And then, plainly, that she was making a lot of noise and wouldn't settle.\n\nShe was asleep the whole time. It was us who weren't settling."},{h:"Newborn sleep is loud, and nobody warns you",t:"A big chunk of it is an active phase where they grunt, squeak, snuffle, sigh, kick, fling an arm out and pull faces that look like real distress.\n\nIt sounds exactly like a baby about to wake up. It usually isn't. The single most useful thing we changed was waiting — not responding to the first sound. A lot of it resolves itself inside a minute or two, and reaching in mid-cycle is how you turn a noise into an actual waking.\n\nHaving spent weeks next to monitors that beeped for real reasons, learning to sit still through noise took some doing."},{h:"The small answers we needed that night",t:"No, a light doesn't have to stay on. We asked specifically because she'd come from a NICU and we assumed preterm babies might need one. A dim night light is for your benefit, not hers.\n\nPoo gets changed reasonably promptly. A wet nappy can usually wait until the next feed.\n\nAnd you don't need to burp a baby who's settled and asleep. We were waking her up to do it."},{h:"What we were actually listening for",t:"Not volume. Effort.\n\nGrunting with every single breath, rather than now and then. Breathing that looks like hard work. The chest pulling in under the ribs, nostrils flaring wide, any pause, or a change in her colour. Those are different from a baby making a racket while fast asleep, and once you've seen the difference you stop mistaking one for the other.\n\nWhen we weren't sure, we filmed ten seconds on a phone. Far more useful than trying to describe it later, and it stops you second-guessing your own memory at four in the morning."}],
   topic:"sleeping",
   icon:"moon",
   featured:true,
@@ -852,22 +799,6 @@ var GUIDES = [
   subcategory:"First nights",
   summary:"Newborn sleep is astonishingly loud. Grunting, squeaking, kicking and thrashing are usually a baby deeply asleep, not a baby about to wake.",
   keywords:["newborn noisy sleep","grunting baby","baby squeaks at night","first night home","active sleep"],
-  body:`
-<p>Our first night home produced a run of questions in about ninety minutes: the little sounds, the hiccups, the noisy sleep, the kicking and arm-waving, how fast to change a dirty nappy, whether a light has to stay on, and finally — she is making so much noise that she won't settle.</p>
-<p>She was asleep. We were the ones not settling.</p>
-<h2>Newborn sleep is loud</h2>
-<p>Babies spend a large proportion of their sleep in an active phase where they grunt, squeak, snuffle, sigh, kick, fling their arms about and pull faces. It looks and sounds exactly like someone on the edge of waking. It usually isn't.</p>
-<div class="quiet">The most useful thing anyone told us: wait. Don't respond to the first sound. A lot of the noise resolves itself in ninety seconds, and picking her up mid-cycle is how you turn a noise into an actual waking.</div>
-<h2>The practical answers we needed that night</h2>
-<ul>
-<li><strong>Does a light have to stay on?</strong> No. A night light is for you, not for her. Dim is better for everyone.</li>
-<li><strong>How fast do you change a dirty nappy?</strong> Poo, reasonably promptly. A wet one can often wait for the next feed.</li>
-<li><strong>Do you burp a sleeping baby?</strong> If she's settled and comfortable, no.</li>
-<li><strong>Should you check her breathing constantly?</strong> You will anyway. But learn the actual warning signs instead, so you know what you're looking for rather than watching everything at once.</li>
-</ul>
-<h2>The noises that aren't just noise</h2>
-<p>What you're listening for isn't volume. It's effort. Grunting with every single breath, breathing that looks laboured, the chest pulling in under the ribs, nostrils flaring, any pause, or a change in colour. Those are different from a baby making a racket while sound asleep.</p>
-<p>If you're not sure — and on the first night you won't be — record ten seconds on your phone. It's far more useful to a clinician than trying to describe it, and it stops you second-guessing yourself at 4am.</p>`,
   callout:{title:"Get advice straight away for",items:["Grunting with every breath, or breathing that looks like hard work","The chest pulling in under the ribs, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","A baby who is floppy, very hard to rouse, or won't feed"]},
   panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's active sleep",items:["Grunting, squeaking, snuffling","Kicking and flinging her arms","Faces that look like distress","Sounds exactly like waking, isn't"]},warn:{title:"Call your doctor if",items:["Grunting with every single breath","Chest pulling in, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","Floppy, very hard to rouse, or won't feed"]},helped:{title:"What helped us",items:["Wait ninety seconds before responding","Dim light — it's for you, not her","Don't burp a settled sleeping baby","Film ten seconds if unsure — better than describing it"]},quick:"Newborn sleep is astonishingly loud and most of it means nothing. Listen for effort rather than volume, and wait before you reach in."},
   originalQuestions:["Asked about little sounds, noisy active sleep, kicking and arm movements (21 August 2025)","Asked how quickly to change a dirty nappy and whether a light must stay on (21 August 2025)","Reported she was making so much noise that she would not settle (21 August 2025)"],
@@ -877,6 +808,7 @@ var GUIDES = [
 },
 {
   id:"milk-from-the-nose",
+  longform:[{h:"A bit of milk came out of her nose",t:"She was asleep. It came out of her nose. Our question was six words long and sent immediately.\n\nIt is a genuinely horrible thing to watch. It looks like choking, or drowning, or something having gone badly wrong in a way you can't fix."},{h:"It's mostly plumbing",t:"The mouth and the nasal passages meet at the back of the throat. When milk comes back up it sometimes takes the nasal route instead of the oral one. Small babies do this. It looks far worse than it is.\n\nKnowing that in advance wouldn't have stopped the jolt, but it would have shortened the twenty minutes afterwards where we sat watching her chest go up and down."},{h:"What we'd do again",t:"Pick her up, upright, where we could see her face. Wipe the outside of her nose gently — not poke about, not try to suction it out.\n\nWatch her breathing and her colour for a minute or two until she was clearly fine. Then straight back down, flat, on her back.\n\nThat last part was the hardest. The urge to prop the mattress up after that is enormous, and it's the exact moment people do it. We didn't, and we'd tell anyone else not to either."},{h:"Where it stops being a story you tell later",t:"One episode, with a baby who recovers straight away and carries on as normal, is a story.\n\nMilk coming down her nose at most feeds is worth raising with someone — it can point to reflux, to how she's feeding, or occasionally to something worth looking at properly.\n\nAnd anything with real breathing difficulty, persistent choking, a colour change, or a baby who doesn't recover promptly is not a wait-and-see. We did an infant first aid session before she came home and never needed it, which is the best possible outcome for an evening spent learning something."}],
   topic:"health",
   icon:"cross",
   featured:false,
@@ -887,20 +819,6 @@ var GUIDES = [
   subcategory:"Feeding and spit-up",
   summary:"Alarming to watch, usually harmless. The mouth and nose connect at the back of the throat, so milk occasionally takes the wrong exit.",
   keywords:["milk out of nose baby","nasal regurgitation","baby spit up nose","posseting"],
-  body:`
-<p>Milk coming out of a sleeping baby's nose is one of those sights that empties your stomach. It looks like she's choking, or drowning, or something has gone badly wrong.</p>
-<p>Usually none of those. The mouth and the nasal passages join at the back of the throat, so when milk comes back up it sometimes takes the nasal route instead of the oral one. Small babies do this. It's plumbing, not pathology.</p>
-<h2>What to do in the moment</h2>
-<ul>
-<li><strong>Pick her up.</strong> Upright, so you can see her face and her airway.</li>
-<li><strong>Wipe it away gently</strong> from outside the nostrils. Don't try to suction it out or poke about.</li>
-<li><strong>Watch her breathing and her colour</strong> for a minute or two.</li>
-<li>Once she's settled and comfortable, back down she goes — flat, on her back, firm clear surface. That doesn't change.</li>
-</ul>
-<div class="quiet">The instinct after this is to prop the cot up. Don't. Inclining isn't recommended and isn't safer, and this is exactly the moment people do it.</div>
-<h2>When it isn't just plumbing</h2>
-<p>One episode with a baby who recovers immediately and carries on is a story you'll tell later. Recurrent nasal regurgitation, or milk coming down the nose at most feeds, is worth raising — it can point to reflux, to how she's feeding, or occasionally to something anatomical worth checking.</p>
-<p>And anything with breathing difficulty, persistent choking, colour change or a baby who doesn't recover promptly is not a wait-and-see. That's now.</p>`,
   callout:{title:"Get help immediately for",items:["Difficulty breathing, or persistent choking or coughing","Blue or grey colour","A baby who doesn't recover promptly, or is floppy or unresponsive","Learn infant choking first aid before you need it — a short course is worth the evening"]},
   panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's plumbing",items:["Mouth and nose connect at the back of the throat","Milk occasionally takes the wrong route","One episode, quick recovery","Looks far worse than it is"]},warn:{title:"Call for help now if",items:["Breathing difficulty or persistent choking","Blue or grey colour","Doesn't recover promptly","Floppy or unresponsive"]},helped:{title:"What helps",items:["Pick her up, keep her face visible","Wipe outside only, don't suction","Watch breathing and colour for a minute","Back down flat afterwards — don't prop the cot"]},dont:{title:"Don't",items:["Don't try to suction it out of her nose — wipe the outside only","Don't prop the cot afterwards, however strongly you want to","Don't put her back down until you've watched her breathing settle"]},quick:"Milk takes the wrong exit sometimes — it's plumbing. Pick her up, wipe, watch her breathing, then straight back down flat."},
   originalQuestions:["Noticed a little milk coming from her nose while she was asleep (23 August 2025)"],
@@ -910,6 +828,7 @@ var GUIDES = [
 },
 {
   id:"spit-up-while-asleep",
+  longform:[{h:"Two hours after a feed",t:"She was asleep and spat up a small amount. Our first thought was that two hours was too long — surely it should have gone somewhere by then.\n\nIt hadn't. Milk sits around for a while, and small spit-ups turning up well after a feed is ordinary."},{h:"We had something to compare it to",t:"This is what made it manageable rather than frightening, and it's the most useful thing we learned that month.\n\nEarlier on she'd had proper projectile vomiting while she was on Alfaré, the hypoallergenic formula. When that stopped, the vomiting stopped with it. So we knew exactly what forceful looked like, and this wasn't that. This was a dribble.\n\nThe word that changes the answer isn't how much. It's force. Milk that shoots out rather than falls out is a different thing, particularly if it keeps happening."},{h:"We watched the weight, not the muslins",t:"She'd gained 90 grams over two days. That number did more to settle us than anything else, because it meant that whatever was landing on the muslin, enough was staying in.\n\nA spit-up always looks like more than it is. Tip a tablespoon of milk onto a cloth some time and see how far it travels — that's usually what you're actually looking at.\n\nA baby who's gaining steadily and behaving normally is almost never a baby with a problem, however much laundry she's generating."},{h:"What would have changed our minds",t:"Green or yellow-green, or anything with blood in it. Forceful vomiting coming back. Her not gaining, or losing. Real distress with feeds, or refusing them. A swollen or firm tummy.\n\nAnd the thing we didn't do, again: prop the cot. It's the obvious response and it isn't the right one."}],
   topic:"feeding",
   icon:"bottle",
   featured:false,
@@ -920,25 +839,6 @@ var GUIDES = [
   subcategory:"Feeding and spit-up",
   summary:"Small spit-ups can arrive long after a feed and mean nothing much. The word that changes the answer is forceful.",
   keywords:["spit up baby","posseting","vomit newborn","reflux baby","clear saliva baby"],
-  body:`
-<p>Ariadne spat up a small amount while asleep, about two hours after her last feed. What made it feel manageable rather than frightening was having something to compare it to — the forceful vomiting we'd seen earlier on a specialist formula, which had stopped when we came off it. She'd also put on 90g in two days.</p>
-<p>That's the whole framework, really. Not the episode. The context around it.</p>
-<h2>What's ordinary</h2>
-<ul>
-<li><strong>Small amounts,</strong> dribbled rather than launched.</li>
-<li><strong>Well after a feed,</strong> not just immediately. Milk sits around for a while.</li>
-<li><strong>Milky or slightly curdled.</strong> Curdled just means it met stomach acid.</li>
-<li><strong>A bit of clear saliva</strong> on its own, which is also fine.</li>
-<li><strong>A baby who isn't bothered.</strong> This is the big one. A happy spitter is a laundry problem.</li>
-</ul>
-<div class="quiet">The rule of thumb that helped: it always looks like more than it is. Tip a tablespoon of milk onto a muslin and see how far it spreads. That's usually what you're looking at.</div>
-<h2>What changes the answer</h2>
-<p><strong>Force.</strong> Milk that shoots out rather than dribbles is a different thing, especially if it's happening repeatedly.</p>
-<p><strong>Colour.</strong> Green or yellow-green, or anything with blood in it, gets checked promptly.</p>
-<p><strong>The whole baby.</strong> Is she gaining weight? Is she distressed by it? Is she feeding well? Is her tummy swollen?</p>
-<p>The weight trend does most of the work here. A baby gaining steadily and behaving normally is almost never a baby with a problem, whatever the muslins look like.</p>
-<h2>What we'd not do</h2>
-<p>Prop the cot. It's the obvious response and it isn't recommended — a small baby slides down an incline into a worse position. Reflux doesn't change safe sleep unless your own team has given you a specific written plan.</p>`,
   callout:{title:"Get her checked for",items:["Forceful or projectile vomiting, especially if it's repeated","Green, yellow-green, or bloody vomit","Not gaining weight, or losing it","Real distress with feeds, or refusing to feed","A swollen or firm tummy, or unusual sleepiness"]},
   panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's fine",items:["Small amounts, dribbled not launched","Even a couple of hours after a feed","Milky or curdled","A little clear saliva on its own","A baby who isn't bothered by it"]},warn:{title:"Call your doctor if",items:["Forceful or projectile, repeatedly","Green, yellow-green or bloody","Not gaining weight","Distress with feeds, or refusing","Swollen tummy, or unusually sleepy"]},helped:{title:"What helped us",items:["Watching the weight trend, not the muslins","A tablespoon of milk spreads a long way","Comparing it to what forceful actually looked like","Not propping the cot, however tempting"]},dont:{title:"Don't",items:["Don't incline the cot or use a wedge — she slides into a worse position","Don't switch formula or cut foods on your own to fix it","Don't judge it by the muslins — judge it by the weight trend"]},quick:"Small and dribbled is laundry. Forceful, green, bloody, or a baby who isn't gaining — that's the version that gets checked."},
   originalQuestions:["Reported she spat up a small amount while asleep about two hours after a feed, and a 90g weight gain over two days (24 August 2025)","Saw her spit a little saliva, and clarified it was transparent (17 August 2025)"],
@@ -948,6 +848,7 @@ var GUIDES = [
 },
 {
   id:"fast-breathing-newborn",
+  longform:[{h:"Why does she sometimes breathe so fast",t:"Nobody had warned us that newborn breathing looks wrong. It speeds up, slows down, occasionally pauses for a few seconds, then picks up again as if nothing happened.\n\nWatching it for the first time, in the dark, having just brought home a baby born at 33 weeks, is not a relaxing experience."},{h:"How to actually count it",t:"We were counting while she was crying, or feeding, or wriggling — which measures crying, feeding and wriggling.\n\nDo it when she's calm, ideally asleep. And count a full minute rather than fifteen seconds times four, because the rate genuinely isn't steady enough for that to work.\n\nNewborns breathe considerably faster than adults, and a resting rate around forty a minute is unremarkable. Babies born early can have more irregular patterns still, with short pauses that even out."},{h:"Effort matters more than speed",t:"This was the shift that made us calmer, because it's what someone examining her is actually looking at.\n\nIs the chest pulling in under the ribs or at the base of the throat with each breath? Are the nostrils flaring wide? Is she grunting on every single breath out, rather than occasionally? What colour is she, especially around the lips? And is she still feeding — because a baby working hard to breathe stops managing that first.\n\nFast but easy, in a pink, feeding, settled baby, is a very different picture from slower but visibly laboured."},{h:"Film it",t:"Twenty seconds on a phone answers questions that five minutes of description can't, and it means you aren't relying on your own memory of something that frightened you.\n\nThe things that don't wait: blue or grey colour, especially around the lips. A pause that comes with a colour change or with her going floppy. Real effort with every breath. A baby who's stopped feeding or is hard to rouse."}],
   topic:"health",
   icon:"cross",
   featured:false,
@@ -958,24 +859,6 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"Newborn breathing is genuinely irregular — bursts of fast, then slower, sometimes short pauses. What matters is effort, not speed.",
   keywords:["newborn fast breathing","baby breathing pattern","periodic breathing","rapid breathing baby"],
-  body:`
-<p>Nobody warns you that newborn breathing looks wrong. It speeds up, slows down, occasionally pauses for a few seconds, then picks up again. Watching it for the first time, at night, is genuinely unnerving.</p>
-<h2>How to actually check</h2>
-<p>Counting while she's crying, feeding or wriggling tells you nothing. Do it while she's calm and preferably asleep, and count for a <strong>full minute</strong> — fifteen seconds times four will be wrong, because the rate isn't steady.</p>
-<div class="quiet">Newborns breathe considerably faster than adults, and a resting rate in the region of forty breaths a minute is unremarkable. If you've counted eighty while she's screaming, you've measured screaming.</div>
-<h2>Effort matters more than speed</h2>
-<p>This is the thing to internalise, because it's what a clinician is actually assessing:</p>
-<ul>
-<li><strong>Is the chest pulling in</strong> under the ribs or at the base of the throat with each breath?</li>
-<li><strong>Are her nostrils flaring</strong> wide with each breath?</li>
-<li><strong>Is she grunting</strong> on every single breath out?</li>
-<li><strong>What colour is she</strong> — around the lips especially?</li>
-<li><strong>Is she still feeding?</strong> A baby working hard to breathe stops being able to feed properly.</li>
-</ul>
-<p>A fast but easy breathing pattern in a pink, feeding, settled baby is very different from a slower one where she's visibly working for it.</p>
-<h2>Pauses</h2>
-<p>Short pauses of a few seconds, followed by normal breathing, are common in newborns and especially in babies born early. Long pauses, pauses with colour change, or pauses where she goes floppy are not, and those are urgent.</p>
-<p>If you can, film it. Twenty seconds of video answers questions that five minutes of description can't, and it means you're not relying on memory at 3am.</p>`,
   callout:{title:"Emergency help for",items:["Blue or grey colour, especially around the lips","A pause in breathing with colour change or floppiness","Chest pulling in hard, nostrils flaring, grunting on every breath","Persistent fast breathing at rest, in a calm baby","A baby who has stopped feeding, or is very hard to rouse"]},
   panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's normal variation",items:["Faster than adults by a long way","Irregular — bursts, then slower","Short pauses of a few seconds","Common in babies born early"]},warn:{title:"Call for help now if",items:["Blue or grey, especially the lips","A pause with colour change or floppiness","Chest pulling in, flaring, grunting every breath","Fast at rest in a calm baby","Stopped feeding"]},helped:{title:"What helps",items:["Only count when she's calm","Count a full minute, not fifteen seconds","Look at effort, not just speed","Film twenty seconds if unsure"]},dont:{title:"Don't",items:["Don't count while she's crying, feeding or wriggling","Don't count fifteen seconds and multiply — the rate isn't steady","Don't rely on the number alone. Effort matters more than speed"]},quick:"Count for a full minute while she's calm, and judge effort over speed. Chest pulling in, flaring nostrils and grunting matter far more than the number."},
   originalQuestions:["Noticed intermittent quick breathing (24 August 2025)"],
@@ -985,6 +868,7 @@ var GUIDES = [
 },
 {
   id:"newborn-trembles-and-jerks",
+  longform:[{h:"Six words, sent immediately",t:"If baby body shakes a bit it's ok. No punctuation, no detail, no context. That's what it looks like when you've just watched something and your brain has stopped working.\n\nIt was sitting in a conversation that also contained a water filter problem and how long milk takes to cool in a Kikka Boo warmer, which is a fair picture of that month."},{h:"Shakes covers several different things",t:"The startle reflex, where her arms fling out and then back in, often at a noise or when you put her down. Dramatic, completely normal, and it fades over the first months.\n\nJitteriness — a fine trembling of the chin or the hands, usually when she's crying, cold, or being undressed.\n\nAnd little jerks of an arm or leg during active sleep, which happen constantly.\n\nThey look similar and they aren't the same, and the difference is learnable in about a minute."},{h:"The thing that tells them apart",t:"Hold the limb that's shaking, gently. Ordinary jitteriness stops when you hold it. Movement that carries on regardless is the kind to report.\n\nThe other question is whether she's there with you. A jittery baby is awake and responsive, and settles when she's comforted, fed or warmed up. Movement that comes with a blank, unresponsive stare is a different report entirely."},{h:"What we'd note if it happened again",t:"Which part of her, and whether it was one side or both. How long. Rhythmic and repetitive, or irregular. What she was doing — awake, asleep, feeding, cold, being moved. Her breathing and her colour during it. Her eyes. And whether touching her stopped it.\n\nAnd film it, if you possibly can. A ten-second video means a doctor is looking at what actually happened rather than at your description of it at two in the morning."}],
   topic:"health",
   icon:"cross",
   featured:false,
@@ -995,29 +879,6 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"Newborns startle, jitter and twitch constantly. The useful distinction is whether it stops when you hold the limb — and whether she's aware.",
   keywords:["newborn shaking","baby jitters","startle reflex","baby twitching sleep","tremor newborn"],
-  body:`
-<p>Our question was six words: <em>"If baby body shakes a bit it's ok."</em> Which is exactly how you ask it when you've just watched it happen and your brain has stopped working.</p>
-<p>The honest answer is that "shakes" covers several very different things, and the difference between them is learnable in about a minute.</p>
-<h2>The ordinary ones</h2>
-<ul>
-<li><strong>The startle reflex.</strong> Arms fling out, then back in, often at a noise or when she's put down. Dramatic, completely normal, fades over the first months.</li>
-<li><strong>Jitteriness.</strong> A fine trembling of the chin or hands, often when she's crying, cold or being undressed.</li>
-<li><strong>Sleep twitching.</strong> Little jerks of an arm or leg during active sleep. Extremely common.</li>
-</ul>
-<h2>The test that actually helps</h2>
-<div class="quiet">Gently hold the limb that's shaking. Ordinary jitteriness stops when you hold it. Movement that carries on regardless is the kind worth reporting.</div>
-<p>The other question is whether she's aware. Jittery babies are awake and responsive, and it settles when they're comforted, fed or warmed. Movement that comes with a blank, unresponsive stare is a different report.</p>
-<h2>What to note if it happens again</h2>
-<ul>
-<li>Which part of her, and both sides or one?</li>
-<li>How long — seconds, or going on and on?</li>
-<li>Rhythmic and repetitive, or irregular?</li>
-<li>Was she awake, asleep, feeding, cold, being moved?</li>
-<li>Her breathing and colour during it.</li>
-<li>Her eyes — fixed staring, or flickering?</li>
-<li>Did it stop when you touched or held her?</li>
-</ul>
-<p>And film it. Genuinely, film it. A ten-second video is worth more than any description you'll manage, and it means the doctor is looking at what happened rather than at your memory of it.</p>`,
   callout:{title:"Get urgent help for",items:["Rhythmic, repetitive movement that carries on when you hold the limb","A blank stare, or reduced responsiveness during it","Any change in breathing or colour","Eyes rolling, fixed staring, or flickering","Stiffening of the whole body, or a baby who seems unwell afterwards"]},
   panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's a startle",items:["The startle reflex — arms out, then in","Jittery chin or hands when crying or cold","Little twitches during active sleep","She's awake, aware and settles"]},warn:{title:"Call for help now if",items:["Rhythmic movement that doesn't stop when held","Blank stare, less responsive","Breathing or colour change","Eyes rolling or flickering","Whole body stiffening"]},helped:{title:"What helps",items:["Hold the limb — jitters stop, seizures don't","Is she aware and responsive?","Does comforting or feeding settle it?","Film ten seconds — it's worth more than words"]},quick:"Hold the limb. If it stops, it's jitteriness. If it carries on, or she's not responsive with it, that's the version needing urgent assessment."},
   originalQuestions:[`"If baby body shakes a bit it's ok" (24 August 2025)`],
@@ -1027,6 +888,7 @@ var GUIDES = [
 },
 {
   id:"sleeping-with-mouth-open",
+  longform:[{h:"She sleeps with her mouth open",t:"We asked this twice, on different nights, in slightly different words. The worry underneath was the same both times: does that mean her nose is blocked?\n\nSometimes. Often it's just a deeply asleep baby with a slack jaw and nothing else going on."},{h:"We stopped looking at the mouth",t:"On its own it doesn't tell you much. What tells you something is everything around it.\n\nIs her breathing easy, or does it look like work? Any snuffling, snorting or whistling from her nose? Nostrils flaring, chest pulling in? What's her colour?\n\nAnd the one that turned out to be our best sensor: is she still feeding normally. A baby who genuinely can't breathe through her nose struggles to feed, because she can't do both at once. A congested baby who's feeding fine is a congested baby you can leave alone."},{h:"The thing we nearly did",t:"We were about to squirt saline up her nose to see whether it came out the other side. Using it as a diagnostic rather than a treatment.\n\nDon't. Saline and suction are for when there's congestion actually getting in her way, not for satisfying a curiosity at midnight. We'd have irritated her nose to answer a question we could have answered by watching her feed."},{h:"When we'd mention it",t:"If it were happening every night rather than now and then. If her breathing stayed noisy or snorting. If feeding started getting harder. Loud snoring, or any pause in her breathing.\n\nAnd any of the effort signs — flaring, chest pulling in, grunting — which stop being an open-mouth question and become a different one."}],
   topic:"sleeping",
   icon:"moon",
   featured:false,
@@ -1037,23 +899,6 @@ var GUIDES = [
   subcategory:"First nights",
   summary:"On its own, an observation rather than a problem. It's worth a look at the rest of her breathing before you decide it means anything.",
   keywords:["baby sleeps mouth open","mouth breathing baby","blocked nose sleep","newborn breathing sleep"],
-  body:`
-<p>Ariadne slept with her mouth open and we wanted to know whether that meant her nose was blocked. Reasonable question — babies prefer to breathe through their noses, so an open mouth suggests something.</p>
-<p>Sometimes. Often it's just a relaxed, deeply asleep baby with a slack jaw.</p>
-<h2>Look at everything else first</h2>
-<p>An open mouth on its own doesn't tell you much. What tells you something is the pattern around it:</p>
-<ul>
-<li>Is her breathing easy, or does it look like work?</li>
-<li>Any snuffling, snorting or whistling from her nose?</li>
-<li>Nostrils flaring, or the chest pulling in?</li>
-<li>What's her colour like?</li>
-<li>Is she feeding normally? This is the tell — a baby who can't breathe through her nose struggles to feed, because she can't do both at once.</li>
-</ul>
-<div class="quiet">Feeding is your best sensor. A congested baby who's feeding well is a congested baby you can leave alone.</div>
-<h2>One thing not to do</h2>
-<p>We were tempted to squirt saline in to see whether it came out the other side — using it as a test rather than a treatment. Don't. Saline and suction are for when there's actual congestion getting in her way, not for diagnosing curiosity.</p>
-<h2>When to raise it</h2>
-<p>Persistent mouth-breathing night after night, ongoing noisy breathing, or feeding that's getting harder is worth mentioning. So is loud snoring, or any pause in her breathing.</p>`,
   callout:{title:"Mention it if",items:["It's happening every night rather than occasionally","Persistent noisy or snorting breathing","Feeding is becoming harder","Loud snoring, or any pause in breathing","Any sign of increased effort — flaring, chest pulling in, grunting"]},
   panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's just a slack jaw",items:["A deeply asleep baby with a slack jaw","Mild congestion she's coping with","Occasional rather than constant","Feeding still going fine"]},warn:{title:"Call your doctor if",items:["Every night rather than sometimes","Persistent noisy breathing","Feeding getting harder","Snoring or pauses","Flaring, chest pulling in, grunting"]},helped:{title:"What helped us",items:["Is her breathing easy or effortful?","Is she still feeding well?","Saline only if she's actually blocked","Don't use saline as a test"]},dont:{title:"Don't",items:["Don't squirt saline in to test whether she's blocked","Don't prop her up or tilt the cot to help her breathe","Don't act on the open mouth alone — look at the whole breathing pattern"]},quick:"On its own it's an observation. Check her breathing effort and whether she's still feeding well — feeding is the best sensor you've got."},
   originalQuestions:["Noticed she slept with her mouth open and asked how to tell whether her nose was blocked (24 August 2025)"],
@@ -1063,6 +908,7 @@ var GUIDES = [
 },
 {
   id:"nappy-changes-at-night",
+  longform:[{h:"She's weed, but she's asleep",t:"That was the three-in-the-morning version of the question. We'd already asked the daytime version — how often do you change a nappy if it's clean — and got a sensible answer we then had to test against an actual sleeping baby.\n\nThere's a second version of this we asked too: she'd pooed but she'd just eaten and was asleep. What's the longest she can sit in it? And then, honestly: I'm not sure she pooed at all."},{h:"What we settled into",t:"Poo gets changed reasonably promptly. That's the one that irritates skin and it's worth the disruption.\n\nA wet nappy can usually wait until the next feed, if she's comfortable and her skin is fine. Nappies are extremely absorbent now, and waking a sleeping newborn for a slightly damp one costs you both more than it gains.\n\nAnd a genuinely clean, dry nappy doesn't need changing to a schedule at all. We'd assumed there was a clock rule. There isn't."},{h:"Except when there isn't a choice",t:"Any sign of soreness or nappy rash, and wet gets changed promptly too. Same if it's leaking, or so full it's swollen, or she's clearly uncomfortable.\n\nShe was born early, and we'd been given routines in the NICU that didn't always match what we read afterwards. Where those two disagreed, we went with what her team had told us."},{h:"They're also your intake monitor",t:"This was the part we nearly missed. In the early weeks the wet nappies are how you know she's getting enough milk, so it's worth noticing them rather than changing on autopilot.\n\nWe were counting hers anyway because we were counting everything. But it's the one number that costs you nothing to collect and tells a midwife something real."}],
   topic:"sleeping",
   icon:"moon",
   featured:false,
@@ -1073,32 +919,6 @@ var GUIDES = [
   subcategory:"First nights",
   summary:"Poo gets changed promptly. A wet nappy can usually wait until she's up anyway. Modern nappies are better at this than your anxiety suggests.",
   keywords:["night nappy change","wake baby to change nappy","wet nappy sleeping","how often change nappy"],
-  body:`
-<p>We asked how often a clean nappy needs changing, and then got to the real question at 3am: she's weed, but she's asleep — does that wait?</p>
-<p>Usually, yes.</p>
-<h2>The working rule</h2>
-<ul>
-<li><strong>Poo:</strong> change it reasonably promptly. It's the thing that irritates skin.</li>
-<li><strong>Wet:</strong> can generally wait until the next feed or waking, if she's comfortable and her skin is fine.</li>
-<li><strong>Genuinely clean and dry:</strong> doesn't need changing to a schedule at all. There's no clock rule.</li>
-</ul>
-<div class="quiet">Nappies are extremely absorbent now. Waking a sleeping newborn to change a slightly damp one costs you both far more than it gains.</div>
-<h2>When to change it anyway</h2>
-<ul>
-<li>Any sign of nappy rash or sore skin — then wet gets changed promptly too.</li>
-<li>If it's leaking, or so full it's swollen.</li>
-<li>If she's clearly uncomfortable.</li>
-<li>If she was born early or has fragile skin, or if your team has given you a specific routine.</li>
-</ul>
-<h2>The other thing nappies are doing</h2>
-<p>They're your intake monitor. Wet nappies are how you know she's getting enough milk, especially in the early weeks, so it's worth actually noticing them rather than changing on autopilot.</p>
-<p>If you've been asked to record them, do — and if you notice a real drop in wet nappies, that's a call rather than a note.</p>
-<h2>Making night changes less disruptive</h2>
-<ul>
-<li>Change her before the feed rather than after, so she can fall asleep at the end of it.</li>
-<li>Dim light, no talking, no eye contact games. Boring is the goal.</li>
-<li>Everything within reach before you start.</li>
-</ul>`,
   callout:{title:"Worth a call if",items:["A noticeable drop in wet nappies — fewer than expected in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling with cream","Blood or mucus in her poo","No poo at all alongside a swollen tummy or vomiting"]},
   panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it can wait",items:["Poo — change promptly","Wet — can wait for the next feed","Clean and dry — no clock rule at all","Modern nappies hold a lot"]},warn:{title:"Call your doctor if",items:["Fewer wet nappies than you'd expect in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling","Blood or mucus in her poo","No poo at all with a swollen tummy or vomiting"]},helped:{title:"What helped us",items:["We let the wet ones wait until the next feed","Poo changed straight away","Changed before the feed, so she fell asleep after","Dim light, no chat, everything in reach","Counted the wet ones — they're your intake monitor"]},dont:{title:"Don't",items:["Don't wake a sleeping newborn for a slightly damp nappy","Don't leave poo until the next feed — that one gets changed","Don't change on autopilot without noticing how many wet ones there are"]},quick:"Poo promptly, wet can wait. Don't wake a sleeping newborn for a damp nappy — but do keep an eye on how many wet ones she's producing."},
   originalQuestions:["Asked how often to change a nappy if it was clean (24 August 2025)","Clarified she had urinated but was asleep — could the change wait? (24–25 August 2025)"],
@@ -1108,6 +928,7 @@ var GUIDES = [
 },
 {
   id:"feeding-on-demand",
+  longform:[{h:"Is on demand right at the beginning",t:"We asked it plainly, and then immediately stress-tested it: what if she wants it more often than every two hours?\n\nThat second question is the one everybody actually has. On demand sounds relaxed until you're living it, and then it sounds like a baby who has never once been satisfied."},{h:"What it actually means",t:"Watching her instead of the clock. The early cues are subtle — rooting, turning her head, hands going to her mouth, stirring and fussing. Crying is a late cue, and a baby who has got to crying is much harder to feed than one you caught earlier.\n\nNewborns feed a lot, and not on any tidy schedule. Bunches of feeds close together, often in the evening, are ordinary and aren't a sign that anything has gone wrong with your milk or your baby.\n\nWanting to feed again ninety minutes later doesn't mean the last one failed. Small stomach, fast digestion, and sometimes she just wants to be near you, which is allowed to be a reason."},{h:"The exception that was ours",t:"On demand assumes a baby who wakes when she's hungry and feeds effectively. Ariadne was born at 33 weeks and came home on a plan, and a sleepy preterm baby who doesn't demand can quietly not get enough.\n\nSo for us the plan won. Minimum frequencies, measured amounts, and waking her when she wasn't asking.\n\nWe're saying this loudly because feed on demand gets handed out as universal advice and it isn't. If you've been given a schedule for a reason, that reason still applies at four in the morning when she's sleeping peacefully through a feed."},{h:"What we watched instead of the clock",t:"Wet nappies daily. Weight over weeks rather than days. Whether she seemed settled after feeds at least some of the time. And whether the feeds were effective rather than just frequent.\n\nWhen any of that slipped, we said so rather than working around it."}],
   topic:"feeding",
   icon:"bottle",
   featured:true,
@@ -1118,22 +939,6 @@ var GUIDES = [
   subcategory:"Newborn feeding",
   summary:"Responsive feeding means following her cues, not the clock. But if you've been given a schedule for a reason, that schedule wins.",
   keywords:["feeding on demand","responsive feeding","newborn feeding frequency","cluster feeding","every two hours"],
-  body:`
-<p>We asked whether a newborn should be fed on demand, and then immediately stress-tested it: what if she wants milk more often than every two hours?</p>
-<h2>What on demand actually means</h2>
-<p>Watching her rather than the clock. Early cues are subtle — rooting, turning her head, hands to mouth, stirring and fussing. Crying is a late cue, and a baby who's got to crying is harder to feed than one you caught earlier.</p>
-<p>Newborns feed a lot. Eight to twelve times in twenty-four hours is ordinary, and it isn't evenly spaced. Cluster feeding — several feeds bunched close together, usually in the evening — is normal and is not a sign that anything is wrong with your milk or your baby.</p>
-<div class="quiet">Wanting to feed again after ninety minutes doesn't mean the last feed failed. Small stomach, fast digestion, and sometimes she just wants to be close to you. That's allowed to be a reason.</div>
-<h2>The important exception</h2>
-<p>On demand assumes a healthy, term, well-growing baby who wakes and feeds effectively. If any of that isn't true — born early, sleepy, jaundiced, slow to gain, or on a plan from a neonatal team — then <strong>the plan wins.</strong> That may mean minimum frequencies, measured volumes, or waking her for feeds even when she isn't asking.</p>
-<p>That was us. And it's worth saying clearly, because "feed on demand" is given out as universal advice and it isn't. A sleepy baby who doesn't demand can quietly under-feed.</p>
-<h2>What to watch instead of the clock</h2>
-<ul>
-<li>Wet nappies — the most reliable everyday signal.</li>
-<li>Weight, over weeks rather than days.</li>
-<li>Whether she seems settled after feeds, at least some of the time.</li>
-<li>Whether feeds are effective, not just frequent.</li>
-</ul>`,
   callout:{title:"Speak to your midwife or team if",items:["She's too sleepy to wake for feeds, or feeds very briefly and drops off","A drop in wet nappies","She isn't back to birth weight by around two weeks, or isn't gaining","Feeding is painful, or she can't stay latched","You've been given a feeding plan and can't keep to it — say so rather than adjusting it alone"]},
   panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's just how newborns feed",items:["Eight to twelve feeds in 24 hours","Not evenly spaced at all","Cluster feeding, often in the evening","Wanting more after ninety minutes"]},warn:{title:"Call your midwife if",items:["Too sleepy to wake for feeds","Fewer wet nappies","Not back to birth weight by two weeks","Feeding is painful","You can't keep to a plan you've been given"]},helped:{title:"What helped us",items:["Early cues, not crying — crying is late","Wet nappies, daily","Weight over weeks, not days","If there's a plan, the plan wins"]},quick:"Follow her cues, not the clock — but if she was born early or you've been given a schedule, that schedule beats on-demand every time."},
   originalQuestions:["Asked whether a baby should be fed on demand at the beginning (1 August 2025)","Asked what happens if the baby wants to feed more often than every two hours (1 August 2025)"],
@@ -1143,6 +948,7 @@ var GUIDES = [
 },
 {
   id:"timing-feeds-start-or-finish",
+  longform:[{h:"The smallest question we asked",t:"When you're calculating feeding time, do you count from when she finishes or when she starts?\n\nOne line. No follow-up. And it reorganised more of our week than most of the big questions did."},{h:"From the start",t:"Feeding intervals are counted start to start. A feed that begins at midday, on a three-hour plan, means the next one begins at three. Not half past three because she took thirty minutes.\n\nWe had been counting from the end, and every feed was landing a little later than the one before. Over a day that's an hour or more of drift, and we'd been quietly wondering why the schedule kept sliding away from us and whether something was wrong with her.\n\nIt was us."},{h:"Why it's worth getting right",t:"It changes the number of feeds in twenty-four hours, which is the figure that actually matters. It keeps the night feeds roughly where you planned them. And it makes your notes mean something when someone asks how often she's feeding — which, with a baby home from NICU, people ask a lot."},{h:"What we didn't do",t:"We didn't fix problems by moving the timings.\n\nWhen feeds were taking unusually long, or she wasn't finishing what she was meant to, or she was hard to wake — those went to her team rather than into a quietly adjusted schedule. It was tempting. A schedule is the one thing in those weeks that feels like it's under your control.\n\nAnd if there's a written plan, that plan beats any general rule, including this one."}],
   topic:"feeding",
   icon:"bottle",
   featured:false,
@@ -1153,21 +959,6 @@ var GUIDES = [
   subcategory:"Newborn feeding",
   summary:"From the start. It's a tiny rule that quietly reorganises your entire day and night, and nobody tells you.",
   keywords:["feed timing","every three hours","feed interval","when does next feed start"],
-  body:`
-<p>This is the smallest question in this whole batch and it changed more of our week than most of the big ones.</p>
-<p>If a feed takes half an hour, and the plan says every three hours — does the clock start when she begins drinking, or when she finishes?</p>
-<h2>From the start</h2>
-<p>Feeding intervals are normally counted <strong>start to start</strong>. Begins at 12:00, next feed starts at 15:00. Not 15:30.</p>
-<div class="quiet">Get this wrong and every feed drifts a little later than the last. Over a day that's an hour or more of slippage, and you end up wondering why the schedule keeps sliding away from you. It was us, not her.</div>
-<h2>Why it matters more than it sounds</h2>
-<ul>
-<li>It affects total feeds in 24 hours, which is the number that actually counts.</li>
-<li>It keeps night feeds where you planned them rather than creeping later.</li>
-<li>It makes your records mean something when someone asks how often she's feeding.</li>
-</ul>
-<h2>When not to just follow the clock</h2>
-<p>If you've been given a written plan — for a baby born early, or one being monitored — that plan is what counts, and it should say. Ask them directly if it doesn't.</p>
-<p>And don't solve problems by quietly shifting the timings. If feeds are taking unusually long, if she's not finishing volumes, if she's hard to wake, or if she's vomiting — those are things to report, not things to schedule around. We were tempted. Tell them instead.</p>`,
   callout:{title:"Tell your team rather than adjusting the clock if",items:["Feeds are taking much longer than expected","She isn't finishing the volumes she's meant to","She's very hard to wake for feeds","She's vomiting, or refusing feeds","You're consistently unable to keep to the interval"]},
   panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's start to start",items:["Counted start to start","12:00 feed, next starts 15:00","Not from when she finishes","Your own written plan overrides this"]},warn:{title:"Call your team if",items:["Feeds taking much longer","Not finishing volumes","Very hard to wake","Vomiting or refusing"]},helped:{title:"What helped us",items:["Start to start stopped our whole day drifting","We'd been counting from the end, and slipping an hour","Made our feed records actually mean something","We asked rather than adjusting the plan ourselves"]},dont:{title:"Don't",items:["Don't count from the end of the feed — your whole day will drift later","Don't fix a feeding problem by quietly shifting the timings","Don't override a written plan from your team with a general rule"]},quick:"Start to start. A feed at 12:00 on a three-hour plan means the next begins at 15:00 — otherwise your whole day quietly slides later."},
   originalQuestions:["Asked whether the three-hour interval begins when she starts drinking or when she finishes (22 August 2025)"],
@@ -1177,6 +968,7 @@ var GUIDES = [
 },
 {
   id:"newborn-weight-loss",
+  longform:[{h:"Why does she weigh less than she did",t:"We asked this properly — why does it happen, and how much is too much — because it's one of the first numbers you're handed and it goes in the wrong direction.\n\nOurs was asked from a NICU, in a stretch that also involved her resting temperature reading 32.3 and us learning what an incubator actually does. Weight was the one number we felt we could follow."},{h:"Most of it is fluid",t:"Babies are born with extra fluid on board and shed some of it in the first days. Milk supply is still arriving at the same time, so intake takes a few days to catch up.\n\nSome early loss is expected. It isn't a failure of anything, and it isn't a verdict on how feeding is going. Knowing that doesn't make being handed a smaller number on day three feel any better — everything in you wants that line to go up — but it does stop you reading it as a result."},{h:"The shape matters more than the number",t:"Loss over the first few days, a low point, then it turns around. Back to birth weight somewhere around two weeks. Then steady gain along her own line.\n\nThe turning point is the bit to watch. Any single weighing is noisy — different scales, different clothes, a full nappy weighs something. We were weighing her every second day and learning to ignore the wobbles between the trend."},{h:"We stopped using the internet's percentage",t:"There's a specific figure quoted everywhere for how much loss is too much, and for us it was simply the wrong yardstick.\n\nAriadne was born at 33 weeks weighing 1900 grams. Her team had their own chart and their own expectations, and a general threshold written for term babies didn't describe her at all. We spent a while trying to place her on percentile lines we didn't have before we gave up and asked the people who did.\n\nIf your baby is under any kind of specialist care, ask them what they're expecting and what number would worry them. Then you know what you're watching for instead of comparing her to a stranger's baby."}],
   topic:"feeding",
   icon:"bottle",
   featured:false,
@@ -1187,24 +979,6 @@ var GUIDES = [
   subcategory:"Newborn feeding",
   summary:"Expected in the first days, and mostly fluid rather than substance. What matters is when it turns around, not the number itself.",
   keywords:["newborn weight loss","birth weight","back to birth weight","baby not gaining"],
-  body:`
-<p>We wanted to understand why newborns weigh less after birth, and where ordinary loss ends and worrying loss begins. It's one of the first numbers you're handed, and it goes in the wrong direction.</p>
-<h2>Why it happens</h2>
-<p>Babies are born with extra fluid on board and lose some of it in the first days. Milk supply is also still arriving, so intake takes a few days to catch up. Some early loss is expected, not a failure of anything.</p>
-<div class="quiet">It's genuinely hard to be handed a lower number on day three when everything in you wants that line to go up. Almost every parent has that moment.</div>
-<h2>The shape to look for</h2>
-<ul>
-<li>Loss over the first few days.</li>
-<li>A low point, then it turns around.</li>
-<li>Back to birth weight somewhere around two weeks.</li>
-<li>Then steady gain along her own line.</li>
-</ul>
-<p>The turning point and the trend matter far more than any individual weighing. Scales differ, clothes differ, and a full nappy weighs something.</p>
-<h2>Why we won't give you a percentage</h2>
-<p>You'll find a specific threshold quoted all over the internet, and it may not apply to your baby. How it's judged depends on gestation, how the birth went, when she was weighed, feeding method, and whether she's being monitored.</p>
-<p>Ariadne was born early and in neonatal care, and the general figure was simply the wrong yardstick — her team had their own chart and their own targets. If your baby is under any kind of specialist care, ask <em>them</em> what they're expecting, and what number would concern them. Then you know what you're watching for instead of comparing against a stranger's baby.</p>
-<h2>What to watch day to day</h2>
-<p>Wet nappies, poo changing colour and consistency over the first week, feeding that seems effective, and a baby who's alert at least some of the time. Those tell you more between weighings than the scale does.</p>`,
   callout:{title:"Speak to your midwife or team if",items:["She hasn't started gaining by around day five","She's not back to birth weight by around two weeks","Fewer wet nappies than expected","She's very sleepy, hard to wake, or feeding poorly","She looks yellow — jaundice with poor feeding needs checking promptly"]},
   panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's expected",items:["Some loss over the first few days","Mostly fluid, not substance","A low point, then it turns around","Back to birth weight around two weeks"]},warn:{title:"Call your midwife if",items:["No gain by around day five","Not back to birth weight by two weeks","Fewer wet nappies","Very sleepy or feeding poorly","Looking yellow"]},helped:{title:"What helped us",items:["The turning point, not the number","Wet nappies daily","Poo changing through the first week","Her team's chart, not a general percentage"]},dont:{title:"Don't",items:["Don't measure her against a percentage you found online","Don't read anything into a single weighing — scales and nappies vary","Don't wait and see if she isn't gaining by around day five"]},quick:"Early loss is expected and mostly fluid. Watch for the turn-around by about day five and birth weight by two weeks — and get your target from your own team."},
   originalQuestions:["Asked why newborns lose weight and how much loss is too much (20 July 2025)"],
@@ -1214,6 +988,7 @@ var GUIDES = [
 },
 {
   id:"newborns-and-blinking",
+  longform:[{h:"Do babies blink less",t:"Three words, sent in the middle of an ordinary afternoon. Once you notice the staring you can't stop noticing it — she'd fix on a face for what felt like minutes without a single blink.\n\nThey do blink far less than adults. Nobody's entirely sure why. The suggestions include that their eyes are less exposed, that they're taking in less visual information, and that tear production is still getting going."},{h:"Don't count them",t:"We tried. A blink rate isn't a useful measurement — it changes with how awake she is, the light, whether she's concentrating, whether her eyes are comfortable.\n\nAll counting does is give you a number to be anxious about, which we can report from experience."},{h:"What's worth looking at instead",t:"The eye itself, rather than the rate. Redness, or discharge that keeps coming back. An eye that looks cloudy, or a pupil that doesn't look properly dark. Eyes that don't move together, or one that seems stuck. An eye that won't close fully. Any sign she's uncomfortable — rubbing, squeezing shut, distress in bright light.\n\nA bit of sticky eye in the early weeks is very common and usually a blocked tear duct rather than an infection, but that's a call for someone who can look at it, not for you at home."},{h:"Her eyes did get checked",t:"A paediatrician shone a light into each eye to see whether she reacted, and she closed each one as it was done. It's a small thing and it isn't a full eye test, but standing there watching her respond was one of the better moments of that week.\n\nAsk when a proper check is due, particularly if she was born early. And in the meantime, enjoy the stare. She's working out what a face is."}],
   topic:"development",
   icon:"blocks",
   featured:false,
@@ -1224,22 +999,6 @@ var GUIDES = [
   subcategory:"Newborn senses",
   summary:"Yes, considerably. That unnerving unbroken stare is a real thing and it's completely ordinary.",
   keywords:["newborn blinking","baby staring","does baby blink","newborn eyes"],
-  body:`
-<p>Babies seem to stare for extraordinary stretches without blinking, and once you've noticed it you can't stop noticing it. We asked whether they genuinely blink less.</p>
-<p>They do — considerably less than adults. Nobody is entirely certain why. Suggestions include that their eyes are less exposed, that they're taking in less visual information, and that tear production is still getting going.</p>
-<div class="quiet">The stare feels like being assessed by someone who has already made up their mind about you. It is not that. She is working out what a face is.</div>
-<h2>Don't count the blinks</h2>
-<p>A blink rate isn't a useful measurement. It changes with how awake she is, the light, whether she's concentrating, and whether her eyes are comfortable. Counting will only make you anxious about a number that means nothing.</p>
-<h2>What's worth noticing instead</h2>
-<ul>
-<li>Redness, or discharge that keeps coming back.</li>
-<li>An eye that looks cloudy, or a pupil that doesn't look dark.</li>
-<li>Eyes that don't move together, or one that seems stuck.</li>
-<li>An eye that won't close properly.</li>
-<li>Any sign she's in pain — rubbing, squeezing shut, distress in bright light.</li>
-<li>A staring episode where she's also unresponsive, which is a different thing entirely.</li>
-</ul>
-<p>A bit of sticky eye in the early weeks is extremely common and usually a blocked tear duct rather than an infection — but get it looked at rather than deciding that yourself, particularly in the first weeks.</p>`,
   callout:{title:"Get her eyes checked if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that doesn't look dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent, not an eye question"]},
   panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's normal",items:["Newborns blink far less than adults","The long unbroken stare is normal","Rate changes with light and alertness","A little sticky eye is common"]},warn:{title:"Call your doctor if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that isn't dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent"]},helped:{title:"What helped us",items:["Don't count blinks — it means nothing","Look at the eye, not the rate","Sticky eye: get it seen, don't self-diagnose","Enjoy the stare. She's learning your face"]},quick:"They genuinely blink far less, and the stare is normal. Look at how the eye itself appears rather than counting anything."},
   originalQuestions:["Asked whether babies genuinely blink less, having noticed long stretches of staring (23 August 2025)"],
@@ -1249,6 +1008,7 @@ var GUIDES = [
 },
 {
   id:"is-that-a-real-smile",
+  longform:[{h:"She smiled several times in the incubator",t:"That's how the question was actually asked. Does she know what she's doing when she's smiling, because she did it several times in the incubator today.\n\nIt was in the middle of a much longer conversation about her weight, about when they'd introduce breast milk, and about everything we needed to know before she came home. And in among all of that, the smile is the thing we stopped to ask about."},{h:"The scientific answer",t:"Early smiles are usually spontaneous rather than social. In the first weeks they tend to happen during sleep, or as movements that aren't yet aimed at anybody.\n\nThe deliberate one — the whole-face, directed-at-you smile you can get her to do again — usually turns up somewhere around six to eight weeks. It's unmistakable when it happens."},{h:"Count from her due date, not her birthday",t:"This is the part that saves a lot of unnecessary worry and nobody explains it well.\n\nAriadne was born on 18 July at 33 weeks. Her due date was 4 September. For milestones like this you count from the second date, not the first — so a baby born seven weeks early might social-smile at thirteen weeks old and be exactly on time.\n\nWe asked whether that gap closes or stays. For the first couple of years it broadly stays, and then it stops mattering. Knowing that in advance would have spared us a few evenings."},{h:"Why the reflex ones counted anyway",t:"Here's what we'd say to anybody arguing with themselves about whether it was real.\n\nYou smiled back. You talked to her. Your voice went up. You leaned in closer to a plastic box to get a better look.\n\nShe may not have meant it. The thing it started was real, and it was happening weeks before she could do anything about it on purpose. That's not sentiment — it's how the whole business gets going."}],
   topic:"development",
   icon:"blocks",
   featured:false,
@@ -1259,18 +1019,6 @@ var GUIDES = [
   subcategory:"Newborn senses",
   summary:"Early smiles are usually spontaneous rather than social. Which does not make them count for nothing — and you're allowed to take it personally.",
   keywords:["newborn smile","first smile","social smile","reflex smile baby","when do babies smile"],
-  body:`
-<p>Amir saw Ariadne smile several times in the incubator and wanted to know whether she meant it.</p>
-<p>Scientifically? Probably an early reflex. Smiles in the first weeks tend to happen during sleep or as spontaneous movements rather than as a response to you.</p>
-<p>Practically? She smiled several times in the incubator, and that was quite sufficient evidence that she knew exactly what she was doing.</p>
-<h2>When the social smile arrives</h2>
-<p>The deliberate, aimed-at-your-face, whole-body smile usually turns up somewhere around six to eight weeks. It's unmistakable when it happens — it's a response, and you'll know because it's directed at you and you can get her to do it again.</p>
-<div class="quiet">If your baby was born early, count from her due date rather than her birthday. A baby born seven weeks early may social-smile around thirteen weeks after birth and be exactly on time. Nobody explains this well, and it causes a lot of unnecessary worry.</div>
-<h2>Why the reflex ones still matter</h2>
-<p>Here's the thing about arguing whether it counts: you smiled back. You talked to her. Your voice changed. You leaned in closer.</p>
-<p>She may not have intended it, but the loop it started is real, and it's happening weeks before she can do anything about it on purpose. That's not sentimentality — it's how the whole thing gets going.</p>
-<h2>When to mention it</h2>
-<p>If there's no social smiling by around three months corrected, mention it — not as an emergency, but as something worth raising alongside eye contact, response to your voice, and how she settles when you pick her up. Those things get looked at together, not one at a time.</p>`,
   callout:{title:"Worth raising if",items:["No social smiling by around three months, corrected for prematurity","She doesn't seem to make eye contact, or follow your face","She doesn't respond to your voice","Any loss of a skill she previously had","Anything that's been niggling at you — bring it to the next check rather than sitting on it"]},
   panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's a reflex, early on",items:["Early smiles are spontaneous, often in sleep","Social smile around six to eight weeks","Aimed at you, and repeatable","Count from the due date if she was early"]},warn:{title:"Call your doctor if",items:["No social smile by around three months, corrected","No eye contact, or not following your face","No response to your voice","Any skill she previously had and has lost"]},helped:{title:"What helped us",items:["Smiling back matters even if she didn't mean it","The loop starts before she can do it on purpose","Corrected age causes needless worry — use it","You're allowed to take it personally"]},dont:{title:"Don't",items:["Don't count from her birthday if she was born early — use her due date","Don't compare her to another baby of the same age in weeks","Don't dismiss a niggle because she's 'probably just early' — say it at the next check"]},quick:"Early ones are usually reflex; the real social smile lands around six to eight weeks, or later if she was early. Smile back anyway — it counts."},
   originalQuestions:["Had seen her smile several times in the incubator and asked whether she was doing it deliberately (16 August 2025)"],
