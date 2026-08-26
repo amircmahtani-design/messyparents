@@ -140,8 +140,16 @@
 
     if (!g) {
       // A generated page always has its guide, so this can only be a legacy
-      // link to something that no longer exists.
+      // link, or a slug that does not exist, reaching the fallback rewrite.
       if (!el.querySelector(".gpanel")) {
+        /* The URL looks like a real guide and returns 200, so without this a
+           dead address could be indexed as though it were a page. Netlify
+           cannot decide this — it does not know what is in Firestore — so the
+           page has to mark itself. */
+        var m = document.createElement("meta");
+        m.name = "robots";
+        m.content = "noindex, follow";
+        document.head.appendChild(m);
         document.title = "Guide not found — The Messy Parents Collection";
         el.className = "article wrap";
         el.innerHTML = '<div class="article-inner"><h1>We can\u2019t find that one</h1>' +

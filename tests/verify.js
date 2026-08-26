@@ -256,10 +256,13 @@ section("Sitemap, robots, redirects");
 
   /* A guide that does not exist must return a real 404, not a styled page with
      HTTP 200 — otherwise dead URLs get indexed as though they were real. */
-  check("Unknown guide slugs 404 properly", /\/guides\/\*\s+\/404\.html\s+404/.test(red));
-  check("The 404 rule is the last rule",
+  check("Unknown slugs fall back to guide.html so new guides render",
+    /\/guides\/\*\s+\/guide\.html\s+200/.test(red));
+  check("That fallback is the last rule",
     red.trim().split("\n").filter(l => l.trim() && !l.trim().startsWith("#")).pop()
-      .includes("/404.html  404"));
+      .includes("/guide.html  200"));
+  check("A guide that does not exist marks itself noindex",
+    /noindex, follow/.test(readIf("assets/js/guide-page.js") || ""));
 
   const llms = readIf("llms.txt") || "";
   check("llms.txt exists and lists guides", llms.includes("## Guides") &&

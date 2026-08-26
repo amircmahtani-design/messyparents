@@ -75,16 +75,29 @@ chain, because every redirect targets the guide's *current* URL rather than the
 slug that replaced it. Slug history lives on the guide itself
 (`seo.previousSlugs`) and is kept forever.
 
-**HTTP status codes.** A valid page is `200`. A moved or legacy URL is `301`. A
-guide that does not exist is a **real `404`** — the last rule in `_redirects`
-sends unmatched `/guides/*` to `/404.html` with a 404 status, rather than
-serving a styled "not found" page with a 200 and letting Google index dead URLs
-as though they were real. That rule is safe to be a catch-all precisely because
-Netlify serves a real file in preference to any non-forced rule, so it can only
-be reached by a slug the build did not generate.
+**HTTP status codes.** A valid page is `200`. A moved or legacy URL is `301`.
+Unknown paths outside `/guides/` get Netlify's normal `404`.
 
-The one exception is the committed fallback `_redirects` described below, which
-does the opposite on purpose. The two can never both apply.
+`/guides/*` is the deliberate exception, and it is worth understanding why. Two
+different things can reach a `/guides/<slug>/` URL that this build did not
+generate:
+
+1. **A guide added in Studio since the last deploy.** It exists in Firestore
+   but has no page yet. It must render.
+2. **A slug that genuinely does not exist.** It must not be indexed.
+
+Netlify cannot tell them apart — it has no idea what is in Firestore. Returning
+a hard `404` would satisfy case 2 and break case 1, which is much the worse
+outcome: you would add a guide, watch it appear in the guide list, click it and
+get a 404 until the next deploy.
+
+So the last rule rewrites to `guide.html`, which *can* tell them apart. It reads
+the slug from the path and looks it up. Found, it renders the guide. Not found,
+it appends `<meta name="robots" content="noindex, follow">` before showing the
+not-found message, so a dead URL still cannot enter the index.
+
+This is the one place the architecture accepts a soft 404 rather than a hard
+one, and it is a considered trade, not an oversight.
 
 ---
 
@@ -201,6 +214,34 @@ date produces **no date property at all**, rather than a guess.
 `sources` holds internal raw-question IDs (`RAW-20250820-…`). These are
 provenance for you, not citations, and they never reach the page. There is a
 test for it.
+
+---
+
+## What happens when you add or edit a guide
+
+Two things update on different clocks, and it matters to know which is which.
+
+**Immediately, no deploy needed** — because these read Firestore in the browser:
+
+- the guide appears in the grids on Home, Popular and All Guides
+- edits to an existing guide show on its page
+- topic pills, ages, search and filtering all include it
+
+**On the next deploy** — because these are generated files:
+
+- the guide's own page at `/guides/<slug>/` with its title, description,
+  canonical, Open Graph tags and Article schema
+- its entry in `sitemap.xml` and `llms.txt`
+- its place on the topic and age landing pages
+- its "Read next" links on other guides
+
+In between, a brand-new guide still works: the fallback rule renders it from
+Firestore. What it lacks is its own metadata and its sitemap entry — so it is
+readable and shareable, just not yet properly indexable.
+
+**To close the gap:** Studio → Site → Search & AI → **Rebuild the search pages**.
+Takes a minute or two. Not urgent for one guide; worth doing after a batch, and
+before you would want Google to find them.
 
 ---
 

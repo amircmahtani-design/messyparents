@@ -47,16 +47,23 @@
 /ages/:slug    /ages/:slug/    301!
 
 # ---------------------------------------------------------------------
-# Unknown guide slugs — must stay last.
+# Slugs this build did not generate — must stay last.
 #
-# This build wrote a real file for every guide above, and Netlify serves a
-# real file in preference to any non-forced rule. So anything still
-# reaching this line is a guide that does not exist, and it gets a genuine
-# 404 — not a styled 'not found' page returning 200, which would leave
-# Google indexing dead URLs as though they were real ones.
+# Not forced, so Netlify serves a real generated file whenever one exists
+# and only falls through to here when it does not. Two things reach this
+# line, and they need opposite treatment:
 #
-# The committed fallback _redirects in the repository does the opposite:
-# it rewrites to guide.html with a 200 so that every guide still renders
-# if this build never ran. That file only survives when this one is not
-# generated, so the two can never both apply.
-/guides/*  /404.html  404
+#   1. A guide added in Studio since the last deploy. It exists in
+#      Firestore but has no page yet. It must render.
+#   2. A slug that genuinely does not exist. It must not be indexed.
+#
+# Netlify cannot tell them apart — it does not know what is in Firestore.
+# So this rewrites to guide.html, which does know: it reads the slug from
+# the path and looks it up. Found, it renders the guide. Not found, it
+# writes a noindex tag and shows the not-found message, so a dead URL
+# still cannot end up in the index.
+#
+# This is the one place the architecture accepts a soft 404 rather than a
+# hard one. The alternative was new guides 404ing until the next deploy,
+# which is a far worse failure and one that happens far more often.
+/guides/*  /guide.html  200
