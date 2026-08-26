@@ -7,6 +7,13 @@
 /assets/img/*
   Cache-Control: public, max-age=31536000, immutable
 
+# The three faces, self-hosted since August 2026. Same rule as images: the
+# filename carries the identity, so a year is safe. Replacing a face means
+# giving the file a new name, exactly as with an illustration.
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
 # CSS and JS used to be cached for a week with hand-maintained ?v=11 query
 # strings, which had already drifted out of step between pages (guides.js was
 # ?v=9 on four pages and ?v=10 on two). Every reference is now stamped by

@@ -19,33 +19,32 @@
 <meta name="apple-mobile-web-app-title" content="Messy Parents">
 <meta name="theme-color" content="#fbf0d3">
 <link rel="manifest" href="site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- The font stylesheet used to block the first paint. Nothing on the page
-     could be drawn until a request to a third-party origin had gone out and
-     come back — on a phone that is a DNS lookup, a TLS handshake and a round
-     trip before a single word appears.
+<!-- The three faces are served from this domain now, not from Google.
 
-     Same URL, same three faces, same weights: the typography is unchanged and
-     deliberately so (see tests/verify.js — the weights are pinned there on
-     purpose). What has changed is only HOW it is asked for. media="print"
-     does not apply to a screen, so the browser downloads it without holding
-     rendering up; onload then promotes it to media="all" and it takes effect.
-     The preload starts the download at the same instant the old blocking
-     stylesheet link would have, so nothing arrives later than it did before —
-     the page simply stops waiting for it. display=swap was already set, so
-     text was always going to appear in the fallback face first; now it
-     appears sooner.
+     The typography is IDENTICAL: same families, same weights, the same files
+     Google was sending. Only the address changed.
 
-     The noscript copy below keeps the fonts working with JavaScript turned
-     off, where the onload never fires.
+     Why it changed: once the stylesheets were inlined the page painted about a
+     second earlier, but the fonts still arrived on their old schedule from a
+     third party. That widened the gap between "text drawn in the fallback"
+     and "text drawn in the real face" from almost nothing to over a second —
+     and the reflow at the end of that gap measured 0.279 CLS, most of it the
+     hero headline rewrapping. Served from here and preloaded, the faces land
+     with the CSS and the gap closes.
 
-     (Deliberately no angle-bracket tag names in this comment: the build and
-     the test suite both regex over this HTML, and a tag name written inside a
-     comment gets matched as if it were real markup.) -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap"></noscript>
+     Preloaded: the three that draw above the fold on a phone. Baloo 700 is
+     the h1 and every card title, Nunito 400 is the body copy, Patrick Hand is
+     the lede and every hand-lettered line. The other five load on demand.
+     crossorigin is required even same-origin, because font fetches are
+     CORS-mode; without it the file is fetched twice.
+
+     (No hostnames and no angle-bracket tag names written out in here: the
+     build and the test suite both regex over this HTML, and prose inside a
+     comment gets matched as if it were real markup. That has bitten this file
+     twice already.) -->
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/baloo2-700.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/patrick-hand-400.woff2" crossorigin>
 <!-- MPC:CSS:START -->
 <!-- The stylesheets are inlined into this page at build time; see inlineCss()
      in scripts/build.js for why and for the two ways it can go wrong.
