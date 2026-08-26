@@ -1,63 +1,57 @@
-# Completes Stage 2 — the missing build, one set of pills, and the section editor
+# The last one. Search everywhere, and the fuller answer finished.
 
-**19 files to upload. 4 to delete, but not yet.**
+**20 files to upload. 4 to delete, but not yet.**
 
 ---
 
-## 1. The pills, search, and "fev" on Popular — all one bug
+## 1. Search matches as you type — on all three pages
 
-Your repo had **Stage 2's pages** running against the **older build**:
+The Popular box used to submit to `guides.html?q=` and do nothing until you
+pressed Search. Now it matches in place, like Home and Guides.
 
-```
-guides.html        Stage 2   -> loads mpc-catalogue.js
-scripts/build.js   Guide-UI  -> never writes /data/guide-index.json
-```
-
-The page fetches that file, gets a 404, and falls back to an empty list —
-deliberately, so a failed fetch costs filtering rather than the whole page.
-Which is exactly why nothing looked broken. An empty list means every query and
-every pill returns nothing.
-
-My fault: overlapping bundles with no way to tell which halves went together.
-`scripts/build.js` here is the Stage 2 one, so the data files get written.
-
-**No search code was damaged.** Tested against the real generated files:
+Tested, typing "fev" with no Enter pressed:
 
 ```
-"m" 31 hits   "mi" 15   "mil" 6   "milk" 5
-
-Popular -> "fev" -> Search -> guides.html?q=fev
-  2 guides: Your baby's first fever | Is teething making my baby miserable?
+  results shown : true
+  count         : 2 guides
+  titles        : Your baby's first fever | Is teething making my baby miserable?
 ```
 
-(The Popular box has always submitted to `guides.html?q=` rather than filtering
-in place — that is how it originally shipped, not something that changed.)
+The dropdown you saw under the box with "fever / fev" in it was **Chrome's own
+autofill**, not the site. `autocomplete="off"` is on all three search inputs now,
+so it will not cover the results.
 
-## 2. One set of pills
+The form keeps its `action`, so pressing Enter still works if JavaScript fails.
 
-Filter pills are `<a href="/topics/health/">` now, with the click intercepted so
-they filter in place exactly as before. A crawler follows them, so the duplicate
-row of links at the bottom is deleted. If the JavaScript ever fails, a click
-lands on a working topic page instead of doing nothing.
+## 2. The fuller answer — boxes waiting for you
 
-## 3. The fuller answer looks like the rest of the editor
+Open any guide and the boxes are simply there:
 
-Each section is now the same card as the guide's three columns: a tagged panel,
-a **Heading** box, then a labelled text box. Prose, not bullets — the box is
-taller and there is no "one per line" hint to mislead.
+- **Heading** box, then **The words** box. Already visible, nothing to press
+  first.
+- A guide written before this editor existed has its prose **split into those
+  boxes automatically as the guide opens** — headings become headings, lists
+  keep their bullets. No "Bring it in here" button any more. Nothing saves until
+  you press Save, and Revert puts it back.
+- **+ Add another section** for more.
+- A permanent red **"Speak to your doctor if"** card underneath, with a Heading
+  and one bullet per line. Always there — you never add it. Leave the bullets
+  empty and it does not render on the guide.
 
-A guide with nothing written yet opens with one empty card ready to type into,
-rather than an empty state and an extra click. Blank sections are dropped on
-save, so that costs nothing if it goes unused.
+That red box was already in your data model and already rendered on the page;
+Studio simply had no editor for it. It does now.
 
-## 4. Tests, so a broken page cannot look fine again
+`wont-nap` converts to four sections: *Start with the wake window*, *Read the
+first sign, not the third*, *The boring fixes that work*, *When the nap is 35
+minutes and that's it* — plus its existing three red-box bullets.
 
-That is what cost you today. Three new checks:
+## 3. Everything from the earlier bundles, in one coherent set
 
-- fails if a page loads the catalogue but the build has not written the index,
-  saying exactly that;
-- types `m`, `mi`, `mil`, `milk` and asserts each returns results;
-- walks Popular -> `?q=fev` and asserts the fever guide comes back.
+- The **Stage 2 build**, which writes `/data/guide-index.json`. Its absence is
+  what made the pills and search return nothing.
+- **One set of pills**, as real links, with the duplicate bottom row deleted.
+- The fold bar, the round arrows, the editable editorial page, content-hashed
+  asset URLs including Studio's, and the redirect-loop fix.
 
 ## Delete these in a few days, not now
 
@@ -66,16 +60,15 @@ assets/js/guides.js   assets/js/mpc-store.js
 assets/js/guide-page.js   assets/js/mpcstore.js
 ```
 
-While they are there, re-uploading the old HTML rolls you back.
-
 ## After deploying
 
 1. Hard-refresh (Ctrl+Shift+R), Studio too.
 2. **`themessyparentscollection.com/data/guide-index.json` should return 31
-   guides.** If it 404s the build did not run and search will be empty again.
-3. "fev" on Popular, "mil" on Guides, click a topic pill.
-4. Studio -> any guide -> The fuller answer: Heading box, text box.
+   guides.** If it 404s the build did not run and search will be empty.
+3. Type "fev" on Popular without pressing Search.
+4. Studio -> any guide -> the fuller answer boxes should already have that
+   guide's writing in them.
 
 ---
 
-Build clean, 0 errors, idempotent. 111 static checks, 58 runtime checks.
+Build clean, 0 errors, idempotent. 111 static checks, 60 runtime checks.

@@ -65,15 +65,23 @@
     <div class="page-hero-copy">
       <h1 data-page-title>Popular guides</h1>
       <p data-page-subtitle>The questions we get asked most, and the ones we googled most ourselves.</p>
-      <form class="search" role="search" action="guides.html" method="get">
+      <form class="search" role="search" id="popSearch" action="guides.html" method="get">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-        <input type="search" name="q" aria-label="Search the guides" data-mpc-attr="placeholder:search.placeholder" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
+        <input type="search" id="popQ" name="q" autocomplete="off" aria-label="Search the guides" data-mpc-attr="placeholder:search.placeholder" placeholder="Try &ldquo;night waking&rdquo; or &ldquo;fever&rdquo;">
         <button type="submit" data-mpc-text="search.button">Search</button>
       </form>
     </div>
     <div class="page-hero-art">
       <img id="pageHeroImg" data-default="assets/img/family.webp" alt="A happy, well-loved family" width="1000" height="747" class="ready" src="assets/img/family.webp" data-src-original="assets/img/family.webp" loading="eager" fetchpriority="high" decoding="async">
     </div>
+  </section>
+
+  <!-- Live results. Hidden until something is typed; the two grids below are
+       hidden while it is showing, so the page never has three lists at once. -->
+  <section class="wrap" id="popResultsWrap" hidden>
+    <h2 id="popResultsTitle" data-mpc-text="results.search">Closest matches</h2>
+    <div class="card-grid" id="popResults"></div>
+    <p class="rows-hint"><span id="popCount"></span> <a href="#" class="link-reset" id="popReset">Clear</a></p>
   </section>
 
   <section class="rows wrap">
@@ -193,6 +201,6 @@
 <script src="assets/js/mpc-runtime.js?v=f874656e4f" defer></script>
 <script src="assets/js/mpc-catalogue.js?v=b92087110c" defer></script>
 
-<script src="assets/js/popular.js?v=e94f9c1d81" defer></script>
+<script src="assets/js/popular.js?v=18eb1b5567" defer></script>
 </body>
 </html>

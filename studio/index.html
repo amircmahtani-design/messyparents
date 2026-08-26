@@ -430,12 +430,19 @@
         A blank line starts a new paragraph. Plain text only, so nothing you type here can break the page.</span>
       </label>
       <div id="f_long_list"></div>
-      <button id="f_long_add" class="btn sm ghost" type="button">+ Add a section</button>
-      <p id="f_long_legacy" class="hint hidden" style="margin-top:8px">
-        This guide&rsquo;s fuller answer was written before this editor existed, so it is still stored as
-        formatting we cannot safely show in boxes. <button id="f_long_import" class="btn sm ghost" type="button">Bring it in here</button>
-        &mdash; this converts it into sections you can edit. Nothing changes on the site until you Save.
-      </p>
+      <button id="f_long_add" class="btn sm ghost" type="button">+ Add another section</button>
+
+      <!-- Always present, never added or removed. Every guide should be able to
+           say when to stop reading and call somebody, so this is not something
+           you should have to remember to create. Leave the bullets empty and it
+           simply does not render on the page. -->
+      <div class="col-card" id="calloutCard" style="margin-top:14px">
+        <span class="tag warn">\u26a0 Speak to your doctor if</span>
+        <div class="field"><label>Heading</label>
+          <input id="f_c_title" type="text" placeholder="Call your doctor if"></div>
+        <div class="field"><label>Bullets <span class="hint">&mdash; one per line. Leave empty to hide this box on the guide.</span></label>
+          <textarea id="f_c_items" rows="5"></textarea></div>
+      </div>
     </div>
 <div class="field">
           <label>The quick answer box</label>
@@ -1243,14 +1250,24 @@ function fillForm(g){
   syncDont();
   $("#f_quick").value = p.quick || "";
   longDraft = Array.isArray(g.longform) ? g.longform.map(r => ({ h:r.h||"", t:r.t||"" })) : [];
-  /* A guide with nothing written yet opens with one empty card, so the boxes
-     are there to type into rather than behind a button. Blank sections are
-     dropped on save, so this costs nothing if it goes unused. */
-  if(!longDraft.length && !(g.body && String(g.body).trim())) longDraft = [{ h:"", t:"" }];
+  /* A guide written before this editor existed still has its prose as HTML.
+     Rather than making you press a button to convert it, it is split into
+     heading + words here as the guide opens, so the boxes are simply there
+     with your writing already in them. Nothing is saved until you press Save,
+     and Revert puts it back.
+
+     A guide with nothing written yet gets one empty card, for the same reason:
+     boxes to type into, not a button to reveal boxes. Blank sections are
+     dropped on save, so an unused one costs nothing. */
+  if(!longDraft.length) longDraft = sectionsFromHTML(g.body);
+  if(!longDraft.length) longDraft = [{ h:"", t:"" }];
   renderLongform();
-  /* An old guide still has HTML prose and no sections: offer to convert it. */
-  const hasLegacy = !longDraft.length && !!(g.body && String(g.body).trim());
-  $("#f_long_legacy") && $("#f_long_legacy").classList.toggle("hidden", !hasLegacy);
+
+  /* The red box. Always present, never added — every guide should be able to
+     say when to stop reading and call someone. */
+  $("#f_c_title").value = (g.callout && g.callout.title) || "";
+  $("#f_c_items").value = itemsToLines(g.callout && g.callout.items);
+
 
   const seo = g.seo || {};
   $("#f_slug").value      = seo.slug || g.id || "";
@@ -1321,7 +1338,19 @@ function draftGuide(){
   /* Sections with nothing in them are dropped rather than saved as blanks. */
   const _lf = longDraft.map(r => ({ h:(r.h||"").trim(), t:(r.t||"").trim() }))
                        .filter(r => r.h || r.t);
-  if(_lf.length) g.longform = _lf; else delete g.longform;
+  if(_lf.length){
+    g.longform = _lf;
+    /* The prose lives in longform now, so the old HTML copy is dropped rather
+       than left behind to disagree with it. */
+    delete g.body;
+  } else {
+    delete g.longform;
+  }
+
+  const _ci = linesToItems($("#f_c_items").value);
+  if(_ci.length){
+    g.callout = { title: ($("#f_c_title").value.trim() || "Call your doctor if"), items:_ci };
+  } else { delete g.callout; }
 
   /* --- Search metadata -------------------------------------------------
      All of it lives under one `seo` key so the whole search side of a guide
@@ -1639,6 +1668,33 @@ $("#p_upload").addEventListener("change", async e => {
    — which the renderer turns into the page. Plain text in, escaped on the way
    out, so a stray angle bracket cannot break a guide.
    ====================================================================== */
+
+/* Split a guide's old HTML prose into heading + words. Used when a guide that
+   predates this editor is opened, so its writing appears in the boxes instead
+   of being locked away behind markup Studio could not show. */
+function sectionsFromHTML(html){
+  const src = String(html || "").trim();
+  if(!src) return [];
+  const doc = new DOMParser().parseFromString("<div>"+src+"</div>", "text/html");
+  const rows = []; let cur = null;
+  doc.querySelector("div").childNodes.forEach(n => {
+    if(n.nodeType !== 1) return;
+    const tag = n.tagName.toLowerCase();
+    if(/^h[1-4]$/.test(tag)){ cur = { h:n.textContent.trim(), t:"" }; rows.push(cur); return; }
+    let txt;
+    if(tag === "ul" || tag === "ol"){
+      txt = Array.from(n.querySelectorAll("li"))
+        .map(li => "\u2022 " + li.textContent.trim()).join("\n");
+    } else {
+      txt = (n.textContent || "").trim();
+    }
+    if(!txt) return;
+    if(!cur){ cur = { h:"", t:"" }; rows.push(cur); }
+    cur.t = cur.t ? cur.t + "\n\n" + txt : txt;
+  });
+  return rows;
+}
+
 let longDraft = [];
 
 function renderLongform(){
@@ -1685,28 +1741,6 @@ $("#f_long_list") && $("#f_long_list").addEventListener("input", (e) => {
   markDirty();
 });
 
-/* Turn an existing guide's HTML body into editable sections. Deliberately a
-   button rather than automatic: it is a one-way conversion and it should be a
-   decision, not something that happens while you are looking elsewhere. */
-$("#f_long_import") && $("#f_long_import").addEventListener("click", () => {
-  const g = state.guides.find(x => x.id === state.current);
-  const html = (g && g.body) || "";
-  if(!html.trim()) return;
-  const doc = new DOMParser().parseFromString("<div>"+html+"</div>", "text/html");
-  const rows = []; let cur = null;
-  doc.querySelector("div").childNodes.forEach(n => {
-    if(n.nodeType !== 1) return;
-    const tag = n.tagName.toLowerCase();
-    if(/^h[1-4]$/.test(tag)){ cur = { h:n.textContent.trim(), t:"" }; rows.push(cur); return; }
-    const txt = (n.textContent||"").trim();
-    if(!txt) return;
-    if(!cur){ cur = { h:"", t:"" }; rows.push(cur); }
-    cur.t = cur.t ? cur.t + "\n\n" + txt : txt;
-  });
-  longDraft = rows.length ? rows : [{ h:"", t:html.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim() }];
-  renderLongform(); markDirty();
-  $("#f_long_legacy").classList.add("hidden");
-});
 
 $("#save").addEventListener("click", async () => {
   const btn = $("#save"), msg = $("#msg");

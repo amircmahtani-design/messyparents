@@ -273,17 +273,30 @@ async function main() {
     check("The ?q= journey works", false, e.message);
   }
 
-  /* Popular — should do nothing when the grids are already baked. */
+  /* Popular — leaves the baked grids alone, and searches as you type. That box
+     used to submit to guides.html and do nothing until you pressed Search,
+     which is not what a search box looks like it does. */
   try {
-    const w = pageWindow(["featured", "byTopic", "year"]);
-    const populated = makeEl("div");
-    populated.querySelector = () => makeEl("a");     // pretends a .card is present
-    w.byId.featured.querySelector = () => makeEl("a");
+    const w = pageWindow(["featured", "byTopic", "popQ", "popResultsWrap",
+      "popResults", "popCount", "popReset", "popSearch", "year"]);
+    w.byId.featured.querySelector = () => makeEl("a");   // pretend a .card is there
     w.byId.byTopic.querySelector = () => makeEl("a");
+    w.byId.featured.closest = () => ({ hidden: false });
+    w.byId.byTopic.closest = () => ({ hidden: false });
     vm.runInContext(readJs("assets/js/popular.js"), w);
     await tick(); await tick();
-    check("popular.js leaves a baked grid alone",
-      w.byId.featured.innerHTML === "");
+    check("popular.js leaves a baked grid alone", w.byId.featured.innerHTML === "");
+
+    w.byId.popQ.value = "fev";
+    w.byId.popQ.dispatch("input");
+    for (let i = 0; i < 8; i++) await tick();
+    check("Typing on Popular shows results without pressing Search",
+      w.byId.popResultsWrap.hidden === false &&
+      /class="card"/.test(w.byId.popResults.innerHTML),
+      w.byId.popResults.innerHTML.slice(0, 80) || "(empty)");
+    check('Typing "fev" on Popular finds the fever guide',
+      /fever/i.test(w.byId.popResults.innerHTML),
+      (w.byId.popResults.innerHTML.match(/<h3>([^<]*)<\/h3>/g) || []).join(" | "));
   } catch (e) {
     check("popular.js runs without throwing", false, e.message);
   }

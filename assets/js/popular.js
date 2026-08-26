@@ -29,7 +29,72 @@
     return el && !el.querySelector(".card");
   };
 
-  if (!empty(featEl) && !empty(oneEl)) return;   // the normal case
+
+  /* ---- live search --------------------------------------------------------
+     The box used to submit to guides.html?q=. Typing did nothing until you
+     pressed Search, which is not what a search box looks like it does.
+
+     Now it matches as you type, in place. The form still has its action, so
+     pressing Enter with JavaScript disabled goes where it always did. */
+  var input = document.getElementById("popQ");
+  var wrap = document.getElementById("popResultsWrap");
+  var results = document.getElementById("popResults");
+  var countEl = document.getElementById("popCount");
+  var resetEl = document.getElementById("popReset");
+  var T = window.MPC_T || {};
+  var t = function (k, f) {
+    var v = T[k];
+    return (v == null || String(v).trim() === "") ? f : v;
+  };
+
+  if (input && wrap && results) {
+    var sections = [];
+    [featEl, oneEl].forEach(function (el) {
+      var sec = el && el.closest ? el.closest("section") : null;
+      if (sec) sections.push(sec);
+    });
+
+    var warmed = false;
+    var warm = function (then) {
+      if (!warmed) { warmed = true; C.loadIndex(); }
+      return C.loadIndex().then(then || function () {});
+    };
+
+    var draw = function () {
+      var q = input.value.trim();
+      var on = !!q;
+      wrap.hidden = !on;
+      sections.forEach(function (sec) { sec.hidden = on; });
+      if (!on) return;
+
+      var list = C.search(q, {});
+      countEl.textContent = list.length + " guide" + (list.length === 1 ? "" : "s");
+      results.innerHTML = list.length
+        ? list.map(C.cardHTML).join("")
+        : '<div class="empty"><p><strong>' +
+          MPC.esc(t("empty.title", "No guides match that yet.")) + "</strong></p><p>" +
+          MPC.inline(t("empty.body", "Try a single word, or clear the filters and scroll.")) +
+          "</p></div>";
+    };
+
+    input.addEventListener("focus", function () { warm(); }, { once: true });
+    input.addEventListener("input", function () {
+      warm(function () { draw(); });
+      /* The search text arrives on the first keystroke; until it does, titles
+         are matched, which is already in memory and covers most queries. */
+      if (input.value.trim() && !C.hasSearchText()) C.loadSearchText().then(draw);
+    });
+    var form = document.getElementById("popSearch");
+    if (form) form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      warm(function () { return C.loadSearchText().then(draw); });
+    });
+    if (resetEl) resetEl.addEventListener("click", function (e) {
+      e.preventDefault(); input.value = ""; draw(); input.focus();
+    });
+  }
+
+  if (!empty(featEl) && !empty(oneEl)) return;   // the grids are fine
 
   MPC.idle(function () {
     C.loadIndex().then(function (list) {
