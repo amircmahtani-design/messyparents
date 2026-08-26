@@ -41,38 +41,7 @@
 # Slugs that have been renamed. One hop, never a chain: every entry points
 # at the guide's current URL, not at the slug that replaced it.
 
-# Trailing-slash normalisation for the clean URLs.
-/guides/blocked-nose-newborn  /guides/blocked-nose-newborn/  301!
-/guides/bottle-refusal  /guides/bottle-refusal/  301!
-/guides/day-night-confusion  /guides/day-night-confusion/  301!
-/guides/drinking-less-milk  /guides/drinking-less-milk/  301!
-/guides/early-waking  /guides/early-waking/  301!
-/guides/fast-breathing-newborn  /guides/fast-breathing-newborn/  301!
-/guides/feeding-on-demand  /guides/feeding-on-demand/  301!
-/guides/first-fever  /guides/first-fever/  301!
-/guides/first-words  /guides/first-words/  301!
-/guides/is-that-a-real-smile  /guides/is-that-a-real-smile/  301!
-/guides/milk-from-the-nose  /guides/milk-from-the-nose/  301!
-/guides/nappy-changes-at-night  /guides/nappy-changes-at-night/  301!
-/guides/nappy-rash  /guides/nappy-rash/  301!
-/guides/newborn-hiccups  /guides/newborn-hiccups/  301!
-/guides/newborn-noises-at-night  /guides/newborn-noises-at-night/  301!
-/guides/newborn-trembles-and-jerks  /guides/newborn-trembles-and-jerks/  301!
-/guides/newborn-weight-loss  /guides/newborn-weight-loss/  301!
-/guides/newborns-and-blinking  /guides/newborns-and-blinking/  301!
-/guides/reflux-or-spit-up  /guides/reflux-or-spit-up/  301!
-/guides/rolling-sitting-crawling  /guides/rolling-sitting-crawling/  301!
-/guides/safe-sleep-newborn  /guides/safe-sleep-newborn/  301!
-/guides/sleep-regression  /guides/sleep-regression/  301!
-/guides/sleeping-with-mouth-open  /guides/sleeping-with-mouth-open/  301!
-/guides/spit-up-while-asleep  /guides/spit-up-while-asleep/  301!
-/guides/splitting-nights  /guides/splitting-nights/  301!
-/guides/starting-solids  /guides/starting-solids/  301!
-/guides/teething  /guides/teething/  301!
-/guides/timing-feeds-start-or-finish  /guides/timing-feeds-start-or-finish/  301!
-/guides/touched-out  /guides/touched-out/  301!
-/guides/visitors  /guides/visitors/  301!
-/guides/wont-nap  /guides/wont-nap/  301!
+# Trailing-slash rules removed: /x -> /x/ is a redirect loop on Netlify.
 
 # ---------------------------------------------------------------------
 # Slugs this build did not generate — must stay last.

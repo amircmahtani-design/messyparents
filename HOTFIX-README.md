@@ -1,55 +1,79 @@
-# Hotfix — stops the redirect loop
+# Hotfix — this is the actual fix
 
-**Two files. Upload both, overwrite.**
+**Two files. Upload both, overwrite. Nothing else changes.**
 
 ```
 _redirects
 scripts/build.js
 ```
 
-These are your ORIGINAL files with one thing changed. Nothing else is touched —
-not the HTML, not the CSS, not the fonts, not the JavaScript. This is the
-original site plus a fix.
+Your original files, with three lines removed.
 
-## What was wrong
+## What the evidence showed
 
-Your repo has always contained this rule:
+The Netlify build log was decisive:
 
 ```
-/guides/:slug  /guides/:slug/  301!
+[seo] 31 guides from firestore
+[seo] 31 guide pages written
+[seo] 5 topic pages, 7 age pages
+[seo] done in 1038ms — 0 errors
 ```
 
-While a generated page exists at `/guides/<slug>/index.html`, Netlify serves it
-and the rule never fires. When the page is **missing**, Netlify matches the
-request against `/guides/:slug` and permanently redirects it to
-`/guides/<slug>/` — the address it already asked for. The browser follows it,
-gets the same answer, follows it again, and gives up:
-`ERR_TOO_MANY_REDIRECTS`.
+The pages were being written all along. So the problem was never generation.
 
-So a missing page — the moment the site most needed to fall through to the
-`/guides/*  /guide.html  200` rule at the bottom and render from Firestore
-instead — is precisely the moment it broke hardest.
-
-## What changed
-
-Each address is now named explicitly:
+Then the pattern of what works against what does not:
 
 ```
-/guides/day-night-confusion  /guides/day-night-confusion/  301!
+/                  WORKS    no redirect rule covers it
+/guides.html       WORKS    no redirect rule covers it
+/sitemap.xml       WORKS    no redirect rule covers it
+
+/topics/feeding/   LOOPS    covered by  /topics/:slug -> /topics/:slug/  301!
+/guides/<slug>/    LOOPS    covered by  /guides/:slug -> /guides/:slug/  301!
 ```
 
-The source never ends in a slash and the target always does, so a rule can
-never point at itself. An unknown or not-yet-built slug now falls through to the
-rewrite at the bottom, which is what it was always meant to do.
+Every URL covered by one of those three rules loops. Every URL not covered
+works. That is the whole fault.
 
-`_redirects` is included as well as `scripts/build.js` because the build
-regenerates that file on every deploy — patching only one of them would either
-be overwritten on the next build, or not take effect until one ran.
+## Why they loop
 
-## This fixes the symptom, not the cause
+Two things combined.
 
-The loop is what you can see. The reason the guide pages were missing is still
-unknown, and it needs the Netlify build log. After this deploy the site should
-work; if a guide page renders slowly (the old Firestore-in-the-browser way)
-rather than instantly, that confirms the pages are still not being generated and
-there is a second thing to fix.
+**Netlify matches `/topics/feeding/` against the source `/topics/:slug`.** The
+trailing slash does not stop it matching. So the rule redirects the URL to the
+address the browser already asked for.
+
+**The `!` makes the redirect forced**, which means it beats a real file at that
+path. The generated page existing changed nothing — the redirect fired first,
+every time.
+
+## What I got wrong along the way
+
+My first fix wrote the sources out one at a time
+(`/guides/teething -> /guides/teething/`) on the theory that an explicit source
+could not match itself. **That was wrong**, and this evidence is what showed it:
+since Netlify matches the slashed form against a slashless source, an explicit
+rule loops for exactly the same reason. Any rule shaped `/x -> /x/` is a loop
+here. Good thing you sent the screenshots before deploying it.
+
+So they are simply gone, with nothing in their place. Netlify already resolves
+`/topics/feeding/` to `topics/feeding/index.html` by itself and serves the same
+file for the slashless form — ordinary directory-index behaviour that needs no
+help from this file.
+
+## Why both files
+
+`scripts/build.js` regenerates `_redirects` on every deploy. Patching only the
+generated file would be overwritten on the next build; patching only the script
+would leave the bad file in place until a build ran.
+
+## After deploying
+
+`themessyparentscollection.com/guides/day-night-confusion/` should load, and it
+should be **instant** — the article is in the HTML. If it loads but takes a
+moment and flashes, tell me: that would mean it is falling through to the
+Firestore path and there is a second thing to look at.
+
+Tested here: build clean, 0 errors, all 66 checks pass, `/guides/* -> /guide.html 200`
+still the last rule so a guide added in Studio still renders before its page exists.
