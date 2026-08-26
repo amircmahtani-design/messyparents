@@ -155,6 +155,14 @@
 .g-detail-fold .article-body li{margin-bottom:10px}
 .g-detail-fold .article-body strong{font-weight:400;color:var(--blue-ink)}
 
+/* The red box is a box, not another section of the prose. The two rules above
+   it are written for headings and bullets that sit directly on the paper, and
+   they were winning on specificity inside it: 34px of heading margin on top of
+   the box's own 20px of padding, and a trailing 10px under the last bullet.
+   The box supplies its own space, so take theirs away. */
+.g-detail-fold .article-body .callout h3{margin-top:0}
+.g-detail-fold .article-body .callout li:last-child{margin-bottom:0}
+
 /* ---- The longer version ---------------------------------------------------
    A single quiet bar the reader taps to open. Folded by default.
 
