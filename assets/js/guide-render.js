@@ -213,10 +213,53 @@
      paint — when the switch is on.
      -------------------------------------------------------------------- */
 
+  /* ---- the fuller answer, as sections -----------------------------------
+     A guide's longer write-up is authored in Studio as a list of sections,
+     each with a heading and its words:
+
+         longform: [ { h: "Building the body clock", t: "Daylight..." } ]
+
+     That replaces hand-written HTML in a `body` field, which nothing in Studio
+     could edit — the prose existed but there was no way to change it without
+     going into Firestore.
+
+     Text is plain. A blank line starts a new paragraph, and nothing typed in
+     Studio can produce markup, so a stray angle bracket cannot break a page.
+     Guides written before this still have their `body` HTML and are rendered
+     from that untouched. */
+  function longformHTML(g) {
+    var rows = g && g.longform;
+    if (!Array.isArray(rows) || !rows.length) return "";
+    var out = [];
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i] || {};
+      var h = String(r.h == null ? "" : r.h).trim();
+      var t = String(r.t == null ? "" : r.t).trim();
+      if (!h && !t) continue;
+      if (h) out.push("<h2>" + esc(h) + "</h2>");
+      if (t) {
+        var paras = t.replace(/\r\n?/g, "\n").split(/\n{2,}/);
+        for (var j = 0; j < paras.length; j++) {
+          var para = paras[j].trim();
+          if (para) out.push("<p>" + esc(para).replace(/\n/g, "<br>") + "</p>");
+        }
+      }
+    }
+    return out.join("");
+  }
+
+  /* The prose for a guide, whichever way it was written. */
+  function bodyHTML(g) {
+    var lf = longformHTML(g);
+    if (lf) return lf;
+    return (g && g.body) ? String(g.body) : "";
+  }
+
   function detailHTML(g, opts) {
     opts = opts || {};
     var t = opts.t || function (k, f) { return f; };
-    if (!g.body || !String(g.body).trim()) return "";
+    var prose = bodyHTML(g);
+    if (!prose.trim()) return "";
     var callout = "";
     if (g.callout && g.callout.items && g.callout.items.length) {
       callout = '<div class="callout"><h3>' + (g.callout.title || "Call your doctor if") + "</h3><ul>" +
@@ -227,7 +270,7 @@
        a flat list of equal sections to a screen reader and to a crawler
        working out what the page is about. Demoting them one level makes the
        structure match the meaning. Only the tags change; not a word moves. */
-    var body = String(g.body)
+    var body = prose
       .replace(/<(\/?)h3\b/gi, "<$1h4")
       .replace(/<(\/?)h2\b/gi, "<$1h3");
 
@@ -364,6 +407,7 @@
     guideUrl: guideUrl, hash: hash, guideHash: guideHash,
     panelMarkup: panelMarkup, cardHTML: cardHTML, relatedHTML: relatedHTML,
     prevNextHTML: prevNextHTML,
+    longformHTML: longformHTML, bodyHTML: bodyHTML,
     crumbTrail: crumbTrail, crumbHTML: crumbHTML,
     detailHTML: detailHTML, questionsHTML: questionsHTML, referencesHTML: referencesHTML,
     BADGE: BADGE

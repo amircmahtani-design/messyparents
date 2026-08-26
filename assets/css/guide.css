@@ -138,8 +138,15 @@
   font-size:clamp(1.5rem,2.4vw,1.95rem);letter-spacing:.3px;margin:0 0 14px}
 .g-extra .article-body h3,
 .g-extra .article-body h4{font-family:var(--hand);font-weight:400;letter-spacing:.3px}
-/* The prose itself stays in the body face. Patrick Hand is right for a
-   headline and for four bullet points; it is tiring for 250 words. */
+/* The prose is hand-lettered too, so the fuller answer reads as the same guide
+   continuing rather than a different document beginning. Slightly larger and
+   more line-height than the body face would need, because Patrick Hand is
+   lighter and needs the room. */
+.g-detail-fold .article-body{
+  font-family:var(--hand);font-size:1.12rem;line-height:1.72;
+  color:var(--ink-hand);letter-spacing:.2px;
+}
+.g-detail-fold .article-body strong{font-weight:400;color:var(--blue-ink)}
 
 /* ---- The longer version ---------------------------------------------------
    A single quiet bar the reader taps to open. Folded by default.
@@ -271,8 +278,15 @@
   font-size:clamp(1.5rem,2.4vw,1.95rem);letter-spacing:.3px;margin:0 0 14px}
 .g-extra .article-body h3,
 .g-extra .article-body h4{font-family:var(--hand);font-weight:400;letter-spacing:.3px}
-/* The prose itself stays in the body face. Patrick Hand is right for a
-   headline and for four bullet points; it is tiring for 250 words. */
+/* The prose is hand-lettered too, so the fuller answer reads as the same guide
+   continuing rather than a different document beginning. Slightly larger and
+   more line-height than the body face would need, because Patrick Hand is
+   lighter and needs the room. */
+.g-detail-fold .article-body{
+  font-family:var(--hand);font-size:1.12rem;line-height:1.72;
+  color:var(--ink-hand);letter-spacing:.2px;
+}
+.g-detail-fold .article-body strong{font-weight:400;color:var(--blue-ink)}
 
 /* ---- The longer version ---------------------------------------------------
    Folded away by default. The prose is still in the HTML — Google indexes a

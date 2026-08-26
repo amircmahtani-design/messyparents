@@ -367,7 +367,31 @@
           <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_d_items" rows="4"></textarea></div>
         </div>
 
-        <div class="field">
+        
+    <!-- ============================================================
+         THE FULLER ANSWER
+
+         Sections, each a heading and its words. This is the prose that
+         appears behind "Want the fuller answer?" on the guide.
+
+         It writes to guide.longform. Guides written before this still have
+         their old `body` HTML and render from that untouched, so nothing
+         that already exists changes until you edit it here.
+         ============================================================ -->
+    <div class="field">
+      <label>The fuller answer
+        <span class="hint">&mdash; the longer write-up, behind the &ldquo;Want the fuller answer?&rdquo; bar on the guide.
+        A blank line starts a new paragraph. Plain text only, so nothing you type here can break the page.</span>
+      </label>
+      <div id="f_long_list"></div>
+      <button id="f_long_add" class="btn sm ghost" type="button">+ Add a section</button>
+      <p id="f_long_legacy" class="hint hidden" style="margin-top:8px">
+        This guide&rsquo;s fuller answer was written before this editor existed, so it is still stored as
+        formatting we cannot safely show in boxes. <button id="f_long_import" class="btn sm ghost" type="button">Bring it in here</button>
+        &mdash; this converts it into sections you can edit. Nothing changes on the site until you Save.
+      </p>
+    </div>
+<div class="field">
           <label>The quick answer box</label>
           <textarea id="f_quick" rows="3"></textarea>
         </div>
@@ -1172,6 +1196,11 @@ function fillForm(g){
   $("#f_d_items").value = itemsToLines(_d && _d.items);
   syncDont();
   $("#f_quick").value = p.quick || "";
+  longDraft = Array.isArray(g.longform) ? g.longform.map(r => ({ h:r.h||"", t:r.t||"" })) : [];
+  renderLongform();
+  /* An old guide still has HTML prose and no sections: offer to convert it. */
+  const hasLegacy = !longDraft.length && !!(g.body && String(g.body).trim());
+  $("#f_long_legacy") && $("#f_long_legacy").classList.toggle("hidden", !hasLegacy);
 
   const seo = g.seo || {};
   $("#f_slug").value      = seo.slug || g.id || "";
@@ -1239,6 +1268,10 @@ function draftGuide(){
     g.panel.dont = { title:($("#f_d_title").value || "Don’t"), items:_di };
   } else { delete g.panel.dont; }
   g.panel.quick  = $("#f_quick").value;
+  /* Sections with nothing in them are dropped rather than saved as blanks. */
+  const _lf = longDraft.map(r => ({ h:(r.h||"").trim(), t:(r.t||"").trim() }))
+                       .filter(r => r.h || r.t);
+  if(_lf.length) g.longform = _lf; else delete g.longform;
 
   /* --- Search metadata -------------------------------------------------
      All of it lives under one `seo` key so the whole search side of a guide
@@ -1543,6 +1576,85 @@ $("#p_upload").addEventListener("change", async e => {
     pushPagePreview();
   }catch(err){ if(err.message!=="cancelled" && msg) msg.textContent="Upload failed: "+(err.message||err); }
 });
+
+/* ==========================================================================
+   THE FULLER ANSWER — a repeatable heading + words editor.
+
+   guide.body was HTML that nothing in Studio could edit: the prose existed on
+   every guide and there was no way to change a word of it without opening
+   Firestore. This stores the same thing as data instead —
+
+       longform: [ { h: "Building the body clock", t: "Daylight..." } ]
+
+   — which the renderer turns into the page. Plain text in, escaped on the way
+   out, so a stray angle bracket cannot break a guide.
+   ====================================================================== */
+let longDraft = [];
+
+function renderLongform(){
+  const host = $("#f_long_list");
+  if(!host) return;
+  host.innerHTML = longDraft.map((row, i) => `
+    <div class="slot" data-long="${i}" style="margin-bottom:10px">
+      <div class="rowbtns" style="justify-content:space-between;align-items:center">
+        <strong style="font-size:.9rem;opacity:.7">Section ${i+1}</strong>
+        <span>
+          <button class="btn sm ghost" type="button" data-lact="up"   ${i===0?"disabled":""}>&uarr;</button>
+          <button class="btn sm ghost" type="button" data-lact="down" ${i===longDraft.length-1?"disabled":""}>&darr;</button>
+          <button class="btn sm danger" type="button" data-lact="del">Remove</button>
+        </span>
+      </div>
+      <input type="text" data-lfield="h" placeholder="Section heading"
+             value="${esc(row.h||"")}" style="margin-bottom:6px">
+      <textarea rows="5" data-lfield="t" placeholder="The words. A blank line starts a new paragraph.">${esc(row.t||"")}</textarea>
+    </div>`).join("") ||
+    `<p class="hint">No sections yet. Add one, or leave it empty and the bar will not appear on the guide.</p>`;
+}
+
+$("#f_long_add") && $("#f_long_add").addEventListener("click", () => {
+  longDraft.push({ h:"", t:"" }); renderLongform(); markDirty();
+});
+
+$("#f_long_list") && $("#f_long_list").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-lact]"); if(!btn) return;
+  const i = +btn.closest("[data-long]").dataset.long;
+  const act = btn.dataset.lact;
+  if(act==="del")  longDraft.splice(i,1);
+  if(act==="up"   && i>0) longDraft.splice(i-1,0,longDraft.splice(i,1)[0]);
+  if(act==="down" && i<longDraft.length-1) longDraft.splice(i+1,0,longDraft.splice(i,1)[0]);
+  renderLongform(); markDirty();
+});
+
+$("#f_long_list") && $("#f_long_list").addEventListener("input", (e) => {
+  const f = e.target.closest("[data-lfield]"); if(!f) return;
+  const i = +f.closest("[data-long]").dataset.long;
+  longDraft[i][f.dataset.lfield] = f.value;
+  markDirty();
+});
+
+/* Turn an existing guide's HTML body into editable sections. Deliberately a
+   button rather than automatic: it is a one-way conversion and it should be a
+   decision, not something that happens while you are looking elsewhere. */
+$("#f_long_import") && $("#f_long_import").addEventListener("click", () => {
+  const g = state.guides.find(x => x.id === state.current);
+  const html = (g && g.body) || "";
+  if(!html.trim()) return;
+  const doc = new DOMParser().parseFromString("<div>"+html+"</div>", "text/html");
+  const rows = []; let cur = null;
+  doc.querySelector("div").childNodes.forEach(n => {
+    if(n.nodeType !== 1) return;
+    const tag = n.tagName.toLowerCase();
+    if(/^h[1-4]$/.test(tag)){ cur = { h:n.textContent.trim(), t:"" }; rows.push(cur); return; }
+    const txt = (n.textContent||"").trim();
+    if(!txt) return;
+    if(!cur){ cur = { h:"", t:"" }; rows.push(cur); }
+    cur.t = cur.t ? cur.t + "\n\n" + txt : txt;
+  });
+  longDraft = rows.length ? rows : [{ h:"", t:html.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim() }];
+  renderLongform(); markDirty();
+  $("#f_long_legacy").classList.add("hidden");
+});
+
 $("#save").addEventListener("click", async () => {
   const btn = $("#save"), msg = $("#msg");
   // A new guide needs a title (we build its id/URL from it).
