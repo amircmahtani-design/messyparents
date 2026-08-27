@@ -1048,7 +1048,9 @@ var GUIDES = [
     "spit-up-while-asleep",
     "milk-from-the-nose"
   ],
-  "seoDesc": "The safest place for a newborn to sleep is on their back, on a firm, flat and completely clear sleep surface.",
+  "seo": {
+    "description": "The safest place for a newborn to sleep is on their back, on a firm, flat and completely clear sleep surface."
+  },
   "longform": [
     {
       "h": "We asked if she could sleep on her side",
@@ -1146,7 +1148,9 @@ var GUIDES = [
     "spit-up-while-asleep",
     "newborn-noises-at-night"
   ],
-  "seoDesc": "Newborn hiccups are very common, usually bother parents more than babies and do not normally stop a comfortable baby from sleeping.",
+  "seo": {
+    "description": "Newborn hiccups are very common, usually bother parents more than babies and do not normally stop a comfortable baby from sleeping."
+  },
   "longform": [
     {
       "h": "It was just after midnight",
@@ -1245,7 +1249,9 @@ var GUIDES = [
     "fast-breathing-newborn",
     "safe-sleep-newborn"
   ],
-  "seoDesc": "Saline, humidity and patience can help a blocked newborn nose, but turning your baby upside down is not the answer, even at 2am.",
+  "seo": {
+    "description": "Saline, humidity and patience can help a blocked newborn nose, but turning your baby upside down is not the answer, even at 2am."
+  },
   "longform": [
     {
       "h": "How do you even blow a baby's nose",
@@ -1350,7 +1356,9 @@ var GUIDES = [
     "fast-breathing-newborn",
     "nappy-changes-at-night"
   ],
-  "seoDesc": "Grunting, squeaking, kicking and arm-waving can all happen during normal newborn sleep, even when your baby is deeply asleep.",
+  "seo": {
+    "description": "Grunting, squeaking, kicking and arm-waving can all happen during normal newborn sleep, even when your baby is deeply asleep."
+  },
   "longform": [
     {
       "h": "The first night home",
@@ -1445,7 +1453,9 @@ var GUIDES = [
     "safe-sleep-newborn",
     "blocked-nose-newborn"
   ],
-  "seoDesc": "Milk can sometimes come through a baby’s nose during spit-up because the mouth and nose connect at the back of the throat.",
+  "seo": {
+    "description": "Milk can sometimes come through a baby’s nose during spit-up because the mouth and nose connect at the back of the throat."
+  },
   "longform": [
     {
       "h": "A bit of milk came out of her nose",
@@ -1549,7 +1559,9 @@ var GUIDES = [
     "safe-sleep-newborn",
     "feeding-on-demand"
   ],
-  "seoDesc": "Small spit-ups can happen hours after a feed, while repeated forceful vomiting is the version worth getting checked.",
+  "seo": {
+    "description": "Small spit-ups can happen hours after a feed, while repeated forceful vomiting is the version worth getting checked."
+  },
   "longform": [
     {
       "h": "Two hours after a feed",
@@ -1646,7 +1658,9 @@ var GUIDES = [
     "blocked-nose-newborn",
     "sleeping-with-mouth-open"
   ],
-  "seoDesc": "Newborn breathing can switch between faster and slower bursts, but breathing effort and colour matter more than speed alone.",
+  "seo": {
+    "description": "Newborn breathing can switch between faster and slower bursts, but breathing effort and colour matter more than speed alone."
+  },
   "longform": [
     {
       "h": "Why does she sometimes breathe so fast",
@@ -1744,7 +1758,9 @@ var GUIDES = [
     "fast-breathing-newborn",
     "safe-sleep-newborn"
   ],
-  "seoDesc": "Newborns often startle, tremble or twitch, but repeated movement or reduced awareness is worth getting checked.",
+  "seo": {
+    "description": "Newborns often startle, tremble or twitch, but repeated movement or reduced awareness is worth getting checked."
+  },
   "longform": [
     {
       "h": "Eight words, sent immediately",
@@ -1844,7 +1860,9 @@ var GUIDES = [
     "fast-breathing-newborn",
     "newborn-noises-at-night"
   ],
-  "seoDesc": "Sleeping with an open mouth can be harmless, but persistent mouth breathing is worth checking alongside feeding and breathing effort.",
+  "seo": {
+    "description": "Sleeping with an open mouth can be harmless, but persistent mouth breathing is worth checking alongside feeding and breathing effort."
+  },
   "longform": [
     {
       "h": "She sleeps with her mouth open",
@@ -1947,7 +1965,9 @@ var GUIDES = [
     "safe-sleep-newborn",
     "feeding-on-demand"
   ],
-  "seoDesc": "Poo gets changed quickly. A wet nappy can usually wait until she's up anyway. Modern nappies are better at this than your anxiety suggests.",
+  "seo": {
+    "description": "Poo gets changed quickly. A wet nappy can usually wait until she's up anyway. Modern nappies are better at this than your anxiety suggests."
+  },
   "longform": [
     {
       "h": "She’s peed, but she’s asleep",
@@ -2047,7 +2067,9 @@ var GUIDES = [
     "newborn-weight-loss",
     "spit-up-while-asleep"
   ],
-  "seoDesc": "Responsive feeding follows your baby’s cues, but a feeding plan given for a medical reason always comes first.",
+  "seo": {
+    "description": "Responsive feeding follows your baby’s cues, but a feeding plan given for a medical reason always comes first."
+  },
   "longform": [
     {
       "h": "Is on demand right at the beginning",
@@ -2144,7 +2166,9 @@ var GUIDES = [
     "nappy-changes-at-night",
     "newborn-weight-loss"
   ],
-  "seoDesc": "Feeding intervals are usually counted from the start of one feed to the start of the next, unless your baby has a different plan.",
+  "seo": {
+    "description": "Feeding intervals are usually counted from the start of one feed to the start of the next, unless your baby has a different plan."
+  },
   "longform": [
     {
       "h": "The smallest question we asked",
@@ -2240,7 +2264,9 @@ var GUIDES = [
     "timing-feeds-start-or-finish",
     "nappy-changes-at-night"
   ],
-  "seoDesc": "Some newborn weight loss is expected in the first days, and the turning point matters more than one number on the scale.",
+  "seo": {
+    "description": "Some newborn weight loss is expected in the first days, and the turning point matters more than one number on the scale."
+  },
   "longform": [
     {
       "h": "Why does she weigh less than she did",
@@ -2338,7 +2364,9 @@ var GUIDES = [
     "newborn-noises-at-night",
     "sleeping-with-mouth-open"
   ],
-  "seoDesc": "Newborns blink far less than adults, so a long unbroken stare can be completely ordinary.",
+  "seo": {
+    "description": "Newborns blink far less than adults, so a long unbroken stare can be completely ordinary."
+  },
   "longform": [
     {
       "h": "Do babies blink less",
@@ -2435,7 +2463,9 @@ var GUIDES = [
     "newborn-noises-at-night",
     "feeding-on-demand"
   ],
-  "seoDesc": "Early baby smiles are usually spontaneous rather than social, but you are still allowed to take them personally.",
+  "seo": {
+    "description": "Early baby smiles are usually spontaneous rather than social, but you are still allowed to take them personally."
+  },
   "longform": [
     {
       "h": "She smiled several times in the incubator",
