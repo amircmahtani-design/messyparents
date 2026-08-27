@@ -304,17 +304,33 @@ async function planScene(guide, characterSelection, userVisualDescription) {
        chosen, we hand the planner a lead parent at random and make it justify
        departing from it. The guide's own words still win — a guide that says
        Mama slept beside the cot should show Mama. */
-    : ("\n\nCAST BALANCE — read this before choosing `characters`:\n" +
-       "This family has TWO parents who are equally present. Papa does night feeds, " +
-       "nappies, soothing and cot-side worrying exactly as much as Mama does.\n" +
-       "1. If the guide text names a specific parent in the scene, use that parent.\n" +
-       "2. Otherwise build this one around " + (Math.random() < 0.5 ? "PAPA" : "MAMA") + 
-       ", who is the lead parent for this illustration.\n" +
-       "3. Do not add the second parent merely to be safe — one parent and Ari is " +
-       "usually the stronger, calmer image. Use both only when the moment genuinely " +
-       "needs two people.\n" +
-       "4. 'Mother and baby' is not the default reading of a parenting guide. " +
-       "Choosing Mama every time is a failure of this brief.");
+    : (function () {
+        /* Left free, the planner picks Mama almost every time: she is the
+           parent most often named in the guides, and "mother and baby" is the
+           safest stock reading of any parenting sentence. Papa then never
+           appears, which is wrong for a site written by both of them.
+
+           So the shape of the cast is drawn here rather than left to the
+           model's instincts: roughly a third each of Mama and Ari, Papa and
+           Ari, and the whole family together. The guide's own words still
+           win — a guide that says Mama slept beside the cot shows Mama. */
+        const r = Math.random();
+        const shape = r < 0.34 ? "MAMA and Ari"
+                    : r < 0.68 ? "PAPA and Ari"
+                    : "MAMA, PAPA and Ari together";
+        return "\n\nCAST BALANCE — read this before choosing `characters`:\n" +
+          "This family has TWO parents who are equally present. Papa does night feeds, " +
+          "nappies, soothing and cot-side worrying exactly as much as Mama does, and " +
+          "scenes with both of them are welcome — two tired parents over one cot is " +
+          "often the funniest and truest version of a moment.\n" +
+          "1. If the guide text names a specific parent in the scene, use that parent.\n" +
+          "2. Otherwise the cast for this illustration is: " + shape + ". Build the " +
+          "visual moment around them.\n" +
+          "3. Depart from that only if the moment genuinely cannot be drawn that way — " +
+          "a single-handed 3am feed does not need two people standing there.\n" +
+          "4. 'Mother and baby' is not the default reading of a parenting guide. " +
+          "Choosing Mama every time is a failure of this brief.";
+      })();
 
   const userDescBlock = (userVisualDescription && userVisualDescription.trim())
     ? ("\n\nUSER-DIRECTED VISUAL — the human author has described exactly what they want to see. Take this as the visualMoment more or less verbatim, only refine wording. Everything else (parentConcern, characters, expressions) should be derived to fit this exact scene:\n\"" + userVisualDescription.trim() + "\"")
