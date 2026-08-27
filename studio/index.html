@@ -2251,7 +2251,18 @@ async function boot(){
     else { $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#who").textContent=""; $("#signout").classList.add("hidden"); }
   });
 }
+
+/* --- Batch review add-on (studio/batches.js) -------------------------------
+   The only line Studio gives up to the bolt-on: read-only handles so it can
+   read the loaded guides, jump between them, and re-render the list after a
+   per-batch import. Nothing above this line depends on it — delete the
+   batches.js <script> tag and Studio behaves exactly as it did before. */
+window.MPCStudio = { state, selectGuide, renderList, loadGuides, saveGuide, guideSlug };
+
 boot();
 </script>
+
+<!-- Batch review add-on — self-installing, safe to remove -->
+<script src="batches.js?v=1"></script>
 </body>
 </html>
