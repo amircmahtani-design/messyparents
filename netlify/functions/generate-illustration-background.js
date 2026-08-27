@@ -111,6 +111,7 @@ const HARD_RULES = [
   "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
+  "FRAMING — as important as the background rule, and for the same reason: the green is cut away afterwards and the drawing floats on a cream page with nothing around it. EVERY element must sit COMPLETELY INSIDE the canvas with clear green margin on all four sides — the whole cot including all four legs and the full base, the whole chair, the whole table, every foot, every elbow, the top of every head. Nothing may touch, straddle or run off any edge. A cot whose base runs off the bottom does not read as a photograph cropped for effect; once the background is gone it reads as a piece of furniture sliced in half. Zoom OUT and draw the objects smaller rather than letting anything reach an edge. No bleed, no crop, no partial objects, no elements continuing past the frame.",
   "TECHNICAL BACKGROUND REQUIREMENT — this is not aesthetic, it is required for the pipeline: the ENTIRE background behind the characters MUST be pure saturated bright green, RGB (0, 255, 0), hex #00FF00. Fill the whole canvas outside the characters with this exact bright green. Do NOT use muted green, sage green, olive, khaki, beige, cream, paper-tone, warm off-white, or any 'book-appropriate' subtle background. Do NOT add texture, watercolour wash, paper grain, gradient, vignette or scenery. The green must be flat, uniform and unmistakably #00FF00. Bright green must NEVER appear anywhere on the characters, their clothes, hair, skin or props — only on the background."
 ];
 
@@ -138,51 +139,6 @@ function imageTool(size) {
 }
 
 function imgInput(url) { return { type: "input_image", image_url: url }; }
-
-/* ---------- reference inlining ---------------------------------------------
-   The Responses API used to be handed plain https:// URLs for every reference
-   image, which meant OpenAI had to go and download five PNGs from our own site
-   before it could start drawing — and again for the QA pass, and again for
-   every retry. Once the reference set grew to include the 3MB brand board and
-   the ~1.6MB approved scenes, that fetch started exceeding OpenAI's own
-   download timeout and the whole job failed with:
-
-     "Unable to download content from the provided URL before the timeout."
-
-   We now fetch the references ourselves and send them inline as base64 data
-   URLs. OpenAI makes no outbound request at all, so its timeout cannot fire.
-   The bytes are cached in module scope: references never change, so a warm
-   function instance fetches each one exactly once.                          */
-
-const REF_CACHE = new Map();
-const REF_FETCH_TIMEOUT_MS = 8000;
-
-async function fetchAsDataUrl(url) {
-  if (REF_CACHE.has(url)) return REF_CACHE.get(url);
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), REF_FETCH_TIMEOUT_MS);
-  try {
-    const r = await fetch(url, { signal: ctrl.signal });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    const buf = Buffer.from(await r.arrayBuffer());
-    const type = r.headers.get("content-type") || "image/png";
-    const dataUrl = "data:" + type.split(";")[0] + ";base64," + buf.toString("base64");
-    REF_CACHE.set(url, dataUrl);
-    return dataUrl;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/** Inline a list of reference URLs. If one cannot be fetched we fall back to
-    the plain URL for that image rather than failing the whole generation. */
-async function inlineRefs(urls) {
-  return Promise.all((urls || []).map(async (u) => {
-    if (/^data:/.test(u)) return u;
-    try { return await fetchAsDataUrl(u); }
-    catch (e) { console.error("ref inline failed, falling back to URL:", u, String(e)); return u; }
-  }));
-}
 
 function extractImage(resp) {
   const out = resp && resp.output;
@@ -328,60 +284,6 @@ function borderTransparencyRatio(b64) {
 
 /* ---------- STAGE 1: PLAN --------------------------------------------------- */
 
-/* When the human has already typed the scene, the planner has nothing to add.
-   It was being asked to invent a visual moment and then told, in the same
-   breath, to take the user's sentence "more or less verbatim" — a full model
-   round trip to hand back what we already had. This builds the same brief
-   shape deterministically, in zero API calls.
-
-   Character resolution, in order:
-     1. the chips the user actually clicked (Mama / Papa / Ari)
-     2. failing that, the names mentioned in the description itself
-     3. failing that, the whole family                                       */
-
-const NAME_PATTERNS = {
-  Mama: /\b(mama|mamma|mummy|mum|mother|mom)\b/i,
-  Papa: /\b(papa|pappa|daddy|dad|father)\b/i,
-  Ari:  /\b(ari|baby|infant|toddler|she|her)\b/i
-};
-
-function charactersFromText(text) {
-  const found = [];
-  for (const name of ["Mama", "Papa", "Ari"]) {
-    if (NAME_PATTERNS[name].test(text)) found.push(name);
-  }
-  return found;
-}
-
-function briefFromDescription(guide, characterSelection, userVisualDescription) {
-  const desc = (userVisualDescription || "").trim();
-  let characters = (characterSelection && characterSelection.length)
-    ? characterSelection.slice()
-    : charactersFromText(desc);
-  if (!characters.length) characters = ["Mama", "Papa", "Ari"];
-
-  return {
-    guideTopic:   guide.title || "parenting moment",
-    /* The guide still supplies the concern — it is what QA checks the finished
-       image against — but the visual moment is the user's, word for word. */
-    parentConcern: ((guide.panel && guide.panel.summary) || guide.summary || guide.title || desc),
-    coreMeaning:   ((guide.panel && guide.panel.summary) || guide.title || desc),
-    visualMoment:  desc,
-    characters,
-    characterActions: {},
-    expressions: {},
-    props: [],
-    ariAccessory: "none",
-    tone: ["warm", "observational"],
-    composition: "characters centred with breathing room",
-    medicalIntensity: "none",
-    mustShow: [desc],
-    mustAvoid: ["glasses on Papa", "text", "extra characters"],
-    _source: "user-description"
-  };
-}
-
-
 async function planScene(guide, characterSelection, userVisualDescription) {
   const guideText = [
     "TITLE: "     + (guide.title || ""),
@@ -395,7 +297,24 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     ? ("\n\nMANDATORY CHARACTER SELECTION: This illustration MUST include exactly these characters and only these characters: " +
        characterSelection.join(", ") +
        ". Do not add anyone else, do not drop anyone. Build the visual moment around this specific set.")
-    : "";
+    /* Left free, the planner picks Mama almost every time: she is the parent
+       most often named in the guides, and 'mother and baby' is the safest
+       stock reading of any parenting sentence. Papa then never appears, which
+       is wrong for a site written by both of them. So when the author has not
+       chosen, we hand the planner a lead parent at random and make it justify
+       departing from it. The guide's own words still win — a guide that says
+       Mama slept beside the cot should show Mama. */
+    : ("\n\nCAST BALANCE — read this before choosing `characters`:\n" +
+       "This family has TWO parents who are equally present. Papa does night feeds, " +
+       "nappies, soothing and cot-side worrying exactly as much as Mama does.\n" +
+       "1. If the guide text names a specific parent in the scene, use that parent.\n" +
+       "2. Otherwise build this one around " + (Math.random() < 0.5 ? "PAPA" : "MAMA") + 
+       ", who is the lead parent for this illustration.\n" +
+       "3. Do not add the second parent merely to be safe — one parent and Ari is " +
+       "usually the stronger, calmer image. Use both only when the moment genuinely " +
+       "needs two people.\n" +
+       "4. 'Mother and baby' is not the default reading of a parenting guide. " +
+       "Choosing Mama every time is a failure of this brief.");
 
   const userDescBlock = (userVisualDescription && userVisualDescription.trim())
     ? ("\n\nUSER-DIRECTED VISUAL — the human author has described exactly what they want to see. Take this as the visualMoment more or less verbatim, only refine wording. Everything else (parentConcern, characters, expressions) should be derived to fit this exact scene:\n\"" + userVisualDescription.trim() + "\"")
@@ -513,16 +432,12 @@ function assembleReferences(brief, manifest, refsBase) {
   const base = (refsBase || "").replace(/\/$/, "");
   const chars = (brief.characters || []).map(c => c.toLowerCase());
   const refs = [];
-  const charUrls = [];
   const chosen = { characters: [], brand: null, approved: null };
 
   // 1) Character sheets — identity comes first
   for (const c of chars) {
     const file = manifest.characters[c];
-    if (file) {
-      const u = base + "/" + file;
-      refs.push(u); charUrls.push(u); chosen.characters.push(file);
-    }
+    if (file) { refs.push(base + "/" + file); chosen.characters.push(file); }
   }
   // 2) One approved finished scene — style and composition language
   if (manifest.approvedScenes && manifest.approvedScenes.length) {
@@ -535,7 +450,7 @@ function assembleReferences(brief, manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, characterUrls: charUrls, chosen };
+  return { urls: refs, chosen };
 }
 
 /* ---------- ICON MODE ------------------------------------------------------
@@ -591,7 +506,7 @@ function assembleIconReferences(manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, characterUrls: [], chosen };
+  return { urls: refs, chosen };
 }
 
 function buildIconPrompt(brief, retryNotes, userInstructions) {
@@ -787,6 +702,7 @@ async function qaImage(b64, refUrls, brief) {
     '  "sceneMeaningMatches": bool,\n' +
     '  "anatomyIsCoherent": bool,\n' +
     '  "propsAreCorrect": bool,\n' +
+    '  "subjectFullyInFrame": bool,   // false if ANY object or person is cut by an edge — cot legs, chair legs, a foot, the top of a head\n' +
     '  "containsUnrequestedText": bool,\n' +
     '  "containsUnrequestedObjects": bool,\n' +
     '  "toneIsAppropriate": bool,\n' +
@@ -815,7 +731,12 @@ async function qaImage(b64, refUrls, brief) {
     "Parent expressions should match the concern: for 'why/is-this-normal' guides, " +
     "parents look mildly puzzled or gently concerned — NOT alarmed, NOT delighted, " +
     "NOT indifferent.\n\n" +
-    "AUTOMATIC RETRY if any of the following are true: a required character does " +
+    "FRAMING CHECK — the background is removed and the drawing is placed on a plain " +
+    "cream page, so anything touching an edge ends up looking sliced off rather than " +
+    "cropped. Set subjectFullyInFrame=false if any person, animal, item of furniture " +
+    "or prop is cut by the canvas edge, including a cot or chair whose legs or base " +
+    "run off the bottom. Clear space on all four sides is required, not preferred.\n\n" +
+    "AUTOMATIC RETRY if any of the following are true: subjectFullyInFrame is false; a required character does " +
     "not match the identity rules above; Papa has glasses; Ari's face/hair colour/romper " +
     "have changed; a wooden spoon appears without being requested; arms/hands/held " +
     "objects are confused; the baby looks ill or distressed for a normal topic; " +
@@ -854,6 +775,7 @@ function qaToRetryNotes(qa) {
       }
     }
   }
+  if (qa.subjectFullyInFrame === false)       notes.push("- Something is cut off by the edge of the canvas. Zoom OUT and redraw the whole scene smaller so every object — the entire cot including its legs and base, every chair leg, every foot, the top of every head — sits fully inside the frame with clear green margin on all four sides. Nothing may touch or cross an edge.");
   if (qa.sceneMeaningMatches === false)       notes.push("- Illustration does not communicate the brief's visual moment.");
   if (qa.anatomyIsCoherent === false)         notes.push("- Anatomy is confused (hands/arms/held objects).");
   if (qa.propsAreCorrect === false)           notes.push("- Props are wrong or missing.");
@@ -866,16 +788,11 @@ function qaToRetryNotes(qa) {
 
 /* ---------- MAIN: orchestrate all four stages ------------------------------ */
 
-const MANIFEST_CACHE = new Map();
-
 async function loadManifest(refsBase) {
   const url = (refsBase || "").replace(/\/$/, "") + "/manifest.json";
-  if (MANIFEST_CACHE.has(url)) return MANIFEST_CACHE.get(url);
   const r = await fetch(url);
   if (!r.ok) throw new Error("Could not load refs manifest at " + url);
-  const j = await r.json();
-  MANIFEST_CACHE.set(url, j);
-  return j;
+  return await r.json();
 }
 
 exports.handler = async (event) => {
@@ -892,22 +809,14 @@ exports.handler = async (event) => {
     userVisualDescription = "",
     mode = "character",
     aspectRatio = "auto",
-    iconSubject = "",
-    forcePlan = false
+    iconSubject = ""
   } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
 
   try {
-    const describedByUser = mode !== "icon" && !briefOverride && !forcePlan &&
-                            !!(userVisualDescription || "").trim();
-    await job.set({
-      status: describedByUser ? "generating" : "planning",
-      plannerSkipped: describedByUser,
-      ts: Date.now(),
-      promptVersion: PROMPT_VER
-    });
+    await job.set({ status: "planning", ts: Date.now(), promptVersion: PROMPT_VER });
 
     /* Fetch the guide so the planner has real content to work from */
     const gSnap = await db.collection("guides").doc(guideId).get();
@@ -926,16 +835,7 @@ exports.handler = async (event) => {
     if (mode === "icon") {
       brief = await planIconScene(guide, iconSubject, userVisualDescription);
     } else {
-      const typed = (userVisualDescription || "").trim();
-      if (briefOverride) {
-        brief = briefOverride;
-      } else if (typed && !forcePlan) {
-        /* SKIP STAGE 1 — the user described the scene, so there is nothing
-           for the planner to decide. Saves a full model round trip. */
-        brief = briefFromDescription(guide, characterSelection, typed);
-      } else {
-        brief = await planScene(guide, characterSelection, userVisualDescription);
-      }
+      brief = briefOverride || await planScene(guide, characterSelection, userVisualDescription);
       // If the user edited a brief AND also toggled character chips, honour the chips
       if (briefOverride && characterSelection && characterSelection.length) {
         brief = { ...brief, characters: characterSelection };
@@ -947,24 +847,9 @@ exports.handler = async (event) => {
 
     /* STAGE 2 · REFERENCES — icons need only the brand board, not characters */
     const manifest = await loadManifest(refsBase);
-    const { urls: rawRefUrls, characterUrls: rawCharUrls, chosen } = (mode === "icon")
+    const { urls: refUrls, chosen } = (mode === "icon")
       ? assembleIconReferences(manifest, refsBase)
       : assembleReferences(brief, manifest, refsBase);
-
-    /* Fetch the reference bytes ourselves and pass them inline. See the note
-       on inlineRefs() above — handing OpenAI URLs is what made this function
-       start failing with "Unable to download content from the provided URL
-       before the timeout". Cached, so this costs nothing on a warm instance. */
-    const refUrls = await inlineRefs(rawRefUrls);
-
-    /* The QA pass only checks character identity, so it gets the character
-       sheets alone — no brand board, no approved scene. Roughly halves the
-       payload on every review and every retry. */
-    const qaRefUrls = (mode === "icon")
-      ? refUrls
-      : (rawCharUrls && rawCharUrls.length
-          ? await inlineRefs(rawCharUrls)
-          : refUrls);
 
     /* STAGE 3 + 4 · GENERATE with QA retry loop */
     let attempt = 0, retryNotes = "", best = null, bestQA = null, bestBorderRatio = 0;
@@ -985,8 +870,8 @@ exports.handler = async (event) => {
       await job.set({ status: "reviewing", attempt, ts: Date.now() }, { merge: true });
       let qa;
       try { qa = (brief.mode === "icon")
-        ? await qaIcon(cut.b64, qaRefUrls, brief)
-        : await qaImage(cut.b64, qaRefUrls, brief); }
+        ? await qaIcon(cut.b64, refUrls, brief)
+        : await qaImage(cut.b64, refUrls, brief); }
       catch (e) { qa = { decision: "retry", issues: ["QA call failed: " + (e.message || e)] }; }
 
       qa.transparencyOk = transparencyOk;
