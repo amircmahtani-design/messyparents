@@ -418,13 +418,37 @@
     if (conn.saveData) return;
     if (/^(slow-)?2g$/.test(conn.effectiveType || "")) return;
 
+    var baked = prerendered.getAttribute("data-guide-hash");
+
+    /* How often this may re-ask. The check is one small REST GET, so the gate
+       is here to keep it off the hot path — not to make it a one-shot.
+       "Once per session" was doing the latter: open a guide, edit it in
+       Studio, reload the tab, and the mark was already set, so the page went
+       on serving the old deploy until the tab was closed. That is the exact
+       window this check exists to cover.
+
+       Now: re-check when the served HTML changed (a deploy landed), when the
+       reader explicitly reloaded, or when the last check has aged out. */
+    var TTL_MS = 60000;
+    var RELOADED = (function () {
+      try {
+        var nav = performance.getEntriesByType("navigation")[0];
+        if (nav) return nav.type === "reload";
+        return performance.navigation && performance.navigation.type === 1;
+      } catch (e) { return false; }
+    })();
+
     var mark = "mpc.fresh." + key;
     try {
-      if (sessionStorage.getItem(mark)) return;
-      sessionStorage.setItem(mark, "1");
-    } catch (e) { /* private mode — check once, do not persist */ }
-
-    var baked = prerendered.getAttribute("data-guide-hash");
+      var prev = sessionStorage.getItem(mark);
+      if (prev && !RELOADED) {
+        var bits = prev.split("|");
+        var sameBuild = bits[0] === baked;
+        var fresh = (Date.now() - Number(bits[1] || 0)) < TTL_MS;
+        if (sameBuild && fresh) return;
+      }
+      sessionStorage.setItem(mark, baked + "|" + Date.now());
+    } catch (e) { /* private mode — check anyway, just do not persist */ }
 
     /* Deliberately fetchGuideById, not fetchGuide. On a generated page the id
        was baked in by the build, so the document lookup is exact and the
