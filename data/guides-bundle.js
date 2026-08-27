@@ -1014,11 +1014,11 @@ var GUIDES = [
     "helped": {
       "title": "What helped us",
       "items": [
-        "A Love to Dream swaddle worked for Ari",
-        "White noise helped Ari settle",
-        "Mama slept in the room beside Ari",
+        "A Love to Dream swaddle",
+        "White noise for settling",
+        "Sleeping in the room beside her",
         "An intercom when we left the room",
-        "Feeding near the cot so we could put her down safely"
+        "Feeding near the cot for an easier transfer"
       ]
     },
     "warn": {
@@ -1527,7 +1527,7 @@ var GUIDES = [
         "Watching the weight trend, not the muslins",
         "A tablespoon of milk spreads a long way",
         "Knowing that forceful means milk shoots out",
-        "Checking how Ari seemed after each episode"
+        "Checking how she seemed after each episode"
       ]
     },
     "warn": {
