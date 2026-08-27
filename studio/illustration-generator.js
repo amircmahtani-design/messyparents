@@ -442,17 +442,44 @@
       finishGeneration();
     }
 
-    setTimeout(() => {
-      if (!gpState.url && document.getElementById("gpGenerateBtn").disabled) {
+    /* Studio used to stop watching after 6 minutes and tell you to come back
+       later — while the job carried on running perfectly well in the
+       background. A run is a planning call, then per attempt an image
+       generation plus a vision QA call, so several minutes is normal rather
+       than a symptom of anything being stuck.
+
+       The Firestore listener now stays attached for the full 15 minutes a
+       Netlify background function is allowed to run, and the message reports
+       elapsed time instead of implying something has gone wrong. */
+    const NETLIFY_BACKGROUND_LIMIT_MS = 15 * 60 * 1000;
+    const startedAt = Date.now();
+
+    gpState.tick = setInterval(() => {
+      if (gpState.url || gpState.cancelled) { clearInterval(gpState.tick); return; }
+      if (!document.getElementById("gpGenerateBtn").disabled) { clearInterval(gpState.tick); return; }
+
+      const mins = Math.floor((Date.now() - startedAt) / 60000);
+      if (mins >= 3) {
+        const msg = document.getElementById("gpMsg");
+        /* Don't stamp over the live stage text the snapshot handler writes. */
+        if (msg && !/^(🧠|🎨|🔍)/.test(msg.textContent)) {
+          msg.textContent = "Still drawing — " + mins + " min so far. This is normal; leave it running.";
+        }
+      }
+
+      if (Date.now() - startedAt >= NETLIFY_BACKGROUND_LIMIT_MS) {
+        clearInterval(gpState.tick);
         try { gpState.unsub && gpState.unsub(); } catch(_) {}
-        document.getElementById("gpMsg").textContent = "Still working after 6 min. Reopen the guide shortly — the job may finish in the background.";
+        document.getElementById("gpMsg").textContent =
+          "No result after 15 min — past the background function's limit. Reopen the guide to check, then try again.";
         finishGeneration();
       }
-    }, 360000);
+    }, 15000);
   }
 
   /** Reset the UI back to the "not generating" state. */
   function finishGeneration() {
+    if (gpState.tick) { clearInterval(gpState.tick); gpState.tick = null; }
     document.getElementById("gpGenerateBtn").disabled = false;
     hide("gpCancelBtn");
     const pendingCol = document.getElementById("gpPendingCol");
