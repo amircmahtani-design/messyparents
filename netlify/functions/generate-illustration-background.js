@@ -328,6 +328,60 @@ function borderTransparencyRatio(b64) {
 
 /* ---------- STAGE 1: PLAN --------------------------------------------------- */
 
+/* When the human has already typed the scene, the planner has nothing to add.
+   It was being asked to invent a visual moment and then told, in the same
+   breath, to take the user's sentence "more or less verbatim" — a full model
+   round trip to hand back what we already had. This builds the same brief
+   shape deterministically, in zero API calls.
+
+   Character resolution, in order:
+     1. the chips the user actually clicked (Mama / Papa / Ari)
+     2. failing that, the names mentioned in the description itself
+     3. failing that, the whole family                                       */
+
+const NAME_PATTERNS = {
+  Mama: /\b(mama|mamma|mummy|mum|mother|mom)\b/i,
+  Papa: /\b(papa|pappa|daddy|dad|father)\b/i,
+  Ari:  /\b(ari|baby|infant|toddler|she|her)\b/i
+};
+
+function charactersFromText(text) {
+  const found = [];
+  for (const name of ["Mama", "Papa", "Ari"]) {
+    if (NAME_PATTERNS[name].test(text)) found.push(name);
+  }
+  return found;
+}
+
+function briefFromDescription(guide, characterSelection, userVisualDescription) {
+  const desc = (userVisualDescription || "").trim();
+  let characters = (characterSelection && characterSelection.length)
+    ? characterSelection.slice()
+    : charactersFromText(desc);
+  if (!characters.length) characters = ["Mama", "Papa", "Ari"];
+
+  return {
+    guideTopic:   guide.title || "parenting moment",
+    /* The guide still supplies the concern — it is what QA checks the finished
+       image against — but the visual moment is the user's, word for word. */
+    parentConcern: ((guide.panel && guide.panel.summary) || guide.summary || guide.title || desc),
+    coreMeaning:   ((guide.panel && guide.panel.summary) || guide.title || desc),
+    visualMoment:  desc,
+    characters,
+    characterActions: {},
+    expressions: {},
+    props: [],
+    ariAccessory: "none",
+    tone: ["warm", "observational"],
+    composition: "characters centred with breathing room",
+    medicalIntensity: "none",
+    mustShow: [desc],
+    mustAvoid: ["glasses on Papa", "text", "extra characters"],
+    _source: "user-description"
+  };
+}
+
+
 async function planScene(guide, characterSelection, userVisualDescription) {
   const guideText = [
     "TITLE: "     + (guide.title || ""),
@@ -838,14 +892,22 @@ exports.handler = async (event) => {
     userVisualDescription = "",
     mode = "character",
     aspectRatio = "auto",
-    iconSubject = ""
+    iconSubject = "",
+    forcePlan = false
   } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
 
   try {
-    await job.set({ status: "planning", ts: Date.now(), promptVersion: PROMPT_VER });
+    const describedByUser = mode !== "icon" && !briefOverride && !forcePlan &&
+                            !!(userVisualDescription || "").trim();
+    await job.set({
+      status: describedByUser ? "generating" : "planning",
+      plannerSkipped: describedByUser,
+      ts: Date.now(),
+      promptVersion: PROMPT_VER
+    });
 
     /* Fetch the guide so the planner has real content to work from */
     const gSnap = await db.collection("guides").doc(guideId).get();
@@ -864,7 +926,16 @@ exports.handler = async (event) => {
     if (mode === "icon") {
       brief = await planIconScene(guide, iconSubject, userVisualDescription);
     } else {
-      brief = briefOverride || await planScene(guide, characterSelection, userVisualDescription);
+      const typed = (userVisualDescription || "").trim();
+      if (briefOverride) {
+        brief = briefOverride;
+      } else if (typed && !forcePlan) {
+        /* SKIP STAGE 1 — the user described the scene, so there is nothing
+           for the planner to decide. Saves a full model round trip. */
+        brief = briefFromDescription(guide, characterSelection, typed);
+      } else {
+        brief = await planScene(guide, characterSelection, userVisualDescription);
+      }
       // If the user edited a brief AND also toggled character chips, honour the chips
       if (briefOverride && characterSelection && characterSelection.length) {
         brief = { ...brief, characters: characterSelection };
