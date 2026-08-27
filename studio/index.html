@@ -1124,7 +1124,8 @@ async function savePage(){
     // clears the old value instead of leaving a stale image behind.
     await fs.setDoc(fs.doc(db,"pages",id), data);
     state.pagesData[id]=data;
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    msg.className="msg ok"; msg.textContent="Saved.";
+    queueRebuild();
     pushPagePreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
@@ -1177,7 +1178,8 @@ async function saveGuide(guide){
     const {fs, db} = state.fb;
     const clean = JSON.parse(JSON.stringify(guide));   // drops any undefined fields
     await fs.setDoc(fs.doc(db, "guides", guide.id), clean);
-    return "Saved to Firestore — live on the site.";
+    queueRebuild();
+    return "Saved.";
   }
   // local preview mode: offer the updated data as a download
   const i = state.guides.findIndex(g => g.id === guide.id);
@@ -1800,6 +1802,86 @@ $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.or
    ====================================================================== */
 const HOOK_KEY = "mpc.netlifyBuildHook";
 
+/* ------------------------------------------------------------------------
+   AUTO-REBUILD ON SAVE
+
+   The public site is static: every guide page is written to disk by
+   scripts/build.js during a Netlify deploy. Saving in Studio writes to
+   Firestore, which is NOT the same thing as publishing — until a build runs,
+   readers keep getting the HTML from the last deploy.
+
+   guide.js does have a client-side catch-up for that window, but it is a
+   safety net (one check per browser session), not a publishing mechanism. So
+   Studio fires the build hook itself.
+
+   Debounced by 90 seconds: a save is rarely a single save, and every hook POST
+   costs a full build. The timer restarts on each save, so a run of edits ends
+   in one deploy. beforeunload flushes it, so closing the tab still publishes.
+   ---------------------------------------------------------------------- */
+const REBUILD_DELAY_MS = 90000;
+let rebuildTimer = null;
+
+function buildHookURL(){
+  try{
+    const u = (localStorage.getItem(HOOK_KEY) || "").trim();
+    return /^https:\/\/api\.netlify\.com\/build_hooks\//.test(u) ? u : "";
+  }catch(e){ return ""; }
+}
+
+function fireRebuild(){
+  const url = buildHookURL();
+  if(!url) return false;
+  // Build hooks take a POST with no body and answer with an empty 200.
+  // no-cors keeps the browser from blocking it; there is no response to read.
+  try{ fetch(url, { method:"POST", mode:"no-cors", keepalive:true }); }catch(e){}
+  setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+  return true;
+}
+
+function queueRebuild(){
+  if(!buildHookURL()){
+    setRebuildBanner("Saved. Not published yet — paste your Netlify build hook in Site → Search & AI.");
+    return;
+  }
+  if(rebuildTimer) clearTimeout(rebuildTimer);
+  rebuildTimer = setTimeout(() => { rebuildTimer = null; fireRebuild(); }, REBUILD_DELAY_MS);
+  setRebuildBanner("Saved. Publishing in 90s — or hit Publish now.");
+}
+
+/* Flush a pending rebuild rather than losing it when the tab closes. */
+window.addEventListener("beforeunload", () => {
+  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; fireRebuild(); }
+});
+
+function publishNow(){
+  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
+  if(!fireRebuild()){
+    setRebuildBanner("No build hook saved — add it in Site → Search & AI.");
+  }
+}
+
+/* A single line in the header that tells the truth about publish state.
+   Created on first use so no markup change is needed elsewhere. */
+function setRebuildBanner(text){
+  let el = document.getElementById("rebuildState");
+  if(!el){
+    const host = document.querySelector("header") || document.body;
+    el = document.createElement("span");
+    el.id = "rebuildState";
+    el.style.cssText = "font-size:12px;font-weight:700;color:var(--muted);margin-left:10px;display:inline-flex;align-items:center;gap:8px";
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "btn sm"; btn.textContent = "Publish now";
+    btn.addEventListener("click", publishNow);
+    const txt = document.createElement("span"); txt.id = "rebuildStateText";
+    el.appendChild(txt); el.appendChild(btn);
+    host.appendChild(el);
+  }
+  document.getElementById("rebuildStateText").textContent = text;
+}
+
+/* illustration-generator.js lives in its own IIFE and needs this too. */
+window.MPCQueueRebuild = queueRebuild;
+
 function renderSeoFields(){
   const d = (state.seo || {});
   $("#seo_detail").checked    = d.showDetail !== false;      // default on
@@ -1845,7 +1927,7 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     await fs.setDoc(fs.doc(db, "meta", "seo"), data);
     state.seo = data;
     msg.className = "msg ok";
-    msg.textContent = "Saved. These take effect on the next rebuild.";
+    msg.textContent = "Saved."; queueRebuild();
   }catch(err){
     msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
   }finally{ btn.disabled = false; }
@@ -2068,7 +2150,7 @@ $("#saveTopics").addEventListener("click", async ()=>{
     await fs.setDoc(fs.doc(db,"meta","topics"), { items, updated:Date.now() });
     state.topics=items.map(x=>({...x})); renderTopicRows();
     if(state.current) $("#f_topic").innerHTML=topicOptionsHTML(state.orig&&state.orig.topic);
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
@@ -2141,7 +2223,7 @@ $("#saveBooks").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
     state.booksList=items.map(x=>({...x})); renderBookRows();
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
@@ -2166,7 +2248,7 @@ $("#saveSiteText").addEventListener("click", async ()=>{
     const data=Object.assign({}, state.pagesData[id], { text:draftText(id) });
     await fs.setDoc(fs.doc(db,"pages",id), data);
     state.pagesData[id]=data;
-    msg.className="msg ok"; msg.textContent="Saved — live across the site.";
+    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
     pushSiteTextPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
@@ -2185,7 +2267,7 @@ $("#saveFooter").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","footer"), Object.assign({}, data, { updated:Date.now() }));
     state.footer=data;
-    msg.className="msg ok"; msg.textContent="Saved — live on every page.";
+    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
     pushFooterPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }

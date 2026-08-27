@@ -553,7 +553,16 @@
     }
     if (savedOk) {
       const altNote = altText ? " (with alt-text)" : "";
-      document.getElementById("gpMsg").textContent = "✓ Approved and saved" + altNote + ".";
+      /* Saved is not published. The guide page a reader gets is static HTML
+         written at deploy time, so the new hero only reaches the live URL once
+         Netlify rebuilds. Studio queues that build; say so, rather than
+         letting "saved" read as "live". */
+      const queued = typeof window.MPCQueueRebuild === "function";
+      if (queued) window.MPCQueueRebuild();
+      document.getElementById("gpMsg").textContent =
+        "✓ Approved and saved" + altNote +
+        (queued ? " — publishing to the live page shortly."
+                : " — remember to rebuild the site to publish it.");
       // Refresh the sidebar dots so the new state (green) shows immediately.
       setTimeout(() => refreshSidebarDots(), 500);
     }
