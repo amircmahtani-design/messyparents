@@ -365,7 +365,7 @@
       if (first) { first = false; if (!["planning","generating","reviewing"].includes(d.status)) return; }
       const msg = document.getElementById("gpMsg");
       if (d.status === "planning")   msg.textContent = "🧠 Planning the scene…";
-      if (d.status === "generating") msg.textContent = "🎨 Drawing (attempt " + (d.attempt || 1) + ")…";
+      if (d.status === "generating") msg.textContent = (d.plannerSkipped ? "🎨 Drawing your description" : "🎨 Drawing") + " (attempt " + (d.attempt || 1) + ")…";
       if (d.status === "reviewing")  msg.textContent = "🔍 Reviewing for brand fidelity…";
       if (d.status === "awaiting-approval" || d.status === "awaiting-approval-with-issues") {
         try { gpState.unsub(); } catch(_) {}
