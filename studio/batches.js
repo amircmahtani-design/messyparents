@@ -689,8 +689,12 @@
 
         await fs.setDoc(ref, g, { merge: true });
 
-        /* the words moved, so any old tick is stale */
-        if (META.checked[g.id]) delete META.checked[g.id];
+        /* Only clear a tick when the WORDS actually moved. A corrected batch
+           usually touches two or three guides; wiping the whole batch's
+           progress because the file was re-imported would mean reading
+           thirteen unchanged guides again. */
+        var tick = META.checked[g.id];
+        if (tick && tick.hash !== contentHash(g)) delete META.checked[g.id];
       }
       ensureBatch(key(k));
       META.batches[key(k)].approved = false;
