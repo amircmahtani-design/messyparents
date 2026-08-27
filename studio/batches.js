@@ -14,10 +14,12 @@
        quietly un-ticks it.
 
    WHERE THE DATA LIVES
-     • Which batch a guide belongs to  → the guide's own `batch` field, set in
-       data/guides-bundle.js when the Word batch is built. A manual move in
-       Studio is stored as an override in meta/batches.assign, so it survives
-       the next import.
+     • Which batch a guide belongs to  → decided ONCE, on its first import, and
+       recorded in meta/batches.origin. The `batch` field in the bundle only
+       ever supplies that first answer; a later batch that reworks the same
+       guide updates its words and is logged in meta/batches.history, but the
+       guide does not move. Batches stay chronological and match the Word
+       documents in Dropbox for good.
      • Whether you have checked it     → meta/batches (Studio only). Imports
        never touch this document, so re-importing a corrected batch cannot
        wipe your ticks — it only un-ticks the guides whose text changed.
@@ -63,7 +65,9 @@
   }
 
   /* ---------- the meta document ---------- */
-  function blankMeta() { return { batches: {}, assign: {}, checked: {}, updated: 0 }; }
+  function blankMeta() {
+    return { batches: {}, origin: {}, assign: {}, checked: {}, history: {}, updated: 0 };
+  }
 
   async function loadMeta() {
     var f = fb();
@@ -77,8 +81,10 @@
       META = snap.exists() ? snap.data() : blankMeta();
     } catch (e) { META = blankMeta(); }
     META.batches = META.batches || {};
-    META.assign = META.assign || {};
+    META.origin  = META.origin  || {};   // guide id -> the batch it FIRST arrived in. Never rewritten.
+    META.assign  = META.assign  || {};   // deliberate manual moves only
     META.checked = META.checked || {};
+    META.history = META.history || {};   // guide id -> [{b, at}] every later batch that reworked it
   }
 
   var saveTimer = null;
@@ -98,12 +104,28 @@
   /* ---------- batch maths ---------- */
   var key = function (v) { return v == null || v === "" ? "" : String(v).trim(); };
 
-  /* The batch a guide is actually in: a manual move wins, otherwise whatever
-     the imported bundle said. "" means unbatched. */
+  /* The batch a guide is in — and stays in, for good.
+
+     A guide belongs to the batch it FIRST arrived in. If batch 6 later reworks
+     a guide that came in with batch 1, the words update but it stays under
+     Batch 1, because that is where the Word document lives in Dropbox. The
+     later pass is recorded in META.history and shown on the guide, not used to
+     move it.
+
+     Order of authority: a deliberate manual move, then the recorded origin,
+     then — only for a guide Studio has never seen before — the tag on the
+     incoming bundle. */
   function batchOf(g) {
     if (!g) return "";
-    var o = META.assign[g.id];
-    return key(o != null ? o : g.batch);
+    if (META.assign[g.id] != null) return key(META.assign[g.id]);
+    if (META.origin[g.id] != null) return key(META.origin[g.id]);
+    return key(g.batch);
+  }
+
+  /* The most recent batch that reworked this guide, if it was not its own. */
+  function lastPass(g) {
+    var h = META.history[g.id];
+    return (h && h.length) ? h[h.length - 1] : null;
   }
   function labelOf(k) {
     if (!k) return "Unbatched";
@@ -144,13 +166,17 @@
     if (!META.batches[k]) META.batches[k] = { label: label || ("Batch " + k), added: Date.now(), approved: false };
     else if (label) META.batches[k].label = label;
   }
-  /* First sight of a batch that arrived inside a bundle: record it so it has a
-     date and a label from the moment it appears. */
+  /* First sight of a guide carrying a batch tag: lock in its origin and make
+     sure the batch itself exists with a date and a label. This also covers the
+     old whole-file "Import site guides" route, so a guide can never end up
+     tagged but ungrouped. */
   function adoptBundleBatches() {
     var touched = false;
     (st().guides || []).forEach(function (g) {
       var k = key(g.batch);
-      if (k && !META.batches[k]) { ensureBatch(k); touched = true; }
+      if (!k) return;
+      if (!META.batches[k]) { ensureBatch(k); touched = true; }
+      if (META.origin[g.id] == null) { META.origin[g.id] = k; touched = true; }
     });
     if (touched) saveMeta();
   }
@@ -171,9 +197,11 @@
 .mpb-meter i.c{background:#dd8b16}
 .mpb-ok{color:#2f855a;font-weight:700}
 .mpb-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.02em;color:#5a6472;background:#eef0f4;
-  border-radius:5px;padding:1px 5px;margin-right:6px;vertical-align:1px}
-.mpb-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#cbd2db;margin-right:6px;vertical-align:1px}
-.mpb-dot.d{background:#2f855a}.mpb-dot.c{background:#dd8b16}
+  border:1px solid transparent;border-radius:5px;padding:1px 5px;margin-right:6px;vertical-align:1px}
+.mpb-tag.d{background:#e6f4ec;color:#256d48;border-color:#bfe3cd}
+.mpb-tag.d::after{content:" ✓"}
+.mpb-tag.c{background:#fdf1dd;color:#8a5a10;border-color:#f0d9ac}
+.mpb-tag.c::after{content:" !"}
 
 .mpb-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px;padding:10px 12px;
   border:1px solid var(--line,#e3e6ea);border-left:4px solid #c7dbff;border-radius:10px;background:#fbfcfe}
@@ -276,19 +304,17 @@
       if (!g) return;
       var k = batchOf(g), s = stateOf(g);
 
-      /* badge — inserted once, kept in sync afterwards */
+      /* One chip, carrying both facts: which batch, and whether you have
+         checked it. Studio's own green dot already means "has an
+         illustration", so a second dot beside it would be a trap. */
       var tag = el.querySelector(".mpb-tag");
       if (!tag) {
         tag = document.createElement("span");
         tag.className = "mpb-tag";
-        var dot = document.createElement("span");
-        dot.className = "mpb-dot";
         el.insertBefore(tag, el.firstChild);
-        el.insertBefore(dot, el.firstChild);
       }
       tag.textContent = shortOf(k);
-      var d = el.querySelector(".mpb-dot");
-      if (d) d.className = "mpb-dot " + (s === "done" ? "d" : s === "changed" ? "c" : "");
+      tag.className = "mpb-tag" + (s === "done" ? " d" : s === "changed" ? " c" : "");
       el.title = labelOf(k) + " · " + (s === "done" ? "checked" : s === "changed" ? "changed since you checked it" : "not checked yet");
 
       var show = FILTER.mode === "all" ? true
@@ -339,9 +365,11 @@
       return `<option value="${esc(x)}" ${x === k ? "selected" : ""}>${esc(labelOf(x))}</option>`;
     }).join("");
 
+    var lp = lastPass(g);
     var sub = s === "done" ? "Checked " + fmtDate(c && c.at) + (c && c.by ? " · " + esc(c.by) : "")
       : s === "changed" ? "The words changed since you checked it on " + fmtDate(c && c.at)
       : (k ? p.done + " of " + p.total + " checked in this batch" : "Not part of a batch");
+    if (lp) sub += ' <span style="color:#dd8b16">· reworked in ' + esc(labelOf(key(lp.b))) + " on " + fmtDate(lp.at) + "</span>";
 
     bar.innerHTML =
       `<span>
@@ -350,7 +378,7 @@
          <br><span class="mpb-sub">${sub}</span>
        </span>
        <span class="mpb-sp"></span>
-       <select data-mpb-move title="Move this guide to another batch">
+       <select data-mpb-move title="This guide stays in its first batch for good. Change it here only if it was filed wrongly.">
          ${opts}
          <option value="" ${k ? "" : "selected"}>Unbatched</option>
          <option value="*new">New batch…</option>
@@ -403,8 +431,9 @@
       if (!k) { renderBar(); return; }
       k = key(k); ensureBatch(k); v = k;
     }
-    if (key(v) === key(g.batch)) delete META.assign[g.id];
-    else META.assign[g.id] = key(v);
+    META.assign[g.id] = key(v);
+    META.origin[g.id] = key(v);      // a deliberate move is the new permanent home
+    if (key(v)) ensureBatch(key(v));
     await saveMeta();
     refreshAll();
   }
@@ -517,8 +546,10 @@
       Safer than “Import site guides”, which rewrites every guide on the site.</p>
       <table><tbody>${imp}</tbody></table>
 
-      <p class="mpb-note">Ticks live in <code>meta/batches</code>, not on the guides — an import can never wipe them.
-      If a guide's words change after you tick it, it un-ticks itself and shows as <em>changed</em>.</p>
+      <p class="mpb-note"><strong>A guide stays in the batch it first arrived in.</strong> If a later batch reworks it,
+      the words update and the guide is marked as needing another look, but it does not move — so the numbering here always
+      matches the Word documents in Dropbox. Ticks live in <code>meta/batches</code>, not on the guides, so an import
+      can never wipe them.</p>
     </div>`;
   }
 
@@ -586,8 +617,17 @@
     if (!f) return alert("Importing needs Firebase mode.");
     var src = (window.GUIDES || []).filter(function (g) { return key(g.batch) === key(k); });
     if (!src.length) return alert("Nothing tagged " + labelOf(k) + " in the uploaded file.");
+    var moving = src.filter(function (g) {
+      return META.origin[g.id] != null && key(META.origin[g.id]) !== key(k);
+    });
+    var note = moving.length
+      ? "\n\n" + moving.length + " of them already belong to an earlier batch. Their words will be " +
+        "updated but they stay where they are:\n" +
+        moving.slice(0, 8).map(function (g) { return "  · " + g.title + "  → stays in " + labelOf(key(META.origin[g.id])); }).join("\n") +
+        (moving.length > 8 ? "\n  · …and " + (moving.length - 8) + " more" : "")
+      : "";
     if (!confirm("Import " + src.length + " guide(s) from " + labelOf(k) + "?\n\n" +
-      "Only these are written. Existing illustrations are kept where the file has none.")) return;
+      "Only these are written. Existing illustrations are kept where the file has none." + note)) return;
 
     var old = btn.textContent; btn.disabled = true; btn.textContent = "Importing…";
     try {
@@ -603,13 +643,24 @@
         if (g.panel && !g.panel.hero) delete g.panel.hero;
         if (prev && prev.order != null && g.order == null) g.order = prev.order;
         if (g.order == null) g.order = ++maxOrder;
-        g.batch = key(k);
+
+        /* Where this guide lives is decided once, on its first import, and is
+           not up for revision. A later batch reworking it writes new words and
+           leaves the grouping alone. */
+        var home = META.origin[g.id] != null ? key(META.origin[g.id]) : key(k);
+        if (META.origin[g.id] == null) META.origin[g.id] = home;
+        g.batch = home;
+
+        if (home !== key(k)) {
+          var h = META.history[g.id] = META.history[g.id] || [];
+          h.push({ b: key(k), at: Date.now() });
+          if (h.length > 12) h.shift();
+        }
 
         await fs.setDoc(ref, g, { merge: true });
 
         /* the words moved, so any old tick is stale */
         if (META.checked[g.id]) delete META.checked[g.id];
-        delete META.assign[g.id];
       }
       ensureBatch(key(k));
       META.batches[key(k)].approved = false;
