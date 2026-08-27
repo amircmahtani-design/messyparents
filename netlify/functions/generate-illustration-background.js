@@ -55,7 +55,11 @@ const IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
 const ORCH_MODEL  = process.env.OPENAI_MODEL       || "gpt-4o";
 const EMBED_MODEL = "text-embedding-3-small";
 const PROMPT_VER  = "messy-parents-image-v2";
-const MAX_RETRIES = 2;
+/* One corrective retry, not two. Every extra attempt costs a full image
+   generation AND a full vision QA call, and a human approves the result by hand
+   anyway — a third automated go at it roughly doubled the worst-case wait
+   without meaningfully improving what landed in the review panel. */
+const MAX_RETRIES = 1;
 
 /* Compute a semantic embedding for a guide and save it back for Pass 3
    similarity searches. Silent-fail: never blocks or breaks generation. */
@@ -127,13 +131,27 @@ async function callResponses(payload) {
   return j;
 }
 
-function imageTool(size) {
+/* Generation quality. "high" roughly doubles the wall-clock of every image
+   call, and there are up to two per job.
+
+   Medium is the right default here, not just a draft setting: the hero slot on
+   a guide page is capped at 530x285 CSS pixels, so even a 1024px medium render
+   is already well beyond what any visitor sees. Note there is deliberately NO
+   "re-render at high quality once approved" step — image generation is not
+   deterministic, so a second pass would hand back a DIFFERENT picture rather
+   than a sharper copy of the one you approved.
+
+   Pass quality:"high" in the request, or set OPENAI_IMAGE_QUALITY, when a
+   particular image needs it. */
+const DRAFT_QUALITY = process.env.OPENAI_IMAGE_QUALITY || "medium";
+
+function imageTool(size, quality) {
   return {
     type: "image_generation",
     model: IMAGE_MODEL,
     output_format: "png",
     size: size || "1024x1024",
-    quality: "high"
+    quality: quality || DRAFT_QUALITY
   };
 }
 
@@ -801,7 +819,7 @@ function buildGenerationPrompt(brief, retryNotes, userInstructions, advice) {
   return parts.join("\n");
 }
 
-async function generateImage(brief, refUrls, retryNotes, userInstructions, advice) {
+async function generateImage(brief, refUrls, retryNotes, userInstructions, advice, quality) {
   const size = aspectRatioToSize(brief.aspectRatio, brief);
   const prompt = (brief.mode === "icon")
     ? buildIconPrompt(brief, retryNotes, userInstructions)
@@ -809,7 +827,7 @@ async function generateImage(brief, refUrls, retryNotes, userInstructions, advic
 
   const resp = await callResponses({
     model: ORCH_MODEL,
-    tools: [imageTool(size)],
+    tools: [imageTool(size, quality)],
     input: [{ role: "user", content: [
       { type: "input_text", text: prompt },
       ...refUrls.map(imgInput)
@@ -955,7 +973,8 @@ exports.handler = async (event) => {
     mode = "character",
     aspectRatio = "auto",
     iconSubject = "",
-    forcePlan = false
+    forcePlan = false,
+    quality = null
   } = body;
   if (!guideId) return;
 
@@ -1039,7 +1058,7 @@ exports.handler = async (event) => {
       attempt++;
       await job.set({ status: "generating", attempt, ts: Date.now() }, { merge: true });
 
-      const gen = await generateImage(brief, refUrls, retryNotes, userInstructions, advice);
+      const gen = await generateImage(brief, refUrls, retryNotes, userInstructions, advice, quality);
 
       /* transparency in code, then verify alpha */
       const cut = cutoutMagenta(gen.b64);
@@ -1093,6 +1112,7 @@ exports.handler = async (event) => {
       attempts: attempt,
       referencesUsed: chosen,
       imageModel: IMAGE_MODEL,
+      imageQuality: quality || DRAFT_QUALITY,
       orchestratorModel: ORCH_MODEL,
       promptVersion: PROMPT_VER,
       ts: Date.now()
