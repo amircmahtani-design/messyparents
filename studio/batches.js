@@ -611,6 +611,18 @@
     if (a === "import") return importBatch(k, b);
   }
 
+
+  /* Turn every null in the incoming guide into a Firestore delete sentinel, so
+     `dont: null` in the bundle actually removes the Don't strip rather than
+     storing a null the renderer would have to ignore. */
+  function stripNulls(o, fs) {
+    if (o === null) return fs.deleteField();
+    if (Array.isArray(o) || typeof o !== "object") return o;
+    var out = {};
+    Object.keys(o).forEach(function (k) { out[k] = stripNulls(o[k], fs); });
+    return out;
+  }
+
   /* ---------- per-batch import from the uploaded bundle ---------- */
   async function importBatch(k, btn) {
     var f = fb();
@@ -641,6 +653,11 @@
 
         /* never blank out an illustration the generator produced */
         if (g.panel && !g.panel.hero) delete g.panel.hero;
+
+        /* An explicit null in the bundle means REMOVE this field — the one way
+           a batch can take something off a guide. Anything the document simply
+           does not mention is left alone by the merge. */
+        g = stripNulls(g, fs);
         if (prev && prev.order != null && g.order == null) g.order = prev.order;
         if (g.order == null) g.order = ++maxOrder;
 
