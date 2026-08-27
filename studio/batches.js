@@ -56,9 +56,13 @@
     var p = function (n) { return String(n).padStart(2, "0"); };
     return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear();
   }
-  /* A short fingerprint of the words. If this changes, the tick is stale. */
+  /* A short fingerprint of the WORDS. Deliberately blind to panel.hero: adding
+     or regenerating an illustration is not a change to the writing, and must
+     not un-tick a guide you have already read through. */
   function contentHash(g) {
-    var s = JSON.stringify([g.title, g.summary, g.panel, g.longform, g.callout, g.body || ""]);
+    var p = null;
+    if (g.panel) { p = {}; Object.keys(g.panel).forEach(function (k) { if (k !== "hero") p[k] = g.panel[k]; }); }
+    var s = JSON.stringify([g.title, g.summary, p, g.longform, g.callout, g.body || ""]);
     var h = 5381;
     for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
     return (h >>> 0).toString(36);
@@ -264,7 +268,7 @@
          <span class="mpb-top"><span class="mpb-name">All guides</span>
          <span class="mpb-count">${(st().guides || []).length}</span></span></button>`,
       `<button class="mpb-row ${FILTER.mode === "open" ? "on" : ""}" data-mpb="*open">
-         <span class="mpb-top"><span class="mpb-name">Needs checking</span>
+         <span class="mpb-top"><span class="mpb-name">Still to do</span>
          <span class="mpb-count">${openTotal}</span></span></button>`
     ];
 
@@ -315,7 +319,7 @@
       }
       tag.textContent = shortOf(k);
       tag.className = "mpb-tag" + (s === "done" ? " d" : s === "changed" ? " c" : "");
-      el.title = labelOf(k) + " · " + (s === "done" ? "checked" : s === "changed" ? "changed since you checked it" : "not checked yet");
+      el.title = labelOf(k) + " · " + (s === "done" ? "done" : s === "changed" ? "changed since you marked it done" : "not done yet");
 
       var show = FILTER.mode === "all" ? true
         : FILTER.mode === "open" ? s !== "done"
@@ -366,10 +370,12 @@
     }).join("");
 
     var lp = lastPass(g);
-    var sub = s === "done" ? "Checked " + fmtDate(c && c.at) + (c && c.by ? " · " + esc(c.by) : "")
-      : s === "changed" ? "The words changed since you checked it on " + fmtDate(c && c.at)
-      : (k ? p.done + " of " + p.total + " checked in this batch" : "Not part of a batch");
+    var sub = s === "done" ? "Done " + fmtDate(c && c.at)
+      : s === "changed" ? "The words changed since you marked it done on " + fmtDate(c && c.at)
+      : "Not done yet";
+    if (k) sub += ' &middot; <strong>' + p.done + " of " + p.total + "</strong> done in this batch";
     if (lp) sub += ' <span style="color:#dd8b16">· reworked in ' + esc(labelOf(key(lp.b))) + " on " + fmtDate(lp.at) + "</span>";
+    var allDone = k && p.total && p.done === p.total && !isApproved(k);
 
     bar.innerHTML =
       `<span>
@@ -383,10 +389,12 @@
          <option value="" ${k ? "" : "selected"}>Unbatched</option>
          <option value="*new">New batch…</option>
        </select>
-       <button class="btn ${s === "done" ? "ghost" : "primary"}" type="button" data-mpb-act="tick">
-         ${s === "done" ? "Checked ✓ — undo" : s === "changed" ? "Check again ✓" : "Mark as checked"}
+       <button class="btn ${s === "done" ? "ghost" : "primary"}" type="button" data-mpb-act="tick"
+         title="Saving a guide marks it done automatically. This is for marking one done without changing anything, or for undoing.">
+         ${s === "done" ? "Done ✓ — undo" : s === "changed" ? "Mark done again" : "Mark as done"}
        </button>
-       <button class="btn ghost" type="button" data-mpb-act="next" ${k ? "" : "disabled"}>Next unchecked →</button>`;
+       <button class="btn ghost" type="button" data-mpb-act="next" ${k ? "" : "disabled"}>Next one →</button>
+       ${allDone ? `<button class="btn primary" type="button" data-mpb-act="approve">Approve ${esc(labelOf(k))} ✓</button>` : ""}`;
   }
 
   async function onBarClick(e) {
@@ -403,6 +411,11 @@
       refreshAll();
       return;
     }
+    if (act === "approve") {
+      await approveBatch(batchOf(g), true);
+      alert(labelOf(batchOf(g)) + " approved — all " + progress(batchOf(g)).total + " done.");
+      return;
+    }
     if (act === "next") {
       var k = batchOf(g), gs = guidesIn(k);
       var i = gs.findIndex(function (x) { return x.id === g.id; });
@@ -412,7 +425,7 @@
         if (stateOf(cand) !== "done") { nxt = cand; break; }
       }
       if (!nxt) {
-        if (confirm("Every guide in " + labelOf(k) + " is checked.\n\nApprove the batch and close it off?"))
+        if (confirm("Every guide in " + labelOf(k) + " is done.\n\nApprove the batch and close it off?"))
           { await approveBatch(k, true); }
         return;
       }
@@ -719,6 +732,31 @@
     }
   }
 
+  /* Saving IS marking it done.
+
+     Studio writes "Saved to Firestore" into #msg with class "ok" only when the
+     write actually succeeded, so that is the signal — not the click, which
+     fires just as happily on a save that failed. The tick records the hash of
+     what was saved, so the guide reads as done rather than immediately
+     flipping to "changed". */
+  var lastSaveKey = "";
+  function watchSaves() {
+    var msg = qs("#msg");
+    if (!msg || msg.__mpbWatched) return;
+    msg.__mpbWatched = true;
+    new MutationObserver(async function () {
+      if (!/\bok\b/.test(msg.className)) return;
+      var g = currentGuide();
+      if (!g) return;
+      var h = contentHash(g), sig = g.id + ":" + h;
+      if (sig === lastSaveKey) return;          // one tick per save
+      lastSaveKey = sig;
+      META.checked[g.id] = { at: Date.now(), by: email(), hash: h };
+      await saveMeta();
+      refreshAll();
+    }).observe(msg, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  }
+
   /* ---------- boot ---------- */
   function ready() {
     return window.MPCStudio && window.MPCStudio.state && qs("#appView") &&
@@ -735,11 +773,10 @@
     installBar();
     watch();
     refreshAll();
-    /* Studio's own save rewrites nothing of ours, but the guide it saved may
-       now differ from what was ticked — recheck a moment after any Save. */
+    watchSaves();
     document.addEventListener("click", function (e) {
       var t = e.target;
-      if (t && (t.id === "save" || t.id === "deleteGuide")) setTimeout(refreshAll, 900);
+      if (t && t.id === "deleteGuide") setTimeout(refreshAll, 900);
     });
   }
 
