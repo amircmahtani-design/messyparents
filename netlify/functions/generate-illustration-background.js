@@ -111,7 +111,6 @@ const HARD_RULES = [
   "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
-  "FRAMING — as important as the background rule, and for the same reason: the green is cut away afterwards and the drawing floats on a cream page with nothing around it. EVERY element must sit COMPLETELY INSIDE the canvas with clear green margin on all four sides — the whole cot including all four legs and the full base, the whole chair, the whole table, every foot, every elbow, the top of every head. Nothing may touch, straddle or run off any edge. A cot whose base runs off the bottom does not read as a photograph cropped for effect; once the background is gone it reads as a piece of furniture sliced in half. Zoom OUT and draw the objects smaller rather than letting anything reach an edge. No bleed, no crop, no partial objects, no elements continuing past the frame.",
   "TECHNICAL BACKGROUND REQUIREMENT — this is not aesthetic, it is required for the pipeline: the ENTIRE background behind the characters MUST be pure saturated bright green, RGB (0, 255, 0), hex #00FF00. Fill the whole canvas outside the characters with this exact bright green. Do NOT use muted green, sage green, olive, khaki, beige, cream, paper-tone, warm off-white, or any 'book-appropriate' subtle background. Do NOT add texture, watercolour wash, paper grain, gradient, vignette or scenery. The green must be flat, uniform and unmistakably #00FF00. Bright green must NEVER appear anywhere on the characters, their clothes, hair, skin or props — only on the background."
 ];
 
@@ -139,6 +138,51 @@ function imageTool(size) {
 }
 
 function imgInput(url) { return { type: "input_image", image_url: url }; }
+
+/* ---------- reference inlining ---------------------------------------------
+   The Responses API used to be handed plain https:// URLs for every reference
+   image, which meant OpenAI had to go and download five PNGs from our own site
+   before it could start drawing — and again for the QA pass, and again for
+   every retry. Once the reference set grew to include the 3MB brand board and
+   the ~1.6MB approved scenes, that fetch started exceeding OpenAI's own
+   download timeout and the whole job failed with:
+
+     "Unable to download content from the provided URL before the timeout."
+
+   We now fetch the references ourselves and send them inline as base64 data
+   URLs. OpenAI makes no outbound request at all, so its timeout cannot fire.
+   The bytes are cached in module scope: references never change, so a warm
+   function instance fetches each one exactly once.                          */
+
+const REF_CACHE = new Map();
+const REF_FETCH_TIMEOUT_MS = 8000;
+
+async function fetchAsDataUrl(url) {
+  if (REF_CACHE.has(url)) return REF_CACHE.get(url);
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), REF_FETCH_TIMEOUT_MS);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const buf = Buffer.from(await r.arrayBuffer());
+    const type = r.headers.get("content-type") || "image/png";
+    const dataUrl = "data:" + type.split(";")[0] + ";base64," + buf.toString("base64");
+    REF_CACHE.set(url, dataUrl);
+    return dataUrl;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Inline a list of reference URLs. If one cannot be fetched we fall back to
+    the plain URL for that image rather than failing the whole generation. */
+async function inlineRefs(urls) {
+  return Promise.all((urls || []).map(async (u) => {
+    if (/^data:/.test(u)) return u;
+    try { return await fetchAsDataUrl(u); }
+    catch (e) { console.error("ref inline failed, falling back to URL:", u, String(e)); return u; }
+  }));
+}
 
 function extractImage(resp) {
   const out = resp && resp.output;
@@ -193,77 +237,78 @@ function cutoutMagenta(b64) {
   const png = PNG.sync.read(Buffer.from(b64, "base64"));
   const d = png.data;
   const w = png.width, h = png.height;
+  const n = w * h;
 
-  // ---- 1) Sample corner regions
-  const OFFSET = 4;
-  const cornerPts = [
-    [OFFSET,           OFFSET],
-    [w - 1 - OFFSET,   OFFSET],
-    [OFFSET,           h - 1 - OFFSET],
-    [w - 1 - OFFSET,   h - 1 - OFFSET],
-    [OFFSET,           Math.floor(h / 2)],
-    [w - 1 - OFFSET,   Math.floor(h / 2)],
-    [Math.floor(w / 2), OFFSET],
-    [Math.floor(w / 2), h - 1 - OFFSET]
-  ];
-  const samples = cornerPts.map(([x, y]) => {
-    const i = (y * w + x) * 4;
-    return [d[i], d[i + 1], d[i + 2]];
-  });
+  /* ---- 1) What colour did the model ACTUALLY use behind the characters?
+     Sample the border ring rather than eight scattered points: the border is
+     background by definition unless the model drew edge-to-edge scenery. */
+  const bs = [];
+  const push = (x, y) => { const i = (y * w + x) * 4; bs.push([d[i], d[i+1], d[i+2]]); };
+  const step = Math.max(1, Math.floor(Math.max(w, h) / 64));
+  for (let x = 0; x < w; x += step) { push(x, 0); push(x, h - 1); }
+  for (let y = 0; y < h; y += step) { push(0, y); push(w - 1, y); }
 
-  // ---- 2) Median → background colour candidate
-  const median = c => {
-    const arr = samples.map(s => s[c]).sort((a, b) => a - b);
-    return arr[Math.floor(arr.length / 2)];
+  const med = (c) => { const a = bs.map(s => s[c]).sort((p, q) => p - q); return a[a.length >> 1]; };
+  const bgR = med(0), bgG = med(1), bgB = med(2);
+
+  /* ---- 2) Tolerance depends on what we found.
+     A true #00FF00 chroma key is miles from anything in the artwork, so it can
+     take a generous tolerance. A cream or paper-toned background — which is
+     what the model produces whenever it ignores the green instruction — sits
+     close to skin tones and highlights, so it needs a tight one. */
+  const isGreenKey = (bgG - Math.max(bgR, bgB)) > 60;
+  const TOL_FULL = isGreenKey ? 60 : 26;
+  const TOL_EDGE = isGreenKey ? 120 : 58;
+  const SPAN = TOL_EDGE - TOL_FULL;
+
+  const dist = (i) => {
+    const dr = d[i] - bgR, dg = d[i+1] - bgG, db = d[i+2] - bgB;
+    return Math.sqrt(dr*dr + dg*dg + db*db);
   };
-  const bgR = median(0), bgG = median(1), bgB = median(2);
 
-  // Variance check — do the samples agree?
-  const dist = (s) => Math.hypot(s[0] - bgR, s[1] - bgG, s[2] - bgB);
-  const spread = samples.reduce((m, s) => Math.max(m, dist(s)), 0);
-  const hasSolidBackground = spread < 40;
-  const isGreenish = bgG - Math.max(bgR, bgB) > 8;  // any green dominance
+  /* ---- 3) Flood fill inward from the border.
+     This is the part that matters. The old code keyed out every pixel in the
+     image matching the background colour, which is why a cream background was
+     unusable: it would also punch holes through cream paper highlights, skin
+     and Papa's mug. Only background CONNECTED TO THE EDGE is removed, so
+     colour matches sealed inside the artwork are left alone. */
+  const bg = new Uint8Array(n);
+  const stack = new Int32Array(n);
+  let sp = 0;
 
-  // ---- 3) Adaptive chroma-key against the SAMPLED colour
-  if (hasSolidBackground && isGreenish) {
-    const TOL_FULL = 60;   // within this distance → fully transparent
-    const TOL_EDGE = 120;  // within this distance → feathered
-    const SPAN = TOL_EDGE - TOL_FULL;
+  const seed = (x, y) => {
+    const px = y * w + x;
+    if (bg[px]) return;
+    if (dist(px * 4) > TOL_EDGE) return;
+    bg[px] = 1; stack[sp++] = px;
+  };
+  for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1); }
+  for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y); }
 
-    for (let i = 0; i < d.length; i += 4) {
-      const r = d[i], g = d[i + 1], b = d[i + 2];
-      const dr = r - bgR, dg = g - bgG, db = b - bgB;
-      const distance = Math.sqrt(dr * dr + dg * dg + db * db);
-
-      if (distance <= TOL_FULL) {
-        d[i + 3] = 0;
-      } else if (distance <= TOL_EDGE) {
-        // Feather the alpha
-        const t = (distance - TOL_FULL) / SPAN;
-        d[i + 3] = Math.round(d[i + 3] * t);
-        // Despill: pull the green channel down toward max(R,B) to remove
-        // the sampled colour's tint from edge pixels
-        if (g > Math.max(r, b)) d[i + 1] = Math.max(r, b);
-      }
-    }
-    return { b64: PNG.sync.write(png).toString("base64"), width: w, height: h };
+  while (sp > 0) {
+    const px = stack[--sp];
+    const x = px % w, y = (px / w) | 0;
+    if (x > 0)     { const q = px - 1; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
+    if (x < w - 1) { const q = px + 1; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
+    if (y > 0)     { const q = px - w; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
+    if (y < h - 1) { const q = px + w; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
   }
 
-  // ---- 4) Fallback: the old green-dominance heuristic
-  const FULL_GREEN = 100;
-  const EDGE_GREEN = 20;
-  const SPAN = FULL_GREEN - EDGE_GREEN;
-  for (let i = 0; i < d.length; i += 4) {
-    const r = d[i], g = d[i + 1], b = d[i + 2];
-    const green = g - Math.max(r, b);
-    if (green >= FULL_GREEN) {
-      d[i + 3] = 0;
-    } else if (green > EDGE_GREEN) {
-      const t = (green - EDGE_GREEN) / SPAN;
-      d[i + 3] = Math.round(d[i + 3] * (1 - t));
-      d[i + 1] = Math.min(g, Math.max(r, b));
+  /* ---- 4) Cut, feather the rim, and despill the background hue out of the
+     half-transparent edge pixels so nothing carries a green or cream halo. */
+  for (let px = 0; px < n; px++) {
+    if (!bg[px]) continue;
+    const i = px * 4;
+    const dd = dist(i);
+    if (dd <= TOL_FULL) {
+      d[i+3] = 0;
+    } else {
+      const tt = (dd - TOL_FULL) / SPAN;
+      d[i+3] = Math.round(d[i+3] * Math.min(1, tt));
+      if (isGreenKey && d[i+1] > Math.max(d[i], d[i+2])) d[i+1] = Math.max(d[i], d[i+2]);
     }
   }
+
   return { b64: PNG.sync.write(png).toString("base64"), width: w, height: h };
 }
 
@@ -284,53 +329,103 @@ function borderTransparencyRatio(b64) {
 
 /* ---------- STAGE 1: PLAN --------------------------------------------------- */
 
+/* When the human has already typed the scene, the planner has nothing to add.
+   It was being asked to invent a visual moment and then told, in the same
+   breath, to take the user's sentence "more or less verbatim" — a full model
+   round trip to hand back what we already had. This builds the same brief
+   shape deterministically, in zero API calls.
+
+   Character resolution, in order:
+     1. the chips the user actually clicked (Mama / Papa / Ari)
+     2. failing that, the names mentioned in the description itself
+     3. failing that, the whole family                                       */
+
+const NAME_PATTERNS = {
+  Mama: /\b(mama|mamma|mummy|mum|mother|mom)\b/i,
+  Papa: /\b(papa|pappa|daddy|dad|father)\b/i,
+  Ari:  /\b(ari|baby|infant|toddler|she|her)\b/i
+};
+
+function charactersFromText(text) {
+  const found = [];
+  for (const name of ["Mama", "Papa", "Ari"]) {
+    if (NAME_PATTERNS[name].test(text)) found.push(name);
+  }
+  return found;
+}
+
+function briefFromDescription(guide, characterSelection, userVisualDescription) {
+  const desc = (userVisualDescription || "").trim();
+  let characters = (characterSelection && characterSelection.length)
+    ? characterSelection.slice()
+    : charactersFromText(desc);
+  if (!characters.length) characters = ["Mama", "Papa", "Ari"];
+
+  return {
+    guideTopic:   guide.title || "parenting moment",
+    /* The guide still supplies the concern — it is what QA checks the finished
+       image against — but the visual moment is the user's, word for word. */
+    parentConcern: ((guide.panel && guide.panel.summary) || guide.summary || guide.title || desc),
+    coreMeaning:   ((guide.panel && guide.panel.summary) || guide.title || desc),
+    visualMoment:  desc,
+    characters,
+    characterActions: {},
+    expressions: {},
+    props: [],
+    ariAccessory: "none",
+    tone: ["warm", "observational"],
+    composition: "characters centred with breathing room",
+    medicalIntensity: "none",
+    mustShow: [desc],
+    mustAvoid: ["glasses on Papa", "text", "extra characters"],
+    _source: "user-description"
+  };
+}
+
+
+/* The advice the guide actually gives its readers. The planner used to see only
+   the title and summary, so it had no idea what the guide was telling parents to
+   DO — which is how a safe-sleep guide whose own bullets read "on her back",
+   "flat", "firm mattress, not a sofa or your bed", "nothing else in the cot at
+   all" ended up illustrated with the baby asleep between both parents in an
+   adult bed, on a pillow. The picture contradicted the advice printed directly
+   beside it. These bullets are now binding on the planner, the drawing prompt
+   and the QA reviewer alike. */
+function guideAdvice(guide) {
+  const p = (guide && guide.panel) || {};
+  const items = (col) => (p[col] && Array.isArray(p[col].items) ? p[col].items : []);
+  return {
+    recommended: [].concat(items("normal"), items("helped")),
+    cautions:    items("warn"),
+    prohibited:  items("dont")
+  };
+}
+
+function adviceBlock(guide) {
+  const a = guideAdvice(guide);
+  const lines = [];
+  if (a.recommended.length) lines.push("THIS GUIDE RECOMMENDS:\n" + a.recommended.map(s => "  - " + s).join("\n"));
+  if (a.cautions.length)    lines.push("THIS GUIDE WARNS ABOUT:\n"  + a.cautions.map(s => "  - " + s).join("\n"));
+  if (a.prohibited.length)  lines.push("THIS GUIDE SAYS DO NOT:\n"  + a.prohibited.map(s => "  - " + s).join("\n"));
+  return lines.join("\n\n");
+}
+
 async function planScene(guide, characterSelection, userVisualDescription) {
+  const advice = adviceBlock(guide);
   const guideText = [
     "TITLE: "     + (guide.title || ""),
     "EYEBROW: "   + ((guide.panel && guide.panel.eyebrow) || ""),
     "SUMMARY: "   + ((guide.panel && guide.panel.summary) || ""),
     "CATEGORY: "  + (guide.category || guide.topic || ""),
-    "AGE RANGE: " + (guide.age || guide.ageRange || "")
-  ].join("\n");
+    "AGE RANGE: " + (guide.age || guide.ageRange || ""),
+    advice ? ("\n" + advice) : ""
+  ].filter(Boolean).join("\n");
 
   const charConstraint = (characterSelection && characterSelection.length)
     ? ("\n\nMANDATORY CHARACTER SELECTION: This illustration MUST include exactly these characters and only these characters: " +
        characterSelection.join(", ") +
        ". Do not add anyone else, do not drop anyone. Build the visual moment around this specific set.")
-    /* Left free, the planner picks Mama almost every time: she is the parent
-       most often named in the guides, and 'mother and baby' is the safest
-       stock reading of any parenting sentence. Papa then never appears, which
-       is wrong for a site written by both of them. So when the author has not
-       chosen, we hand the planner a lead parent at random and make it justify
-       departing from it. The guide's own words still win — a guide that says
-       Mama slept beside the cot should show Mama. */
-    : (function () {
-        /* Left free, the planner picks Mama almost every time: she is the
-           parent most often named in the guides, and "mother and baby" is the
-           safest stock reading of any parenting sentence. Papa then never
-           appears, which is wrong for a site written by both of them.
-
-           So the shape of the cast is drawn here rather than left to the
-           model's instincts: roughly a third each of Mama and Ari, Papa and
-           Ari, and the whole family together. The guide's own words still
-           win — a guide that says Mama slept beside the cot shows Mama. */
-        const r = Math.random();
-        const shape = r < 0.34 ? "MAMA and Ari"
-                    : r < 0.68 ? "PAPA and Ari"
-                    : "MAMA, PAPA and Ari together";
-        return "\n\nCAST BALANCE — read this before choosing `characters`:\n" +
-          "This family has TWO parents who are equally present. Papa does night feeds, " +
-          "nappies, soothing and cot-side worrying exactly as much as Mama does, and " +
-          "scenes with both of them are welcome — two tired parents over one cot is " +
-          "often the funniest and truest version of a moment.\n" +
-          "1. If the guide text names a specific parent in the scene, use that parent.\n" +
-          "2. Otherwise the cast for this illustration is: " + shape + ". Build the " +
-          "visual moment around them.\n" +
-          "3. Depart from that only if the moment genuinely cannot be drawn that way — " +
-          "a single-handed 3am feed does not need two people standing there.\n" +
-          "4. 'Mother and baby' is not the default reading of a parenting guide. " +
-          "Choosing Mama every time is a failure of this brief.";
-      })();
+    : "";
 
   const userDescBlock = (userVisualDescription && userVisualDescription.trim())
     ? ("\n\nUSER-DIRECTED VISUAL — the human author has described exactly what they want to see. Take this as the visualMoment more or less verbatim, only refine wording. Everything else (parentConcern, characters, expressions) should be derived to fit this exact scene:\n\"" + userVisualDescription.trim() + "\"")
@@ -359,6 +454,16 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     "the illustration disagrees with the guide's premise. The correct visual is baby " +
     "TURNING AWAY from the milk bottle while a parent looks mildly puzzled, holding " +
     "the bottle out. Show the refusal, not a substitute activity.\n\n" +
+    "SAFETY CONTRADICTION CHECK — this overrides every other consideration. The " +
+    "guide's own advice bullets are listed below the brief. The illustration must " +
+    "NEVER depict a practice those bullets advise against. If the guide says the baby " +
+    "should sleep flat, on her back, alone in her cot with nothing else in it, then do " +
+    "NOT design a scene showing her asleep in an adult bed, on a sofa, propped up, on " +
+    "her front, or among pillows, duvets, bumpers or toys — however warm that scene " +
+    "would look. A cosy illustration that contradicts the safety advice printed beside " +
+    "it is worse than no illustration at all. When a guide is about doing something " +
+    "safely, either show it done correctly, or choose a moment that sidesteps the " +
+    "practice entirely (a parent settling the baby, a parent listening at the door).\n\n" +
     "Other rules: Do not design a poster or reproduce the slide. Do not place titles, " +
     "body copy, labels or logos inside the illustration. Use only the characters who " +
     "genuinely improve the visual idea — do NOT automatically include all three family " +
@@ -448,12 +553,16 @@ function assembleReferences(brief, manifest, refsBase) {
   const base = (refsBase || "").replace(/\/$/, "");
   const chars = (brief.characters || []).map(c => c.toLowerCase());
   const refs = [];
+  const charUrls = [];
   const chosen = { characters: [], brand: null, approved: null };
 
   // 1) Character sheets — identity comes first
   for (const c of chars) {
     const file = manifest.characters[c];
-    if (file) { refs.push(base + "/" + file); chosen.characters.push(file); }
+    if (file) {
+      const u = base + "/" + file;
+      refs.push(u); charUrls.push(u); chosen.characters.push(file);
+    }
   }
   // 2) One approved finished scene — style and composition language
   if (manifest.approvedScenes && manifest.approvedScenes.length) {
@@ -466,7 +575,7 @@ function assembleReferences(brief, manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, chosen };
+  return { urls: refs, characterUrls: charUrls, chosen };
 }
 
 /* ---------- ICON MODE ------------------------------------------------------
@@ -522,7 +631,7 @@ function assembleIconReferences(manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, chosen };
+  return { urls: refs, characterUrls: [], chosen };
 }
 
 function buildIconPrompt(brief, retryNotes, userInstructions) {
@@ -611,7 +720,7 @@ function aspectRatioToSize(aspectRatio, brief) {
 
 /* ---------- STAGE 3: generate ---------------------------------------------- */
 
-function buildGenerationPrompt(brief, retryNotes, userInstructions) {
+function buildGenerationPrompt(brief, retryNotes, userInstructions, advice) {
   const chars = (brief.characters || []);
   const bibleLines = chars.map(c => CHARACTER_BIBLE[c.toLowerCase()]).filter(Boolean).join("\n");
   const actions = brief.characterActions || {};
@@ -660,6 +769,16 @@ function buildGenerationPrompt(brief, retryNotes, userInstructions) {
     ...HARD_RULES.map((r, i) => (i + 1) + ". " + r)
   ];
 
+  if (advice) {
+    parts.push(
+      "",
+      "THE ADVICE THIS ILLUSTRATION SITS BESIDE — the image must not contradict it:",
+      advice,
+      "",
+      "If any element of the scene would show a practice the bullets above advise " +
+      "against, change that element. This outranks the scene brief."
+    );
+  }
   if (brief.mustShow && brief.mustShow.length) parts.push("", "MUST SHOW: " + brief.mustShow.join("; "));
   if (brief.mustAvoid && brief.mustAvoid.length) parts.push("MUST AVOID: " + brief.mustAvoid.join("; "));
 
@@ -682,11 +801,11 @@ function buildGenerationPrompt(brief, retryNotes, userInstructions) {
   return parts.join("\n");
 }
 
-async function generateImage(brief, refUrls, retryNotes, userInstructions) {
+async function generateImage(brief, refUrls, retryNotes, userInstructions, advice) {
   const size = aspectRatioToSize(brief.aspectRatio, brief);
   const prompt = (brief.mode === "icon")
     ? buildIconPrompt(brief, retryNotes, userInstructions)
-    : buildGenerationPrompt(brief, retryNotes, userInstructions);
+    : buildGenerationPrompt(brief, retryNotes, userInstructions, advice);
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -704,7 +823,7 @@ async function generateImage(brief, refUrls, retryNotes, userInstructions) {
 
 /* ---------- STAGE 4: QA + retry -------------------------------------------- */
 
-async function qaImage(b64, refUrls, brief) {
+async function qaImage(b64, refUrls, brief, advice) {
   const instruction =
     "You are the QA reviewer for a children's-book illustration brand. Compare " +
     "the GENERATED image against the CHARACTER REFERENCES and the SCENE BRIEF. " +
@@ -718,10 +837,10 @@ async function qaImage(b64, refUrls, brief) {
     '  "sceneMeaningMatches": bool,\n' +
     '  "anatomyIsCoherent": bool,\n' +
     '  "propsAreCorrect": bool,\n' +
-    '  "subjectFullyInFrame": bool,   // false if ANY object or person is cut by an edge — cot legs, chair legs, a foot, the top of a head\n' +
     '  "containsUnrequestedText": bool,\n' +
     '  "containsUnrequestedObjects": bool,\n' +
     '  "toneIsAppropriate": bool,\n' +
+    '  "contradictsGuideAdvice": bool,  // does the image show a practice the guide advises against?\n' +
     '  "issues": [string],\n' +
     '  "decision": "accept" | "retry",\n' +
     '  "altText": string  // A single plain-English sentence describing what is happening in the image, for use as accessibility alt-text on the website. Focus on WHO is in the scene and WHAT they are doing. Do NOT mention brand elements (paint stains, mug branding) or style (watercolour). Max 140 characters. Example: "A mother gently offers a bottle to her baby daughter, who turns her head away with a puzzled look."\n' +
@@ -747,12 +866,7 @@ async function qaImage(b64, refUrls, brief) {
     "Parent expressions should match the concern: for 'why/is-this-normal' guides, " +
     "parents look mildly puzzled or gently concerned — NOT alarmed, NOT delighted, " +
     "NOT indifferent.\n\n" +
-    "FRAMING CHECK — the background is removed and the drawing is placed on a plain " +
-    "cream page, so anything touching an edge ends up looking sliced off rather than " +
-    "cropped. Set subjectFullyInFrame=false if any person, animal, item of furniture " +
-    "or prop is cut by the canvas edge, including a cot or chair whose legs or base " +
-    "run off the bottom. Clear space on all four sides is required, not preferred.\n\n" +
-    "AUTOMATIC RETRY if any of the following are true: subjectFullyInFrame is false; a required character does " +
+    "AUTOMATIC RETRY if any of the following are true: a required character does " +
     "not match the identity rules above; Papa has glasses; Ari's face/hair colour/romper " +
     "have changed; a wooden spoon appears without being requested; arms/hands/held " +
     "objects are confused; the baby looks ill or distressed for a normal topic; " +
@@ -761,6 +875,16 @@ async function qaImage(b64, refUrls, brief) {
     "(soap bubbles, sparkles, hearts, stars, particles, speech bubbles) that were " +
     "not in the brief's `props` or `mustShow` — these count as containsUnrequestedObjects=true.\n\n" +
     "DO NOT retry over: variation in Ari's head accessory (a crown, headband, bow, or nothing are all acceptable); Papa not holding his coffee mug; paint stains being subtle or absent from jeans; minor pose differences; minor colour variations that don't affect identity.\n\n" +
+    "SAFETY CONTRADICTION — check this before anything else. The guide's own advice " +
+    "bullets are given below. Set contradictsGuideAdvice=true, and decision=\"retry\", if " +
+    "the image depicts a practice those bullets advise against. Worked example: a guide " +
+    "whose bullets read 'on her back, every sleep', 'flat — not propped or inclined', " +
+    "'firm mattress, not a sofa or your bed', 'nothing else in the cot at all', " +
+    "illustrated with the baby lying between both parents in an adult bed on a pillow " +
+    "→ contradictsGuideAdvice=TRUE. The picture is charming and it tells the reader to " +
+    "do the exact opposite of the advice beside it. This is a hard failure regardless " +
+    "of how good the characters, style or composition are.\n\n" +
+    (advice ? ("GUIDE ADVICE:\n" + advice + "\n\n") : "") +
     "SCENE BRIEF:\n" + JSON.stringify(brief);
 
   const gen = "data:image/png;base64," + b64;
@@ -791,24 +915,29 @@ function qaToRetryNotes(qa) {
       }
     }
   }
-  if (qa.subjectFullyInFrame === false)       notes.push("- Something is cut off by the edge of the canvas. Zoom OUT and redraw the whole scene smaller so every object — the entire cot including its legs and base, every chair leg, every foot, the top of every head — sits fully inside the frame with clear green margin on all four sides. Nothing may touch or cross an edge.");
   if (qa.sceneMeaningMatches === false)       notes.push("- Illustration does not communicate the brief's visual moment.");
   if (qa.anatomyIsCoherent === false)         notes.push("- Anatomy is confused (hands/arms/held objects).");
   if (qa.propsAreCorrect === false)           notes.push("- Props are wrong or missing.");
   if (qa.containsUnrequestedText === true)    notes.push("- Remove all text, letters, numbers and logos.");
   if (qa.containsUnrequestedObjects === true) notes.push("- Remove objects not in the brief (glasses, wooden spoon, crown, extra people).");
   if (qa.toneIsAppropriate === false)         notes.push("- Tone is off — make it reassuring/warm, not alarmed or sad.");
+  if (qa.contradictsGuideAdvice === true)     notes.push("- CRITICAL: the scene shows a practice this guide advises against. Redesign the moment so it agrees with the guide's own bullets, or pick a moment that avoids the practice entirely.");
   for (const i of qa.issues || []) notes.push("- " + i);
   return notes.join("\n") || "- Match the character references more closely.";
 }
 
 /* ---------- MAIN: orchestrate all four stages ------------------------------ */
 
+const MANIFEST_CACHE = new Map();
+
 async function loadManifest(refsBase) {
   const url = (refsBase || "").replace(/\/$/, "") + "/manifest.json";
+  if (MANIFEST_CACHE.has(url)) return MANIFEST_CACHE.get(url);
   const r = await fetch(url);
   if (!r.ok) throw new Error("Could not load refs manifest at " + url);
-  return await r.json();
+  const j = await r.json();
+  MANIFEST_CACHE.set(url, j);
+  return j;
 }
 
 exports.handler = async (event) => {
@@ -825,14 +954,22 @@ exports.handler = async (event) => {
     userVisualDescription = "",
     mode = "character",
     aspectRatio = "auto",
-    iconSubject = ""
+    iconSubject = "",
+    forcePlan = false
   } = body;
   if (!guideId) return;
 
   const job = db.collection("illustration_jobs").doc(guideId);
 
   try {
-    await job.set({ status: "planning", ts: Date.now(), promptVersion: PROMPT_VER });
+    const describedByUser = mode !== "icon" && !briefOverride && !forcePlan &&
+                            !!(userVisualDescription || "").trim();
+    await job.set({
+      status: describedByUser ? "generating" : "planning",
+      plannerSkipped: describedByUser,
+      ts: Date.now(),
+      promptVersion: PROMPT_VER
+    });
 
     /* Fetch the guide so the planner has real content to work from */
     const gSnap = await db.collection("guides").doc(guideId).get();
@@ -851,7 +988,16 @@ exports.handler = async (event) => {
     if (mode === "icon") {
       brief = await planIconScene(guide, iconSubject, userVisualDescription);
     } else {
-      brief = briefOverride || await planScene(guide, characterSelection, userVisualDescription);
+      const typed = (userVisualDescription || "").trim();
+      if (briefOverride) {
+        brief = briefOverride;
+      } else if (typed && !forcePlan) {
+        /* SKIP STAGE 1 — the user described the scene, so there is nothing
+           for the planner to decide. Saves a full model round trip. */
+        brief = briefFromDescription(guide, characterSelection, typed);
+      } else {
+        brief = await planScene(guide, characterSelection, userVisualDescription);
+      }
       // If the user edited a brief AND also toggled character chips, honour the chips
       if (briefOverride && characterSelection && characterSelection.length) {
         brief = { ...brief, characters: characterSelection };
@@ -862,10 +1008,28 @@ exports.handler = async (event) => {
     await job.set({ status: "generating", brief, ts: Date.now() }, { merge: true });
 
     /* STAGE 2 · REFERENCES — icons need only the brand board, not characters */
+    /* The guide's own bullets, threaded through drawing and review alike. */
+    const advice = (mode === "icon") ? "" : adviceBlock(guide);
+
     const manifest = await loadManifest(refsBase);
-    const { urls: refUrls, chosen } = (mode === "icon")
+    const { urls: rawRefUrls, characterUrls: rawCharUrls, chosen } = (mode === "icon")
       ? assembleIconReferences(manifest, refsBase)
       : assembleReferences(brief, manifest, refsBase);
+
+    /* Fetch the reference bytes ourselves and pass them inline. See the note
+       on inlineRefs() above — handing OpenAI URLs is what made this function
+       start failing with "Unable to download content from the provided URL
+       before the timeout". Cached, so this costs nothing on a warm instance. */
+    const refUrls = await inlineRefs(rawRefUrls);
+
+    /* The QA pass only checks character identity, so it gets the character
+       sheets alone — no brand board, no approved scene. Roughly halves the
+       payload on every review and every retry. */
+    const qaRefUrls = (mode === "icon")
+      ? refUrls
+      : (rawCharUrls && rawCharUrls.length
+          ? await inlineRefs(rawCharUrls)
+          : refUrls);
 
     /* STAGE 3 + 4 · GENERATE with QA retry loop */
     let attempt = 0, retryNotes = "", best = null, bestQA = null, bestBorderRatio = 0;
@@ -875,7 +1039,7 @@ exports.handler = async (event) => {
       attempt++;
       await job.set({ status: "generating", attempt, ts: Date.now() }, { merge: true });
 
-      const gen = await generateImage(brief, refUrls, retryNotes, userInstructions);
+      const gen = await generateImage(brief, refUrls, retryNotes, userInstructions, advice);
 
       /* transparency in code, then verify alpha */
       const cut = cutoutMagenta(gen.b64);
@@ -886,8 +1050,8 @@ exports.handler = async (event) => {
       await job.set({ status: "reviewing", attempt, ts: Date.now() }, { merge: true });
       let qa;
       try { qa = (brief.mode === "icon")
-        ? await qaIcon(cut.b64, refUrls, brief)
-        : await qaImage(cut.b64, refUrls, brief); }
+        ? await qaIcon(cut.b64, qaRefUrls, brief)
+        : await qaImage(cut.b64, qaRefUrls, brief, advice); }
       catch (e) { qa = { decision: "retry", issues: ["QA call failed: " + (e.message || e)] }; }
 
       qa.transparencyOk = transparencyOk;
@@ -898,6 +1062,9 @@ exports.handler = async (event) => {
       if (!best || (transparencyOk && borderRatio > bestBorderRatio)) {
         best = cut.b64; bestQA = qa; bestBorderRatio = borderRatio;
       }
+
+      /* A safety contradiction is never acceptable, whatever else QA thought. */
+      if (qa.contradictsGuideAdvice === true) qa.decision = "retry";
 
       if (qa.decision === "accept" && transparencyOk) {
         accepted = true; finalB64 = cut.b64; finalQA = qa; break;
