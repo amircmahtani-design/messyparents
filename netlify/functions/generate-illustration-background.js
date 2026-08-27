@@ -139,6 +139,51 @@ function imageTool(size) {
 
 function imgInput(url) { return { type: "input_image", image_url: url }; }
 
+/* ---------- reference inlining ---------------------------------------------
+   The Responses API used to be handed plain https:// URLs for every reference
+   image, which meant OpenAI had to go and download five PNGs from our own site
+   before it could start drawing — and again for the QA pass, and again for
+   every retry. Once the reference set grew to include the 3MB brand board and
+   the ~1.6MB approved scenes, that fetch started exceeding OpenAI's own
+   download timeout and the whole job failed with:
+
+     "Unable to download content from the provided URL before the timeout."
+
+   We now fetch the references ourselves and send them inline as base64 data
+   URLs. OpenAI makes no outbound request at all, so its timeout cannot fire.
+   The bytes are cached in module scope: references never change, so a warm
+   function instance fetches each one exactly once.                          */
+
+const REF_CACHE = new Map();
+const REF_FETCH_TIMEOUT_MS = 8000;
+
+async function fetchAsDataUrl(url) {
+  if (REF_CACHE.has(url)) return REF_CACHE.get(url);
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), REF_FETCH_TIMEOUT_MS);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const buf = Buffer.from(await r.arrayBuffer());
+    const type = r.headers.get("content-type") || "image/png";
+    const dataUrl = "data:" + type.split(";")[0] + ";base64," + buf.toString("base64");
+    REF_CACHE.set(url, dataUrl);
+    return dataUrl;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Inline a list of reference URLs. If one cannot be fetched we fall back to
+    the plain URL for that image rather than failing the whole generation. */
+async function inlineRefs(urls) {
+  return Promise.all((urls || []).map(async (u) => {
+    if (/^data:/.test(u)) return u;
+    try { return await fetchAsDataUrl(u); }
+    catch (e) { console.error("ref inline failed, falling back to URL:", u, String(e)); return u; }
+  }));
+}
+
 function extractImage(resp) {
   const out = resp && resp.output;
   if (Array.isArray(out)) {
@@ -414,12 +459,16 @@ function assembleReferences(brief, manifest, refsBase) {
   const base = (refsBase || "").replace(/\/$/, "");
   const chars = (brief.characters || []).map(c => c.toLowerCase());
   const refs = [];
+  const charUrls = [];
   const chosen = { characters: [], brand: null, approved: null };
 
   // 1) Character sheets — identity comes first
   for (const c of chars) {
     const file = manifest.characters[c];
-    if (file) { refs.push(base + "/" + file); chosen.characters.push(file); }
+    if (file) {
+      const u = base + "/" + file;
+      refs.push(u); charUrls.push(u); chosen.characters.push(file);
+    }
   }
   // 2) One approved finished scene — style and composition language
   if (manifest.approvedScenes && manifest.approvedScenes.length) {
@@ -432,7 +481,7 @@ function assembleReferences(brief, manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, chosen };
+  return { urls: refs, characterUrls: charUrls, chosen };
 }
 
 /* ---------- ICON MODE ------------------------------------------------------
@@ -488,7 +537,7 @@ function assembleIconReferences(manifest, refsBase) {
     refs.push(base + "/" + manifest.brand);
     chosen.brand = manifest.brand;
   }
-  return { urls: refs, chosen };
+  return { urls: refs, characterUrls: [], chosen };
 }
 
 function buildIconPrompt(brief, retryNotes, userInstructions) {
@@ -763,11 +812,16 @@ function qaToRetryNotes(qa) {
 
 /* ---------- MAIN: orchestrate all four stages ------------------------------ */
 
+const MANIFEST_CACHE = new Map();
+
 async function loadManifest(refsBase) {
   const url = (refsBase || "").replace(/\/$/, "") + "/manifest.json";
+  if (MANIFEST_CACHE.has(url)) return MANIFEST_CACHE.get(url);
   const r = await fetch(url);
   if (!r.ok) throw new Error("Could not load refs manifest at " + url);
-  return await r.json();
+  const j = await r.json();
+  MANIFEST_CACHE.set(url, j);
+  return j;
 }
 
 exports.handler = async (event) => {
@@ -822,9 +876,24 @@ exports.handler = async (event) => {
 
     /* STAGE 2 · REFERENCES — icons need only the brand board, not characters */
     const manifest = await loadManifest(refsBase);
-    const { urls: refUrls, chosen } = (mode === "icon")
+    const { urls: rawRefUrls, characterUrls: rawCharUrls, chosen } = (mode === "icon")
       ? assembleIconReferences(manifest, refsBase)
       : assembleReferences(brief, manifest, refsBase);
+
+    /* Fetch the reference bytes ourselves and pass them inline. See the note
+       on inlineRefs() above — handing OpenAI URLs is what made this function
+       start failing with "Unable to download content from the provided URL
+       before the timeout". Cached, so this costs nothing on a warm instance. */
+    const refUrls = await inlineRefs(rawRefUrls);
+
+    /* The QA pass only checks character identity, so it gets the character
+       sheets alone — no brand board, no approved scene. Roughly halves the
+       payload on every review and every retry. */
+    const qaRefUrls = (mode === "icon")
+      ? refUrls
+      : (rawCharUrls && rawCharUrls.length
+          ? await inlineRefs(rawCharUrls)
+          : refUrls);
 
     /* STAGE 3 + 4 · GENERATE with QA retry loop */
     let attempt = 0, retryNotes = "", best = null, bestQA = null, bestBorderRatio = 0;
@@ -845,8 +914,8 @@ exports.handler = async (event) => {
       await job.set({ status: "reviewing", attempt, ts: Date.now() }, { merge: true });
       let qa;
       try { qa = (brief.mode === "icon")
-        ? await qaIcon(cut.b64, refUrls, brief)
-        : await qaImage(cut.b64, refUrls, brief); }
+        ? await qaIcon(cut.b64, qaRefUrls, brief)
+        : await qaImage(cut.b64, qaRefUrls, brief); }
       catch (e) { qa = { decision: "retry", issues: ["QA call failed: " + (e.message || e)] }; }
 
       qa.transparencyOk = transparencyOk;
