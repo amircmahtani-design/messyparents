@@ -256,9 +256,24 @@
    leaves too little margin and a floating arrow crowds the text — so on those
    widths they stay as the labelled pair underneath, which is more useful
    anyway. */
-@media (min-width:1380px){
-  .g-steps{position:fixed;inset:0 auto 0 0;width:100%;pointer-events:none;
-    align-items:center;padding:0 clamp(26px,3.2vw,72px);margin:0;z-index:5}
+@media (min-width:1500px){
+  /* The arrows are placed against the COLUMN, not against the viewport edges.
+
+     Pinning them to the viewport meant their clearance depended on window
+     width, and at the old 1380px breakpoint there was none: the column is
+     1180px, leaving 100px either side, while an arrow inset 26-72px and 66px
+     across reached 110px. The arrow landed on the headline. Raising the
+     breakpoint from 1100 to 1380 had been an attempt to fix this and stopped
+     just short.
+
+     A band 94px wider than the column on each side gives every arrow a fixed
+     28px of clearance at any window width, so the collision cannot come back
+     as the viewport changes. The breakpoint is 1500px, the width at which that
+     band fits without touching the window edge; below it the arrows stay as
+     the labelled pair underneath the guide. */
+  .g-steps{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);
+    width:min(1368px,calc(100% - 24px));pointer-events:none;
+    align-items:center;padding:0;margin:0;z-index:5}
   .g-step{
     pointer-events:auto;width:66px;height:66px;padding:0;max-width:none;
     border-radius:50%;justify-content:center;
