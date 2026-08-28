@@ -826,6 +826,25 @@
     applyDotsToDom();
   }
 
+  /* Published so the editor can tell us a hero has just landed.
+
+     The dots are painted from guideStatusCache, which is only refilled by a
+     round trip to Firestore. Re-rendering the guide list repaints from that
+     cache, so uploading a hero and saving left the dot grey until something
+     else happened to trigger a refetch — the picture was on the guide, the
+     sidebar just had not been told.
+
+     markHero() patches the cache for instant feedback; refreshDots() then
+     confirms it against Firestore. */
+  window.MPCIllustration = {
+    markHero: function (id) {
+      if (!id) return;
+      guideStatusCache[id] = "has";
+      applyDotsToDom();
+    },
+    refreshDots: refreshSidebarDots
+  };
+
   function installSidebarDots() {
     if (document.getElementById("mpc-dots-css")) return;
     const st = document.createElement("style");

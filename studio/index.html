@@ -2499,6 +2499,16 @@ async function boot(){
       state.pendingHeroUpdated = null;
       renderList();
 
+      /* Tell the sidebar the hero exists. Its dots are painted from a cached
+         Firestore read, so without this the guide stayed grey until some
+         unrelated action happened to refetch — the picture was attached, the
+         list just had not heard. Patch first for instant feedback, then
+         confirm against Firestore. */
+      if (window.MPCIllustration) {
+        window.MPCIllustration.markHero(fresh.id);
+        Promise.resolve(window.MPCIllustration.refreshDots()).catch(() => {});
+      }
+
       msg.textContent = "Uploaded and saved ✓";
       publishSoon();
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
