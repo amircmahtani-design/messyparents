@@ -180,6 +180,29 @@
       }
     }
 
+    /* Mark the document once Patrick Hand has actually rendered.
+
+       Patrick Hand ships in one weight, so guide headlines fake bold with
+       -webkit-text-stroke. That stroke is calibrated for a thin handwritten
+       face. When the font fails to arrive and the browser draws the fallback
+       instead, the same stroke lands on a system font that is already normal
+       weight, and the headline comes out looking doubled and outlined — which
+       is far more obviously wrong than the substituted font alone.
+
+       The stroke is now gated on this class, so a page that falls back renders
+       plainly rather than badly. If document.fonts is unavailable the class is
+       set anyway, keeping the intended appearance on older browsers. */
+    (function markFontReady() {
+      var html = document.documentElement;
+      var ok = function () { html.classList.add("fonts-ready"); };
+      if (!document.fonts || !document.fonts.load) { ok(); return; }
+      try {
+        document.fonts.load('1em "Patrick Hand"').then(function () {
+          ok();
+        }, ok);
+      } catch (e) { ok(); }
+    })();
+
     /* The Studio-edited copyright line writes its own year, so this span may
        already have been replaced by the time this runs. */
     var y = document.getElementById("year");
