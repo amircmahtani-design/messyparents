@@ -1856,8 +1856,12 @@ async function fireRebuildViaFunction(){
      the response body. The function distinguishes them deliberately (it checks
      the hook BEFORE the token, so the status code localises the fault), and
      that information should reach the screen. */
-  let user = null;
-  try { user = a.currentUser; } catch(e){}
+  /* The auth instance lives on state.fb.a — there is no bare `a` at this
+     scope. Reaching for one threw a ReferenceError that the surrounding
+     try/catch swallowed, so a perfectly signed-in Studio reported itself as
+     signed out. Read it the same way every other function here does. */
+  const fbAuth = state.fb && state.fb.a;
+  const user = fbAuth && fbAuth.currentUser;
   if(!user){
     setRebuildBanner("Not published — Studio is not signed in. Reload and sign in, then Publish now.", "action");
     return true;                       // handled: do not fall through
