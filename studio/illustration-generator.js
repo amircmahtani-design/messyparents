@@ -620,10 +620,52 @@
         "✓ Approved and saved" + altNote +
         (queued ? " — publishing to the live page shortly."
                 : " — remember to rebuild the site to publish it.");
+      attachHeroLocally(id, gpState.url, altText);
       // Refresh the sidebar dots so the new state (green) shows immediately.
       setTimeout(() => refreshSidebarDots(), 500);
     }
     hideReview();
+  }
+
+  /* Mirror an approved hero into the editor's own state.
+
+     approve() writes straight to Firestore with a merge patch, which is
+     correct as far as it goes — but it left the editor unaware. Two
+     consequences, one cosmetic and one destructive:
+
+       - The live preview reads the #f_hero field, not Firestore, so an
+         approved guide still showed the "Illustration generated for this
+         guide" placeholder even though the gallery listed it as having a hero.
+
+       - Worse, draftGuide() rebuilds the guide from the form on every Save:
+
+             if (hero) g.panel.hero = hero; else delete g.panel.hero;
+
+         With #f_hero still empty, the next Save DELETED the hero that had just
+         been approved. A guide could lose its illustration simply because you
+         edited a bullet afterwards.
+
+     Writing the URL back into the field and the in-memory guide keeps all
+     three copies — Firestore, the form and state — saying the same thing. */
+  function attachHeroLocally(id, url, altText) {
+    const input = document.getElementById("f_hero");
+    if (input && currentGuideId() === id) input.value = url;
+
+    const S = window.MPCStudio;
+    if (S && S.state) {
+      const stamp = Date.now();
+      const patch = (g) => {
+        if (!g || g.id !== id) return;
+        g.panel = g.panel || {};
+        g.panel.hero = url;
+        if (altText) g.panel.heroAlt = altText;
+        g.heroUpdated = stamp;
+      };
+      patch(S.state.orig);
+      (S.state.guides || []).forEach(patch);
+    }
+
+    try { refreshCurrentPreview(); } catch (e) {}
   }
 
   function reject() {
@@ -1898,6 +1940,7 @@
         };
         if (result.qa && result.qa.altText) patch.panel.heroAlt = result.qa.altText;
         await fs.setDoc(fs.doc(db, "guides", guideId), patch, { merge: true });
+        attachHeroLocally(guideId, result.url, result.qa && result.qa.altText);
         msg.textContent = "✓ Saved to guide.";
         setTimeout(() => refreshSidebarDots(), 500);
       } catch (e) {

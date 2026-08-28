@@ -1378,8 +1378,25 @@ function draftGuide(){
   if(typeof g.body !== "string") g.body = "";
   g.panel = g.panel || {};
   g.panel.eyebrow = $("#f_eyebrow").value;
+  /* An empty hero field is ambiguous: it can mean "I cleared this" or "nothing
+     ever put a value here". The old line treated both as delete.
+
+     That mattered because the illustration panel used to write an approved
+     hero straight to Firestore without touching this field, so the form could
+     be empty while the guide genuinely had a picture — and the next Save
+     removed it. An illustration lost because a bullet was edited afterwards.
+
+     The panel now mirrors the URL back into the field, so the ambiguity should
+     not arise. This distinguishes the two cases anyway, because the costs are
+     not symmetric: an unwanted hero is one click to clear, a destroyed one has
+     to be regenerated or re-uploaded. state.heroCleared is set only when the
+     field is emptied by hand — see the input handler — so a deliberate clear
+     still works exactly as before. */
   const hero = $("#f_hero").value.trim();
-  if(hero) g.panel.hero = hero; else delete g.panel.hero;
+  const hadHero = !!(state.orig && state.orig.panel && state.orig.panel.hero);
+  if(hero) g.panel.hero = hero;
+  else if(hadHero && !state.heroCleared) g.panel.hero = state.orig.panel.hero;
+  else delete g.panel.hero;
   /* A hero attached by upload stamps heroUpdated the same way approve() does,
      so the field means "when the hero last changed" regardless of which route
      it arrived by. */
@@ -1574,8 +1591,10 @@ function selectGuide(id){
   if(!g) return;
   state.current = id; state.orig = g; state.isNew = false;
   state.currentPage = null; state.currentSection = null;
-  /* Don't carry a pending hero stamp from the guide we just left. */
+  /* Don't carry a pending hero stamp, or a hero-cleared flag, from the guide
+     we just left. */
   state.pendingHeroUpdated = null;
+  state.heroCleared = false;
   showPanel("editor"); renderSiteList();
   renderPageList();
   $("#pvId").textContent = "· " + id;
@@ -2468,6 +2487,12 @@ async function boot(){
     }catch(e){ alert("Import failed: " + (e.message || e)); btn.textContent = old; }
     finally{ btn.disabled = false; }
   });
+  /* Emptying the hero field by hand is a deliberate clear; anything else
+     leaving it empty is not. draftGuide() relies on this distinction. */
+  $("#f_hero").addEventListener("input", () => {
+    state.heroCleared = $("#f_hero").value.trim() === "";
+  });
+
   $("#f_upload").addEventListener("change", async e => {
     const file = e.target.files && e.target.files[0]; e.target.value = ""; if(!file) return;
     const g = draftGuide(); const msg = $("#genMsg");
