@@ -1843,22 +1843,48 @@ function buildHookURL(){
    localStorage path stays as a fallback so nothing breaks before
    NETLIFY_BUILD_HOOK is configured. */
 async function fireRebuildViaFunction(){
+  /* Report WHY a publish failed rather than falling silently back.
+
+     This used to swallow every non-OK response and return false, so a missing
+     environment variable, an expired login and a rejected token all surfaced
+     as the same "not published" line — with the real reason sitting unread in
+     the response body. The function distinguishes them deliberately (it checks
+     the hook BEFORE the token, so the status code localises the fault), and
+     that information should reach the screen. */
+  let user = null;
+  try { user = a.currentUser; } catch(e){}
+  if(!user){
+    setRebuildBanner("Not published — Studio is not signed in. Reload and sign in, then Publish now.", "action");
+    return true;                       // handled: do not fall through
+  }
+
+  let r, body = {};
   try{
-    const user = a.currentUser;
-    if(!user) return false;
-    const token = await user.getIdToken();
-    const r = await fetch("/.netlify/functions/publish", {
+    const token = await user.getIdToken(/* forceRefresh */ true);
+    r = await fetch("/.netlify/functions/publish", {
       method:"POST",
       headers:{ "Authorization": "Bearer " + token }
     });
-    if(r.ok){
-      setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
-      return true;
-    }
-    /* 500 means the env var is not set yet — fall through to the local hook
-       rather than reporting a failure the operator cannot act on here. */
+    try { body = await r.json(); } catch(e){ body = {}; }
+  }catch(e){
+    setRebuildBanner("Not published — could not reach the publish function: " + (e.message || e), "action");
+    return true;
+  }
+
+  if(r.ok){
+    setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
+    return true;
+  }
+
+  /* Only a missing/!invalid hook is worth falling back to a locally pasted one;
+     everything else is a real fault the operator needs to see. */
+  if(r.status === 500 && /NETLIFY_BUILD_HOOK is not set/.test(body.error || "")){
     return false;
-  }catch(e){ return false; }
+  }
+
+  setRebuildBanner("Not published — publish function said " + r.status + ": " +
+    (body.error || "no detail") + (body.hint ? (" — " + body.hint) : ""), "action");
+  return true;
 }
 
 function fireRebuild(){
