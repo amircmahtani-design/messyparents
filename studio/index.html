@@ -1380,6 +1380,10 @@ function draftGuide(){
   g.panel.eyebrow = $("#f_eyebrow").value;
   const hero = $("#f_hero").value.trim();
   if(hero) g.panel.hero = hero; else delete g.panel.hero;
+  /* A hero attached by upload stamps heroUpdated the same way approve() does,
+     so the field means "when the hero last changed" regardless of which route
+     it arrived by. */
+  if(state.pendingHeroUpdated){ g.heroUpdated = state.pendingHeroUpdated; }
   g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
   g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
@@ -1570,6 +1574,8 @@ function selectGuide(id){
   if(!g) return;
   state.current = id; state.orig = g; state.isNew = false;
   state.currentPage = null; state.currentSection = null;
+  /* Don't carry a pending hero stamp from the guide we just left. */
+  state.pendingHeroUpdated = null;
   showPanel("editor"); renderSiteList();
   renderPageList();
   $("#pvId").textContent = "· " + id;
@@ -1828,21 +1834,50 @@ function buildHookURL(){
   }catch(e){ return ""; }
 }
 
+/* Publish via the server-side function first, falling back to a locally
+   pasted hook.
+
+   The function keeps the hook in a Netlify environment variable, so it is set
+   once for the whole site instead of once per browser — no more "Saved. Not
+   published yet" on a device where you happen not to have pasted it. The
+   localStorage path stays as a fallback so nothing breaks before
+   NETLIFY_BUILD_HOOK is configured. */
+async function fireRebuildViaFunction(){
+  try{
+    const user = a.currentUser;
+    if(!user) return false;
+    const token = await user.getIdToken();
+    const r = await fetch("/.netlify/functions/publish", {
+      method:"POST",
+      headers:{ "Authorization": "Bearer " + token }
+    });
+    if(r.ok){
+      setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+      return true;
+    }
+    /* 500 means the env var is not set yet — fall through to the local hook
+       rather than reporting a failure the operator cannot act on here. */
+    return false;
+  }catch(e){ return false; }
+}
+
 function fireRebuild(){
-  const url = buildHookURL();
-  if(!url) return false;
-  // Build hooks take a POST with no body and answer with an empty 200.
-  // no-cors keeps the browser from blocking it; there is no response to read.
-  try{ fetch(url, { method:"POST", mode:"no-cors", keepalive:true }); }catch(e){}
-  setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+  fireRebuildViaFunction().then(done => {
+    if(done) return;
+    const url = buildHookURL();
+    if(!url){
+      setRebuildBanner("Saved, but not published — set NETLIFY_BUILD_HOOK in Netlify, or paste a hook in Site → Search & AI.");
+      return;
+    }
+    // Build hooks take a POST with no body and answer with an empty 200.
+    // no-cors keeps the browser from blocking it; there is no response to read.
+    try{ fetch(url, { method:"POST", mode:"no-cors", keepalive:true }); }catch(e){}
+    setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+  });
   return true;
 }
 
 function queueRebuild(){
-  if(!buildHookURL()){
-    setRebuildBanner("Saved. Not published yet — paste your Netlify build hook in Site → Search & AI.");
-    return;
-  }
   if(rebuildTimer) clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(() => { rebuildTimer = null; fireRebuild(); }, REBUILD_DELAY_MS);
   setRebuildBanner("Saved. Publishing in 90s — or hit Publish now.");
@@ -2324,7 +2359,14 @@ async function boot(){
       const blob = await openCropper(file, GUIDE_HERO);
       msg.textContent = "Uploading…";
       const url = await uploadImage("guides", g.id, blob, blob.__ext || "png");
-      $("#f_hero").value = url; pushPreview();
+      $("#f_hero").value = url;
+      /* Stamp heroUpdated here too. Only approve() in the illustration
+         generator used to set it, so a hero attached by upload left the field
+         showing an older time than the image it described — which made it
+         useless for working out which path a hero actually came from. Both
+         routes now stamp it. */
+      state.pendingHeroUpdated = Date.now();
+      pushPreview();
       msg.textContent = "Uploaded ✓ — click Save to keep it.";
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
   });

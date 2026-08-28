@@ -135,6 +135,7 @@
     <button type="button" id="gpRegenBtn" class="gp-btn ghost gp-hidden">Regenerate</button>
     <button type="button" id="gpApproveBtn" class="gp-btn primary gp-hidden">Approve &amp; use</button>
     <button type="button" id="gpRejectBtn" class="gp-btn ghost gp-hidden">Reject</button>
+    <button type="button" id="gpReportBtn" class="gp-btn ghost gp-hidden">🐞 Report a problem</button>
   </div>
 
   <div class="gp-msg" id="gpMsg">Ready.</div>
@@ -286,6 +287,7 @@
     gpState.url   = d.url;
     gpState.brief = d.brief;
     gpState.qa    = d.qa;
+    gpState.promptVersion = d.promptVersion || null;
     document.getElementById("gpPreviewImg").src = d.url;
     const pendingCol = document.getElementById("gpPendingCol");
     pendingCol.classList.remove("gp-hidden");
@@ -305,7 +307,7 @@
       verdictEl.className = "gp-qa-verdict " + (flagged ? "bad" : "good");
     }
     if (qaWrap && qaWrap.tagName === "DETAILS") qaWrap.open = flagged;
-    show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+    show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn"); show("gpReportBtn");
     hide("gpCancelBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
 
@@ -320,7 +322,7 @@
     pendingCol.classList.add("gp-hidden");
     pendingCol.classList.remove("gp-regenerating");
     hide("gpQAWrap"); hide("gpBriefWrap"); hide("gpChangeWrap");
-    hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn");
+    hide("gpRegenBtn"); hide("gpApproveBtn"); hide("gpRejectBtn"); hide("gpReportBtn");
     hide("gpCancelBtn");
     document.getElementById("gpGenerateBtn").disabled = false;
   }
@@ -400,7 +402,7 @@
     // Hide the QA / change / brief blocks while generating — they belong
     // to the previous result and would be misleading. We'll re-show on new result.
     hide("gpQAWrap"); hide("gpBriefWrap"); hide("gpChangeWrap");
-    hide("gpApproveBtn"); hide("gpRejectBtn");
+    hide("gpApproveBtn"); hide("gpRejectBtn"); hide("gpReportBtn");
 
     document.getElementById("gpMsg").textContent = "Starting…";
     gpState.cancelled = false;
@@ -477,6 +479,45 @@
     }, 15000);
   }
 
+  /** Capture what is needed to debug a bad generation, as files.
+
+      A screenshot flattens transparency onto whatever was behind it, which
+      destroys the one thing needed to diagnose a cutout bug. This saves the
+      real PNG plus the brief and QA verdict instead. */
+  async function reportProblem() {
+    const msg = document.getElementById("gpMsg");
+    try {
+      const id = currentGuideId();
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const report = {
+        capturedAt: new Date().toISOString(),
+        guideId: id,
+        imageUrl: gpState.url || null,
+        brief: gpState.brief || null,
+        qa: gpState.qa || null,
+        promptVersion: gpState.promptVersion || null,
+        note: (document.getElementById("gpChangeInput") || {}).value || "",
+        userAgent: navigator.userAgent
+      };
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }));
+      a.download = "illustration-report-" + id + "-" + stamp + ".json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      if (gpState.url) {
+        const b = document.createElement("a");
+        b.href = gpState.url;
+        b.download = "illustration-" + id + "-" + stamp + ".png";
+        b.target = "_blank";
+        b.click();
+      }
+      msg.textContent = "Report saved (JSON + PNG in your downloads). Send both — the PNG keeps its transparency, a screenshot doesn't.";
+    } catch (e) {
+      msg.textContent = "Could not build report: " + (e.message || e);
+    }
+  }
+
   /** Reset the UI back to the "not generating" state. */
   function finishGeneration() {
     if (gpState.tick) { clearInterval(gpState.tick); gpState.tick = null; }
@@ -510,7 +551,7 @@
 
     // If we had a previous Proposed image showing, restore its controls
     if (gpState.url) {
-      show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn");
+      show("gpRegenBtn"); show("gpApproveBtn"); show("gpRejectBtn"); show("gpReportBtn");
       show("gpQAWrap"); show("gpChangeWrap"); show("gpBriefWrap");
       document.getElementById("gpMsg").textContent = "✕ Cancelled — previous version still shown.";
     } else {
@@ -608,10 +649,30 @@
     on("gpCancelBtn",    "click", cancelGeneration);
     on("gpRegenBtn",     "click", () => startGeneration(gpState.brief, ""));
     on("gpEditBriefBtn", "click", tryEditBrief);
+    on("gpReportBtn",    "click", reportProblem);
     on("gpApproveBtn",   "click", approve);
     on("gpRejectBtn",    "click", reject);
     on("gpChangeBtn",    "click", () => {
       const txt = (document.getElementById("gpChangeInput").value || "").trim();
+
+      /* The green background is a chroma key we deliberately ask for and then
+         remove in code — it is not a mistake the model made. Telling the model
+         to stop painting it leaves nothing keyable, so instead of a green
+         fringe you get the whole opaque rectangle. Leftover green is a cutout
+         bug and belongs in a report, not in the drawing prompt. */
+      if (txt &&
+          /\b(green|chroma|background)\b/i.test(txt) &&
+          /\b(remove|removing|get rid|delete|no more|stop|without|transparent|transparency)\b/i.test(txt)) {
+        document.getElementById("gpMsg").innerHTML =
+          "That instruction would make things worse. The green background is deliberate — " +
+          "it's a chroma key the pipeline removes after drawing. Telling the model not to " +
+          "paint it means there's nothing left to key out, and you get a solid rectangle " +
+          "instead.<br><br>Leftover green is a cutout bug: use <b>Report a problem</b> to " +
+          "capture it. Change your note to describe the drawing itself (pose, expression, " +
+          "props), or clear the box and hit Regenerate.";
+        return;
+      }
+
       if (!txt) {
         document.getElementById("gpMsg").textContent = "Type what to change first (e.g. 'Papa standing up').";
         return;
