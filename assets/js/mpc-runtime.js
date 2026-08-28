@@ -81,6 +81,11 @@
       (function (img) {
         if (img.complete && img.naturalWidth) return;   /* already painted */
         img.addEventListener("load", function () {
+          /* .ready means the anti-flash gate has already revealed this image.
+             Starting the keyframes now would animate opacity from 0 on
+             something the reader can see — a blink, not a fade. The two
+             mechanisms must never both own the reveal. */
+          if (img.classList.contains("ready")) return;
           img.classList.add("is-in");
         }, { once: true });
       })(imgs[i]);

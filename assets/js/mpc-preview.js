@@ -159,24 +159,45 @@ MPCStore.applyBooks = function(targetId){
    already cached) we reveal straight away. */
 function setImageSource(img, src) {
   if (!img || !src) return;
+  const next = MPCStore.img(src, 1100);
   const current = img.getAttribute("src") || "";
-  if (current === src) {
-    if (img.complete && img.naturalWidth > 0) img.classList.add("ready");
-    else img.addEventListener("load", function(){ img.classList.add("ready"); }, { once: true });
+
+  function reveal() { img.classList.add("ready"); }
+
+  /* Already pointed at the right file. */
+  if (current === next || current === src) {
+    if (img.complete && img.naturalWidth > 0) reveal();
+    else img.addEventListener("load", reveal, { once: true });
     return;
   }
-  img.classList.remove("ready");                 // hide until the new one is in
-  img.addEventListener("load",  function(){ img.classList.add("ready"); }, { once: true });
-  img.addEventListener("error", function(){
-    // If the resized copy could not be fetched, show the original rather than
-    // an empty frame — then stop, so a broken original cannot loop.
-    var raw = img.getAttribute("data-src-original");
-    if (raw && img.getAttribute("src") !== raw) { img.setAttribute("src", raw); return; }
-    img.classList.add("ready");
-  }, { once: false });
+
   img.setAttribute("data-src-original", src);
-  img.setAttribute("src", MPCStore.img(src, 1100));
-  if (img.complete && img.naturalWidth > 0) img.classList.add("ready");   // was cached
+
+  /* Fetch and decode the new picture off-screen FIRST, then swap it in.
+
+     This used to work the other way round: remove .ready (opacity 0), point
+     the live element at the new URL, and wait. On a page the build had baked
+     a picture into, that un-painted an illustration the reader could already
+     see — the appear / disappear / appear snap. The gap was however long the
+     new file took to arrive, which on a remote hero is most of a second.
+
+     Nothing is taken off screen here. The element keeps showing whatever it
+     has until there is something better to show, and the swap happens in a
+     single frame. A first visit with an empty frame is not slower: the fetch
+     starts the moment pre.src is set, exactly as it did before. */
+  const pre = new Image();
+  pre.onload = function () { img.setAttribute("src", next); reveal(); };
+  pre.onerror = function () {
+    /* The resized copy failed. Try the original once — and only once, so a
+       broken original cannot loop — then reveal regardless rather than
+       leaving an empty frame. */
+    if (next === src) { reveal(); return; }
+    const raw = new Image();
+    raw.onload  = function () { img.setAttribute("src", src); reveal(); };
+    raw.onerror = reveal;
+    raw.src = src;
+  };
+  pre.src = next;
 }
 
 /* --------------------------------------------------------------------------
