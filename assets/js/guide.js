@@ -113,38 +113,39 @@
 
     lastVW = vw; lastVH = vh;
 
-    /* ---- writes --------------------------------------------------------- */
-    var avail = vh - headH - crumbH - 16;          // small breathing room
-    if (natural > avail && avail > 0) {
-      var scale = avail / natural;
-      if (scale >= 0.8) {                          // gentle fit — never past ~20%
-        panel.style.transformOrigin = "top center";
-        panel.style.transform = "scale(" + scale + ")";
-        el.style.height = Math.ceil(natural * scale) + "px";
+    /* ---- writes ---------------------------------------------------------
 
-        /* The fit is a transform, so every glyph is re-rasterised at a
-           fractional size — and the headline's -webkit-text-stroke is scaled
-           with it. At 0.8px that stroke is already sub-pixel; scaled down it
-           smears into a visible outline around each letter, which reads as the
-           headline being drawn in a heavier, doubled, altogether different
-           face.
+       THE SCALE-TO-FIT USED TO LIVE HERE, AND IT IS GONE ON PURPOSE.
 
-           This is why one guide looked wrong and the next looked right with
-           identical CSS: the fit only fires when the panel overflows the
-           viewport, so a guide with a three-line headline gets scaled and its
-           shorter neighbour does not. It also only appears AFTER first paint,
-           because the page renders at natural size and this runs a frame
-           later.
+       It measured the panel against the viewport and, when the panel was
+       taller, shrank the whole thing with a CSS transform:
 
-           Marking the panel lets the stylesheet drop the stroke while scaled,
-           so a fitted page renders plainly instead of badly. */
-        panel.classList.add("is-fitted");
-        return;
-      }
-      /* Shrinking more than ~18% makes everything tiny. Leave it full size and
-         let the page scroll a little instead. */
-    }
-    panel.classList.remove("is-fitted");
+           if (natural > avail && scale >= 0.8)
+               panel.style.transform = "scale(" + scale + ")";
+
+       Two things made that untenable.
+
+       It rendered guides inconsistently. Whether it fired depended on this
+       guide's height AND this reader's window height, so the same page was
+       scaled on a laptop and not on a desktop, and on one screen a guide with
+       five bullets was scaled while its four-bullet neighbour was not. With
+       ~300 guides planned there is no window size at which they all agree.
+
+       And scaled text rendered badly. The headline carries
+       -webkit-text-stroke:0.8px to fake bold on Patrick Hand, which ships in
+       one weight. That stroke is sub-pixel already; scaled to a fraction it
+       smears into an outline around every glyph, which reads as a different,
+       heavier typeface. Hours went into hunting a font bug that never existed
+       — the font was always correct, it was being drawn at 0.87x.
+
+       A tall guide now simply scrolls. Every guide renders at true size on
+       every screen, which is the only arrangement that is consistent by
+       construction rather than by luck.
+
+       The measuring above is kept because it still clears stale inline styles
+       left by an earlier build, and because the ResizeObserver plumbing that
+       calls it also drives the redraw path. */
+    if (panel.classList.contains("is-fitted")) panel.classList.remove("is-fitted");
     if (panel.style.transform) panel.style.transform = "";
     if (el.style.height) el.style.height = "";
   }
