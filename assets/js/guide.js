@@ -114,37 +114,11 @@
     lastVW = vw; lastVH = vh;
 
     /* ---- writes ---------------------------------------------------------
-
-       THE SCALE-TO-FIT USED TO LIVE HERE, AND IT IS GONE ON PURPOSE.
-
-       It measured the panel against the viewport and, when the panel was
-       taller, shrank the whole thing with a CSS transform:
-
-           if (natural > avail && scale >= 0.8)
-               panel.style.transform = "scale(" + scale + ")";
-
-       Two things made that untenable.
-
-       It rendered guides inconsistently. Whether it fired depended on this
-       guide's height AND this reader's window height, so the same page was
-       scaled on a laptop and not on a desktop, and on one screen a guide with
-       five bullets was scaled while its four-bullet neighbour was not. With
-       ~300 guides planned there is no window size at which they all agree.
-
-       And scaled text rendered badly. The headline carries
-       -webkit-text-stroke:0.8px to fake bold on Patrick Hand, which ships in
-       one weight. That stroke is sub-pixel already; scaled to a fraction it
-       smears into an outline around every glyph, which reads as a different,
-       heavier typeface. Hours went into hunting a font bug that never existed
-       — the font was always correct, it was being drawn at 0.87x.
-
-       A tall guide now simply scrolls. Every guide renders at true size on
-       every screen, which is the only arrangement that is consistent by
-       construction rather than by luck.
-
-       The measuring above is kept because it still clears stale inline styles
-       left by an earlier build, and because the ResizeObserver plumbing that
-       calls it also drives the redraw path. */
+       The scale-to-fit that used to live here is gone. It shrank the panel
+       with a CSS transform whenever it overflowed the viewport, so the same
+       guide rendered at 100% on one screen and 87% on another — and the
+       headline's sub-pixel text-stroke smeared when scaled. Tall guides now
+       scroll. See claude/publish-pipeline-notes.md. */
     if (panel.classList.contains("is-fitted")) panel.classList.remove("is-fitted");
     if (panel.style.transform) panel.style.transform = "";
     if (el.style.height) el.style.height = "";
@@ -501,4 +475,70 @@
   } else {
     renderFromScratch();
   }
+
+  /* MOVING BETWEEN GUIDES — arrow keys, and swipe on touch.
+
+     Both follow the Previous/Next links the page already renders, so there is
+     no second idea of what "next" means, and a client-side redraw cannot leave
+     this pointing at stale hrefs. */
+  function stepHref(dir) {
+    var a = document.querySelector(".g-step--" + dir + ":not(.is-empty)");
+    return (a && a.getAttribute("href")) || null;
+  }
+
+  function go(dir) {
+    var href = stepHref(dir);
+    if (href) window.location.href = href;
+  }
+
+  /* Left/Right do not scroll a page, so they are free to take. Modifiers are
+     left alone (Alt+Left is Back), as is anything being typed into. */
+  document.addEventListener("keydown", function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+
+    var el = e.target;
+    if (el && (el.isContentEditable ||
+               /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName || ""))) return;
+
+    e.preventDefault();
+    go(e.key === "ArrowLeft" ? "prev" : "next");
+  });
+
+  /* Swipe, deliberately conservative — a reader who meant to scroll and lands
+     on another article has lost their place. Must be clearly horizontal, far
+     enough to be intent, not started at the screen edge (iOS owns that for its
+     own back gesture), and single-touch so a pinch is never read as a swipe.
+     Dragging leftward advances, as on every other app. */
+  var EDGE_GUARD = 32;      // px from either side where iOS owns the gesture
+  var MIN_TRAVEL = 70;      // px before it counts as intent
+  var MAX_DRIFT  = 0.6;     // vertical movement allowed, as a fraction of horizontal
+
+  var sx = 0, sy = 0, tracking = false;
+
+  document.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    var t0 = e.touches[0];
+    if (t0.clientX < EDGE_GUARD || t0.clientX > window.innerWidth - EDGE_GUARD) {
+      tracking = false; return;
+    }
+    sx = t0.clientX; sy = t0.clientY; tracking = true;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", function (e) {
+    if (e.touches.length !== 1) tracking = false;
+  }, { passive: true });
+
+  document.addEventListener("touchend", function (e) {
+    if (!tracking) return;
+    tracking = false;
+    var t1 = e.changedTouches && e.changedTouches[0];
+    if (!t1) return;
+
+    var dx = t1.clientX - sx, dy = t1.clientY - sy;
+    if (Math.abs(dx) < MIN_TRAVEL) return;
+    if (Math.abs(dy) > Math.abs(dx) * MAX_DRIFT) return;   /* that was a scroll */
+
+    go(dx < 0 ? "next" : "prev");
+  }, { passive: true });
 })();
