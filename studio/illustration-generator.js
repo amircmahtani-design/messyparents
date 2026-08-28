@@ -1254,8 +1254,15 @@
   padding: 8px; max-height: 320px; overflow-y: auto; margin-bottom: 12px;
 }
 #batchList .g-topic {
-  font-size: 11px; font-weight: 700; color: #6b7684; text-transform: uppercase;
-  padding: 6px 8px; letter-spacing: .5px;
+  font-size: 12px; font-weight: 800; color: #33404f; text-transform: uppercase;
+  padding: 12px 8px 4px; letter-spacing: .5px;
+  border-top: 1px solid #e6e9ee; margin-top: 6px;
+}
+#batchList .g-topic:first-child { border-top: 0; margin-top: 0; padding-top: 6px; }
+/* Topic runs inside a batch — present, but clearly subordinate to the batch. */
+#batchList .g-subtopic {
+  font-size: 10.5px; font-weight: 700; color: #8a95a3; text-transform: uppercase;
+  padding: 6px 8px 2px 8px; letter-spacing: .4px;
 }
 #batchList .g-row {
   display: flex; align-items: center; gap: 10px; padding: 8px 10px;
@@ -1437,14 +1444,62 @@
   function renderBatchList() {
     const list = document.getElementById("batchList");
     list.innerHTML = "";
-    let currentTopic = null;
-    batchState.guides.forEach(g => {
-      if (g.topic !== currentTopic) {
-        currentTopic = g.topic;
+
+    /* Group by BATCH, falling back to topic.
+
+       Topic order was the wrong shape for how this actually gets used: work
+       happens a batch at a time, so a dialog sorted by Feeding/Sleeping/etc
+       scatters the fifteen guides you are working through across the whole
+       list and you have to hunt for them.
+
+       Batch membership lives in the batch add-on's own meta document, which is
+       why this has to ask it rather than read a field off the guide. When the
+       add-on is not loaded — it is designed to be removable — this falls back
+       to the previous topic grouping rather than breaking. */
+    const B = window.MPCBatches;
+    const groupKey = B
+      ? (g) => B.batchOf(g) || ""
+      : (g) => g.topic || "";
+    const groupLabel = B
+      ? (k) => B.labelOf(k)
+      : (k) => k || "(no topic)";
+
+    const ordered = batchState.guides.slice().sort((a, b) => {
+      const ka = groupKey(a), kb = groupKey(b);
+      if (ka !== kb) {
+        /* Unbatched last; otherwise numerically, so Batch 2 precedes Batch 10. */
+        if (!ka) return 1;
+        if (!kb) return -1;
+        const na = parseFloat(ka), nb = parseFloat(kb);
+        if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+        return String(ka).localeCompare(String(kb));
+      }
+      /* Inside a batch, keep the topic runs together so the list still reads
+         the way the sidebar does. */
+      const ta = a.topic || "", tb = b.topic || "";
+      if (ta !== tb) return ta.localeCompare(tb);
+      return (a.title || "").localeCompare(b.title || "");
+    });
+
+    let currentGroup = null, currentTopic = null;
+    ordered.forEach(g => {
+      const k = groupKey(g);
+      if (k !== currentGroup) {
+        currentGroup = k; currentTopic = null;
         const h = document.createElement("div");
         h.className = "g-topic";
-        h.textContent = currentTopic || "(no topic)";
+        const inGroup = ordered.filter(x => groupKey(x) === k).length;
+        h.textContent = groupLabel(k) + " · " + inGroup;
         list.appendChild(h);
+      }
+      /* Topic stays visible as a lighter sub-heading inside each batch, so you
+         still get the Feeding/Sleeping runs you asked to keep. */
+      if (B && (g.topic || "") !== currentTopic) {
+        currentTopic = g.topic || "";
+        const s = document.createElement("div");
+        s.className = "g-subtopic";
+        s.textContent = currentTopic || "(no topic)";
+        list.appendChild(s);
       }
       const row = document.createElement("label");
       row.className = "g-row";

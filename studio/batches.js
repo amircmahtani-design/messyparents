@@ -138,6 +138,18 @@
   }
   function shortOf(k) { return k ? "B" + k : "—"; }
 
+  /* Published so other Studio surfaces can group by batch instead of by topic.
+     Batch membership lives in this add-on's meta document, so without this the
+     batch-generate dialog has no way to know which batch a guide belongs to and
+     can only fall back to the topic it was filed under. Read-only on purpose:
+     nothing outside here should be reassigning batches. */
+  window.MPCBatches = {
+    batchOf: batchOf,
+    labelOf: labelOf,
+    stateOf: stateOf,
+    keysInOrder: allBatchKeys
+  };
+
   /* checked / changed / open */
   function stateOf(g) {
     var c = META.checked[g.id];
