@@ -111,7 +111,11 @@ const HARD_RULES = [
   "Do not redesign, beautify, age, modernise or reinterpret any character.",
   "No written words, letters, headings, labels, logos, borders, numbers or captions anywhere in the image.",
   "No floating decorative elements: NO soap bubbles, NO sparkles, NO floating hearts, NO stars, NO speech bubbles, NO thought bubbles, NO whimsical particles or emojis. Only draw physical objects that are actually part of the scene brief.",
-  "No unrequested extra people, unexplained props, extra fingers or extra limbs. Simple environmental context (a rug, a couch) is fine when it grounds the scene, but do not add clutter — extra toys, books or objects — that are not called for by the brief.",
+  "No unrequested extra people, unexplained props, extra fingers or extra limbs. Do not add clutter — extra toys, books or objects — that are not called for by the brief.",
+
+  "CUT-OUT COMPOSITION — the illustration is placed on the page as a floating cut-out with no frame or border. Furniture and props are welcome: a sofa, armchair, cot, high chair, bed, rug or table are all fine when the moment needs them. The requirement is that every object is drawn COMPLETE and SELF-CONTAINED — a single freestanding island of artwork with background visible all the way around it. Draw the whole sofa: both arms, the full back, the base, as an object standing in empty space the way furniture appears in a catalogue illustration. Do NOT draw the room around it: no floor plane, no walls, no skirting board, no horizon line, no windows or doorways. A soft contact shadow directly beneath an object is fine; a shadow spreading out to the canvas edge is not.",
+
+  "FRAME MARGIN — this is what makes the image read as floating on the page rather than as a cropped photograph, and it is the most important compositional rule here. NOTHING may touch or run off the edge of the canvas. Leave a clear band of pure background, at least 8% of the canvas width, completely empty on all four sides. Every character, limb, hair strand, prop and piece of furniture must sit fully inside that band with visible background between it and the edge. All four corners must be pure background. If a sofa is too wide to fit, draw it smaller — never let it run out of frame. A straight line of artwork reaching the canvas edge produces a hard cropped edge on the page and ruins the effect completely.",
   "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
@@ -377,7 +381,7 @@ function briefFromDescription(guide, characterSelection, userVisualDescription) 
   let characters = (characterSelection && characterSelection.length)
     ? characterSelection.slice()
     : charactersFromText(desc);
-  if (!characters.length) characters = ["Mama", "Papa", "Ari"];
+  if (!characters.length) characters = suggestedCast(guide.id || guide.slug || guide.title);
 
   return {
     guideTopic:   guide.title || "parenting moment",
@@ -428,6 +432,37 @@ function adviceBlock(guide) {
   return lines.join("\n\n");
 }
 
+/* Casting rotation.
+
+   Left to itself the planner picks Mama and Ari almost every time. Each guide
+   is planned in isolation, so the model has no idea what it cast last time and
+   simply falls back to the statistically obvious mother-and-baby image — which
+   means Papa barely appears across the whole set, and every guide page looks
+   like the one before it.
+
+   A prompt asking for "variety" cannot fix that; variety is a property of the
+   collection, not of any single call. So the cast is rotated deterministically
+   from the guide id instead. Same guide always gets the same suggestion (so
+   regenerating is stable), and the spread across the set is even by
+   construction. The planner may still override it when the guide's own content
+   calls for someone specific — a breastfeeding guide should not be cast with
+   Papa — but it has to have a reason. */
+const CAST_ROTATION = [
+  ["Mama", "Ari"],
+  ["Papa", "Ari"],
+  ["Mama", "Papa", "Ari"],
+  ["Papa", "Ari"],
+  ["Mama", "Ari"],
+  ["Mama", "Papa", "Ari"]
+];
+
+function suggestedCast(guideId) {
+  const s = String(guideId || "");
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) hash = ((hash << 5) - hash + s.charCodeAt(i)) | 0;
+  return CAST_ROTATION[Math.abs(hash) % CAST_ROTATION.length];
+}
+
 async function planScene(guide, characterSelection, userVisualDescription) {
   const advice = adviceBlock(guide);
   const guideText = [
@@ -438,6 +473,17 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     "AGE RANGE: " + (guide.age || guide.ageRange || ""),
     advice ? ("\n" + advice) : ""
   ].filter(Boolean).join("\n");
+
+  const cast = suggestedCast(guide.id || guide.slug || guide.title);
+  const castBlock = (characterSelection && characterSelection.length) ? "" :
+    ("\n\nSUGGESTED CAST: " + cast.join(", ") + ".\n" +
+     "Use this cast unless the guide's own content makes it wrong — a guide " +
+     "specifically about breastfeeding needs Mama, one about a father's experience " +
+     "needs Papa. Otherwise take the suggestion as given. Do NOT default to Mama for " +
+     "general caregiving: feeding a bottle, winding, soothing, nappy changes and " +
+     "settling are done by either parent, and Papa should carry those scenes as often " +
+     "as Mama does. If you depart from the suggested cast, the reason must be visible " +
+     "in the guide's text.");
 
   const charConstraint = (characterSelection && characterSelection.length)
     ? ("\n\nMANDATORY CHARACTER SELECTION: This illustration MUST include exactly these characters and only these characters: " +
@@ -482,6 +528,13 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     "it is worse than no illustration at all. When a guide is about doing something " +
     "safely, either show it done correctly, or choose a moment that sidesteps the " +
     "practice entirely (a parent settling the baby, a parent listening at the door).\n\n" +
+    "FREESTANDING COMPOSITION. The illustration sits on the page as a floating cut-out. \n" +
+    "Furniture is allowed and often helps — a sofa, armchair, cot or high chair is fine. \n" +
+    "But describe it as a complete freestanding object with space around it, never as a \n" +
+    "room: 'Mama sitting at one end of a small two-seater sofa' rather than 'Mama on the \n" +
+    "sofa in the living room'. Never put a floor, wall, window or general room setting in \n" +
+    "composition. Keep the cast and any furniture compact enough to sit well inside the \n" +
+    "frame with clear empty space on all four sides.\n\n" +
     "Other rules: Do not design a poster or reproduce the slide. Do not place titles, " +
     "body copy, labels or logos inside the illustration. Use only the characters who " +
     "genuinely improve the visual idea — do NOT automatically include all three family " +
@@ -504,7 +557,7 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     '  "mustAvoid": [string]\n' +
     "}\n\n" +
     "Explicitly resolve arm positions, who holds Ari, and which hand holds each " +
-    "prop whenever characters touch or carry objects." + charConstraint + userDescBlock;
+    "prop whenever characters touch or carry objects." + castBlock + charConstraint + userDescBlock;
 
   const resp = await callResponses({
     model: ORCH_MODEL,
@@ -859,6 +912,8 @@ async function qaImage(b64, refUrls, brief, advice) {
     '  "containsUnrequestedObjects": bool,\n' +
     '  "toneIsAppropriate": bool,\n' +
     '  "contradictsGuideAdvice": bool,  // does the image show a practice the guide advises against?\n' +
+    '  "hasRoomSetting": bool,          // a drawn floor plane, wall, skirting board, window or doorway? (furniture on its own is FINE)\n' +
+    '  "touchesFrameEdge": bool,        // does any artwork reach or run off the canvas edge, or fill a corner?\n' +
     '  "issues": [string],\n' +
     '  "decision": "accept" | "retry",\n' +
     '  "altText": string  // A single plain-English sentence describing what is happening in the image, for use as accessibility alt-text on the website. Focus on WHO is in the scene and WHAT they are doing. Do NOT mention brand elements (paint stains, mug branding) or style (watercolour). Max 140 characters. Example: "A mother gently offers a bottle to her baby daughter, who turns her head away with a puzzled look."\n' +
@@ -939,6 +994,8 @@ function qaToRetryNotes(qa) {
   if (qa.containsUnrequestedText === true)    notes.push("- Remove all text, letters, numbers and logos.");
   if (qa.containsUnrequestedObjects === true) notes.push("- Remove objects not in the brief (glasses, wooden spoon, crown, extra people).");
   if (qa.toneIsAppropriate === false)         notes.push("- Tone is off — make it reassuring/warm, not alarmed or sad.");
+  if (qa.hasRoomSetting === true)             notes.push("- Remove the room: no floor plane, wall, skirting board, window or doorway. Keep the furniture, but draw it as a freestanding object with background all around it.");
+  if (qa.touchesFrameEdge === true)           notes.push("- CRITICAL: artwork runs off the canvas edge, which makes the image look cropped instead of floating. Scale everything down and redraw so a clear band of background at least 8% of the width is empty on all four sides, every object is complete, and all four corners are pure background.");
   if (qa.contradictsGuideAdvice === true)     notes.push("- CRITICAL: the scene shows a practice this guide advises against. Redesign the moment so it agrees with the guide's own bullets, or pick a moment that avoids the practice entirely.");
   for (const i of qa.issues || []) notes.push("- " + i);
   return notes.join("\n") || "- Match the character references more closely.";
@@ -1084,6 +1141,11 @@ exports.handler = async (event) => {
 
       /* A safety contradiction is never acceptable, whatever else QA thought. */
       if (qa.contradictsGuideAdvice === true) qa.decision = "retry";
+
+      /* A drawn setting is what makes the finished image land on the page as a
+         grey rectangle instead of a floating cut-out, so it fails outright
+         however good the drawing is. */
+      if (qa.hasRoomSetting === true || qa.touchesFrameEdge === true) qa.decision = "retry";
 
       if (qa.decision === "accept" && transparencyOk) {
         accepted = true; finalB64 = cut.b64; finalQA = qa; break;
