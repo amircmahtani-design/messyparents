@@ -57,10 +57,26 @@
    Latin subset. A glyph outside it falls back for that character alone, which
    is the safe failure. See FONTS-STEP-BY-STEP.md to regenerate.
    ------------------------------------------------------------------------ */
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/baloo-2-v23-latin-600.woff2") format("woff2")}
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/baloo-2-v23-latin-700.woff2") format("woff2")}
-@font-face{font-family:"Baloo 2";font-style:normal;font-weight:800;font-display:swap;src:url("../fonts/baloo-2-v23-latin-800.woff2") format("woff2")}
-@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/patrick-hand-v25-latin-regular.woff2") format("woff2")}
+/* font-display: the two DISPLAY faces block, the body face swaps.
+
+   These were all "swap", which draws text in a fallback face immediately and
+   repaints when the real font lands. On headlines that is very visible: the
+   guide title appeared in ui-rounded, a clean geometric sans, then flipped to
+   Patrick Hand a moment later. It reads as the font changing at random,
+   because whether you see it depends on whether the face is already cached.
+
+   "block" holds the text invisible for up to 3s instead, so the headline is
+   only ever painted in the face it is meant to be in. Safe here because all
+   three faces are preloaded in the document head and are a few KB each, so
+   the wait is imperceptible in practice.
+
+   Nunito stays on "swap": it carries the body copy, and invisible body text
+   is a worse failure than a repaint.
+   ------------------------------------------------------------------------ */
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:600;font-display:block;src:url("../fonts/baloo-2-v23-latin-600.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:700;font-display:block;src:url("../fonts/baloo-2-v23-latin-700.woff2") format("woff2")}
+@font-face{font-family:"Baloo 2";font-style:normal;font-weight:800;font-display:block;src:url("../fonts/baloo-2-v23-latin-800.woff2") format("woff2")}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:block;src:url("../fonts/patrick-hand-v25-latin-regular.woff2") format("woff2")}
 @font-face{font-family:"Nunito";font-style:normal;font-weight:400;font-display:swap;src:url("../fonts/nunito-v32-latin-regular.woff2") format("woff2")}
 @font-face{font-family:"Nunito";font-style:normal;font-weight:600;font-display:swap;src:url("../fonts/nunito-v32-latin-600.woff2") format("woff2")}
 @font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url("../fonts/nunito-v32-latin-700.woff2") format("woff2")}
@@ -114,7 +130,7 @@
      everything that is meant to look handwritten; it ships in ONE weight, so
      bold text needs -webkit-text-stroke rather than font-weight. */
   --display:"Baloo 2", "Trebuchet MS", sans-serif;
-  --hand:"Patrick Hand", "Poppins", ui-rounded, system-ui, sans-serif;
+  --hand:"Patrick Hand", ui-rounded, system-ui, sans-serif;
   --body:"Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --stroke-title:.8px;          /* how much weight a hand-lettered heading gets */
