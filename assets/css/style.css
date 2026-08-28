@@ -331,7 +331,7 @@ h3{font-size:1.3rem}
    safety net. Without JS the images show normally so the page still works. */
 html.js .about-art img,
 html.js .page-hero-art img,
-html.js .hero-art img{opacity:0;transition:opacity .2s ease}
+html.js .hero-art img{opacity:0;transition:opacity .3s ease}
 html.js .about-art img.ready,
 html.js .page-hero-art img.ready,
 html.js .hero-art img.ready,
