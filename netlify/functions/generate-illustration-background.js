@@ -116,7 +116,9 @@ const HARD_RULES = [
   "CUT-OUT COMPOSITION — the illustration is placed on the page as a floating cut-out with no frame or border. Furniture and props are welcome: a sofa, armchair, cot, high chair, bed, rug or table are all fine when the moment needs them. The requirement is that every object is drawn COMPLETE and SELF-CONTAINED — a single freestanding island of artwork with background visible all the way around it. Draw the whole sofa: both arms, the full back, the base, as an object standing in empty space the way furniture appears in a catalogue illustration. Do NOT draw the room around it: no floor plane, no walls, no skirting board, no horizon line, no windows or doorways. A soft contact shadow directly beneath an object is fine; a shadow spreading out to the canvas edge is not.",
 
   "FRAME MARGIN — this is what makes the image read as floating on the page rather than as a cropped photograph, and it is the most important compositional rule here. NOTHING may touch or run off the edge of the canvas. Leave a clear band of pure background, at least 8% of the canvas width, completely empty on all four sides. Every character, limb, hair strand, prop and piece of furniture must sit fully inside that band with visible background between it and the edge. All four corners must be pure background. If a sofa is too wide to fit, draw it smaller — never let it run out of frame. A straight line of artwork reaching the canvas edge produces a hard cropped edge on the page and ruins the effect completely.",
-  "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge or belong to the wrong person.",
+  "TWO HANDS PER PERSON — do the arithmetic before you draw. Every adult has exactly two hands and each hand can do exactly ONE job. Count the jobs the scene asks of each character: holding a bottle is one hand, holding a stopwatch is one hand, supporting a baby's back is one hand, holding a phone is one hand. If a character is asked for THREE jobs, the scene is impossible and you must NOT solve it by drawing a third arm, a disembodied hand, or one hand doing two things at once. Solve it the way a real parent does: rest the object down (the stopwatch or notebook sits on the floor or a table), tuck it under an arm or between the knees, hold it in the crook of the elbow, put it in a pocket, or let the baby be supported by the lap and crossed legs rather than by a hand. A parent bottle-feeding while seated needs one hand for the bottle and one arm cradling the baby — that is both hands already, so anything else in that scene must be resting on a surface, not held.",
+
+  "Every hand, arm and object must have an understandable owner and a natural position — hands and arms must not merge, cross implausibly, or belong to the wrong person. Each visible hand must trace back along a visible arm to a shoulder of the character it belongs to.",
   "Ari should look cheerful, curious or mischievous unless the scene brief specifically requires discomfort. Do not make the baby look sick, distressed or frightened for a normal developmental or feeding topic.",
   "Do not make the parents look alarmed for a normal topic — keep medical and safety topics reassuring, not scary.",
   "TECHNICAL BACKGROUND REQUIREMENT — this is not aesthetic, it is required for the pipeline: the ENTIRE background behind the characters MUST be pure saturated bright green, RGB (0, 255, 0), hex #00FF00. Fill the whole canvas outside the characters with this exact bright green. Do NOT use muted green, sage green, olive, khaki, beige, cream, paper-tone, warm off-white, or any 'book-appropriate' subtle background. Do NOT add texture, watercolour wash, paper grain, gradient, vignette or scenery. The green must be flat, uniform and unmistakably #00FF00. Bright green must NEVER appear anywhere on the characters, their clothes, hair, skin or props — only on the background."
@@ -314,6 +316,30 @@ function cutoutMagenta(b64) {
     if (x < w - 1) { const q = px + 1; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
     if (y > 0)     { const q = px - w; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
     if (y < h - 1) { const q = px + w; if (!bg[q] && dist(q*4) <= TOL_EDGE) { bg[q] = 1; stack[sp++] = q; } }
+  }
+
+  /* ---- 3b) Enclosed green pockets.
+     The flood fill deliberately only removes background CONNECTED to the edge,
+     which is what stops it punching holes through cream paper tones inside the
+     artwork. But it also means a pocket of background sealed off by the drawing
+     survives — the gap between an arm and a torso, between crossed legs, inside
+     the crook of an elbow. Those came out as bright green blobs sitting on top
+     of the illustration.
+
+     That caution is only warranted when the background colour is one the
+     artwork might legitimately contain. Pure saturated chroma green is not:
+     the hard rules forbid it appearing anywhere on characters, clothes, hair,
+     skin or props precisely so it can be treated as non-artwork wherever it
+     turns up. So when we detected a real green key, strongly green pixels are
+     removed regardless of whether they connect to the edge. When the model
+     painted a cream or paper background instead, we stay conservative and keep
+     to edge-connected removal only. */
+  if (isGreenKey) {
+    for (let px = 0; px < n; px++) {
+      if (bg[px]) continue;
+      const i = px * 4;
+      if ((d[i+1] - Math.max(d[i], d[i+2])) > 40) bg[px] = 1;
+    }
   }
 
   /* ---- 4) Cut, feather the rim, and despill the background hue out of the
@@ -528,6 +554,17 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     "it is worse than no illustration at all. When a guide is about doing something " +
     "safely, either show it done correctly, or choose a moment that sidesteps the " +
     "practice entirely (a parent settling the baby, a parent listening at the door).\n\n" +
+    "HAND BUDGET — count before you commit. Each adult has TWO hands and each hand \n" +
+    "does ONE job. Before returning the brief, list every hand-task the scene needs \n" +
+    "from each adult: holding a bottle, holding a spoon, holding a stopwatch, holding \n" +
+    "a phone, supporting the baby. If any adult needs more than two, the scene is \n" +
+    "impossible and the image model will draw a third arm to satisfy it. Fix it in the \n" +
+    "brief, not in the drawing: put the extra object on the floor or a table, tuck it \n" +
+    "under an arm, or let the baby sit supported by the adult's lap and crossed legs \n" +
+    "instead of by a hand. Fill handBudget with at most two entries per adult, e.g. \n" +
+    '"Papa": ["left hand holds the bottle to Ari\'s mouth", "right arm cradles Ari\'s back"], \n' +
+    "and make sure every prop you list is accounted for by a hand or explicitly resting \n" +
+    "on a surface.\n\n" +
     "FREESTANDING COMPOSITION. The illustration sits on the page as a floating cut-out. \n" +
     "Furniture is allowed and often helps — a sofa, armchair, cot or high chair is fine. \n" +
     "But describe it as a complete freestanding object with space around it, never as a \n" +
@@ -546,6 +583,7 @@ async function planScene(guide, characterSelection, userVisualDescription) {
     '  "coreMeaning": string,\n' +
     '  "visualMoment": string,   // must directly depict parentConcern\n' +
     '  "characters": ["Mama"|"Papa"|"Ari"],\n' +
+    '  "handBudget": { "Mama"?: [string], "Papa"?: [string] },  // what each ADULT hand is doing; MAX 2 entries per adult\n' +
     '  "characterActions": { "Mama"?: string, "Papa"?: string, "Ari"?: string },\n' +
     '  "expressions":       { "Mama"?: string, "Papa"?: string, "Ari"?: string },\n' +
     '  "props": [string],\n' +
@@ -850,6 +888,34 @@ function buildGenerationPrompt(brief, retryNotes, userInstructions, advice) {
       "against, change that element. This outranks the scene brief."
     );
   }
+  /* Spell the hand budget out in the drawing prompt. When the planner produced
+     one, render it. When it didn't — the user typed their own description, so
+     the planner was skipped — instruct the model to do the count itself, since
+     that path is exactly where an unsatisfiable scene reaches the drawing
+     stage unchecked. */
+  if (brief.handBudget && Object.keys(brief.handBudget).length) {
+    const budget = Object.keys(brief.handBudget)
+      .map(who => "  " + who + ": " + [].concat(brief.handBudget[who]).slice(0, 2).join(" / "))
+      .join("\n");
+    parts.push(
+      "",
+      "HAND ASSIGNMENT — each hand listed does that one job and nothing else:",
+      budget,
+      "Anything not listed above is NOT being held. Draw it resting on a surface, " +
+      "tucked under an arm, or leave it out. Do not add a hand to carry it."
+    );
+  } else {
+    parts.push(
+      "",
+      "HAND CHECK — before drawing, count the hand-tasks this scene asks of each adult. " +
+      "Two hands each, one job per hand. If the description implies three tasks for one " +
+      "person (for example feeding a bottle, supporting the baby, AND holding a stopwatch " +
+      "or notebook), do NOT draw a third arm or let one hand do two jobs. Rest the extra " +
+      "object on the floor or a table, tuck it under an arm, or support the baby with the " +
+      "lap and crossed legs so a hand is freed."
+    );
+  }
+
   if (brief.mustShow && brief.mustShow.length) parts.push("", "MUST SHOW: " + brief.mustShow.join("; "));
   if (brief.mustAvoid && brief.mustAvoid.length) parts.push("MUST AVOID: " + brief.mustAvoid.join("; "));
 
@@ -907,6 +973,9 @@ async function qaImage(b64, refUrls, brief, advice) {
     "  },\n" +
     '  "sceneMeaningMatches": bool,\n' +
     '  "anatomyIsCoherent": bool,\n' +
+    '  "handCount": { "Mama"?: number, "Papa"?: number },  // COUNT the visible hands belonging to each adult\n' +
+    '  "extraHands": bool,              // does any adult have more than two hands, or a hand with no arm leading to their shoulder?\n' +
+    '  "handDoingTwoJobs": bool,        // is one hand simultaneously holding an object AND supporting the baby?\n' +
     '  "propsAreCorrect": bool,\n' +
     '  "containsUnrequestedText": bool,\n' +
     '  "containsUnrequestedObjects": bool,\n' +
@@ -924,6 +993,17 @@ async function qaImage(b64, refUrls, brief, advice) {
     "• ARI identity = BROWN hair (not blonde), big rosy cheeks, wide open-mouth smile, PINK floral-print romper with a LARGE PINK BOW at the chest. " +
     "The pink romper and chest bow are BINDING. Her HEAD accessory (crown, headband, hair bow, or nothing) is VARIABLE and MUST NOT be treated as an identity mismatch — do NOT flag Ari as identity=false because her head accessory differs from any reference or from the brief. Only mark Ari identity=false if her face, hair colour, or the pink floral romper have changed.\n" +
     "• BRAND STYLE: hand-drawn ink linework + soft watercolour fill, warm muted palette, gently imperfect edges. Papa's and Mama's jeans should look 'lived in' — small paint stains, patches or scribble marks are correct, not defects.\n\n" +
+    "HAND COUNT — do this literally, do not eyeball it:\n" +
+    "For each adult in the image, trace every visible hand back along its arm to a \n" +
+    "shoulder. Count them. An adult must have exactly two, and each hand must be doing \n" +
+    "exactly one thing. Set extraHands=true if you find a third hand, a hand whose arm \n" +
+    "does not connect to a shoulder, or two arms emerging from one shoulder. Set \n" +
+    "handDoingTwoJobs=true if a single hand is drawn both gripping an object and \n" +
+    "supporting the baby's body. Worked example: Papa seated cross-legged, holding a \n" +
+    "bottle to Ari's mouth with one hand and a stopwatch in the other, while Ari is also \n" +
+    "held upright against his chest — that requires three hands. If the picture shows it \n" +
+    "anyway, one of those flags is true. This is a hard failure however good the rest of \n" +
+    "the drawing is, because it is the single most noticeable defect to a reader.\n\n" +
     "NARRATIVE ALIGNMENT — this is what sceneMeaningMatches must actually check:\n" +
     "The scene brief contains a `parentConcern` field describing the SPECIFIC worry, " +
     "question or behaviour the guide addresses. The image must depict that concern " +
@@ -990,6 +1070,8 @@ function qaToRetryNotes(qa) {
   }
   if (qa.sceneMeaningMatches === false)       notes.push("- Illustration does not communicate the brief's visual moment.");
   if (qa.anatomyIsCoherent === false)         notes.push("- Anatomy is confused (hands/arms/held objects).");
+  if (qa.extraHands === true)                 notes.push("- CRITICAL: an adult has more than two hands, or a hand with no arm leading back to their shoulder. Redraw with exactly two hands per adult. Whatever the third hand was holding must instead rest on a surface, tuck under an arm, or be left out.");
+  if (qa.handDoingTwoJobs === true)           notes.push("- CRITICAL: one hand is doing two jobs at once (holding an object AND supporting the baby). Give each hand one job. Support the baby with the lap and crossed legs to free a hand, or put the held object down.");
   if (qa.propsAreCorrect === false)           notes.push("- Props are wrong or missing.");
   if (qa.containsUnrequestedText === true)    notes.push("- Remove all text, letters, numbers and logos.");
   if (qa.containsUnrequestedObjects === true) notes.push("- Remove objects not in the brief (glasses, wooden spoon, crown, extra people).");
@@ -1146,6 +1228,10 @@ exports.handler = async (event) => {
          grey rectangle instead of a floating cut-out, so it fails outright
          however good the drawing is. */
       if (qa.hasRoomSetting === true || qa.touchesFrameEdge === true) qa.decision = "retry";
+
+      /* An invented third hand is the model's way of satisfying a scene that
+         asks one person for three simultaneous hand-tasks. Never acceptable. */
+      if (qa.extraHands === true || qa.handDoingTwoJobs === true) qa.decision = "retry";
 
       if (qa.decision === "accept" && transparencyOk) {
         accepted = true; finalB64 = cut.b64; finalQA = qa; break;
