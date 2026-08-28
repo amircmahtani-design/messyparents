@@ -378,10 +378,81 @@ function cutoutMagenta(b64) {
      painted a cream or paper background instead, we stay conservative and keep
      to edge-connected removal only. */
   if (isGreenKey) {
+    /* Judge "is this the green background" by HUE, not by distance from pure
+       #00FF00.
+
+       The model does not paint the key as a flat colour everywhere. It shades
+       it: a contact shadow under a character darkens the green beneath them,
+       and green seen through the gaps in a cot rail picks up the wood's
+       ambient tone. Those pixels land around rgb(147,168,71) — plainly the
+       same green, but 185 units from pure #00FF00, so a distance test with a
+       120 tolerance rejects them and they survive into the finished cut-out as
+       an olive smear along the ground and stripes between the slats.
+
+       Hue is stable under that shading where distance is not. A green with any
+       real saturation is background; the artwork's own greens live in small
+       details, handled by the size rule below. */
+    const greenish = new Uint8Array(n);
     for (let px = 0; px < n; px++) {
-      if (bg[px]) continue;
       const i = px * 4;
-      if ((d[i+1] - Math.max(d[i], d[i+2])) > 40) bg[px] = 1;
+      const R = d[i], G = d[i+1], B = d[i+2];
+      const mx = Math.max(R, G, B), mn = Math.min(R, G, B), delta = mx - mn;
+      if (mx <= 40 || delta === 0) continue;                 /* near-black or grey */
+      if (delta / mx < 0.25) continue;                       /* too washed out to be the key */
+      let hue;
+      if (mx === R)      hue = 60 * (((G - B) / delta + 6) % 6);
+      else if (mx === G) hue = 60 * (2 + (B - R) / delta);
+      else               hue = 60 * (4 + (R - G) / delta);
+      if (hue >= 60 && hue <= 180) greenish[px] = 1;
+    }
+
+    /* Anything greenish CONNECTED to the border is background, shaded or not.
+       This is what clears the ground shadow, which touches the key on all
+       sides. */
+    const stack2 = new Int32Array(n);
+    let sp2 = 0;
+    for (let px = 0; px < n; px++) {
+      if (bg[px] && greenish[px]) { stack2[sp2++] = px; }
+    }
+    for (let px = 0; px < n; px++) if (bg[px]) { stack2[sp2++] = px; }
+    /* Grow the existing background region across greenish pixels. */
+    while (sp2 > 0) {
+      const px = stack2[--sp2];
+      const x = px % w, y = (px / w) | 0;
+      const visit = (q) => { if (!bg[q] && greenish[q]) { bg[q] = 1; stack2[sp2++] = q; } };
+      if (x > 0)     visit(px - 1);
+      if (x < w - 1) visit(px + 1);
+      if (y > 0)     visit(px - w);
+      if (y < h - 1) visit(px + w);
+    }
+
+    /* What is left is greenish but sealed inside the drawing: the gaps between
+       cot slats, the space under an arm. Those are background too, but so are
+       the green flowers printed on a mattress and the leaves on Ari's romper —
+       and those must survive.
+
+       Size separates them cleanly. Measured on a real failing render, the
+       enclosed background regions were 2000-14000px while every piece of
+       artwork detail was under 1900px, and the great majority under 100px.
+       0.05% of the canvas sits in that gap with room to spare. */
+    const MIN_ENCLOSED = Math.max(600, Math.round(n * 0.0005));
+    const comp = new Int32Array(n);
+    const queue = new Int32Array(n);
+    for (let px = 0; px < n; px++) {
+      if (bg[px] || !greenish[px] || comp[px]) continue;
+      let qs = 0, qe = 0, count = 0;
+      queue[qe++] = px; comp[px] = 1;
+      const members = [];
+      while (qs < qe) {
+        const q = queue[qs++]; members.push(q); count++;
+        const x = q % w, y = (q / w) | 0;
+        const visit = (z) => { if (!bg[z] && greenish[z] && !comp[z]) { comp[z] = 1; queue[qe++] = z; } };
+        if (x > 0)     visit(q - 1);
+        if (x < w - 1) visit(q + 1);
+        if (y > 0)     visit(q - w);
+        if (y < h - 1) visit(q + w);
+      }
+      if (count >= MIN_ENCLOSED) for (const z of members) bg[z] = 1;
     }
   }
 
