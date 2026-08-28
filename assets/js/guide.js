@@ -89,6 +89,7 @@
     if (!IS_TOP) return;
     panel = el.querySelector(".gpanel");
     if (!panel) { if (el.style.height) el.style.height = ""; return; }
+    if (!IS_TOP) { panel.classList.remove("is-fitted"); }
 
     /* ---- reads ---------------------------------------------------------
        All of them, together, before anything is written. One layout flush. */
@@ -120,11 +121,30 @@
         panel.style.transformOrigin = "top center";
         panel.style.transform = "scale(" + scale + ")";
         el.style.height = Math.ceil(natural * scale) + "px";
+
+        /* The fit is a transform, so every glyph is re-rasterised at a
+           fractional size — and the headline's -webkit-text-stroke is scaled
+           with it. At 0.8px that stroke is already sub-pixel; scaled down it
+           smears into a visible outline around each letter, which reads as the
+           headline being drawn in a heavier, doubled, altogether different
+           face.
+
+           This is why one guide looked wrong and the next looked right with
+           identical CSS: the fit only fires when the panel overflows the
+           viewport, so a guide with a three-line headline gets scaled and its
+           shorter neighbour does not. It also only appears AFTER first paint,
+           because the page renders at natural size and this runs a frame
+           later.
+
+           Marking the panel lets the stylesheet drop the stroke while scaled,
+           so a fitted page renders plainly instead of badly. */
+        panel.classList.add("is-fitted");
         return;
       }
       /* Shrinking more than ~18% makes everything tiny. Leave it full size and
          let the page scroll a little instead. */
     }
+    panel.classList.remove("is-fitted");
     if (panel.style.transform) panel.style.transform = "";
     if (el.style.height) el.style.height = "";
   }
