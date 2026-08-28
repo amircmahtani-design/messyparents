@@ -1827,6 +1827,11 @@ const HOOK_KEY = "mpc.netlifyBuildHook";
 const REBUILD_DELAY_MS = 90000;
 let rebuildTimer = null;
 
+/* Declared alongside the other publish timers, above every function that
+   touches them — Studio's test suite enforces that ordering. */
+const PUBLISH_WINDOW_MS = 60 * 60 * 1000;
+let coalesceTimer = null, pendingSince = 0, pendingCount = 0;
+
 function buildHookURL(){
   try{
     const u = (localStorage.getItem(HOOK_KEY) || "").trim();
@@ -1904,6 +1909,9 @@ function fireRebuild(){
 }
 
 function queueRebuild(){
+  /* A save joins the same hourly window as an upload, so editing text and
+     uploading pictures in the same sitting still produces one deploy. */
+  if(coalesceTimer){ pendingCount++; pendingBanner(); return; }
   if(rebuildTimer) clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(() => { rebuildTimer = null; fireRebuild(); }, REBUILD_DELAY_MS);
   setRebuildBanner("Saved. Publishing in 90s.", "ok");
@@ -1911,10 +1919,54 @@ function queueRebuild(){
 
 /* Flush a pending rebuild rather than losing it when the tab closes. */
 window.addEventListener("beforeunload", () => {
-  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; fireRebuild(); }
+  /* One build, whichever timer was waiting — firing both would spend two
+     deploys on the same set of changes. */
+  let due = false;
+  if(coalesceTimer){ clearTimeout(coalesceTimer); coalesceTimer = null; pendingCount = 0; due = true; }
+  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; due = true; }
+  if(due) fireRebuild();
 });
 
+/* Collect changes and publish at most once an hour.
+
+   Every trigger of the build hook spends build minutes off the Netlify
+   allowance, so publishing on each upload is expensive when you are working
+   through a whole set in one sitting: thirty uploads would be thirty deploys,
+   almost all of them superseded within minutes.
+
+   Saves and uploads therefore accumulate. The first change starts a one-hour
+   window; everything after it joins the same pending deploy, and one build
+   goes out at the end covering all of it. "Publish now" overrides at any
+   point, and closing the tab flushes rather than losing the work.
+
+   Nothing is at risk while it waits — every change is already saved in
+   Firestore. What is pending is only the rebuild of the public pages. */
+
+function pendingBanner(){
+  const mins = Math.max(1, Math.round((PUBLISH_WINDOW_MS - (Date.now() - pendingSince)) / 60000));
+  setRebuildBanner(
+    pendingCount + (pendingCount === 1 ? " change" : " changes") +
+    " saved, publishing in about " + mins + " min. Hit Publish now to go live immediately.",
+    "action");
+}
+
+function publishSoon(){
+  /* The old 90-second save debounce is superseded while a window is open. */
+  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
+
+  pendingCount++;
+  if(!coalesceTimer){
+    pendingSince = Date.now();
+    coalesceTimer = setTimeout(() => {
+      coalesceTimer = null; pendingCount = 0;
+      fireRebuild();
+    }, PUBLISH_WINDOW_MS);
+  }
+  pendingBanner();
+}
+
 function publishNow(){
+  if(coalesceTimer){ clearTimeout(coalesceTimer); coalesceTimer = null; pendingCount = 0; }
   if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
   if(!fireRebuild()){
     setRebuildBanner("No build hook set. Add NETLIFY_BUILD_HOOK in Netlify, then redeploy once.", "action");
@@ -2427,7 +2479,28 @@ async function boot(){
          routes now stamp it. */
       state.pendingHeroUpdated = Date.now();
       pushPreview();
-      msg.textContent = "Uploaded ✓ — click Save to keep it.";
+
+      /* Save and publish in one go.
+
+         An uploaded hero used to need two more deliberate actions before a
+         reader could see it: click Save, then wait out the 90-second publish
+         debounce. Neither adds anything when you have just chosen the picture
+         by hand — the decision was made at the file dialog.
+
+         The order matters. The build reads the guide from Firestore, so the
+         save has to COMPLETE before the build is triggered; firing them
+         together would race and could bake the previous hero. */
+      msg.textContent = "Uploaded ✓ — saving…";
+      const fresh = draftGuide();
+      await saveGuide(fresh);
+      state.orig = fresh;
+      const gi = state.guides.findIndex(x => x.id === fresh.id);
+      if(gi >= 0) state.guides[gi] = fresh;
+      state.pendingHeroUpdated = null;
+      renderList();
+
+      msg.textContent = "Uploaded and saved ✓";
+      publishSoon();
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
   });
   auth.onAuthStateChanged(a, async user => {
