@@ -270,12 +270,16 @@ h3{font-size:1.3rem}
    reserved height never causes a gap above the results.) */
 .page-hero-art{display:flex;justify-content:flex-start;align-items:flex-start;min-width:0;
   height:clamp(240px,24vw,300px);margin-top:6px}
-.page-hero-art img{width:100%;height:100%;max-width:460px;
-  object-fit:contain;object-position:left top;display:block;transform:translateX(80px)}
+/* --illus-x is the horizontal offset the illustration sits at. It is a custom
+   property, not a bare transform, because the fade-in keyframes below have to
+   land on the SAME transform they started from — see the note on illus-in. */
+.page-hero-art img{--illus-x:80px;width:100%;height:100%;max-width:460px;
+  object-fit:contain;object-position:left top;display:block;
+  transform:translateX(var(--illus-x))}
 @media (max-width:820px){
   .page-hero{grid-template-columns:1fr;gap:10px}
   .page-hero-art{order:-1;height:auto;max-width:360px;margin:0 auto;justify-content:center}
-  .page-hero-art img{height:auto;max-height:260px;transform:none;object-position:center}
+  .page-hero-art img{--illus-x:0px;height:auto;max-height:260px;object-position:center}
 }
 /* the intro already provides the breathing room — don't stack another gap on top */
 .page-head + .rows{padding-top:clamp(14px,1.8vw,22px)}
@@ -350,7 +354,21 @@ html.illus-ready .hero-art img{opacity:1}
    The element is only at opacity 0 for the length of the animation, after it
    has loaded — it is never a hidden LCP candidate that the browser has to
    wait on. */
-@keyframes illus-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* The end frame must restate the element's resting offset, not `none`.
+
+   `transform` is one property: a keyframe that ends at `transform:none` does
+   not "stop animating the Y nudge", it replaces the whole transform — and
+   because the animation is `both`, that replacement persists after it ends.
+   On the Popular / Guides heroes, whose resting position is
+   translateX(var(--illus-x)), that made the illustration slide 80px to the
+   left as it faded in and stay there. Composing the offset into both frames
+   keeps the nudge purely vertical and leaves the art where it started.
+
+   --illus-x defaults to 0, so the selectors with no offset are unaffected. */
+@keyframes illus-in{
+  from{opacity:0;transform:translate(var(--illus-x,0px),6px)}
+  to  {opacity:1;transform:translate(var(--illus-x,0px),0)}
+}
 html.js .hero-art img.is-in,
 html.js .page-hero-art img.is-in,
 html.js .about-art img.is-in,
