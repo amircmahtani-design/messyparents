@@ -33,10 +33,15 @@
   }
   .gpanel .g-copy{min-width:0}
   .gpanel .g-hero > *{min-width:0}
+  /* The fake-bold stroke only applies once Patrick Hand has really rendered.
+     Applied to a fallback face it produces a doubled, outlined headline —
+     see markFontReady() in mpc-runtime.js. */
+  html.fonts-ready .gpanel h1{-webkit-text-stroke:var(--stroke-title) var(--g-ink)}
+  html.fonts-ready .gpanel .g-band b{-webkit-text-stroke:.5px var(--g-ink)}
   .gpanel h1{
     font-family:var(--hand);font-weight:400;
     font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:8px 0 0;
-    -webkit-text-stroke:var(--stroke-title) var(--g-ink);letter-spacing:.4px;width:100%;max-width:none;
+    letter-spacing:.4px;width:100%;max-width:none;
   }
   /* Illustration sits centred in its column (balanced whitespace), nudged
      slightly left — NOT jammed against the far-right edge. */
@@ -88,7 +93,7 @@
     background:var(--g-band);border:2px solid var(--g-band-line);border-radius:14px;
     padding:13px 210px 13px 26px;min-height:80px;font-size:22px;line-height:1.4;
   }
-  .gpanel .g-band b{font-weight:400;-webkit-text-stroke:.5px var(--g-ink)}
+  .gpanel .g-band b{font-weight:400}
   .gpanel .g-band-text{min-width:0}
   .gpanel .g-note{width:108px;height:90px;transform:rotate(-6deg);display:block;flex:none}
   .gpanel .g-note--img{object-fit:contain}
