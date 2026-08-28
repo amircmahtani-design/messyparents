@@ -1852,7 +1852,7 @@ async function fireRebuildViaFunction(){
       headers:{ "Authorization": "Bearer " + token }
     });
     if(r.ok){
-      setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+      setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
       return true;
     }
     /* 500 means the env var is not set yet — fall through to the local hook
@@ -1866,13 +1866,13 @@ function fireRebuild(){
     if(done) return;
     const url = buildHookURL();
     if(!url){
-      setRebuildBanner("Saved, but not published — set NETLIFY_BUILD_HOOK in Netlify, or paste a hook in Site → Search & AI.");
+      setRebuildBanner("Saved. Not published yet — set NETLIFY_BUILD_HOOK in Netlify (Site configuration → Environment variables).", "action");
       return;
     }
     // Build hooks take a POST with no body and answer with an empty 200.
     // no-cors keeps the browser from blocking it; there is no response to read.
     try{ fetch(url, { method:"POST", mode:"no-cors", keepalive:true }); }catch(e){}
-    setRebuildBanner("Publishing… the site rebuilds in about a minute.");
+    setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
   });
   return true;
 }
@@ -1880,7 +1880,7 @@ function fireRebuild(){
 function queueRebuild(){
   if(rebuildTimer) clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(() => { rebuildTimer = null; fireRebuild(); }, REBUILD_DELAY_MS);
-  setRebuildBanner("Saved. Publishing in 90s — or hit Publish now.");
+  setRebuildBanner("Saved. Publishing in 90s.", "ok");
 }
 
 /* Flush a pending rebuild rather than losing it when the tab closes. */
@@ -1891,27 +1891,61 @@ window.addEventListener("beforeunload", () => {
 function publishNow(){
   if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
   if(!fireRebuild()){
-    setRebuildBanner("No build hook saved — add it in Site → Search & AI.");
+    setRebuildBanner("No build hook set. Add NETLIFY_BUILD_HOOK in Netlify, then redeploy once.", "action");
   }
 }
 
 /* A single line in the header that tells the truth about publish state.
    Created on first use so no markup change is needed elsewhere. */
-function setRebuildBanner(text){
+/* The publish status, as a self-contained toast rather than loose text.
+
+   It used to be appended into the header as an inline-flex span. The header is
+   not laid out to receive it, so on a narrow window the text escaped its box
+   and printed straight across the sidebar and the editor — unreadable, and
+   overlapping the guide titles underneath.
+
+   It is now a fixed toast in the bottom-left with its own background, and it
+   takes itself away: a success message fades after a few seconds, since
+   "publishing" is not something you need told about permanently. Only a
+   message you have to act on stays put. */
+function setRebuildBanner(text, kind){
   let el = document.getElementById("rebuildState");
   if(!el){
-    const host = document.querySelector("header") || document.body;
-    el = document.createElement("span");
+    el = document.createElement("div");
     el.id = "rebuildState";
-    el.style.cssText = "font-size:12px;font-weight:700;color:var(--muted);margin-left:10px;display:inline-flex;align-items:center;gap:8px";
+    el.style.cssText =
+      "position:fixed;left:16px;bottom:16px;z-index:9999;max-width:min(420px,calc(100vw - 32px));" +
+      "display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;" +
+      "background:#fff;border:1px solid #e3e6ea;box-shadow:0 6px 20px rgba(20,24,31,.13);" +
+      "font-size:12.5px;line-height:1.4;color:#33404f;" +
+      "opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease";
+    const txt = document.createElement("span");
+    txt.id = "rebuildStateText";
+    txt.style.cssText = "flex:1 1 auto;min-width:0";
     const btn = document.createElement("button");
-    btn.type = "button"; btn.className = "btn sm"; btn.textContent = "Publish now";
+    btn.type = "button"; btn.className = "btn sm"; btn.id = "rebuildStateBtn";
+    btn.textContent = "Publish now";
+    btn.style.cssText = "flex:0 0 auto";
     btn.addEventListener("click", publishNow);
-    const txt = document.createElement("span"); txt.id = "rebuildStateText";
     el.appendChild(txt); el.appendChild(btn);
-    host.appendChild(el);
+    document.body.appendChild(el);
   }
   document.getElementById("rebuildStateText").textContent = text;
+
+  /* Publishing is already under way, so there is nothing to press. */
+  const btn = document.getElementById("rebuildStateBtn");
+  if(btn) btn.style.display = (kind === "busy" || kind === "ok") ? "none" : "";
+
+  el.style.opacity = "1";
+  el.style.transform = "translateY(0)";
+
+  clearTimeout(el.__hide);
+  if(kind === "ok" || kind === "busy"){
+    el.__hide = setTimeout(() => {
+      el.style.opacity = "0";
+      el.style.transform = "translateY(6px)";
+    }, 6000);
+  }
 }
 
 /* illustration-generator.js lives in its own IIFE and needs this too. */

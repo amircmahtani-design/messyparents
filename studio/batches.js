@@ -59,14 +59,81 @@
   /* A short fingerprint of the WORDS. Deliberately blind to panel.hero: adding
      or regenerating an illustration is not a change to the writing, and must
      not un-tick a guide you have already read through. */
+  /* A hash of what the guide SAYS, not of how the object happens to be built.
+
+     The previous version ran JSON.stringify over the panel object directly,
+     which made the hash depend on the order the keys sat in. That order is not
+     stable: Firestore returns map keys alphabetically, while a guide rebuilt by
+     draftGuide() in Studio carries whatever order the assignments produced, and
+     a section deleted and re-added (an empty "Don't" block, say) moves to the
+     end. So approving a guide and then simply reloading Studio could flip it
+     from done to changed with nothing edited — which is why a whole batch went
+     back to 0/15 and turned yellow.
+
+     Two smaller versions of the same fault: the same prose counted as different
+     depending on whether it lived in `body` or `longform` (draftGuide moves it
+     from one to the other on save), and whitespace the save trimmed counted as
+     an edit.
+
+     Everything is now normalised before hashing: keys sorted at every depth,
+     strings trimmed, empty values dropped, and body/longform reduced to one
+     representation. Identical content therefore always hashes identically, no
+     matter which route it took to get here. */
+  function canonical(v) {
+    if (v == null) return null;
+    if (Array.isArray(v)) {
+      var arr = v.map(canonical).filter(function (x) {
+        return !(x === null || x === "" || (Array.isArray(x) && !x.length));
+      });
+      return arr.length ? arr : null;
+    }
+    if (typeof v === "object") {
+      var out = {};
+      Object.keys(v).sort().forEach(function (k) {
+        var c = canonical(v[k]);
+        if (c === null || c === "") return;
+        if (Array.isArray(c) && !c.length) return;
+        out[k] = c;
+      });
+      return Object.keys(out).length ? out : null;
+    }
+    if (typeof v === "string") {
+      /* Collapse runs of whitespace as well as trimming: a save can turn a
+         double space into a single one without that being an edit. */
+      var s = v.replace(/\s+/g, " ").trim();
+      return s;
+    }
+    return v;
+  }
+
   function contentHash(g) {
     var p = null;
-    if (g.panel) { p = {}; Object.keys(g.panel).forEach(function (k) { if (k !== "hero") p[k] = g.panel[k]; }); }
-    var s = JSON.stringify([g.title, g.summary, p, g.longform, g.callout, g.body || ""]);
+    if (g && g.panel) {
+      p = {};
+      Object.keys(g.panel).forEach(function (k) { if (k !== "hero") p[k] = g.panel[k]; });
+    }
+    /* The prose lives in longform once a guide has been edited in Studio, and
+       in body before that. Same words either way. */
+    var prose = (g && g.longform && g.longform.length) ? g.longform : (g && g.body) || null;
+
+    var s = JSON.stringify(canonical({
+      title:   g && g.title,
+      summary: g && g.summary,
+      panel:   p,
+      prose:   prose,
+      callout: g && g.callout
+    }));
     var h = 5381;
     for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
     return (h >>> 0).toString(36);
   }
+
+  /* Bumped when contentHash changes shape. Ticks recorded under an older
+     version cannot be compared against a new hash, so they are re-stamped
+     rather than shown as changed — see stateOf(). Without this, shipping this
+     fix would itself turn every approved guide yellow one final time, which is
+     exactly the behaviour being fixed. */
+  var HASH_VERSION = 2;
 
   /* ---------- the meta document ---------- */
   function blankMeta() {
@@ -151,10 +218,31 @@
   };
 
   /* checked / changed / open */
+  var restamped = false;
+
   function stateOf(g) {
     var c = META.checked[g.id];
     if (!c) return "open";
+
+    /* A tick from an older hash format is still a tick. Re-stamp it with the
+       current hash and treat it as done: the guide was approved by a human and
+       nothing about it has changed just because the way we fingerprint it did. */
+    if (c.hash && (c.v || 1) !== HASH_VERSION) {
+      c.hash = contentHash(g);
+      c.v = HASH_VERSION;
+      restamped = true;
+      return "done";
+    }
+
     return c.hash && c.hash !== contentHash(g) ? "changed" : "done";
+  }
+
+  /* Re-stamped ticks are written back once, quietly, after a render settles —
+     rather than one save per guide as each is inspected. */
+  function flushRestamp() {
+    if (!restamped) return;
+    restamped = false;
+    saveMeta().catch(function () {});
   }
 
   function guidesIn(k) {
@@ -349,6 +437,7 @@
     });
     if (grp) grp.style.display = any ? "" : "none";
     muting = false;
+    flushRestamp();          /* persist any v1 -> v2 ticks, once */
   }
 
   /* ---------- the bar inside the guide editor ---------- */
@@ -418,7 +507,7 @@
 
     if (act === "tick") {
       if (stateOf(g) === "done") delete META.checked[g.id];
-      else META.checked[g.id] = { at: Date.now(), by: email(), hash: contentHash(g) };
+      else META.checked[g.id] = { at: Date.now(), by: email(), hash: contentHash(g), v: HASH_VERSION };
       await saveMeta();
       refreshAll();
       return;
@@ -767,7 +856,7 @@
       var h = contentHash(g), sig = g.id + ":" + h;
       if (sig === lastSaveKey) return;          // one tick per save
       lastSaveKey = sig;
-      META.checked[g.id] = { at: Date.now(), by: email(), hash: h };
+      META.checked[g.id] = { at: Date.now(), by: email(), hash: h, v: HASH_VERSION };
       await saveMeta();
       refreshAll();
     }).observe(msg, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["class"] });

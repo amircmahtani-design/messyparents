@@ -248,6 +248,22 @@
     const id = currentGuideId();
     if (!id || id === lastLoadedSelectionFor) return;
     lastLoadedSelectionFor = id;
+
+    /* Clear the per-guide inputs when the guide changes.
+
+       The character chips were being reloaded here but the scene description
+       was not, so a description typed for one guide stayed in the box and was
+       silently sent with the NEXT guide's generation — producing an
+       illustration of the wrong moment, with nothing on screen to explain why.
+       The same applied to the change-request box and the status line, both of
+       which belong to the guide you have just left. */
+    const desc = document.getElementById("gpDescribeInput");
+    if (desc) desc.value = "";
+    const change = document.getElementById("gpChangeInput");
+    if (change) change.value = "";
+    const msg = document.getElementById("gpMsg");
+    if (msg) msg.textContent = "Ready.";
+
     try {
       const { fs, db } = await getFirebase();
       const snap = await fs.getDoc(fs.doc(db, "guides", id));
