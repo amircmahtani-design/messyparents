@@ -38,6 +38,20 @@
      see markFontReady() in mpc-runtime.js. */
   html.fonts-ready .gpanel h1{-webkit-text-stroke:var(--stroke-title) var(--g-ink)}
   html.fonts-ready .gpanel .g-band b{-webkit-text-stroke:.5px var(--g-ink)}
+
+  /* A panel that overflowed the viewport is shrunk with a CSS transform by
+     apply() in guide.js. The stroke is sub-pixel at 0.8px, and scaling it down
+     turns a subtle thickening into a visible outline around every letter —
+     which is what made one guide's headline look like a different, doubled
+     font while its shorter neighbour looked right. Drop the stroke while
+     fitted; the headline is slightly lighter, which is invisible, rather than
+     smeared, which is not.
+
+     Also render the scaled text from the geometry rather than from cached
+     glyph bitmaps, so the fit does not soften the body copy either. */
+  .gpanel.is-fitted h1{-webkit-text-stroke:0}
+  .gpanel.is-fitted .g-band b{-webkit-text-stroke:0}
+  .gpanel.is-fitted{text-rendering:geometricPrecision}
   .gpanel h1{
     font-family:var(--hand);font-weight:400;
     font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:8px 0 0;
