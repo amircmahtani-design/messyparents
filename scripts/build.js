@@ -116,6 +116,36 @@ function absolutise(html) {
 
 /* Insert (or refresh) the generated SEO block just before </head> on the
    hand-written pages, which have no marker of their own. */
+/* ---------------------------------------------------------------------------
+   ANALYTICS
+
+   The GA4 Measurement ID comes from the environment, not from the repo and not
+   from Firestore. It is only ever read at build time, so putting it in Studio
+   would still need a deploy to take effect — and a Netlify environment
+   variable keeps it out of git entirely.
+
+   Set GA_MEASUREMENT_ID in Netlify → Site configuration → Environment
+   variables. Unset (and on every local build), this writes nothing, and with
+   nothing written mpc-runtime.js never fetches mpc-analytics.js: no tag, no
+   cookie, no banner. That is the default state.
+
+   Only the id is written here. Every decision about consent lives in
+   mpc-analytics.js, which loads after the `load` event.
+
+   The block is stripped before it is re-added so a second run over the same
+   tree replaces it rather than stacking copies — the same shape as MPC_FS and
+   MPC_HIDDEN_AGES.
+   ------------------------------------------------------------------------ */
+const GA_ID = (process.env.GA_MEASUREMENT_ID || "").trim();
+
+function injectAnalytics(html) {
+  html = html.replace(/<script>window\.MPC_GA=[\s\S]*?<\/script>\s*/g, "");
+  if (!GA_ID) return html;
+  if (!/^G-[A-Z0-9]+$/i.test(GA_ID)) return html;
+  return html.replace(/<\/head>/i,
+    `<script>window.MPC_GA=${JSON.stringify(GA_ID)};</script>\n</head>`);
+}
+
 function injectHead(html, block) {
   const wrapped = `<!-- MPC:SEO:START -->\n${block}\n<!-- MPC:SEO:END -->`;
   if (/<!--\s*MPC:SEO:START\s*-->/.test(html)) {
@@ -418,10 +448,16 @@ async function main() {
       `$1<style data-mpc-css="${files.join(",")}">\n${css}</style>$3`);
   }
 
-  /* Applied to every generated and hand-written page. */
+  /* Applied to every generated and hand-written page.
+
+     This is the ONLY place analytics enters the site, and it is the reason
+     Studio and the Editor cannot receive it by accident: they are stamped for
+     asset URLs further down and never pass through here. */
   function bakeCommon(html, pageId) {
     html = B.applyText(html, textFor(pageId));
     html = B.applyFooter(html, settings.footer);
+    html = B.applyFootLinks(html);
+    html = injectAnalytics(html);
     html = stampAssets(html);
     html = inlineCss(html, pageId || "page");
     return html;
@@ -538,7 +574,15 @@ async function main() {
       html = html.replace(
         '<div id="article"></div>',
         `<div id="article">\n${R.panelMarkup(g, renderOpts(g))}\n</div>\n` +
-        `<script>window.MPC_GUIDE_ID=${JSON.stringify(g.id)};</script>`
+        `<script>window.MPC_GUIDE_ID=${JSON.stringify(g.id)};` +
+        /* Topic and age are already on the guide, so reporting them costs
+           nothing beyond writing them down. GA4 supplies the title and the
+           URL itself; these are the two things it cannot know. */
+        `window.MPC_PAGE=${JSON.stringify({
+          slug: g.slug,
+          topic: g.topic || "",
+          age: (g.ages && g.ages[0]) || ""
+        })};</script>`
       );
 
       write(path.join("guides", g.slug, "index.html"), html);
@@ -775,6 +819,12 @@ async function main() {
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) {
     bakePage("editorial.html", null, { canonical: "/editorial.html" });
   }
+  /* Indexable on purpose. A privacy page that search engines cannot see is
+     not much of a disclosure, and Google's Analytics terms require the site
+     to publish one. */
+  if (fs.existsSync(path.join(ROOT, "privacy.html"))) {
+    bakePage("privacy.html", null, { canonical: "/privacy.html" });
+  }
   /* ---- Studio and the Editor -------------------------------------------
      Not public pages, so no metadata and no baking — but they ARE served, and
      their <script> tags were the only ones on the site with no cache-busting
@@ -845,6 +895,7 @@ async function main() {
   push("/about.html", "", "monthly", "0.6");
   push("/books.html", "", "monthly", "0.5");
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) push("/editorial.html", "", "yearly", "0.4");
+  if (fs.existsSync(path.join(ROOT, "privacy.html"))) push("/privacy.html", "", "yearly", "0.3");
 
   topicPages.forEach(p => push(p.url, newest(guides.filter(g => g.topic === p.url.split("/")[2])), "weekly", "0.7"));
   agePages.forEach(p => push(p.url, newest(guides.filter(g => g.ages.includes(p.label))), "weekly", "0.7"));
