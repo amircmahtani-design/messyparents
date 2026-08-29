@@ -1039,6 +1039,185 @@ section("Performance architecture");
     check("With every script removed, a guide page still has its article",
       thin === 0, `${thin} pages are thin without JS`);
   }
+
+  /* ---- analytics and consent -------------------------------------------
+     Added August 2026 with GA4. The rules being defended here are the ones
+     that are easy to break silently later: analytics must not reach the two
+     editing surfaces, must not appear as a script tag on a guide page, and
+     must not be able to set a cookie before the reader has agreed. */
+  section("Analytics and consent");
+  {
+    const analytics = readIf("assets/js/mpc-analytics.js") || "";
+    const runtime = readIf("assets/js/mpc-runtime.js") || "";
+
+    check("assets/js/mpc-analytics.js exists", !!analytics);
+
+    /* THE SEPARATE BUDGET.
+
+       The core check above holds mpc-runtime.js + guide.js under 14KB gzipped,
+       and that number means "what a reader waits for before the guide is on
+       screen". This file is not on that path: the runtime fetches it on the
+       `load` event, after everything the reader came for has painted. Folding
+       it into the core figure would make that number mean something else, and
+       the whole point of it is that it means one thing.
+
+       So it gets a ceiling of its own, and the ceiling is real rather than
+       decorative — it is enough for consent handling and a banner and not
+       enough for a consent-management platform, which is exactly the thing
+       that must never quietly arrive here.
+
+       The ceiling moved from 3KB to 3.5KB in August 2026, immediately after
+       the feature landed. 3KB was guessed before the file was written and left
+       SEVEN bytes of headroom — the same position the guide-page budget was in
+       at 12KB with eleven bytes, which failed on the first line of the next
+       change. Worse, squeezing under it did real damage: comments were shaved
+       out of a file whose whole risk is that its consent ordering is not
+       obvious, and the class name was shortened to save bytes, which silently
+       broke the banner's styling (see the class-drift check below — that bug is
+       why it exists).
+
+       So the reason for the rise is not "the file grew". It is that the first
+       number was set badly and was buying nothing except pressure to write
+       worse code. 3.5KB leaves roughly 450 bytes, which is a change or two of
+       room and still nowhere near a CMP.
+
+       Same rule as the 14KB: if this needs raising again, write down why, in a
+       sentence, or change the code instead. And do not shave comments to fit —
+       that is the failure this paragraph exists to record. */
+    const AGZ_MAX = 3.5 * 1024;
+    const agz = zlib.gzipSync(Buffer.from(analytics), { level: 9 }).length;
+    check(`Analytics transfers under 3.5KB gzipped (${(agz / 1024).toFixed(1)}KB, ` +
+      `${(Buffer.byteLength(analytics) / 1024).toFixed(1)}KB raw, ` +
+      `${AGZ_MAX - agz} bytes spare)`,
+      agz < AGZ_MAX, `${agz} bytes gzipped`);
+
+    /* The core budget must be unaffected by any of this. */
+    {
+      let gz = 0;
+      for (const f of ["assets/js/mpc-runtime.js", "assets/js/guide.js"]) {
+        gz += zlib.gzipSync(Buffer.from(readIf(f) || ""), { level: 9 }).length;
+      }
+      check(`Core guide-page JS is still under its own 14KB (${(gz / 1024).toFixed(1)}KB)`,
+        gz < 14 * 1024, `${gz} bytes gzipped`);
+    }
+
+    /* Injected by the runtime, never linked. A script tag would put a third
+       <script src> on every generated guide page and break the rule above. */
+    const tagged = ALL.filter(f =>
+      /<script[^>]*src="[^"]*(?:mpc-analytics|googletagmanager)/.test(readIf(f) || ""));
+    check("No page carries a static analytics script tag",
+      tagged.length === 0, tagged.join(", "));
+
+    check("The runtime fetches analytics only when an ID is configured",
+      /window\.MPC_GA/.test(runtime) && /mpc-analytics\.js/.test(runtime));
+
+    /* Consent Mode's default must be queued before gtag.js is requested, or
+       the tag initialises storage and writes _ga before anyone has agreed. */
+    const defaultAt = analytics.indexOf('"consent", "default"');
+    const loadAt = analytics.indexOf("googletagmanager.com");
+    check("Consent defaults are set before the tag is requested",
+      defaultAt > -1 && loadAt > -1 && defaultAt < loadAt);
+    check("Analytics storage defaults to denied",
+      /analytics_storage:\s*"denied"/.test(analytics));
+    check("Consent is only granted on an explicit update",
+      /"consent",\s*"update",\s*\{\s*analytics_storage:\s*"granted"/.test(analytics));
+    check("Google Signals is off", /allow_google_signals:\s*false/.test(analytics));
+    check("Withdrawing consent clears the cookies already set",
+      /Max-Age=0/.test(analytics));
+    check("Consent can be reopened from the footer",
+      /data-mpc-consent/.test(analytics) && /Cookie settings/.test(analytics));
+
+    /* The banner styles itself from a string, so its CSS and its markup can
+       drift apart with nothing to notice — and the result is a fully working
+       but completely unstyled bar sitting across the bottom of every page.
+       That happened once already, when the class was shortened to fit the
+       budget and the rename caught the selectors but not the className. Every
+       class the CSS targets must exist in the markup, and the other way round. */
+    {
+      const css = (/var CSS =([\s\S]*?);\n/.exec(analytics) || [])[1] || "";
+      const inCss = new Set((css.match(/\.([a-z][\w-]*)/g) || [])
+        .map(s => s.slice(1)));
+      const inMarkup = new Set(
+        (analytics.match(/className = "([^"]+)"/g) || [])
+          .map(s => /"([^"]+)"/.exec(s)[1])
+          .concat((analytics.match(/class="([^"]+)"/g) || [])
+            .map(s => /"([^"]+)"/.exec(s)[1]))
+          .flatMap(s => s.split(/\s+/)));
+
+      const orphanCss = [...inCss].filter(c => !inMarkup.has(c));
+      const orphanMarkup = [...inMarkup].filter(c => !inCss.has(c));
+      check("Every class the banner CSS targets exists in its markup",
+        orphanCss.length === 0, "styled but never used: " + orphanCss.join(", "));
+      check("Every class in the banner markup is styled",
+        orphanMarkup.length === 0, "unstyled: " + orphanMarkup.join(", "));
+    }
+
+    /* The two editing surfaces are the whole reason bakeCommon exists as a
+       separate path. Nothing analytics-shaped may reach them. */
+    const admin = ["studio/index.html", "editor/index.html"].filter(f => exists(f));
+    const dirty = admin.filter(f => {
+      const html = readIf(f) || "";
+      return /MPC_GA|googletagmanager|mpc-analytics|gtag\(/.test(html);
+    });
+    check("Studio and the Editor carry no analytics", dirty.length === 0, dirty.join(", "));
+    check("Studio and the Editor do not load the public runtime",
+      admin.every(f => !/mpc-runtime\.js/.test(readIf(f) || "")));
+
+    /* A soft 404 is served with a 200 by Netlify, so without this it counts
+       as a guide someone read. */
+    check("A soft 404 is flagged so it is not counted as a guide view",
+      /MPC_NOT_FOUND/.test(readIf("assets/js/guide.js") || "") &&
+      /MPC_NOT_FOUND/.test(analytics));
+
+    /* The privacy page, and the link that makes it reachable. */
+    const privacy = readIf("privacy.html");
+    check("privacy.html exists", !!privacy);
+    if (privacy) {
+      const markup = readMarkup("privacy.html");
+      check("Privacy page names Google Analytics", /Google Analytics/.test(markup));
+      check("Privacy page names the cookies it sets", /_ga\b/.test(markup));
+      check("Privacy page explains how to withdraw consent",
+        /Cookie settings/.test(markup));
+      check("Privacy page links to Google's own privacy information",
+        /policies\.google\.com\/privacy/.test(privacy));
+      check("Privacy page is indexable",
+        !/<meta[^>]+name="robots"[^>]+noindex/.test(privacy));
+    }
+
+    /* The link is inserted at build time, so on an unbuilt checkout the source
+       pages legitimately do not have it. Test the function directly — that is
+       true whatever state the tree is in — and only check the pages themselves
+       once there is build output to check. */
+    {
+      const B = require("../scripts/lib/bake.js");
+      const foot = '<span class="foot-links"><a href="/about.html">About us</a></span>';
+      const once = B.applyFootLinks(foot);
+      check("applyFootLinks adds the privacy link",
+        /href="\/privacy\.html"/.test(once));
+      check("applyFootLinks leaves the existing links alone",
+        /href="\/about\.html"/.test(once));
+      check("applyFootLinks is idempotent",
+        B.applyFootLinks(once) === once);
+      check("applyFootLinks does nothing to a page with no footer",
+        B.applyFootLinks("<p>no footer here</p>") === "<p>no footer here</p>");
+    }
+
+    if (exists("sitemap.xml")) {
+      const noLink = ALL.filter(f => {
+        const html = readMarkup(f);
+        return /class="foot-links"/.test(html) && !/href="\/privacy\.html"/.test(html);
+      });
+      check("Every public page links to the privacy page",
+        noLink.length === 0, noLink.join(", "));
+    }
+
+    const sitemap = readIf("sitemap.xml");
+    if (sitemap) {
+      check("Privacy page is in the sitemap", /\/privacy\.html</.test(sitemap));
+      check("Studio and the Editor are not in the sitemap",
+        !/\/studio\/|\/editor\//.test(sitemap));
+    }
+  }
 }
 
 /* ======================================================================== */
