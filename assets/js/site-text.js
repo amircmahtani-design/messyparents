@@ -158,16 +158,16 @@ window.SITE_TEXT = {
     ]
   },
 
-  /* ---- How we write these ---------------------------------------------
+  /* ---- How these guides happen ---------------------------------------------
      The editorial page. It is linked from the footer of every page, and it is
      what a reader — or a search engine working out whether the site is worth
      trusting — checks before deciding. Worth keeping current, which means
      being editable. */
   editorial: {
-    label: "How we write these",
+    label: "How these guides happen",
     intro: "Where the questions come from, what they are checked against, and what you are careful to say you are not.",
     fields: [
-      { key:"page.title", label:"Page heading", default:"How we write these" },
+      { key:"page.title", label:"Page heading", default:"How these guides happen" },
       { key:"page.intro", label:"Line under the heading", multiline:true, rows:8,
         default:"Where the questions come from, what we check them against, and what we are not qualified to tell you." },
       { key:"editorial.questions.h", label:"Section — The questions are real ones", default:"The questions are real ones" },
