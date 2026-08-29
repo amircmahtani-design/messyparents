@@ -229,6 +229,40 @@
   }
 
   /* ==========================================================================
+     AGE RANGES THAT ARE SWITCHED OFF
+
+     window.MPC_HIDDEN_AGES is written by the build and is normally empty.
+
+     It matters on one path. _redirects rewrites any /guides/<slug>/ with no
+     generated page to guide.html, which looks the slug up in Firestore and
+     renders whatever comes back — what lets a guide saved in Studio a minute
+     ago work before the next deploy. Without this check that path would serve
+     a guide from a switched-off range on its real public URL. The build writes
+     404 rules for every hidden slug it knew about; this covers the one it
+     could not, a guide moved into a hidden range since.
+
+     Same rule as the build: hidden only when the guide has ages and every one
+     of them is off, so a guide that also carries a visible age is untouched.
+     ========================================================================= */
+
+  var HIDDEN_AGES = (window.MPC_HIDDEN_AGES || []).map(normAge);
+
+  function normAge(s) {
+    return String(s == null ? "" : s)
+      .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  function isHiddenGuide(g) {
+    if (!HIDDEN_AGES.length || !g) return false;
+    var ages = (g.ages || []).filter(Boolean);
+    if (!ages.length) return false;            /* untagged guides are unaffected */
+    for (var i = 0; i < ages.length; i++) {
+      if (HIDDEN_AGES.indexOf(normAge(ages[i])) === -1) return false;
+    }
+    return true;
+  }
+
+  /* ==========================================================================
      FIRESTORE — one document, over REST, no SDK.
 
      guides is `allow read: if true` in firestore.rules, which is what lets the
@@ -369,7 +403,10 @@
        render. It also gets the not-found message on screen sooner. */
     fetchGuide(key)
       .then(function (g) {
-        if (!g || !g.id) return notFound();
+        /* A hidden guide is deliberately indistinguishable from one that does
+           not exist. Same message, same noindex, no hint that there is
+           something here to come back for. */
+        if (!g || !g.id || isHiddenGuide(g)) return notFound();
         return Promise.all([loadRenderer(), loadSettings(), fetchIndexMap()])
           .then(function (r) {
             var R = r[0], cfg = r[1], byId = r[2];
@@ -395,6 +432,18 @@
     el.innerHTML = '<div class="article-inner"><h1>We can\u2019t find that one</h1>' +
       '<p class="lede">The link may be old, or the guide may have been renamed.</p>' +
       '<p style="margin-top:14px"><a href="/guides.html">Browse all guides</a></p></div>';
+  }
+
+  /* Take a page that is already on screen back off it. Only reached when an
+     age range was switched off between the last deploy and this visit; the
+     next build replaces this URL with a real 404. */
+  function withdraw() {
+    [".gpage-related", ".g-extra", ".g-steps", ".gpage-crumb"].forEach(function (sel) {
+      var n = document.querySelector(sel);
+      if (n && n.parentNode) n.parentNode.removeChild(n);
+    });
+    el.innerHTML = "";
+    notFound();
   }
 
   /* -------------------------------------------------------------------------
@@ -456,6 +505,9 @@
 
     lookup.then(function (g) {
       if (!g || !g.id) return;
+      /* The band this guide is in was switched off after the page was built.
+         The same catch-up net that pulls in an edit pulls this one out. */
+      if (isHiddenGuide(g)) { withdraw(); return; }
       return loadRenderer().then(function (R) {
         if (R.guideHash(g) === baked) return;    // deployed HTML is current
         /* Firestore has moved on since the last deploy. Catch the page up and
