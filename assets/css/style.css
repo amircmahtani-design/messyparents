@@ -701,9 +701,9 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
    editable text, because data-mpc-page is what the build uses to decide which
    Studio document drives a page's wording.
 
-   So the look now has a name of its own. Put `data-longform` on the <body> of
-   any page that is an essay rather than a panel, and it gets the treatment.
-   The editorial page keeps its own selector so nothing had to change there. */
+   So the look has a name of its own. Put `data-longform` on the <body> of any
+   page that is an essay rather than a panel. The editorial page keeps its own
+   selector so nothing had to change there. */
 body[data-mpc-page="editorial"] .article-body,
 body[data-longform] .article-body{
   font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);
@@ -729,10 +729,10 @@ body[data-longform] .article-inner{width:min(100%,960px)}
    illustration fills the other side. On a page that is nothing but prose it
    reads as a layout fault.
 
-   The column itself stays capped. A line of text running the full width of a
-   1700px monitor is genuinely harder to read: the eye loses its place on the
-   return sweep. What was wrong was not the measure, it was all the leftover
-   space being on one side.
+   The column itself stays capped: a line running the full width of a 1700px
+   monitor is harder to read, because the eye loses its place on the return
+   sweep. What was wrong was not the measure, it was all the leftover space
+   being on one side.
 
    Only data-longform pages, so the editorial page's alignment is untouched. */
 body[data-longform] .article-inner{margin-inline:auto}
@@ -770,4 +770,3 @@ body[data-longform] .article-inner{margin-inline:auto}
    filling it in. Off-screen and out of the tab order does that job while
    staying invisible. */
 .mpc-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-
