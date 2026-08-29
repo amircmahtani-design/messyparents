@@ -4042,6 +4042,1364 @@ var GUIDES = [
   ],
   "order": 45,
   "batch": "3"
+},
+{
+  "id": "newborn-poo-colours",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What colour should my baby’s poo be?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "From mustard yellow to alarming green, baby poo has a much wider colour chart than anyone warns you about.",
+  "keywords": [
+    "newborn poo colour",
+    "green baby poo",
+    "yellow seedy poo",
+    "abnormal baby poo"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "White or chalky-pale poo",
+      "Red streaks or blood",
+      "Black poo after the first newborn days",
+      "Watery poo with fewer wet nappies",
+      "Fever, vomiting or a firm swollen tummy"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Mustard yellow, seedy and loose on breast milk",
+        "Yellow, orange, brown or green; some formula can make it dark green",
+        "Darker and firmer with formula or mixed feeding",
+        "One big poo plus smaller stains"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Photographing anything that looked unusual",
+        "Checking wet nappies as well as dirty ones",
+        "Remembering that mixed feeding changes the colour",
+        "Watching her pattern rather than one nappy"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "White or chalky-pale poo",
+        "Red streaks or blood",
+        "Black poo after the first newborn days",
+        "Watery poo with fewer wet nappies",
+        "Fever, vomiting or a firm swollen tummy"
+      ]
+    },
+    "quick": "Mustard yellow and seedy is the classic, but yellow, orange, brown and green can all be normal. White, red or black needs checking."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "first-fever",
+    "nappy-rash",
+    "newborn-hiccups"
+  ],
+  "seo": {
+    "description": "A simple guide to normal newborn poo colours, what changes with feeding, and the three colours worth calling about."
+  },
+  "longform": [
+    {
+      "h": "Nobody warns you how much you will discuss poo",
+      "t": "Before Ari, we did not imagine photographing nappies and debating shades of yellow. Then she arrived and suddenly one green nappy felt like breaking news.\n\nBreastfed poo is often mustard yellow, loose and seedy. Formula or mixed feeding usually makes it darker and firmer. Ari had both breast milk and Alfaré, so her nappies did not always match the classic breastfed picture."
+    },
+    {
+      "h": "The pattern matters more than one nappy",
+      "t": "Ari often did one proper poo and then left smaller yellow stains through the day. We wondered whether those counted. What mattered more was that the poo stayed soft, she fed well and wet nappies continued.\n\nGreen can look alarming and still be ordinary. A change in milk, digestion or the type of formula can change the colour without anything being wrong. Some formulas can make poo dark green."
+    },
+    {
+      "h": "The three colours worth remembering",
+      "t": "White or chalky-pale poo, visible blood or red, and black poo after the first newborn days are the ones to show your baby’s doctor or nurse.\n\nOur most practical discovery was also the easiest: take a photo. Trying to describe ‘mustard, but slightly greener than yesterday’ over the phone helps nobody."
+    }
+  ],
+  "order": 46,
+  "batch": "4"
+},
+{
+  "id": "baby-not-pooping",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "How long can a baby go without pooing?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "A long gap can feel dramatic, but soft poo and plenty of wet nappies usually tell the calmer story.",
+  "keywords": [
+    "baby not pooping",
+    "newborn constipation",
+    "breastfed baby no poo",
+    "hard baby poo"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Hard, dry or pellet-like poo",
+      "Blood in the nappy",
+      "A firm swollen tummy or vomiting",
+      "A young newborn suddenly pooing much less",
+      "Poor feeding or seeming genuinely unwell"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Longer gaps as babies grow",
+        "Breastfed babies sometimes going days",
+        "Grunting and going red before a soft poo",
+        "Soft poo when it finally arrives"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Checking wet nappies instead of only the clock",
+        "Gentle bicycle legs",
+        "A warm bath when she seemed uncomfortable",
+        "Waiting before trying to fix it",
+        "A Windi device used carefully and only occasionally"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Hard, dry or pellet-like poo",
+        "Blood in the nappy",
+        "A firm swollen tummy or vomiting",
+        "A young newborn suddenly pooing much less",
+        "Poor feeding or seeming genuinely unwell"
+      ]
+    },
+    "quick": "A gap alone is not constipation. If the poo is soft when it arrives, wet nappies continue and your baby seems well, waiting is often enough."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nappy-rash",
+    "blocked-nose-newborn",
+    "milk-from-the-nose"
+  ],
+  "seo": {
+    "description": "Babies can have surprisingly long gaps between poos; softness, feeding and wet nappies matter more than the clock alone."
+  },
+  "longform": [
+    {
+      "h": "The countdown started at three in the morning",
+      "t": "Ari had last pooed in the early morning. By the afternoon we were behaving as though a deadline had been missed.\n\nThat is what happens when you are new, tired and recording everything. A normal gap becomes a countdown simply because you know the exact time it started."
+    },
+    {
+      "h": "Straining does not always mean constipation",
+      "t": "Babies grunt, go red, pull their knees up and look as though they are attempting something heroic. They are still learning how to push while relaxing the right muscles.\n\nThe better clue is what comes out. Soft poo after a dramatic performance is usually not constipation. Hard, dry or pellet-like poo is different."
+    },
+    {
+      "h": "What we did while waiting",
+      "t": "Gentle bicycle legs, a warm bath and tummy time while Ari was awake sometimes helped her feel more comfortable. Mostly, we waited and watched the wet nappies. We also used a Frida Baby Windi occasionally when she seemed full of trapped gas. It sometimes helped her pass wind and poo.We also added chamomile granules to her milk once a day when a day or two had passed without a poo. It seemed to work wonders for Ari. Knowing what we know now, we would not tell another parent to copy that without asking their baby’s doctor or pharmacist first.\n\nWe did not give water, juice, tea or anything rectally unless a doctor had specifically advised it. If a very young baby’s pattern changes sharply, or the gap comes with poor feeding, vomiting or a swollen tummy, ask your baby’s doctor or nurse."
+    }
+  ],
+  "order": 47,
+  "batch": "4"
+},
+{
+  "id": "colic-and-witching-hour",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why does my baby cry every evening?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "The evening crying can feel endless, even when it arrives like clockwork and eventually passes.",
+  "keywords": [
+    "baby crying every evening",
+    "witching hour baby",
+    "newborn evening crying",
+    "colic crying"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A weak, high-pitched or unusual cry",
+      "Fever, vomiting or blood in the nappy",
+      "Refusing feeds or being unusually floppy",
+      "Crying that is constant rather than patterned",
+      "You feel close to losing control"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Crying clustering in late afternoon or evening",
+        "Starting in the early weeks",
+        "Often peaking around six weeks",
+        "Gradually easing over the following months"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Planning for the difficult part of the day",
+        "Walking, carrying, the pram or a drive",
+        "White noise and a darker room",
+        "Swapping before either parent reached the end"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A weak, high-pitched or unusual cry",
+        "Fever, vomiting or blood in the nappy",
+        "Refusing feeds or being unusually floppy",
+        "Crying that is constant rather than patterned",
+        "You feel close to losing control"
+      ]
+    },
+    "quick": "Predictable evening crying can be common and still be awful. Movement and less stimulation may help; if you are at your limit, put baby down safely and step away."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "blocked-nose-newborn",
+    "milk-from-the-nose",
+    "corrected-age"
+  ],
+  "seo": {
+    "description": "Predictable evening crying is common and exhausting; movement, less stimulation and swapping parents can make it more manageable."
+  },
+  "longform": [
+    {
+      "h": "There must be something else we can do",
+      "t": "That was not really a question. It was two exhausted parents saying: surely the answer cannot be that we simply listen to our baby cry every evening.\n\nThere was no magic fix. There were things that softened it, and there was the fact that it eventually ended. Neither felt very comforting while it was happening."
+    },
+    {
+      "h": "Once we saw the pattern, it felt less random",
+      "t": "The crying arrived at roughly the same part of the day. Movement helped more than stillness: walking, carrying, the pram and sometimes a drive. White noise and a darker room also took some of the edge off.\n\nWe stopped cycling through five new remedies in ten minutes. An overstimulated baby did not need two panicked parents adding more stimulation."
+    },
+    {
+      "h": "Hand over before you are finished",
+      "t": "The most useful thing we learned was to swap before either of us reached breaking point. That decision belongs in the afternoon, not after an hour of crying.\n\nIf you feel yourself losing control, put your baby safely on their back in the cot, leave the room for a few minutes and call someone. A crying baby in a safe cot is safer than a baby being held by somebody who has nothing left."
+    }
+  ],
+  "order": 48,
+  "batch": "4"
+},
+{
+  "id": "wind-and-gas",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why does my baby have so much wind?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Babies are tiny wind machines; slowing feeds and gentle movement can make the noisy aftermath easier.",
+  "keywords": [
+    "baby wind and gas",
+    "newborn trapped wind",
+    "winding baby bottle",
+    "baby gas pain"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A firm, swollen or shiny tummy",
+      "Green or bloody vomit",
+      "Poor feeding or weight concerns",
+      "Blood or mucus in the nappy",
+      "A new pattern of inconsolable crying"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Air swallowed during feeding or crying",
+        "Grunting and pulling knees up",
+        "Worse discomfort in the evening",
+        "A gut still learning to move things along"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Stopping partway through feeds",
+        "Gentle bicycle legs and knees towards the tummy",
+        "Tummy time while awake and watched",
+        "A slower, paced bottle feed",
+        "A Windi device used carefully and only occasionally"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A firm, swollen or shiny tummy",
+        "Green or bloody vomit",
+        "Poor feeding or weight concerns",
+        "Blood or mucus in the nappy",
+        "A new pattern of inconsolable crying"
+      ]
+    },
+    "quick": "Wind is usually swallowed air plus a gut still learning its job. Stopping partway through and slowing the feed helped us; a firm swollen tummy is different."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "milk-from-the-nose",
+    "corrected-age",
+    "preemie-growth-charts"
+  ],
+  "seo": {
+    "description": "Swallowed air and an immature gut make wind common; pacing, winding and gentle movement helped us more than rushing feeds."
+  },
+  "longform": [
+    {
+      "h": "Ours was not only during the feed",
+      "t": "We asked how to get rid of Ari’s gas and were given feeding advice. The important detail was that she was uncomfortable between feeds too.\n\nSome wind comes from feeding, some from crying, and some from a digestive system that is still very new at its job. None of that means you have done something wrong."
+    },
+    {
+      "h": "Slow worked better than fast",
+      "t": "Stopping halfway through the bottle helped more than waiting until the end. So did a slower teat, keeping the bottle roughly horizontal and building in pauses so Ari could set the rhythm.\n\nGentle bicycle legs, knees towards the tummy and watched tummy time also helped. Nothing needed to be vigorous. She was a baby, not a stubborn jar lid. We also used a Frida Baby Windi occasionally, and it sometimes helped her release trapped wind."
+    },
+    {
+      "h": "When it is not ordinary wind",
+      "t": "A soft round tummy can be normal. A firm, tight, swollen or shiny tummy—especially with green vomit, blood, unusual sleepiness or poor feeding—needs medical advice.\n\nWe had an evening when Ari’s tummy was firm and bloated and she was extra sleepy. We went to the hospital. Those signs together were not something we wanted to explain away as gas."
+    }
+  ],
+  "order": 49,
+  "batch": "4"
+},
+{
+  "id": "colic-drops",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Do colic drops actually help?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Drops may help a little, a lot or not at all—which is annoyingly less definite than tired parents would like.",
+  "keywords": [
+    "colic drops baby",
+    "Infacol baby",
+    "BioGaia baby",
+    "baby gas drops"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Your baby was born early",
+      "A rash, reaction or increased vomiting",
+      "Medication is already prescribed",
+      "Your baby remains in real distress",
+      "You are unsure about dose or timing"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Some babies improving and others not",
+        "Simeticone products used around feeds",
+        "Probiotic drops usually given daily",
+        "Modest results rather than a miracle"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Following the pack rather than guessing the timing",
+        "Trying one product at a time",
+        "Infacol seeming to help",
+        "Gocce Gas Bimbi making the clearest difference",
+        "Asking a pharmacist before starting"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby was born early",
+        "A rash, reaction or increased vomiting",
+        "Medication is already prescribed",
+        "Your baby remains in real distress",
+        "You are unsure about dose or timing"
+      ]
+    },
+    "quick": "Colic drops help some babies and do very little for others. Try one thing at a time, follow the product instructions and keep tea or water out of a young baby’s milk."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "corrected-age",
+    "preemie-growth-charts",
+    "baby-not-pooping"
+  ],
+  "seo": {
+    "description": "Infacol and probiotic drops help some babies modestly; try one thing at a time and avoid homemade additions to a young baby’s milk."
+  },
+  "longform": [
+    {
+      "h": "We wanted a plain answer about timing",
+      "t": "Our question about Infacol became increasingly specific: an hour before, immediately before, or after? We did not need a lecture. We needed to know when to give the drops.\n\nThe answer depends on the product, so follow the label and ask a pharmacist if it is unclear. Giving something consistently tells you far more than giving it randomly whenever the evening goes badly.\n\nWe tried Infacol, BioGaia and Gocce Gas Bimbi at different points. Infacol seemed to help. With BioGaia, honestly, we never knew whether it changed anything or simply made us feel that we were doing something. Gocce Gas Bimbi made the clearest difference for Ari."
+    },
+    {
+      "h": "The evidence is not dramatic",
+      "t": "Simeticone and probiotic drops work in different ways, and some parents feel they help. Others see no change at all. We tried to remember that colic drops are a possible small help, not a switch that turns crying off.\n\nStarting Infacol, BioGaia and a formula change together leaves you with no idea what helped. We know because that is approximately how our first attempt at problem-solving looked."
+    },
+    {
+      "h": "We also tried chamomile granules",
+      "t": "We first asked whether Mama drinking chamomile tea might help. We then went further and added chamomile granules directly to Ari’s formula once a day. It seemed to help her poo and pass gas, which made the colic easier.\n\nThat is honestly what we did, but it is not something we would now tell another parent to copy. Young babies should not have herbal additions unless their baby’s doctor or pharmacist specifically advises it."
+    }
+  ],
+  "order": 50,
+  "batch": "4"
+},
+{
+  "id": "newborn-skin-bumps",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What are the little bumps on my newborn’s face?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Those little newborn bumps often look far worse to us than they feel to the baby.",
+  "keywords": [
+    "newborn face bumps",
+    "baby milia",
+    "newborn acne",
+    "baby facial rash"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A rash that does not fade under a glass",
+      "Blisters, weeping or crusting",
+      "Fever or seeming unwell",
+      "Cold-sore-like spots near eyes or mouth",
+      "A rash spreading quickly"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Tiny white spots on nose or cheeks",
+        "Red pimply patches on cheeks and forehead",
+        "Looking worse with heat, crying or drool",
+        "Settling without treatment"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Doing less rather than adding products",
+        "Plain water and patting dry",
+        "Keeping her comfortably cool",
+        "Taking photos to track change"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A rash that does not fade under a glass",
+        "Blisters, weeping or crusting",
+        "Fever or seeming unwell",
+        "Cold-sore-like spots near eyes or mouth",
+        "A rash spreading quickly"
+      ]
+    },
+    "quick": "Milia and newborn acne are common and usually clear by themselves. A non-fading rash, blisters or any rash with fever is different."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "fast-breathing-newborn",
+    "newborn-trembles-and-jerks",
+    "corrected-age"
+  ],
+  "seo": {
+    "description": "Milia and newborn acne are common and usually clear alone; fever, blisters or a non-fading rash need medical advice."
+  },
+  "longform": [
+    {
+      "h": "Newborn skin does a lot of strange things",
+      "t": "Ari developed little bumps across her face and up towards her forehead. They looked far more dramatic to us than they seemed to bother her.\n\nTiny white milia and red newborn-acne patches are common in the early weeks. Heat, crying and drool can make them look angrier for a while."
+    },
+    {
+      "h": "Doing nothing was surprisingly difficult",
+      "t": "The urge to put a cream, oil or special baby product on every mark is strong. For ordinary newborn bumps, plain water and gentle patting dry were enough for us.\n\nWe once got soap on Ari’s face while washing her and then felt guilty about the redness. We rinsed it with water, it settled, and everybody survived the scandal."
+    },
+    {
+      "h": "The rashes that need a different response",
+      "t": "A rash that does not fade when pressed with a clear glass needs urgent medical advice. So does a rash with fever, fast spreading, blisters, weeping or crusting.\n\nCold-sore-like spots around a young baby’s eyes or mouth also deserve same-day advice. Photographing a changing rash can help your baby’s doctor or nurse see what you are seeing."
+    }
+  ],
+  "order": 51,
+  "batch": "4"
+},
+{
+  "id": "is-my-baby-in-pain",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "How can I tell if my newborn is actually in pain?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Newborns make alarming noises in their sleep; the trick is learning which ones actually need you.",
+  "keywords": [
+    "newborn pain signs",
+    "noisy newborn sleep",
+    "baby grunting sleep",
+    "unusual baby cry"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A weak, high-pitched or unusual cry",
+      "Pale, blue or grey colour",
+      "Choking or struggling to breathe",
+      "Crying that cannot be settled",
+      "Floppy, hard to wake or refusing feeds"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Groaning and fidgeting in active sleep",
+        "Grunting while passing wind or poo",
+        "Throat-clearing sounds",
+        "Faces that look distressed for a moment"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Pausing before picking her up",
+        "Watching colour and breathing",
+        "Learning her normal noises",
+        "Waiting to see whether she settled again"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A weak, high-pitched or unusual cry",
+        "Pale, blue or grey colour",
+        "Choking or struggling to breathe",
+        "Crying that cannot be settled",
+        "Floppy, hard to wake or refusing feeds"
+      ]
+    },
+    "quick": "Groaning, fidgeting and throat clearing can all happen in normal newborn sleep. Watch colour, breathing and whether the sound is truly different."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-trembles-and-jerks",
+    "corrected-age",
+    "preemie-growth-charts"
+  ],
+  "seo": {
+    "description": "Newborns groan, fidget and clear their throats in normal sleep; colour, breathing and a genuinely different cry tell you more than noise alone."
+  },
+  "longform": [
+    {
+      "h": "Mama was right",
+      "t": "Papa kept picking Ari up whenever she groaned or cleared her throat. Mama said to wait. Mama was right.\n\nThe slightly painful realisation came afterwards: many times Ari had been asleep, made one of her normal noises, and Papa had helpfully woken her up. Then Ari was tired but wide awake, while Papa slowly lost his mind trying to settle her again."
+    },
+    {
+      "h": "Newborn sleep is unbelievably noisy",
+      "t": "Babies grunt, sigh, fidget, pull faces and clear normal secretions while still asleep. The sound alone does not tell you they are in pain.\n\nWe learned to watch her colour, breathing and what happened next. If she settled again without help, the noise had usually been part of sleep rather than a request for rescue."
+    },
+    {
+      "h": "Waiting is not ignoring",
+      "t": "Our fear underneath all of this was choking, especially after NICU alarms had trained us to react. We settled on pausing briefly before reaching in while still watching her properly.\n\nA cry that is weak, unusually high-pitched or genuinely different, colour changes, breathing difficulty, being hard to wake or refusing feeds are not ‘wait and see’ noises. Those need help."
+    }
+  ],
+  "order": 52,
+  "batch": "4"
+},
+{
+  "id": "sterilising-baby-bottles",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How long should I sterilise baby bottles?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "Clean bottles matter, but you do not need to sterilise the baby, the sofa and half the house.",
+  "keywords": [
+    "sterilising baby bottles",
+    "how long sterilise bottles",
+    "sterilising pump parts",
+    "formula bottle hygiene"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Your baby was born premature",
+      "Your baby has reduced immunity",
+      "Your water supply may not be safe",
+      "Your formula machine may not reach 70°C",
+      "Your unit gave different instructions"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Bottles and teats sterilised after washing",
+        "Pump parts handled as instructed",
+        "UK guidance continuing to twelve months",
+        "Ordinary toys not needing sterilising"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Rinsing bottles before milk dried",
+        "A brush used only for feeding equipment",
+        "Sterilising in batches",
+        "Following the NICU instructions first"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby was born premature",
+        "Your baby has reduced immunity",
+        "Your water supply may not be safe",
+        "Your formula machine may not reach 70°C",
+        "Your unit gave different instructions"
+      ]
+    },
+    "quick": "Wash feeding equipment first, then sterilise it. UK guidance continues to twelve months, while a premature baby may be given stricter rules."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "feeding-on-demand",
+    "timing-feeds-start-or-finish",
+    "pumping-schedule"
+  ],
+  "seo": {
+    "description": "Wash feeding equipment thoroughly and sterilise it for the first year under UK guidance; premature babies may need stricter instructions."
+  },
+  "longform": [
+    {
+      "h": "We were trying to sterilise the entire world",
+      "t": "At first, ‘keep things clean’ somehow became ‘everything near the baby must be sterilised’. That is an exhausting standard and not what the guidance means.\n\nThe focus is feeding equipment: bottles, teats and the pump parts that need sterilising. Toys, muslins and the whole house are a different question."
+    },
+    {
+      "h": "Washing comes before sterilising",
+      "t": "Steam does not magically remove dried milk. Rinsing straight after a feed, washing properly with a bottle brush, then sterilising saved far more effort than attacking yesterday’s bottle the next morning.\n\nUK guidance says to sterilise bottles and teats until at least twelve months. We stopped at six months and washed them thoroughly instead, because Ari was moving around and putting everything in her mouth anyway. That was our choice, not the UK recommendation."
+    },
+    {
+      "h": "Formula preparation is a separate safety job",
+      "t": "Powdered formula is not sterile. Current guidance uses fresh water that is still at least 70°C when mixed with standard formula, then cools the made bottle before feeding.\n\nAri was premature, so when NICU instructions were stricter than general advice, their rules won. If your baby was born early or has an immune concern, ask rather than assuming the standard version applies."
+    }
+  ],
+  "order": 53,
+  "batch": "4"
+},
+{
+  "id": "is-baby-too-hot",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is my baby too hot, and is air conditioning safe?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Cool hands can be misleading; your baby’s chest and neck tell you much more about temperature.",
+  "keywords": [
+    "baby too hot",
+    "air conditioning baby room",
+    "baby room temperature",
+    "check baby temperature"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A fever, especially under three months",
+      "Floppy, unusually sleepy or hard to wake",
+      "Poor feeding or fewer wet nappies",
+      "Fast breathing with flushed skin",
+      "Unwell after being somewhere very hot"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Cool hands and feet",
+        "Checking chest or back of neck",
+        "A cooler room being safer than overheating",
+        "Using air conditioning without direct airflow"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "A room thermometer",
+        "Checking her chest rather than guessing",
+        "Air conditioning not aimed at the cot",
+        "Matching layers to the actual room"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A fever, especially under three months",
+        "Floppy, unusually sleepy or hard to wake",
+        "Poor feeding or fewer wet nappies",
+        "Fast breathing with flushed skin",
+        "Unwell after being somewhere very hot"
+      ]
+    },
+    "quick": "Check the chest or back of the neck, not cool hands and feet. Air conditioning is fine when it keeps the room comfortable and does not blow directly on baby."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "wind-and-gas",
+    "colic-drops",
+    "flat-head"
+  ],
+  "seo": {
+    "description": "Check your baby’s chest or neck rather than cool hands; air conditioning is useful when the room stays comfortable and airflow is not direct."
+  },
+  "longform": [
+    {
+      "h": "We worried about cold hands and the air conditioner",
+      "t": "Ari’s hands felt cool, the air conditioning was on, and we immediately wondered whether we were freezing the baby. Her chest was comfortable. The hands had simply lied to us again.\n\nHands and feet often feel cooler than the rest of a baby. The chest, tummy or back of the neck gives you a better idea of how warm they really are."
+    },
+    {
+      "h": "A room thermometer ended the debate",
+      "t": "A comfortably cool room is safer for sleep than an overheated one. UK safe-sleep guidance uses roughly 16–20°C, with lighter sleeping bags for warmer rooms. Ari actually settled best around 22–24°C. Sixteen to twenty felt far too cold to us, so we matched her sleepwear to the room and checked her chest and neck.\n\nAri was home from NICU during a Greek summer. Air conditioning made the room safer and more comfortable. We kept the airflow away from the cot instead of treating the machine itself as dangerous."
+    },
+    {
+      "h": "Signs baby may be too warm",
+      "t": "Sweating, hot skin on the chest or back, damp hair, flushing and faster breathing can mean too much heat or too many layers. Remove a layer and check again.\n\nA measured fever is different from simply feeling warm. If a young baby has a fever, seems unusually sleepy, feeds poorly or has breathing changes, ask your baby’s doctor or nurse."
+    }
+  ],
+  "order": 54,
+  "batch": "4"
+},
+{
+  "id": "head-control",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "When will my baby hold their head up?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Head control arrives bit by bit, with plenty of wobbling before it starts to look convincing.",
+  "keywords": [
+    "baby head control",
+    "tummy time head lifting",
+    "premature baby corrected age",
+    "when babies hold head up"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Always turning to one side",
+      "Control going backwards",
+      "Very floppy or unusually stiff",
+      "No progress with lifting the head",
+      "Any skill that has been lost"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Very brief lifts in early tummy time",
+        "Steadier control over the first months",
+        "Corrected age after premature birth",
+        "Some wobble while strength is building"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Short, frequent tummy time",
+        "Tummy time on our chest",
+        "Supporting her head for every lift",
+        "Using corrected age for milestones, without delaying tummy time"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Always turning to one side",
+        "Control going backwards",
+        "Very floppy or unusually stiff",
+        "No progress with lifting the head",
+        "Any skill that has been lost"
+      ]
+    },
+    "quick": "Head control builds over months, not overnight. Corrected age matters for milestones after an early birth, but tummy time still starts gently from the beginning."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "is-that-a-real-smile",
+    "rolling-sitting-crawling",
+    "first-words"
+  ],
+  "seo": {
+    "description": "Head control builds gradually through short tummy-time practice; use corrected age after premature birth and keep supporting the head until control is reliable."
+  },
+  "longform": [
+    {
+      "h": "We worried about every wobble",
+      "t": "The question underneath ‘when can she hold her head?’ was really: what happens if we support it badly once? Newborn neck muscles are weak, so the head needs support—but one small wobble is not automatically a catastrophe.\n\nA hand behind the head and neck on every lift and transfer quickly became automatic for us."
+    },
+    {
+      "h": "It arrives little by little",
+      "t": "Early tummy time may mean one tiny lift and immediate outrage. Over the next months, the head becomes steadier upright and stronger on the tummy.\n\nAri was born at 33 weeks, so we used corrected age. Comparing her with a baby who had several extra weeks to practise would have created worry for no useful reason."
+    },
+    {
+      "h": "Tummy time without the heroics",
+      "t": "Short and frequent worked better than one long miserable session. On our chest counted. Across a lap counted. Ten calm seconds counted.\n\nIf your baby always looks one way, seems unusually floppy or stiff, loses a skill, or head control is not progressing, mention it to your baby’s doctor or nurse. Neck tightness is much easier to help early."
+    }
+  ],
+  "order": 55,
+  "batch": "4"
+},
+{
+  "id": "flat-head",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Will sleeping with the head to one side cause a flat head?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "A favourite sleeping side can flatten one spot, but safe sleep stays exactly the same.",
+  "keywords": [
+    "baby flat head",
+    "baby sleeps head one side",
+    "plagiocephaly baby",
+    "prevent flat head baby"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Always turning one way and resisting the other",
+      "A tight or painful-looking neck",
+      "Flattening becoming more obvious",
+      "Uneven ears or face",
+      "You want an early assessment"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A preferred side in early months",
+        "Mild flattening from repeated pressure",
+        "Improvement as movement increases",
+        "Back sleeping remaining safest"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Changing which end of the cot she faced",
+        "Alternating carrying and feeding sides",
+        "More watched tummy time",
+        "Moving the interesting view"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Always turning one way and resisting the other",
+        "A tight or painful-looking neck",
+        "Flattening becoming more obvious",
+        "Uneven ears or face",
+        "You want an early assessment"
+      ]
+    },
+    "quick": "Flat spots are common and often improve. Vary pressure while baby is awake, but safe sleep stays unchanged: on the back, flat and with nothing added to the cot."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "is-baby-too-hot",
+    "baby-vaccine-side-effects",
+    "overfed-big-tummy"
+  ],
+  "seo": {
+    "description": "Flat spots are common and often improve as babies move more; vary awake positioning but never change safe back sleeping to fix head shape."
+  },
+  "longform": [
+    {
+      "h": "We were already doing the useful part",
+      "t": "Ari kept turning her head towards the same side in her sleep, and we worried about her head shape. We were already changing which direction she faced. That was useful—as long as she still started every sleep on her back.\n\nA baby’s skull is soft because it is growing quickly. Repeated pressure on one area can create a flat spot without anybody having done something wrong."
+    },
+    {
+      "h": "Change the view, not the sleep position",
+      "t": "We changed which end of the cot Ari’s head went at, alternated carrying and feeding sides, and moved the interesting thing she wanted to look at.\n\nTummy time while awake and watched also removed pressure from the back of her head. As babies roll, sit and turn more, many mild flat spots improve."
+    },
+    {
+      "h": "Safe sleep does not change for head shape",
+      "t": "We did not use a head-shaping pillow, wedge or positioner. Nothing went into the cot to hold Ari in place.\n\nIf your baby always turns one way, resists the other side, has neck tightness or the flattening is worsening, ask early. Physiotherapy can help when neck tightness is part of the problem."
+    }
+  ],
+  "order": 56,
+  "batch": "4"
+},
+{
+  "id": "swaddling",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Should I swaddle my baby or let them kick?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Swaddling can calm the startle reflex while awake kicking gives those little legs room to work.",
+  "keywords": [
+    "swaddling baby",
+    "baby kicking legs",
+    "when to stop swaddling",
+    "Love to Dream swaddle"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Any sign of rolling",
+      "Legs held straight and pressed together",
+      "Overheating",
+      "Restricted-looking breathing",
+      "Known hip concerns"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Swaddling helping the startle reflex",
+        "Plenty of free kicking while awake",
+        "Loose hips and legs inside a swaddle",
+        "Moving to an arms-free sleeping bag"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Snug around the arms, roomy around the hips",
+        "Unswaddled floor time while awake",
+        "Watching for early rolling signs",
+        "Changing to a sleeping bag",
+        "A Love to Dream swaddle, which gave her more freedom"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Any sign of rolling",
+        "Legs held straight and pressed together",
+        "Overheating",
+        "Restricted-looking breathing",
+        "Known hip concerns"
+      ]
+    },
+    "quick": "Swaddling may help sleep and free kicking builds strength. Keep hips loose, avoid overheating and stop swaddling at the first signs of rolling."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "wont-nap",
+    "sleep-regression",
+    "day-night-confusion"
+  ],
+  "seo": {
+    "description": "Swaddling may settle a newborn while free awake movement builds strength; keep hips loose and stop at the first signs of rolling."
+  },
+  "longform": [
+    {
+      "h": "They are for different parts of the day",
+      "t": "We asked whether swaddling was better than letting Ari kick. The answer was both: free movement while awake, and swaddling only as a settling tool for a young baby who startled herself awake. The Love to Dream swaddle worked brilliantly for Ari because she felt less pinned down. That is not sponsorship; it is simply the one that suited her.\n\nKicking on the floor builds strength. A swaddle is not exercise equipment; it is temporary sleep equipment."
+    },
+    {
+      "h": "Can a swaddled baby still poo?",
+      "t": "Yes, we genuinely asked this. We worried that if Ari could not fold herself in half, perhaps nothing would come out.\n\nA hip-healthy swaddle leaves the legs able to bend up and out, so there is room to strain, pass wind and poo. Snug arms do not mean straight, pinned legs."
+    },
+    {
+      "h": "It stops before rolling",
+      "t": "Swaddling stops at the first signs of trying to roll, not after rolling becomes reliable. A baby who rolls while their arms are trapped cannot use them to reposition.\n\nWe moved to an arms-free sleeping bag. No loose fabric near the face, no extra blanket piled on top, and no swaddle if breathing or chest movement looks restricted."
+    }
+  ],
+  "order": 57,
+  "batch": "4"
+},
+{
+  "id": "baby-vaccine-side-effects",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "How long do vaccine side effects last in babies?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months",
+    "12–18 months",
+    "18–24 months"
+  ],
+  "read": 2,
+  "summary": "A grumpy day after vaccines is common; symptoms that persist or feel wrong deserve a separate look.",
+  "keywords": [
+    "baby vaccine side effects",
+    "vaccine fever baby",
+    "rotavirus side effects",
+    "baby sleepy after vaccines"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Vomiting repeatedly or unable to keep feeds down",
+      "Fewer wet nappies",
+      "A non-fading rash",
+      "Very hard to wake or unusually unresponsive",
+      "A swollen painful tummy or blood in poo after rotavirus vaccine"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–24 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Irritability or extra sleepiness",
+        "A mild temperature",
+        "Reduced appetite for a short time",
+        "A small sore lump at the injection site",
+        "Mild loose nappies after oral rotavirus vaccine"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Expecting a difficult evening",
+        "Offering smaller feeds more often",
+        "Keeping the next day quiet",
+        "Asking about suitable pain relief beforehand"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Vomiting repeatedly or unable to keep feeds down",
+        "Fewer wet nappies",
+        "A non-fading rash",
+        "Very hard to wake or unusually unresponsive",
+        "A swollen painful tummy or blood in poo after rotavirus vaccine"
+      ]
+    },
+    "quick": "A grumpy day or two, sleepiness and a sore injection site can be expected. Repeated vomiting, dehydration or a baby who is difficult to wake needs advice."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "flat-head",
+    "overfed-big-tummy",
+    "newborn-hiccups"
+  ],
+  "seo": {
+    "description": "A day or two of irritability, sleepiness or reduced appetite can be expected; persistent vomiting, dehydration or unusual sleepiness needs advice."
+  },
+  "longform": [
+    {
+      "h": "We kept blaming the vaccines",
+      "t": "After Ari’s vaccines, she was unsettled and later started bringing milk back after feeds. We wanted a neat answer for when the side effects would stop.\n\nMost common reactions are mild and short: irritability, sleepiness, less appetite, a temperature or soreness where the injection went in."
+    },
+    {
+      "h": "There is a point where it needs its own explanation",
+      "t": "Vomiting after every feed for days should not be dismissed simply because a vaccine happened recently. If your baby cannot keep feeds down, has fewer wet nappies, seems very sleepy or is not recovering, ask your baby’s doctor or nurse.\n\nAfter the oral rotavirus vaccine, mild loose nappies can happen. Repeated vomiting, a swollen painful tummy, severe episodes of crying or blood in the poo needs urgent advice."
+    },
+    {
+      "h": "Make the next day easier",
+      "t": "We learned to keep the following day quiet when possible and offer smaller feeds more often if Ari’s appetite was off.\n\nAsk about pain relief, the correct product and the dose for your baby’s age and weight before the evening gets difficult. Premature babies are usually vaccinated by actual age, but confirm the schedule with your baby’s doctor or nurse."
+    }
+  ],
+  "order": 58,
+  "batch": "4"
+},
+{
+  "id": "overfed-big-tummy",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is my baby’s big round tummy normal?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Baby tummies are gloriously round; soft and settled is very different from firm, swollen and painful.",
+  "keywords": [
+    "baby big tummy",
+    "newborn swollen stomach",
+    "overfed baby tummy",
+    "firm baby belly"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Firm, tight or shiny tummy",
+      "Green, bloody or forceful vomit",
+      "Obvious pain or inconsolable crying",
+      "Not passing wind or poo",
+      "Premature baby with new swelling"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A round middle",
+        "A fuller tummy after feeding",
+        "Softness when touched gently",
+        "Some spit-up after a larger feed"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Feeling gently rather than judging by sight",
+        "Watching whether she settled",
+        "Slowing the bottle and pausing",
+        "Stopping when she turned away"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Firm, tight or shiny tummy",
+        "Green, bloody or forceful vomit",
+        "Obvious pain or inconsolable crying",
+        "Not passing wind or poo",
+        "Premature baby with new swelling"
+      ]
+    },
+    "quick": "Round and soft after a feed is ordinary baby shape. Firm, tight or shiny—especially with vomiting, pain or unusual sleepiness—needs checking."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-hiccups",
+    "fast-breathing-newborn",
+    "newborn-trembles-and-jerks"
+  ],
+  "seo": {
+    "description": "A soft round tummy after feeding is usually normal baby shape; a firm shiny tummy with pain or vomiting needs checking."
+  },
+  "longform": [
+    {
+      "h": "Babies are built round in the middle",
+      "t": "Ari’s tummy looked enormous after a feed, but she was comfortable and not crying. We worried we had somehow stretched her stomach.\n\nBabies have short torsos, weak abdominal muscles and a middle full of milk and gas. Compared with an adult, the shape looks very round because it is supposed to."
+    },
+    {
+      "h": "Soft versus firm is the useful difference",
+      "t": "A soft tummy and a settled baby is usually reassuring. We learned more by placing a flat hand gently on Ari’s tummy than by staring at it from different angles.\n\nA firm, tight, shiny or increasingly swollen tummy is different, especially with vomiting, poor feeding, pain or unusual sleepiness. We had that combination once and went in."
+    },
+    {
+      "h": "Let baby finish the feed",
+      "t": "A bottle can keep flowing after a baby is full, especially if the teat is fast. The usual result of taking too much is spit-up and discomfort, not permanent damage.\n\nPaced feeding helped: bottle more horizontal, breaks built in, and stopping when Ari turned away. The difficult part was accepting that the measured amount left in the bottle did not need to be defeated."
+    }
+  ],
+  "order": 59,
+  "batch": "4"
+},
+{
+  "id": "overwhelmed-new-parent",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Is it normal to regret having a baby sometimes?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Sometimes parenthood feels crushingly heavy; saying that aloud does not make you a bad parent.",
+  "keywords": [
+    "regret having a baby",
+    "overwhelmed new parent",
+    "postnatal depression fathers",
+    "parent burnout baby"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Low mood or hopelessness that does not lift",
+      "Withdrawing from your partner or baby",
+      "Unable to sleep even when given the chance",
+      "Drinking more or feeling constantly on edge",
+      "Thoughts of harming yourself or the baby"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Overwhelmed thoughts after little sleep",
+        "Responsibility feeling relentless",
+        "The thought arriving during an argument",
+        "Feeling better when some rest returns"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Telling one trusted person",
+        "Protecting one real block of sleep",
+        "Naming the hardest specific problem",
+        "Accepting help without earning it first"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Low mood or hopelessness that does not lift",
+        "Withdrawing from your partner or baby",
+        "Unable to sleep even when given the chance",
+        "Drinking more or feeling constantly on edge",
+        "Thoughts of harming yourself or the baby"
+      ]
+    },
+    "quick": "Overload can produce thoughts like this without making them true. Say it to one person early; persistent numbness, hopelessness or thoughts of harm need help."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "visitors",
+    "father-not-feeling-it",
+    "touched-out"
+  ],
+  "seo": {
+    "description": "Overload can produce frightening thoughts without making them true; saying it early and protecting real sleep can stop shame making everything heavier."
+  },
+  "longform": [
+    {
+      "h": "The sentence came out during an argument",
+      "t": "Papa said it plainly: sometimes I am so overwhelmed that I think, what did I do having this baby? It did not arrive as a calm confession. It arrived alongside being told he was constantly negative.\n\nThat matters because thoughts like this often appear as frustration before anybody recognises the exhaustion underneath."
+    },
+    {
+      "h": "It was not only the baby",
+      "t": "For us there was NICU, travel, work, a household and endless decisions. Papa was also operating in Greek while still learning it. Doing ordinary life in another language is manageable; doing it exhausted while worried about a baby is something else entirely.\n\nHaving the thought did not mean Papa did not love Ari. It meant the whole system was overloaded."
+    },
+    {
+      "h": "Make the problem smaller and say it aloud",
+      "t": "One real block of sleep helped more than a night of lying down while still listening for everything. Naming the specific thing—another hospital run, another broken night—made it something we could share.\n\nIf low mood, numbness, panic, hopelessness or withdrawal continues, tell a doctor. Postnatal depression and anxiety can affect either parent. If you might harm yourself or the baby, seek urgent help now."
+    }
+  ],
+  "order": 60,
+  "batch": "4"
 }
 ];
 
