@@ -228,6 +228,32 @@ function applyFooter(html, footer) {
 }
 
 /* --------------------------------------------------------------------------
+   FOOTER LINKS
+
+   The Privacy link has to appear on every public page, including the 61
+   generated guide pages, which have no hand-written footer of their own. The
+   span is byte-identical across all eight source pages, so adding it here is
+   one change instead of nine and it cannot drift out of step later.
+
+   Idempotent: a page that already has the link is returned untouched, so the
+   build is safe to run twice over the same tree.
+
+   Deliberately NOT here: the "Cookie settings" link. That one is added at
+   runtime by mpc-analytics.js, which only loads when analytics is actually
+   configured — so it can never be baked into the HTML as a link that opens
+   nothing.
+   ------------------------------------------------------------------------ */
+function applyFootLinks(html) {
+  return html.replace(
+    /(<span class="foot-links">)([\s\S]*?)(<\/span>)/g,
+    (whole, open, inner, close) =>
+      /href="\/privacy\.html"/.test(inner)
+        ? whole
+        : open + inner + '<a href="/privacy.html">Privacy</a>' + close
+  );
+}
+
+/* --------------------------------------------------------------------------
    HERO ILLUSTRATION
 
    This one is worth more than it looks. The <img> used to ship with NO src at
@@ -458,7 +484,7 @@ function applyPills(html, topics, ages, selected) {
 }
 
 module.exports = {
-  applyText, applyFooter, applyHero, applyAbout, applyBooks, applyPills,
+  applyText, applyFooter, applyFootLinks, applyHero, applyAbout, applyBooks, applyPills,
   inlineHTML, proseHTML, esc,
   ABOUT_DEFAULTS, BOOK_DEFAULTS
 };

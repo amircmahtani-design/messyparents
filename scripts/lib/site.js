@@ -70,7 +70,8 @@ const STATIC_PAGES = [
   { path: "/popular.html",  file: "popular.html",  changefreq: "weekly",  priority: "0.7" },
   { path: "/about.html",    file: "about.html",    changefreq: "monthly", priority: "0.6" },
   { path: "/books.html",    file: "books.html",    changefreq: "monthly", priority: "0.5" },
-  { path: "/editorial.html",file: "editorial.html",changefreq: "yearly",  priority: "0.4" }
+  { path: "/editorial.html",file: "editorial.html",changefreq: "yearly",  priority: "0.4" },
+  { path: "/privacy.html",  file: "privacy.html",  changefreq: "yearly",  priority: "0.3" }
 ];
 
 /* Routes that must never be indexed or listed. Everything here ends up in
