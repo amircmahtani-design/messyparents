@@ -691,13 +691,48 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
    checks when deciding whether to trust the site, and looking like a different
    website was not helping. Same face as the guides, at a size that carries it.
    ------------------------------------------------------------------------ */
-body[data-mpc-page="editorial"] .article-body{
+/* THE LONG-FORM PAGE LOOK — hand font, wider measure, hand-set headings.
+
+   This used to be bolted to one page: every selector said
+   body[data-mpc-page="editorial"]. So the second long-form page written
+   (Privacy and cookies) got none of it — Nunito body copy, Baloo headings, a
+   700px measure — and there was no way to opt in short of pretending to be the
+   editorial page, which would ALSO have handed it the editorial page's
+   editable text, because data-mpc-page is what the build uses to decide which
+   Studio document drives a page's wording.
+
+   So the look now has a name of its own. Put `data-longform` on the <body> of
+   any page that is an essay rather than a panel, and it gets the treatment.
+   The editorial page keeps its own selector so nothing had to change there. */
+body[data-mpc-page="editorial"] .article-body,
+body[data-longform] .article-body{
   font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);
   line-height:1.75;color:var(--ink-hand);letter-spacing:.2px;
 }
-body[data-mpc-page="editorial"] .article-body h2{
+body[data-mpc-page="editorial"] .article-body h2,
+body[data-longform] .article-body h2{
   font-family:var(--hand);font-weight:400;letter-spacing:.3px;
   font-size:clamp(1.55rem,2.4vw,1.95rem);margin:36px 0 12px;
 }
-body[data-mpc-page="editorial"] .article-body strong{font-weight:400;color:var(--blue-ink)}
-body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
+body[data-mpc-page="editorial"] .article-body h3,
+body[data-longform] .article-body h3{
+  font-family:var(--hand);font-weight:400;letter-spacing:.3px;
+}
+body[data-mpc-page="editorial"] .article-body strong,
+body[data-longform] .article-body strong{font-weight:400;color:var(--blue-ink)}
+body[data-mpc-page="editorial"] .article-inner,
+body[data-longform] .article-inner{width:min(100%,960px)}
+
+/* AND CENTRE IT. .article-inner is a fixed-width column inside a 1080px wrap
+   with no side margins, so it sits hard against the left and every pixel it
+   does not use piles up on the right. On a guide that is invisible — the
+   illustration fills the other side. On a page that is nothing but prose it
+   reads as a layout fault.
+
+   The column itself stays capped. A line of text running the full width of a
+   1700px monitor is genuinely harder to read: the eye loses its place on the
+   return sweep. What was wrong was not the measure, it was all the leftover
+   space being on one side.
+
+   Only data-longform pages, so the editorial page's alignment is untouched. */
+body[data-longform] .article-inner{margin-inline:auto}
