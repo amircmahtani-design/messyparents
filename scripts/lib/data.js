@@ -21,6 +21,8 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const { ageSlug, guideUrl } = require("./site");
+/* Which age bands are public. One source of truth; see scripts/lib/ages.js. */
+const AGES = require("./ages");
 /* The shared renderer also turns Studio's section list into the guide's prose,
    and everything downstream — word counts, meta descriptions, the audit, the
    search index — has to see the same words the reader gets. */
@@ -328,9 +330,46 @@ async function load({ preferBundled = false } = {}) {
   }
 
   const ctx = { topics };
-  const guides = rawGuides
+  const everyGuide = rawGuides
     .filter(g => g && g.id)
     .map(g => normaliseGuide(g, ctx));
+
+  /* -------------------------------------------------------------------------
+     AGE-RANGE VISIBILITY
+
+     A band can be switched off in Studio. When it is, this is where it stops
+     — before the build, the audit, the sitemap, the search index or anything
+     else has seen it. Everything downstream keeps working on `guides` and
+     `ages` exactly as it did, and gets the public view by construction rather
+     than by remembering to filter.
+
+     Nothing is discarded: `allGuides` and `hiddenGuides` are returned too, so
+     the audit page can still show Amir what is being held back.
+     ---------------------------------------------------------------------- */
+  const ageVisibility = AGES.resolve(
+    bundled.ages,
+    (meta.seo && meta.seo.ageVisibility) || null
+  );
+
+  const hiddenGuides = everyGuide.filter(g => ageVisibility.isGuideHidden(g.ages));
+  const guides = everyGuide
+    .filter(g => !ageVisibility.isGuideHidden(g.ages))
+    .map(g => {
+      if (ageVisibility.allPublic) return g;
+      /* A guide that lives in both a visible and a hidden band stays, but the
+         hidden tag is stripped from its public shape — otherwise its
+         breadcrumb, its filter row and its age landing page would all point at
+         a band that is switched off. Its Firestore document is untouched. */
+      const visibleAges = ageVisibility.visibleAgesOf(g.ages);
+      if (visibleAges.length === g.ages.length) return g;
+      return Object.assign({}, g, {
+        ages: visibleAges,
+        ageSlugs: visibleAges.map(ageSlug),
+        /* Kept so the audit can report the full tagging honestly. */
+        allAges: g.ages
+      });
+    });
+
 
   /* Site-wide settings that the renderer needs to match the live page exactly
      (the quick-answer label, the notepad lines, the band illustration) plus
@@ -362,7 +401,14 @@ async function load({ preferBundled = false } = {}) {
   };
 
   return {
-    guides, topics, ages: bundled.ages, pages, meta,
+    /* The public view. `ages` is the bands a reader may see and `guides` the
+       guides that survive them, so everything downstream is correct without
+       knowing this feature exists. */
+    guides, topics, ages: ageVisibility.visible, pages, meta,
+    /* The complete picture, for the audit and for anything that needs to
+       reason about what is being held back rather than what is published. */
+    allGuides: everyGuide, hiddenGuides, allAges: ageVisibility.all,
+    ageVisibility,
     settings, source, warnings
   };
 }

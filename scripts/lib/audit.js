@@ -21,7 +21,8 @@ const esc = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;")
   .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-function runAudit({ guides, topics, ages, topicPages, agePages, settings, source }) {
+function runAudit({ guides, topics, ages, topicPages, agePages, settings, source,
+                    hiddenAges = [], hiddenGuides = [] }) {
   const errors = [];
   const warnings = [];
   const todos = [];
@@ -136,7 +137,8 @@ function runAudit({ guides, topics, ages, topicPages, agePages, settings, source
     warnings.push({ id: "site", message: `Built from the ${source} copy rather than live Firestore — generated pages may be behind what Studio shows.` });
   }
 
-  return { guides, topics, topicPages, agePages, settings, source, errors, warnings, todos };
+  return { guides, topics, topicPages, agePages, settings, source, errors, warnings, todos,
+           hiddenAges, hiddenGuides };
 }
 
 /* ---------------------------------------------------------------------------
@@ -149,6 +151,8 @@ function runAudit({ guides, topics, ages, topicPages, agePages, settings, source
 
 function writeAuditPage(ROOT, audit, { write }) {
   const { guides, errors, warnings, todos, source, buildProblems } = audit;
+  const hiddenAges = audit.hiddenAges || [];
+  const hiddenGuides = audit.hiddenGuides || [];
 
   const todosByGuide = new Map();
   todos.forEach(t => {
@@ -219,12 +223,20 @@ function writeAuditPage(ROOT, audit, { write }) {
 
 ${buildProblems && buildProblems.length ? `<div class="banner"><strong>Build notes</strong><ul>${buildProblems.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>` : ""}
 
+${hiddenAges.length ? `<div class="banner"><strong>Age ranges switched off</strong>
+  <p style="margin:6px 0 0">${hiddenAges.map(a => `<code>${esc(a)}</code>`).join(" ")} &mdash; hidden from the pills, the filters, the landing pages, the sitemap, the search index and the structured data. Nothing has been deleted. Switch them back on in Studio &rarr; Site &rarr; Search &amp; AI and the next deploy restores everything.</p>
+  ${hiddenGuides.length ? `<p style="margin:8px 0 0">${hiddenGuides.length} guide(s) are held back because every age they are tagged with is off. Their own URLs return 404 while hidden:</p>
+  <ul>${hiddenGuides.map(g => `<li><code>${esc(g.slug)}</code> &mdash; ${esc(g.title)} <small>(${esc((g.allAges || g.ages).join(", "))})</small></li>`).join("")}</ul>`
+   : `<p style="margin:8px 0 0">No guide is tagged <em>only</em> to a switched-off range, so none is held back &mdash; guides that also carry a visible age still appear, under their visible ages only.</p>`}
+</div>` : ""}
+
 <div class="cards">
   <div class="card"><b>${guides.length}</b>guides</div>
   <div class="card"><b>${guides.filter(g => !g.noindex).length}</b>indexable</div>
   <div class="card"><b>${errors.length}</b>errors</div>
   <div class="card"><b>${warnings.length}</b>warnings</div>
   <div class="card"><b>${todos.length}</b>fields to write</div>
+  ${hiddenAges.length ? `<div class="card"><b>${hiddenGuides.length}</b>held back</div>` : ""}
 </div>
 
 ${errors.length ? `<div class="banner"><strong>Errors — these break something</strong><ul>${errors.map(e => `<li><code>${esc(e.id)}</code> ${esc(e.message)}</li>`).join("")}</ul></div>` : ""}
@@ -249,6 +261,10 @@ ${rows}
   write("test-results/seo-audit.json", JSON.stringify({
     generated: new Date().toISOString(),
     source,
+    ageRanges: {
+      hidden: hiddenAges,
+      heldBack: hiddenGuides.map(g => ({ id: g.id, slug: g.slug, ages: g.allAges || g.ages }))
+    },
     counts: {
       guides: guides.length,
       indexable: guides.filter(g => !g.noindex).length,
