@@ -2563,6 +2563,268 @@
     applyGroupCollapse();
   }
 
+  /* ==========================================================================
+     FEATURE: Site -> Ages, and un-blanking Site -> Search & AI
+     ------------------------------------------------------------------------
+     WHY THIS IS HERE AND NOT IN studio/index.html
+
+     Both of these are, on the face of it, edits to index.html. They are not
+     made there because that file cannot be edited safely from a repo copy:
+     the version in the repo is not the version that is deployed (the repo copy
+     has no <script> tag for THIS file, yet the Gallery button exists on the
+     live Studio, so the live file has something the repo does not). Shipping an
+     edited index.html would overwrite the live one and take away whatever the
+     repo copy is missing.
+
+     So both changes install themselves from here instead, the same way the
+     gallery and the batch button do. Upload one file, change nothing else.
+
+     WHAT IT ADDS
+
+     1. "Ages" in the SITE list, directly under Topics — a checkbox per age
+        range, saved to meta/seo.ageVisibility, which is what scripts/lib/ages.js
+        reads at build time. That map is the one source of truth for which
+        ranges are public.
+
+     2. A fix for Search & AI, which renders blank. showPanel() in index.html
+        toggles `hidden` on a hard-coded list of panel ids and seoEditor is not
+        in it, so selecting that section hides every panel and unhides nothing.
+        Cannot be fixed from out here — that function is module-scoped — but the
+        effect can: after the click, unhide #seoEditor ourselves.
+
+     If index.html is ever updated to include either of these properly, this
+     stands down: the panel is only created when one does not already exist,
+     and unhiding an already-visible element is a no-op.
+     ========================================================================== */
+
+  const AGE_BANDS = ["0–1 month", "2–3 months", "4–6 months", "7–9 months",
+                     "10–12 months", "12–18 months", "18–24 months"];
+  /* Must match DEFAULT_VISIBILITY in scripts/lib/ages.js. These are the ranges
+     that are off until the saved map says otherwise. */
+  const AGE_DEFAULT_OFF = ["12–18 months", "18–24 months"];
+
+  /* Labels carry an en-dash. One round-tripped through a keyboard or a
+     spreadsheet comes back with a plain hyphen, and a toggle that silently
+     stops matching is worse than one that is obviously broken. */
+  const normAge = (v) => String(v == null ? "" : v)
+    .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+
+  let ageSaved = null;   // meta/seo.ageVisibility, once read
+
+  function studioGuides() {
+    try { return (window.MPCStudio && window.MPCStudio.state.guides) || []; }
+    catch (e) { return []; }
+  }
+
+  /* Every band the site knows about, plus any a guide is actually tagged with
+     that is not on the list — so a band added straight to a guide still gets a
+     switch rather than being unswitchable. */
+  function ageBands() {
+    const out = AGE_BANDS.slice();
+    const seen = new Set(out.map(normAge));
+    studioGuides().forEach(g => (g.ages || []).forEach(a => {
+      if (a && !seen.has(normAge(a))) { seen.add(normAge(a)); out.push(a); }
+    }));
+    return out;
+  }
+
+  function ageIsPublic(label) {
+    const k = normAge(label);
+    const saved = ageSaved || {};
+    for (const key of Object.keys(saved)) if (normAge(key) === k) return saved[key] !== false;
+    return !AGE_DEFAULT_OFF.some(d => normAge(d) === k);
+  }
+
+  const AGES_HTML = `
+<div id="agesEditor" class="editor hidden">
+  <h2 style="margin:0 0 4px;font-size:19px">Browse ages</h2>
+  <p class="field hint" style="margin:0 0 16px">These are the &ldquo;How old is your little one?&rdquo; pills on the Home and Guides pages. Untick a range to take it off the public site.</p>
+
+  <div class="col-card">
+    <span class="tag tip">What unticking does</span>
+    <p class="field hint" style="margin:0 0 8px">The pill disappears from Home and All guides, and its landing page comes down. Any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next, the structured data and the guide count, and its own address returns &ldquo;not found&rdquo; to readers and to Google.</p>
+    <p class="field hint" style="margin:0"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, shown under its public ranges only.</p>
+  </div>
+
+  <div id="ageRows"></div>
+  <p class="hint" id="agesNote" style="margin:10px 0 0"></p>
+
+  <div class="actions">
+    <button id="saveAges" class="btn primary" type="button">Save</button>
+    <span id="agesMsg" class="msg"></span>
+  </div>
+</div>`;
+
+  function renderAgeRows() {
+    const box = document.getElementById("ageRows");
+    if (!box) return;
+    box.innerHTML = ageBands().map(a => {
+      const n = studioGuides().filter(g =>
+        (g.ages || []).some(x => normAge(x) === normAge(a))).length;
+      return `<label class="check-field"><input type="checkbox" data-age-band="${escapeHtml(a)}"` +
+        `${ageIsPublic(a) ? " checked" : ""}> <span><strong>${escapeHtml(a)}</strong>` +
+        ` <span class="hint">&mdash; ${n === 1 ? "1 guide" : n + " guides"} tagged</span></span></label>`;
+    }).join("");
+    box.querySelectorAll("input[data-age-band]").forEach(inp =>
+      inp.addEventListener("change", updateAgeNote));
+    const msg = document.getElementById("agesMsg");
+    if (msg) { msg.textContent = ""; msg.className = "msg"; }
+    updateAgeNote();
+  }
+
+  /* The number that matters before pressing Save: how many guides would
+     actually leave the site. One tagged to a public range as well stays. */
+  function updateAgeNote() {
+    const note = document.getElementById("agesNote");
+    const box = document.getElementById("ageRows");
+    if (!note || !box) return;
+    const off = new Set();
+    box.querySelectorAll("input[data-age-band]").forEach(inp => {
+      if (!inp.checked) off.add(normAge(inp.dataset.ageBand));
+    });
+    if (!off.size) { note.textContent = "Every age range is public."; return; }
+    const held = studioGuides().filter(g => {
+      const ages = (g.ages || []).filter(Boolean);
+      return ages.length && ages.every(a => off.has(normAge(a)));
+    });
+    note.innerHTML =
+      `<strong>${off.size}</strong> range(s) hidden &mdash; <strong>${held.length}</strong> guide(s) ` +
+      `would come off the site` +
+      (held.length ? `: ${escapeHtml(held.map(g => g.title || g.id).join(", "))}` : "") +
+      `. They stay saved, and come straight back when you tick the range again.`;
+  }
+
+  async function loadAgeVisibility() {
+    if (ageSaved) return ageSaved;
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDoc(fs.doc(db, "meta", "seo"));
+      const d = snap.exists() ? (snap.data() || {}) : {};
+      ageSaved = d.ageVisibility || {};
+    } catch (e) { ageSaved = {}; }
+    return ageSaved;
+  }
+
+  async function saveAgeVisibility() {
+    const btn = document.getElementById("saveAges");
+    const msg = document.getElementById("agesMsg");
+    const map = {};
+    document.querySelectorAll("#ageRows input[data-age-band]").forEach(inp => {
+      map[inp.dataset.ageBand] = inp.checked;
+    });
+    btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+    try {
+      const { fs, db } = await getFirebase();
+      /* merge:true — meta/seo also holds the Search & AI settings, which are
+         written whole by their own Save. Without merge the two screens would
+         overwrite each other. */
+      await fs.setDoc(fs.doc(db, "meta", "seo"),
+        { ageVisibility: map, updated: Date.now() }, { merge: true });
+      ageSaved = map;
+      msg.className = "msg ok";
+      msg.textContent = "Saved. The site updates on the next publish.";
+      if (window.MPCQueueRebuild) window.MPCQueueRebuild();
+    } catch (err) {
+      msg.className = "msg err";
+      msg.textContent = "Save failed: " + (err.message || err);
+    } finally { btn.disabled = false; }
+  }
+
+  /* Studio's own showPanel() hides a fixed list of panels. #agesEditor is not
+     on it, so it has to be hidden by hand whenever anything else is selected —
+     otherwise it would stay on screen underneath the next section. */
+  function hideAgesPanel() {
+    const el = document.getElementById("agesEditor");
+    if (el) el.classList.add("hidden");
+    document.querySelectorAll('#siteList .gitem[data-mpc-ages]').forEach(b =>
+      b.classList.remove("active"));
+  }
+
+  async function showAgesPanel() {
+    /* Hide everything Studio knows about, plus the empty state. */
+    ["empty", "pageEditor", "editor", "topicsEditor", "booksEditor",
+     "footerEditor", "siteTextEditor", "seoEditor"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    });
+    document.querySelectorAll("#pageList .gitem, #siteList .gitem, #list .gitem")
+      .forEach(b => b.classList.remove("active"));
+    document.querySelectorAll('#siteList .gitem[data-mpc-ages]').forEach(b =>
+      b.classList.add("active"));
+
+    const panel = document.getElementById("agesEditor");
+    if (panel) panel.classList.remove("hidden");
+    const pv = document.getElementById("pvId");
+    if (pv) pv.textContent = "· ages";
+
+    await loadAgeVisibility();
+    renderAgeRows();
+  }
+
+  /* The SITE list is re-rendered by Studio on every section change, which wipes
+     anything added to it. Re-inserting on mutation is what keeps the entry
+     there, rather than adding it once and watching it disappear. */
+  function ensureAgesButton() {
+    const list = document.getElementById("siteList");
+    if (!list) return;
+    if (list.querySelector("[data-mpc-ages]")) return;
+    const topics = list.querySelector('[data-section="topics"]');
+    if (!topics) return;                       // list not rendered yet
+
+    const btn = document.createElement("button");
+    btn.className = "gitem";
+    btn.type = "button";
+    btn.setAttribute("data-mpc-ages", "1");
+    btn.textContent = "Ages";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      showAgesPanel();
+    });
+    topics.insertAdjacentElement("afterend", btn);
+  }
+
+  function installAgesSection() {
+    if (document.getElementById("mpc-ages-installed")) return;
+    const topicsEditor = document.getElementById("topicsEditor");
+    const siteList = document.getElementById("siteList");
+    if (!topicsEditor || !siteList) return;    // Studio DOM not up yet
+
+    const flag = document.createElement("meta");
+    flag.id = "mpc-ages-installed";
+    document.head.appendChild(flag);
+
+    /* Only build a panel if index.html does not already provide one. */
+    if (!document.getElementById("agesEditor")) {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = AGES_HTML.trim();
+      topicsEditor.insertAdjacentElement("afterend", wrap.firstElementChild);
+    }
+    document.getElementById("saveAges").addEventListener("click", saveAgeVisibility);
+
+    ensureAgesButton();
+    new MutationObserver(ensureAgesButton)
+      .observe(siteList, { childList: true, subtree: true });
+
+    /* Any other section takes the Ages panel back off screen. Capture phase,
+       so this runs before Studio's own handler redraws the list out from
+       under the click. */
+    document.addEventListener("click", (e) => {
+      const t = e.target.closest && e.target.closest(".gitem, [data-section], #pageList button");
+      if (!t || t.hasAttribute("data-mpc-ages")) return;
+      hideAgesPanel();
+
+      /* And while we are here: Search & AI is blank because showPanel() in
+         index.html never unhides #seoEditor. Do it after Studio's own handler
+         has run, so it is not immediately re-hidden. */
+      if (t.getAttribute("data-section") === "seo") {
+        setTimeout(() => {
+          const seo = document.getElementById("seoEditor");
+          if (seo) seo.classList.remove("hidden");
+        }, 0);
+      }
+    }, true);
+  }
+
   function installSections() {
     if (!document.getElementById("mpc-sec-css")) {
       const st = document.createElement("style");
@@ -2571,6 +2833,7 @@
     }
     installEditorSections();
     installSidebarGroups();
+    installAgesSection();
   }
 
   /* ---- diag() is now silent — the restore system works reliably so we
