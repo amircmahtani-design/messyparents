@@ -2802,6 +2802,1246 @@ var GUIDES = [
     }
   ],
   "batch": "1"
+},
+{
+  "id": "when-does-milk-come-in",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "When does the milk actually come in?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "Thick, yellow colostrum is expected at first; fuller milk volume often arrives between days two and five and can be later after a caesarean.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Milk has not started changing after several days and you are worried",
+      "Your baby isn't producing wet nappies as expected",
+      "You're in real pain, or there's a hot, red, painful area",
+      "Your midwife or NICU is concerned about supply or feeding"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Thick, yellow, and only drops of it",
+        "That's the right substance, not a failed attempt",
+        "Fuller volume usually arrives day two to five",
+        "Often a little later after a caesarean"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Counting drops rather than millilitres at first",
+        "Starting to express early, before it felt worth it",
+        "Getting the hospital's own targets rather than an internet number",
+        "Frequency mattered more than how long each session ran",
+        "Very gentle massage on a tight area",
+        "Microwavable heat pads for comfort before pumping",
+        "Ice packs for after pumping",
+        "Silver nipple cups for soreness",
+        "Medela nipple cream"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Milk has not started changing after several days and you are worried",
+        "Your baby isn't producing wet nappies as expected",
+        "You're in real pain, or there's a hot, red, painful area",
+        "Your midwife or NICU is concerned about supply or feeding"
+      ]
+    },
+    "quick": "Colostrum is thick, yellow and measured in drops, and that's exactly right. Fuller volume usually turns up between days two and five, often later after a caesarean."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "pumping-schedule",
+    "milk-supply-dropped",
+    "blocked-duct-or-mastitis"
+  ],
+  "seo": {
+    "description": "Thick, yellow colostrum is expected at first; fuller milk volume often arrives between days two and five and can be later after a caesarean."
+  },
+  "longform": [
+    {
+      "h": "We thought something had gone wrong",
+      "t": "Mama had delivered by caesarean at 33 weeks, Ari was in NICU, and we were already staring at a few yellow drops wondering how that could possibly be enough. It felt as though the milk had not arrived. In fact, this was the milk.\n\nColostrum is thick, yellow and made in tiny amounts. When you are measuring drops rather than bottles, it is easy to think your body is failing. It is not. Those first drops are exactly what a newborn needs."
+    },
+    {
+      "h": "The fuller milk takes a little time",
+      "t": "The fuller, paler milk often arrives between days two and five. It can take a little longer after a caesarean or a difficult birth. Knowing that earlier would have saved us a great deal of staring at the pump in despair.\n\nVery gentle massage helped when Mama felt a tight area. Brief warmth before an ordinary pumping session felt soothing, and an ice pack afterwards helped with soreness. Pumping is hard work and, especially at the beginning, it can hurt.\n\nPortable pumps gave Mama more freedom, but for her the suction felt more robotic and hurt more. The sit-down pump was far less convenient, but the suction felt more natural and was easier on her body. Freedom is wonderful; pain-free is better.\n\nSilver nipple cups were amazing for Mama’s soreness, and Medela nipple cream helped too. That was our experience rather than a promise for every skin type, so stop if something irritates the area and ask for feeding support if pain continues.\n\nIf your baby is in NICU, the nurses may collect even the smallest amount. Nothing feels more ridiculous than proudly carrying over a syringe containing what looks like almost nothing. But almost nothing is still something."
+    },
+    {
+      "h": "Why pumping mattered for us",
+      "t": "Ari could not feed directly at first, so expressing did two jobs: it gave her the colostrum Mama was making and told Mama’s body to keep making more. The pump was not replacing Ari. It was standing in for her until she could feed herself.\n\nWhat helped most was asking the NICU nurses what they wanted from us, rather than comparing every session with numbers online. If you are getting very little, are in pain or are worried that nothing is changing, ask your midwife, lactation support or baby’s nurse."
+    }
+  ],
+  "order": 31,
+  "batch": "3"
+},
+{
+  "id": "pumping-schedule",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How often should I pump around the clock?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Roughly eight sessions in twenty-four hours, and one longer gap at night that you plan for rather than fall into.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Supply is dropping and you can't work out why",
+      "There's a hot, red, painful area, or you feel flu-like",
+      "You're in so much pain you're avoiding sessions",
+      "You're not coping — say it early rather than at breaking point"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Roughly every three hours, day and night",
+        "Frequency matters more than session length",
+        "Your support person can help plan a realistic night gap",
+        "It's genuinely, physically tiring — that's not you failing"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Counting from when the session starts, not when it ends",
+        "Writing out the actual clock times for the whole day",
+        "Planning any longer night gap with feeding support",
+        "Alarms, because nobody remembers at 4am"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Supply is dropping and you can't work out why",
+        "There's a hot, red, painful area, or you feel flu-like",
+        "You're in so much pain you're avoiding sessions",
+        "You're not coping — say it early rather than at breaking point"
+      ]
+    },
+    "quick": "Early pumping often means frequent sessions across day and night; writing down the real times made it much easier for us to manage."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-does-milk-come-in",
+    "milk-supply-dropped",
+    "blocked-duct-or-mastitis"
+  ],
+  "seo": {
+    "description": "Roughly eight sessions in twenty-four hours, and one longer gap at night that you plan for rather than fall into."
+  },
+  "longform": [
+    {
+      "h": "The schedule looked slightly unhinged",
+      "t": "When we were told to pump around every three hours, our first reaction was basically: so nobody sleeps now? It was a joke, but only just.\n\nEarly on, many parents are advised to aim for roughly eight sessions across twenty-four hours. Your own plan may be different, especially after a premature birth, so use the schedule given by your midwife, lactation support or NICU.If Mama produced more than Ari needed, we froze it in smaller amounts. We liked milk-storage bags with a little pouring spout: fill them from the top, then pour through the spout without covering the kitchen in liquid gold. Smaller portions also meant we thawed only what we expected to use. Once milk had been fully thawed, we followed the storage limit we had been given, never refroze it and used warmed milk promptly."
+    },
+    {
+      "h": "Write the real times down",
+      "t": "‘Every three hours’ sounds simple until it is three in the morning and nobody can remember whether the last session started at midnight or finished at midnight. Papa tried several apps because Papa always tries an app first. In the end, pen, a paper journal and alarms worked better.While Ari was in NICU, Papa also woke up for moral support. Once she came home, that became impossible. One of us had to sleep, and moral support is considerably less useful when both parents are barely functioning.\n\nThat tiny bit of organisation removed one decision from an already exhausting day. A shared note also meant Mama did not have to carry the whole schedule in her head."
+    },
+    {
+      "h": "It is genuinely tiring",
+      "t": "Producing milk takes energy. Doing it with a machine around the clock, while recovering from birth and visiting a baby in hospital, is hard work. Feeling exhausted does not mean you are doing it badly. It means it is exhausting.\n\nIf the plan is breaking you, say so. Ask where a longer sleep gap can safely sit for your situation instead of quietly missing alarms and feeling guilty afterwards."
+    }
+  ],
+  "order": 32,
+  "batch": "3"
+},
+{
+  "id": "milk-supply-dropped",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Why has my milk supply dropped on one side?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Sides are rarely equal, and supply follows demand. The most common answer is the least satisfying one: missed sessions.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "There's a hot, red or painful area, or a hard lump",
+      "You feel flu-like, shivery or feverish",
+      "Supply drops sharply and stays down despite regular sessions",
+      "There's blood, or a cracked nipple that isn't healing"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Sides are almost never equal",
+        "Supply follows how often milk is removed",
+        "Missed or shortened sessions show up within days",
+        "Stress, illness and exhaustion all feed in"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Being honest that we'd been missing the three-hour gaps",
+        "Checking the pump parts before blaming the body",
+        "Adding a session back rather than making sessions longer",
+        "Not weighing every single expression"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "There's a hot, red or painful area, or a hard lump",
+        "You feel flu-like, shivery or feverish",
+        "Supply drops sharply and stays down despite regular sessions",
+        "There's blood, or a cracked nipple that isn't healing"
+      ]
+    },
+    "quick": "Sides are rarely equal and supply follows demand, so missed sessions are the usual culprit. Heat, pain, a hard lump or feeling flu-like is a different conversation."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-does-milk-come-in",
+    "pumping-schedule",
+    "blocked-duct-or-mastitis"
+  ],
+  "seo": {
+    "description": "Sides are rarely equal, and supply follows demand. The most common answer is the least satisfying one: missed sessions."
+  },
+  "longform": [
+    {
+      "h": "One side suddenly did much less",
+      "t": "One side had been producing well and then seemed to stop cooperating. No dramatic pain. No obvious red patch. Just a much smaller number and two worried parents staring at it.\n\nThe first reassuring thing we learned was that breasts are rarely perfectly equal. One side often makes more than the other, and the total over time matters more than matching bottles."
+    },
+    {
+      "h": "We checked what was actually happening",
+      "t": "When the whole supply later dropped, we looked at the real pumping record rather than the schedule we thought we were following. Sessions had slipped because there was a baby to hold, a hospital to visit and a day to survive. Supply had followed demand.\n\nThat was not laziness. It was life. Once we saw the pattern, the problem felt less mysterious and more fixable."
+    },
+    {
+      "h": "Check the simple things first",
+      "t": "We would first check the last few days of sessions, then the pump parts and the cone or flange fit. Worn valves or a poor fit can make a surprising difference. Food, fluids, sleep and illness matter too.\n\nA hot or red area, a painful lump, fever or feeling flu-like is different. Speak to a doctor, midwife or breastfeeding specialist, especially if you feel unwell or things are getting worse."
+    }
+  ],
+  "order": 33,
+  "batch": "3"
+},
+{
+  "id": "blocked-duct-or-mastitis",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Is this a blocked milk duct or mastitis?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "A tender lump usually clears with milk moving through it. Heat, redness or feeling unwell changes the answer and shouldn't wait.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "A red or hot area, especially a wedge-shaped patch",
+      "Fever, shivering, aching, or feeling flu-like",
+      "A lump that isn't shifting after about a day",
+      "Cracked skin, bleeding, or pain that's getting worse"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A tender lump that moves or changes with a session",
+        "Often after a missed or rushed session",
+        "No fever, and you feel otherwise well",
+        "Usually settles once milk is moving through it again"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Warmth before a session, cool afterwards",
+        "Gentle massage towards the nipple while expressing",
+        "Not skipping the next session out of soreness",
+        "Silver nipple cups for pumping soreness",
+        "Checking the cone or flange size — the wrong fit can add pain"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A red or hot area, especially a wedge-shaped patch",
+        "Fever, shivering, aching, or feeling flu-like",
+        "A lump that isn't shifting after about a day",
+        "Cracked skin, bleeding, or pain that's getting worse"
+      ]
+    },
+    "quick": "A tender area without fever may be inflammation; redness, worsening pain or flu-like symptoms are reasons to seek same-day advice."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-does-milk-come-in",
+    "pumping-schedule",
+    "milk-supply-dropped"
+  ],
+  "seo": {
+    "description": "A tender lump usually clears with milk moving through it. Heat, redness or feeling unwell changes the answer and shouldn't wait."
+  },
+  "longform": [
+    {
+      "h": "The word mastitis frightened us",
+      "t": "We asked about bumps, swelling and soreness on different days, and mastitis appeared in every search result. Neither episode became mastitis, but the word was enough to send us into a small panic.\n\nA tender lump can happen when milk is not moving well. Mastitis is inflammation of the breast, and infection can sometimes develop. A hot, swollen or very painful area with fever, shivering or feeling generally unwell needs medical advice."
+    },
+    {
+      "h": "Gentle was better",
+      "t": "We tried pressing much harder than necessary because it felt logical that a blockage needed to be forced out. It mostly made an already sore breast angrier.\n\nVery light touch helped Mama feel more comfortable, but this is not the place for deep, muscle-style massage or trying to force a “knot” out. Continuing normal milk removal, using a cool pack, checking the pump fit and getting feeding support were more useful. If feeding or pumping is painful, ask someone to check the latch, cone and schedule rather than battling through it."
+    },
+    {
+      "h": "When to ask for help",
+      "t": "If Mama feels unwell, the breast is hot or red, or the pain is worsening, get same-day advice. If a lump is not improving, ask for help even without a fever.\n\nThis is common and treatable. It is also not a test of toughness. Nobody gets a prize for waiting until it is unbearable."
+    }
+  ],
+  "order": 34,
+  "batch": "3"
+},
+{
+  "id": "storing-expressed-milk",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How long can expressed milk sit out?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Room temperature buys you a few hours, and a warm room buys you fewer. If your baby is in hospital, their rules override every chart online.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Your baby is premature, in hospital, or unwell — the rules are stricter",
+      "Milk smells sour or looks unusual",
+      "You've had a power cut or a freezer failure",
+      "You're unsure whether milk has been out too long"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A cool room buys longer than a warm one",
+        "Fresh milk can keep for days at home; NICU limits may be shorter",
+        "Defrost in the fridge, not on the counter",
+        "Freshly expressed keeps longer than previously frozen"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Labelling every bottle with date, time and quantity in ml",
+        "Checking the actual room temperature, not guessing",
+        "Defrosting overnight in the fridge and planning ahead",
+        "Following the NICU's rules over anything we read"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby is premature, in hospital, or unwell — the rules are stricter",
+        "Milk smells sour or looks unusual",
+        "You've had a power cut or a freezer failure",
+        "You're unsure whether milk has been out too long"
+      ]
+    },
+    "quick": "Fresh breast milk can keep for up to four days in a cold home fridge, but NICU rules may be much shorter—ours used a 24-hour limit."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-does-milk-come-in",
+    "pumping-schedule",
+    "milk-supply-dropped"
+  ],
+  "seo": {
+    "description": "Room temperature buys you a few hours, and a warm room buys you fewer. If your baby is in hospital, their rules override every chart online."
+  },
+  "longform": [
+    {
+      "h": "The room temperature changed the answer",
+      "t": "Our first question was whether breast milk left out for ninety minutes was still usable. Then we added the important detail: the room was warm. That detail mattered more than the clock alone.Freshly expressed breast milk can generally sit at room temperature for up to four hours when the room is 25°C or cooler. Prepared formula follows a different rule: use it within two hours of making it and within one hour once feeding begins. A hotter room shortens the comfortable safety margin, so we chilled milk early rather than stretching the limit.\n\nStorage times assume certain temperatures. A hot room shortens the safe window, so when in doubt we chilled the milk sooner instead of trying to win an argument with a chart."
+    },
+    {
+      "h": "The practical bits caught us out",
+      "t": "Frozen milk takes hours to thaw in the fridge, not the few minutes you imagine when a hungry baby is already waiting. Labelling every bottle with the date and time also saved us from making tired guesses.\n\nWe never microwaved milk. We started with a Kikka Boo warmer, then changed to the Baby Brezza warmer, which worked much better for us. We did not refreeze thawed milk or keep reheating the same bottle. Once Ari started drinking, we followed the shorter leftover-bottle limit we had been given."
+    },
+    {
+      "h": "NICU rules come first",
+      "t": "Hospital rules can be stricter than general home guidance, particularly for premature or unwell babies. Our NICU told us exactly how to label, store and transport Mama’s milk.\n\nIf your baby is in hospital, ask the unit for its written rules and follow those. It is much easier than trying to combine five different internet charts at two in the morning."
+    }
+  ],
+  "order": 35,
+  "batch": "3"
+},
+{
+  "id": "warming-milk-out-and-about",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How do I keep expressed milk ready when we are out?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Carry it cold and warm it when you need it. Holding milk at feeding temperature for hours is the thing to avoid.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Your baby is premature or has feeding difficulties",
+      "You've been told to give milk at a specific temperature",
+      "Milk has been warm for longer than you intended",
+      "You're unsure whether a bottle is still safe to use"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Carry it chilled in a cool bag, warm it on demand",
+        "Portable warmers run from a battery",
+        "A formula dispenser with measured scoops and a pouring spout",
+        "Body temperature is a comfort thing, not a requirement",
+        "Some babies take milk cool without complaint"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Cold bag out, warm at the last minute",
+        "The Baby Brezza portable warmer was fast and easy for us",
+        "Testing the temperature on our wrist every time",
+        "Working out how long our warmer actually took",
+        "Not trying to hold a bottle at 37 for hours"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby is premature or has feeding difficulties",
+        "You've been told to give milk at a specific temperature",
+        "Milk has been warm for longer than you intended",
+        "You're unsure whether a bottle is still safe to use"
+      ]
+    },
+    "quick": "Take it cold and warm it when she's ready. Holding milk at 37 degrees for hours is the thing to avoid, and a microwave is never the answer."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-does-milk-come-in",
+    "pumping-schedule",
+    "milk-supply-dropped"
+  ],
+  "seo": {
+    "description": "Carry it cold and warm it when you need it. Holding milk at feeding temperature for hours is the thing to avoid."
+  },
+  "longform": [
+    {
+      "h": "We were trying to keep it warm for hours",
+      "t": "Our original plan was to hold milk at feeding temperature while we were out so it would be instantly ready. It sounded efficient. It was also the wrong way round.\n\nWe learned to carry the milk cold and warm it when Ari needed it. That was safer and, once we stopped overcomplicating it, easier."
+    },
+    {
+      "h": "Test the warmer before leaving home",
+      "t": "We used a cool bag and a portable warmer. The surprise was how long our first warmer took when the bottle started fridge-cold. A baby who has decided she is hungry is not impressed by a device that needs another fifteen minutes.The Baby Brezza portable warmer was much faster for us. By then Ari was on formula, and the measured powder dispenser with a spout made outings far less messy. One important correction to what we did: current guidance for standard powdered formula is to mix it with fresh water that is still at least 70°C, because formula powder is not sterile. Reheating previously boiled cold water in a bottle warmer may not reach that temperature. For travel, use the method advised for your formula and baby—for example, a clean flask keeping fresh water above 70°C, or ready-to-feed liquid formula—then cool the finished bottle before feeding.\n\nWe tested ours at home and checked the milk before feeding rather than trusting the screen alone. We also carried a simple backup plan for days when technology behaved like technology."
+    },
+    {
+      "h": "Your baby may not need it warm",
+      "t": "Some babies happily drink cool or room-temperature milk. Finding that out early can remove the whole warming problem.\n\nFollow the storage and transport advice for your milk, and use any extra instructions from your NICU or baby’s doctor. We treated warming as a one-time job and did not microwave or repeatedly reheat a bottle."
+    }
+  ],
+  "order": 36,
+  "batch": "3"
+},
+{
+  "id": "nicu-stages",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What do the different NICU stages mean?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "The numbers describe how much support your baby needs, not how she's doing overall. And they don't only go one way.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "You don't understand why she's moved, in either direction",
+      "The plan has changed and nobody has explained it",
+      "You're being given different answers by different people",
+      "You want a second opinion — asking is normal and allowed"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "The number reflects how much help she needs",
+        "Moving between stages can happen in either direction",
+        "Timelines are estimates, not promises",
+        "Units name and number their stages differently"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking what specifically has to change before she moves",
+        "Writing down names, numbers and times at every round",
+        "Asking what would trigger going back a stage",
+        "Treating estimates as estimates"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "You don't understand why she's moved, in either direction",
+        "The plan has changed and nobody has explained it",
+        "You're being given different answers by different people",
+        "You want a second opinion — asking is normal and allowed"
+      ]
+    },
+    "quick": "The stage number describes how much support she needs right now, not how she's doing overall — and units number them differently, so ask what yours mean."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "incubator-temperature",
+    "nicu-discharge",
+    "preemie-feeding-stamina"
+  ],
+  "seo": {
+    "description": "The numbers describe how much support your baby needs, not how she's doing overall. And they don't only go one way."
+  },
+  "longform": [
+    {
+      "h": "We wanted the stages to be a countdown",
+      "t": "We were told Ari would move through different NICU stages, so naturally we wanted to know exactly when stage one became stage two and when stage two meant home. We asked more than once because the first answer did not satisfy our need for a timetable.\n\nThe stages were not a countdown. They described how much support she needed at that moment."
+    },
+    {
+      "h": "Every NICU uses its own language",
+      "t": "Some units number stages in opposite directions. That makes an online chart wonderfully useless if your hospital means the reverse.\n\nAsk what each stage means in your unit and write it down. The better question for us was not ‘When will she move?’ but ‘What does she need to manage before she moves?’"
+    },
+    {
+      "h": "A step backwards is still care",
+      "t": "Ari moved forward and later went back a stage when feeding stopped going well. It felt awful. It did not mean everything had failed. It meant the nurses noticed she needed more support and gave it to her.\n\nNICU progress is rarely a neat straight line. A backwards step can still be the team doing exactly what your baby needs that day."
+    }
+  ],
+  "order": 37,
+  "batch": "3"
+},
+{
+  "id": "incubator-temperature",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why does the incubator show such a low temperature?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "A NICU screen may show the incubator setting rather than your baby’s temperature, so ask what the number is measuring before interpreting it.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Nobody has explained a reading that's worrying you",
+      "She feels cold, mottled or unusually pale to you",
+      "You're at home and her temperature is low or high",
+      "Anything about her has changed and you can't get an answer"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Small babies lose heat very fast",
+        "Incubators warm gradually and deliberately",
+        "Holding her own temperature is a discharge milestone",
+        "The number on the screen isn't always what you think"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking what the number was measuring, and where",
+        "Asking what they wanted it to be, and by when",
+        "Skin-to-skin when the unit said we could",
+        "Not looking things up before asking someone"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Nobody has explained a reading that's worrying you",
+        "She feels cold, mottled or unusually pale to you",
+        "You're at home and her temperature is low or high",
+        "Anything about her has changed and you can't get an answer"
+      ]
+    },
+    "quick": "A low-looking number may be the incubator setting rather than your baby’s temperature, so ask the NICU nurse or doctor what it measures."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "nicu-discharge",
+    "preemie-feeding-stamina"
+  ],
+  "seo": {
+    "description": "A NICU screen may show the incubator setting rather than your baby’s temperature, so ask what the number is measuring before interpreting it."
+  },
+  "longform": [
+    {
+      "h": "We frightened ourselves with one number",
+      "t": "We saw a low number on the incubator screen, searched it before asking anyone and scared ourselves badly. The number was not what we thought it was.\n\nA NICU display may show the incubator setting, a skin reading or something else entirely. The first question should be: what is this number measuring?"
+    },
+    {
+      "h": "The incubator is doing a job for them",
+      "t": "Babies born early lose heat easily and may not yet hold their own temperature. The incubator takes over that job while their body catches up.\n\nThe nurses adjust it gradually while checking the baby. From outside, slow changes can look worrying. Inside the plan, slow and controlled may be exactly the point."
+    },
+    {
+      "h": "Eventually the screen looked like progress",
+      "t": "Once we understood what we were seeing, changes to the incubator stopped feeling like random danger signals. They showed Ari slowly taking over more of the work herself.\n\nAsk what the number means, what range the nurses want and what change they are waiting for. Thirty seconds with the nurse is kinder to your nerves than an hour with a search engine."
+    }
+  ],
+  "order": 38,
+  "batch": "3"
+},
+{
+  "id": "nicu-discharge",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is there a minimum weight before she can come home?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "Almost everyone asks about the number. Readiness is really about three things she has to be doing herself, and weight is not one of them.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "What would delay discharge, and what would bring it forward",
+      "Which follow-up appointments are already booked",
+      "What signs should bring her back, and who to ring",
+      "Feeding volumes, and what to do if she won't take them"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Holding her own temperature outside an incubator",
+        "Breathing steadily without support",
+        "Taking all her feeds by mouth and gaining",
+        "Weight matters, but not as a single magic number"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking which of the three she still had left",
+        "Asking what to look for at home before we needed it",
+        "Doing infant first aid before she came home",
+        "Writing everything down, because we forgot it all"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "What would delay discharge, and what would bring it forward",
+        "Which follow-up appointments are already booked",
+        "What signs should bring her back, and who to ring",
+        "Feeding volumes, and what to do if she won't take them"
+      ]
+    },
+    "quick": "Discharge usually depends more on stable breathing, temperature and feeding than one magic weight, but each NICU has its own criteria."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "preemie-feeding-stamina"
+  ],
+  "seo": {
+    "description": "Almost everyone asks about the number. Readiness is really about three things she has to be doing herself, and weight is not one of them."
+  },
+  "longform": [
+    {
+      "h": "We kept asking for the magic weight",
+      "t": "A minimum weight felt comforting because it gave us a finish line. We asked what Ari had to weigh before she could come home more than once.\n\nThere was no magic number. Her NICU cared about what she could do safely, not simply what appeared on the scales."
+    },
+    {
+      "h": "Three jobs mattered most for us",
+      "t": "Ari needed to breathe steadily, hold her temperature and take enough milk by mouth while growing. Weight moved alongside those skills, but it did not unlock the door by itself.\n\nThe useful question became: which job is she still working on? That gave us something real to understand without pretending anyone could promise a date."
+    },
+    {
+      "h": "Feeding was the slow final stretch",
+      "t": "Ari could take only part of each feed herself before getting tired, with the rest given through her tube. Some days the amount rose and the next day it dropped. Watching every millilitre made us slightly cuckoo.\n\nBefore discharge, ask for the feeding plan, warning signs, follow-up appointments and a number to call after hours. We also took an infant first-aid course. Happily, the best thing we ever did with that knowledge was not need it."
+    }
+  ],
+  "order": 39,
+  "batch": "3"
+},
+{
+  "id": "preemie-feeding-stamina",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why can my premature baby only manage a little milk?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "Not appetite — stamina. Sucking, swallowing and breathing in sequence is genuinely hard work, and it comes with time rather than encouragement.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "She's taking noticeably less by mouth than she was",
+      "She goes pale, or her breathing changes during feeds",
+      "She's not gaining weight as expected",
+      "She's very sleepy and hard to wake for feeds"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Sucking, swallowing and breathing must happen in order",
+        "That coordination matures around 34 weeks and improves after",
+        "Progress is uneven — good days and worse days",
+        "The rest going by tube isn't a failure"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Counting the millilitres she took by mouth, not the total",
+        "Noticing when she was most alert, and discussing feed timing with the NICU nurses",
+        "Letting her pause, and not rushing her back on",
+        "Asking about a slower teat"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "She's taking noticeably less by mouth than she was",
+        "She goes pale, or her breathing changes during feeds",
+        "She's not gaining weight as expected",
+        "She's very sleepy and hard to wake for feeds"
+      ]
+    },
+    "quick": "Premature babies often tire before finishing a feed, but a clear drop, colour change or breathing change needs the NICU nurse or doctor."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "Not appetite — stamina. Sucking, swallowing and breathing in sequence is genuinely hard work, and it comes with time rather than encouragement."
+  },
+  "longform": [
+    {
+      "h": "It looked like she was refusing",
+      "t": "Ari was offered a full feed but could manage only a small part by mouth before she stopped. We thought she needed to become hungrier. What she actually needed was stamina.\n\nSucking, swallowing and breathing in the right order is hard work for a baby born early. She was not being difficult. She was tired."
+    },
+    {
+      "h": "The daily numbers bounced around",
+      "t": "One day she took more and we celebrated. The next day she took less and we felt crushed. Looking across a week told us far more than staring at one feed.\n\nTests, baths and busy days also used energy she might otherwise have spent feeding. Once we understood that, a smaller feed did not automatically feel like a disaster."
+    },
+    {
+      "h": "We followed her cues",
+      "t": "Within the NICU plan, feeding when she was alert helped. So did letting her stop when she showed she was finished rather than turning every last millilitre into a battle.\n\nWhen Papa first fed Ari, he was very excited—and then she suddenly went still and seemed to switch off. Papa thought she had lost consciousness. The NICU nurses stepped in, explained that she had become exhausted and showed him how to pace the feed: let her drink, lower or remove the teat for a breathing break, then continue only when she was ready.That was normal for Ari in that supervised NICU moment, not something to assume is harmless at home. If a baby becomes unresponsive, changes colour or struggles to breathe during a feed, stop and get urgent help.\n\nWe asked about teat flow and positioning too. Premature feeding is individual, so the NICU nurses and doctors are the right people to guide volumes, pacing and when a tube is still needed."
+    }
+  ],
+  "order": 40,
+  "batch": "3"
+},
+{
+  "id": "preemie-bloated-tummy",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why is my premature baby’s tummy firm and bloated?",
+  "ages": [
+    "0–1 month"
+  ],
+  "read": 2,
+  "summary": "A swollen, firm abdomen in a small baby is one to raise straight away rather than watch. In hospital it is taken seriously fast, and there are good reasons for that.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "The abdomen is firm, swollen, or shiny",
+      "Vomiting, especially green or bloody",
+      "Blood in the stool, or she stops passing anything",
+      "She's unusually sleepy, floppy, or her colour changes",
+      "You're at home and any of this appears — same day, not tomorrow"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • Newborn",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Premature digestive systems mature slowly",
+        "Some bloating and slow tolerance is expected",
+        "Feeds are often paused and reintroduced gradually",
+        "Pausing feeds is a precaution, not a punishment"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking what specifically they were watching for",
+        "Asking what would change the plan, in either direction",
+        "Writing down what we were told, every single time",
+        "Saying out loud that we were frightened"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "The abdomen is firm, swollen, or shiny",
+        "Vomiting, especially green or bloody",
+        "Blood in the stool, or she stops passing anything",
+        "She's unusually sleepy, floppy, or her colour changes",
+        "You're at home and any of this appears — same day, not tomorrow"
+      ]
+    },
+    "quick": "A firm, swollen tummy in a premature or small baby needs quick medical advice, especially with green vomit, blood or colour changes."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "A swollen, firm abdomen in a small baby is one to raise straight away rather than watch. In hospital it is taken seriously fast, and there are good reasons for that."
+  },
+  "longform": [
+    {
+      "h": "She went back a stage",
+      "t": "A few weeks into NICU, Ari’s tummy became firm and she was not digesting feeds properly. Her feeds were paused while the doctors worked out what was happening. That night was frightening.\n\nShe recovered and later came home. But while we were in it, we wanted someone to explain why everyone was moving so quickly without making the situation sound even scarier."
+    },
+    {
+      "h": "Why the NICU acts quickly",
+      "t": "Premature digestion is still developing, and mild bloating can happen. A firm or swollen tummy can also be an early sign of something that needs urgent attention. That is why NICU staff do not casually watch and wait.\n\nPausing feeds can give the bowel a rest while the team checks what is happening. It does not automatically mean surgery or the worst outcome. It means they are being careful."
+    },
+    {
+      "h": "Ask the frightening questions",
+      "t": "We asked what they were watching, what would change the plan and whether surgery was genuinely expected or simply being prepared for. Those direct answers helped more than trying to decode every expression around the incubator.\n\nIf a newborn at home has a firm, swollen tummy—especially with green vomit, blood, poor feeding or unusual sleepiness—get urgent medical advice. This is not one to monitor quietly overnight."
+    }
+  ],
+  "order": 41,
+  "batch": "3"
+},
+{
+  "id": "corrected-age",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What is corrected age and when should I use it?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "Count from the due date, not the birthday. It's a small arithmetic change that removes an enormous amount of unnecessary worry.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "You're unsure which age applies to vaccinations or a check",
+      "A milestone is well outside range even corrected",
+      "She's lost a skill she previously had",
+      "Anything has been niggling at you between appointments"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Corrected age = count development from the due date",
+        "Use it for milestones, feeding and sleep expectations",
+        "The gap matters most in the first two years",
+        "Vaccinations usually go by actual birth date — check yours"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing both dates on the fridge",
+        "Recalculating before panicking about a milestone",
+        "Telling relatives, so their comparisons stopped landing",
+        "Asking which age each appointment was using"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "You're unsure which age applies to vaccinations or a check",
+        "A milestone is well outside range even corrected",
+        "She's lost a skill she previously had",
+        "Anything has been niggling at you between appointments"
+      ]
+    },
+    "quick": "Count milestones from the due date rather than the birthday. Vaccinations usually follow actual age, so check which age each appointment is using."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "Count from the due date, not the birthday. It's a small arithmetic change that removes an enormous amount of unnecessary worry."
+  },
+  "longform": [
+    {
+      "h": "Two ages can make everything look confusing",
+      "t": "Ari was born in July at 33 weeks and was due in September. For development, those missing weeks matter.\n\nWithout corrected age, a premature baby can look behind on every chart while actually progressing exactly as expected. Understanding that removed a huge amount of worry for us."
+    },
+    {
+      "h": "Count from the due date",
+      "t": "Corrected age is the age your baby would be if they had been born around their due date. A baby born seven weeks early may reach a milestone roughly seven weeks later than a term baby and still be on track.\n\nWe used corrected age for things such as milestones, early feeding expectations and sleep. It helped us compare Ari with the right stage rather than with babies who had seven extra weeks to practise."
+    },
+    {
+      "h": "It does not apply to everything",
+      "t": "Vaccinations are usually based on actual age, not corrected age. Other medical appointments may use one or the other depending on what is being assessed.\n\nWe learned to ask which age was being used instead of assuming. Corrected age usually becomes less important over the first two years, until one day you realise you have stopped doing the maths."
+    }
+  ],
+  "order": 42,
+  "batch": "3"
+},
+{
+  "id": "preemie-growth-charts",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Which growth chart should a premature baby use?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Percentiles are close to meaningless for a baby born early unless you're using the right chart and the right age. Her own trend is the number that matters.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Her weight is flat or falling across more than a few days",
+      "She's dropping across the chart rather than following her line",
+      "She's feeding much less than usual",
+      "You've been given a target you can't meet"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Her own line matters more than the percentile",
+        "Preterm babies are plotted differently early on",
+        "Corrected age changes the answer completely",
+        "Weight, length and head are read together, not alone"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking which chart the NICU nurses and doctors were using",
+        "Plotting corrected age, not her birthday",
+        "Watching the direction over weeks, not the position",
+        "Weighing on the same scales, roughly the same time"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Her weight is flat or falling across more than a few days",
+        "She's dropping across the chart rather than following her line",
+        "She's feeding much less than usual",
+        "You've been given a target you can't meet"
+      ]
+    },
+    "quick": "Percentiles mean little without the right chart and corrected age. Watch her own line over weeks — direction beats position every time."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "Percentiles are close to meaningless for a baby born early unless you're using the right chart and the right age. Her own trend is the number that matters."
+  },
+  "longform": [
+    {
+      "h": "We wanted one reassuring percentile",
+      "t": "We kept asking where Ari sat on the chart. A neat percentile felt as though it would tell us whether she was doing well.\n\nWith a premature baby, the answer changes if you use the wrong chart or the wrong age. The same baby can look tiny on one chart and completely expected on another."
+    },
+    {
+      "h": "The right chart and the right age",
+      "t": "Babies born early may start on a premature growth chart and later move to a standard chart using corrected age. Your baby’s doctor or nurse can show you which chart they are using and why.\n\nWe stopped trying to replot Ari ourselves after realising how easy it was to frighten ourselves with the wrong comparison—including the apps Papa always likes to use."
+    },
+    {
+      "h": "Her own line mattered most",
+      "t": "One weigh-in can move because of different scales, clothing, timing or a full nappy. The trend across several measurements tells a better story.\n\nFor us, the useful question was whether Ari was following her own curve and growing steadily. Feeding more does not automatically mean gaining more, especially for a premature baby, so volumes stayed with her NICU nurses and doctors—not our midnight maths."
+    }
+  ],
+  "order": 43,
+  "batch": "3"
+},
+{
+  "id": "newborn-immune-and-going-out",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "When can I take my newborn out?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "The forty days thing is custom more than medicine. The real answer depends on her, and for a baby born early it depends more.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "She's under three months with any fever",
+      "She's feeding less, unusually sleepy, or breathing differently",
+      "You're planning to fly and she was born early or has had lung problems",
+      "Anyone she's been near has a significant infection"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Newborn immune systems are still developing",
+        "The forty days idea is largely custom",
+        "Crowds and unwell visitors matter more than fresh air",
+        "Babies born early are more vulnerable for longer"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking our baby’s doctor rather than settling it by arithmetic",
+        "Asking our baby’s doctor what was safe for her",
+        "Quiet walks early on rather than crowded places",
+        "Being firm with visitors who had 'just a cold'"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "She's under three months with any fever",
+        "She's feeding less, unusually sleepy, or breathing differently",
+        "You're planning to fly and she was born early or has had lung problems",
+        "Anyone she's been near has a significant infection"
+      ]
+    },
+    "quick": "There is no magic waiting date; your baby’s health and the type of outing matter more, especially after a premature birth."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "incubator-temperature",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "The forty days thing is custom more than medicine. The real answer depends on her, and for a baby born early it depends more."
+  },
+  "longform": [
+    {
+      "h": "We tried to solve it with a calendar",
+      "t": "We kept asking when the waiting period started for a baby born early: from birth, from the due date, or from some mysterious point in between? We were trying to turn a worrying decision into arithmetic.\n\nThere is no universal forty-day medical rule. What matters more is your baby’s health, age, prematurity and the kind of outing you mean."
+    },
+    {
+      "h": "Outside is not the same as a crowd",
+      "t": "A quiet walk outdoors is very different from a packed room full of people wanting to touch the baby. For a young or premature baby, we cared more about exposure than about crossing off a particular date.\n\nWe asked anyone unwell to stay away, insisted on clean hands and did not allow kissing Ari’s face or hands. It felt awkward for about thirty seconds. Protecting her mattered longer.We were smack in the middle of flu season, so we went extra cautious. For the first six months, anyone coming close to Ari wore a mask and sanitised their hands. That may sound excessive to somebody else. We were happy with our decision. Do not let people push you into boundaries you are not comfortable with. Your baby, your rules."
+    },
+    {
+      "h": "Travel needed a real conversation",
+      "t": "We also tried to calculate when flying would be safe. In the end, the calendar could not answer questions about Ari’s lungs, feeding, weight or NICU history.\n\nIf your baby was born early or has been unwell, ask their doctor before booking travel or planning crowded outings. The answer belongs to your baby, not to a general internet countdown."
+    }
+  ],
+  "order": 44,
+  "batch": "3"
+},
+{
+  "id": "father-not-feeling-it",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Is it normal not to feel an instant bond with my baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Common, rarely said out loud, and not a verdict on the kind of father you'll be. It usually arrives later and through doing rather than feeling.",
+  "keywords": [],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "You feel persistently low, numb or hopeless",
+      "You're withdrawing from your partner or the baby",
+      "You're drinking more, or not sleeping even when you can",
+      "Any thoughts of harming yourself or the baby — seek urgent help now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Bonding often builds over weeks or months",
+        "Responsibility usually arrives long before the feeling",
+        "Very common in fathers, and rarely admitted",
+        "A NICU stay makes it harder — less holding, less doing"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Doing the practical things — feeds, changes, carrying",
+        "Skin-to-skin whenever the unit allowed it",
+        "Saying it out loud to one person",
+        "Not waiting to feel it before acting like it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "You feel persistently low, numb or hopeless",
+        "You're withdrawing from your partner or the baby",
+        "You're drinking more, or not sleeping even when you can",
+        "Any thoughts of harming yourself or the baby — seek urgent help now"
+      ]
+    },
+    "quick": "An instant rush of love is not the only way bonding begins; it can grow through ordinary care, time and getting to know your baby."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "touched-out",
+    "splitting-nights",
+    "visitors"
+  ],
+  "seo": {
+    "description": "Common, rarely said out loud, and not a verdict on the kind of father you'll be. It usually arrives later and through doing rather than feeling."
+  },
+  "longform": [
+    {
+      "h": "Papa felt responsibility before love",
+      "t": "Papa eventually said the quiet part out loud: he felt responsible for Ari and would do anything she needed, but he had not yet felt the huge rush of love everyone talks about. That came later.\n\nSaying it felt uncomfortable. It also made the feeling much less frightening. An instant bond is not the only way a bond begins."
+    },
+    {
+      "h": "NICU made bonding harder",
+      "t": "When your baby is behind plastic and somebody else controls when you can hold or feed her, ordinary bonding is interrupted. You can love the idea of your baby and still feel strangely separate from the actual tiny person in front of you.\n\nSkin-to-skin helped when the NICU allowed it. So did asking to take part in the small jobs instead of waiting silently beside the incubator."
+    },
+    {
+      "h": "The feeling grew through doing",
+      "t": "For Papa, feeding Ari, carrying her, learning her preferences and getting up at night created familiarity. The bond and the love grew inside those ordinary jobs. There was no single film-scene moment.\n\nIf the distance comes with ongoing low mood, numbness, hopelessness, anger, withdrawing or thoughts of harm, tell a doctor. Fathers can experience postnatal depression too, and asking for help does not make the bond less real."
+    }
+  ],
+  "order": 45,
+  "batch": "3"
 }
 ];
 
