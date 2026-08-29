@@ -2998,6 +2998,196 @@
     }
   }
 
+  /* ==========================================================================
+     FEATURE: age ranges on the guide itself, saving as you tick
+     ------------------------------------------------------------------------
+     Which age ranges a guide belongs to decides which age landing pages carry
+     it, which filter pills find it, and what its breadcrumb says. It was only
+     editable by hand in the bundled file, so a guide filed under the wrong age
+     could not be corrected from Studio at all.
+
+     WHAT SAVES ITSELF, AND WHAT DOES NOT
+
+     Ticking an age writes immediately. So do Topic, Read time and Feature on
+     the homepage. None of those four is part of the fingerprint batches.js
+     stores when you tick a guide as checked — that covers the WORDS (title,
+     summary, panel, prose, callout) — so saving them cannot un-tick a batch.
+
+     The words themselves are deliberately left to the Save button. Auto-saving
+     those would recompute the fingerprint on every keystroke and drop the
+     batch tick of the guide you are in the middle of typing, which is worse
+     than one scroll to a button.
+     ========================================================================== */
+
+  const GUIDE_AGES_CSS = `
+/* Studio's own .field label is laid out for a single caption line; these rules
+   are explicit (and win) so the checkbox rows do not inherit that spacing and
+   end up with the tick at one end of the row and its words at the other. */
+#mpcGuideAges > label { display: block; }
+#mpcGuideAges .mpc-age-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 2px 14px; margin-top: 6px;
+}
+#mpcGuideAges .mpc-age-grid label {
+  display: flex !important; align-items: center; justify-content: flex-start;
+  gap: 8px; font-size: 13.5px; font-weight: 500; cursor: pointer;
+  padding: 3px 0; margin: 0; white-space: nowrap;
+}
+#mpcGuideAges .mpc-age-grid label input {
+  margin: 0; flex: 0 0 auto; width: 15px; height: 15px;
+}
+#mpcGuideAges .off { color: #a8620f; font-size: 11px; }
+#mpcGuideAges .mpc-age-msg { font-size: 12px; color: #6b7684; min-height: 16px; margin-top: 8px; }
+#mpcGuideAges .mpc-age-msg.ok { color: #2e8b57; }
+#mpcGuideAges .mpc-age-msg.err { color: #c0392b; }
+`;
+
+  let ageFieldGuide = null;       // which guide the checkboxes currently show
+  let autoFieldTimer = null;
+
+  function guideAgesMsg(text, kind) {
+    const el = document.getElementById("mpcGuideAgesMsg");
+    if (!el) return;
+    el.textContent = text || "";
+    el.className = "mpc-age-msg" + (kind ? " " + kind : "");
+    if (kind === "ok") {
+      clearTimeout(el.__t);
+      el.__t = setTimeout(() => { el.textContent = ""; el.className = "mpc-age-msg"; }, 4000);
+    }
+  }
+
+  function installGuideAgesField() {
+    if (document.getElementById("mpcGuideAges")) return;
+    const read = document.getElementById("f_read");
+    const hero = document.getElementById("f_hero");
+    if (!read && !hero) return;                 // editor not built yet
+
+    if (!document.getElementById("mpc-guide-ages-css")) {
+      const st = document.createElement("style");
+      st.id = "mpc-guide-ages-css"; st.textContent = GUIDE_AGES_CSS;
+      document.head.appendChild(st);
+    }
+
+    const box = document.createElement("div");
+    box.className = "field";
+    box.id = "mpcGuideAges";
+    box.innerHTML =
+      '<label>Age ranges <span class="hint">&mdash; which &ldquo;How old is your little one?&rdquo; pills ' +
+      'this guide appears under. Saves as you tick.</span></label>' +
+      '<div class="mpc-age-grid" id="mpcGuideAgesGrid"></div>' +
+      '<div class="mpc-age-msg" id="mpcGuideAgesMsg"></div>';
+
+    /* After Read time, before the hero fields — with the other classification
+       controls rather than down among the pictures. */
+    const anchorEl = (read && read.closest(".meta-row")) ||
+                     (hero && hero.closest(".field"));
+    anchorEl.insertAdjacentElement("afterend", box);
+
+    renderGuideAges();
+
+    /* Studio has no event for "a different guide is now loaded", so this
+       watches the one piece of state that says so. 300ms, one comparison —
+       cheaper than trying to intercept fillForm from outside. */
+    setInterval(() => {
+      const S = window.MPCStudio;
+      const id = (S && S.state && S.state.current) || null;
+      if (id !== ageFieldGuide) renderGuideAges();
+    }, 300);
+
+    installBasicsAutoSave();
+  }
+
+  async function renderGuideAges() {
+    const grid = document.getElementById("mpcGuideAgesGrid");
+    if (!grid) return;
+    const S = window.MPCStudio;
+    const orig = (S && S.state && S.state.orig) || null;
+    const id = (S && S.state && S.state.current) || null;
+    ageFieldGuide = id;
+    guideAgesMsg("");
+
+    if (!id || !orig) { grid.innerHTML = '<span class="hint">Pick a guide first.</span>'; return; }
+
+    await loadAgeVisibility();
+    const on = new Set((orig.ages || []).filter(Boolean).map(normAge));
+    grid.innerHTML = ageBands().map(a =>
+      '<label><input type="checkbox" data-guide-age="' + escapeHtml(a) + '"' +
+      (on.has(normAge(a)) ? " checked" : "") + "> <span>" + escapeHtml(a) +
+      (ageIsPublic(a) ? "" : ' <span class="off">(range hidden)</span>') +
+      "</span></label>").join("");
+
+    grid.querySelectorAll("input[data-guide-age]").forEach(inp =>
+      inp.addEventListener("change", () => saveGuideAges(id)));
+  }
+
+  async function saveGuideAges(id) {
+    const grid = document.getElementById("mpcGuideAgesGrid");
+    if (!grid || !id) return;
+    /* Written in the site's own band order, not tick order, so the first age
+       — which is what the breadcrumb uses — is the youngest, every time. */
+    const picked = ageBands().filter(a => {
+      const inp = grid.querySelector('input[data-guide-age="' + cssEsc(a) + '"]');
+      return inp && inp.checked;
+    });
+    guideAgesMsg("Saving…");
+    try {
+      const { fs, db } = await getFirebase();
+      await fs.setDoc(fs.doc(db, "guides", id), { ages: picked }, { merge: true });
+      patchLocalGuide(id, { ages: picked.slice() });
+      if (window.MPCQueueRebuild) window.MPCQueueRebuild();
+      guideAgesMsg(picked.length
+        ? "Saved ✓ — " + picked.join(", ")
+        : "Saved ✓ — no age set, so it is on no age page.", "ok");
+    } catch (e) {
+      guideAgesMsg("Could not save: " + (e.message || e), "err");
+    }
+  }
+
+  /* Attribute selectors need the en-dash escaped only for quotes; the labels
+     contain none, but be safe rather than clever. */
+  function cssEsc(v) { return String(v).replace(/"/g, '\\"'); }
+
+  function patchLocalGuide(id, patch) {
+    const S = window.MPCStudio;
+    if (!S || !S.state) return;
+    const apply = (g) => { if (g && g.id === id) Object.assign(g, patch); };
+    apply(S.state.orig);
+    (S.state.guides || []).forEach(apply);
+  }
+
+  /* Topic, Read time and Feature on the homepage — same reasoning as the ages:
+     none of them is part of the batch fingerprint, so writing them as they
+     change costs nothing and saves a scroll. */
+  function installBasicsAutoSave() {
+    const wire = (elId, read) => {
+      const el = document.getElementById(elId);
+      if (!el || el.__mpcAuto) return;
+      el.__mpcAuto = true;
+      el.addEventListener("change", () => {
+        const S = window.MPCStudio;
+        const id = (S && S.state && S.state.current) || null;
+        if (!id) return;
+        clearTimeout(autoFieldTimer);
+        autoFieldTimer = setTimeout(async () => {
+          const patch = read();
+          if (!patch) return;
+          try {
+            const { fs, db } = await getFirebase();
+            await fs.setDoc(fs.doc(db, "guides", id), patch, { merge: true });
+            patchLocalGuide(id, patch);
+            if (window.MPCQueueRebuild) window.MPCQueueRebuild();
+            guideAgesMsg("Saved ✓", "ok");
+          } catch (e) {
+            guideAgesMsg("Could not save: " + (e.message || e), "err");
+          }
+        }, 300);
+      });
+    };
+    wire("f_topic",    () => { const v = document.getElementById("f_topic").value; return v ? { topic: v } : null; });
+    wire("f_featured", () => ({ featured: !!document.getElementById("f_featured").checked }));
+    wire("f_read",     () => { const n = parseInt(document.getElementById("f_read").value, 10); return { read: n > 0 ? n : 3 }; });
+  }
+
   function installSections() {
     if (!document.getElementById("mpc-sec-css")) {
       const st = document.createElement("style");
@@ -3008,6 +3198,7 @@
     installSidebarGroups();
     installAgesSection();
     installHeroAutoSave();
+    installGuideAgesField();
   }
 
   /* ---- diag() is now silent — the restore system works reliably so we
