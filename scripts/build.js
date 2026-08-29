@@ -162,7 +162,7 @@ async function main() {
   if (hiddenAges.length) {
     log(`age ranges switched off: ${hiddenAges.join(", ")} ` +
         `— ${hiddenGuides.length} guide(s) held back, ${guides.length} published`);
-    log("  (Studio -> Site -> Search & AI -> Which ages are public. Nothing is deleted.)");
+    log("  (Studio -> Site -> Ages. Nothing is deleted.)");
   }
 
   if (!guides.length) {
@@ -924,7 +924,7 @@ async function main() {
   redirects.push("# ---------------------------------------------------------------------");
   redirects.push("# AGE RANGES THAT ARE SWITCHED OFF");
   redirects.push("#");
-  redirects.push("# Studio -> Site -> Search & AI -> Which ages are public. The guides below");
+  redirects.push("# Studio -> Site -> Ages. The guides below");
   redirects.push("# are tagged only to bands that are currently off. Nothing has been deleted:");
   redirects.push("# their Firestore documents, ages, slugs and illustrations are all intact,");
   redirects.push("# and switching the band back on republishes them at these same URLs.");
@@ -994,7 +994,7 @@ async function main() {
     "## About", "",
     `- [About us](${S.absolute("/about.html")}): who writes these and what they are not.`,
     fs.existsSync(path.join(ROOT, "editorial.html"))
-      ? `- [How we write these](${S.absolute("/editorial.html")}): sourcing, review and corrections.` : "",
+      ? `- [How these guides happen](${S.absolute("/editorial.html")}): sourcing, review and corrections.` : "",
     `- [All guides](${S.absolute("/guides.html")})`, "",
     "## Guides", ""
   ].filter(Boolean);
