@@ -736,3 +736,38 @@ body[data-longform] .article-inner{width:min(100%,960px)}
 
    Only data-longform pages, so the editorial page's alignment is untouched. */
 body[data-longform] .article-inner{margin-inline:auto}
+
+/* ---------------------------------------------------------------------------
+   THE CONTACT FORM (privacy page)
+
+   Form controls do not inherit font-family, so without this the one place on
+   the site asking a reader to write something would answer them in the
+   browser's default face. Everything else here is the paper-and-ink palette
+   the rest of the page already uses.
+   ------------------------------------------------------------------------ */
+.mpc-form{margin:18px 0 8px;max-width:44rem}
+.mpc-field{margin-bottom:14px}
+.mpc-form label{display:block;font-family:var(--hand);font-size:1.05rem;
+  color:var(--ink-70);margin-bottom:5px}
+.mpc-opt{color:var(--ink-50)}
+.mpc-form textarea,
+.mpc-form input[type="email"]{
+  width:100%;box-sizing:border-box;font-family:var(--body);font-size:1rem;
+  color:var(--ink);background:var(--cream-soft);
+  border:1.6px solid var(--line-soft);border-radius:10px;padding:10px 12px;
+}
+.mpc-form textarea{resize:vertical;min-height:120px;line-height:1.5}
+.mpc-form textarea:focus,
+.mpc-form input[type="email"]:focus{outline:none;border-color:var(--blue)}
+.mpc-send{font-family:var(--display);font-weight:700;font-size:1rem;
+  color:#fff;background:var(--blue);border:0;border-radius:999px;
+  padding:11px 26px;cursor:pointer;min-height:44px}
+.mpc-send:hover{filter:brightness(1.06)}
+.mpc-send:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+/* The honeypot. Hidden from people but NOT with display:none — some bots skip
+   fields they can tell are undisplayed, and the whole trick depends on them
+   filling it in. Off-screen and out of the tab order does that job while
+   staying invisible. */
+.mpc-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+

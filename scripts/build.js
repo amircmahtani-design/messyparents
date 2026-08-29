@@ -797,6 +797,13 @@ async function main() {
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) {
     bakePage("editorial.html", null, { canonical: "/editorial.html" });
   }
+  /* The privacy notice. Baked like any other hand-written page so it gets a
+     canonical, the shared wording, the hashed asset URLs and the inlined CSS —
+     and so it is a real page in the sitemap rather than something only the
+     cookie banner knows the address of. */
+  if (fs.existsSync(path.join(ROOT, "privacy.html"))) {
+    bakePage("privacy.html", null, { canonical: "/privacy.html" });
+  }
   /* ---- Studio and the Editor -------------------------------------------
      Not public pages, so no metadata and no baking — but they ARE served, and
      their <script> tags were the only ones on the site with no cache-busting
@@ -867,6 +874,7 @@ async function main() {
   push("/about.html", "", "monthly", "0.6");
   push("/books.html", "", "monthly", "0.5");
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) push("/editorial.html", "", "yearly", "0.4");
+  if (fs.existsSync(path.join(ROOT, "privacy.html"))) push("/privacy.html", "", "yearly", "0.3");
 
   topicPages.forEach(p => push(p.url, newest(guides.filter(g => g.topic === p.url.split("/")[2])), "weekly", "0.7"));
   agePages.forEach(p => push(p.url, newest(guides.filter(g => g.ages.includes(p.label))), "weekly", "0.7"));

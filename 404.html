@@ -521,16 +521,45 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   border:1.4px solid var(--line);border-radius:999px;padding:3px 11px;
   display:inline-block;margin:0 3px 3px 0;background:var(--card)}
 .browse-links a:hover{border-color:var(--blue);color:var(--blue)}
-body[data-mpc-page="editorial"] .article-body{
+body[data-mpc-page="editorial"] .article-body,
+body[data-longform] .article-body{
   font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);
   line-height:1.75;color:var(--ink-hand);letter-spacing:.2px;
 }
-body[data-mpc-page="editorial"] .article-body h2{
+body[data-mpc-page="editorial"] .article-body h2,
+body[data-longform] .article-body h2{
   font-family:var(--hand);font-weight:400;letter-spacing:.3px;
   font-size:clamp(1.55rem,2.4vw,1.95rem);margin:36px 0 12px;
 }
-body[data-mpc-page="editorial"] .article-body strong{font-weight:400;color:var(--blue-ink)}
-body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
+body[data-mpc-page="editorial"] .article-body h3,
+body[data-longform] .article-body h3{
+  font-family:var(--hand);font-weight:400;letter-spacing:.3px;
+}
+body[data-mpc-page="editorial"] .article-body strong,
+body[data-longform] .article-body strong{font-weight:400;color:var(--blue-ink)}
+body[data-mpc-page="editorial"] .article-inner,
+body[data-longform] .article-inner{width:min(100%,960px)}
+body[data-longform] .article-inner{margin-inline:auto}
+.mpc-form{margin:18px 0 8px;max-width:44rem}
+.mpc-field{margin-bottom:14px}
+.mpc-form label{display:block;font-family:var(--hand);font-size:1.05rem;
+  color:var(--ink-70);margin-bottom:5px}
+.mpc-opt{color:var(--ink-50)}
+.mpc-form textarea,
+.mpc-form input[type="email"]{
+  width:100%;box-sizing:border-box;font-family:var(--body);font-size:1rem;
+  color:var(--ink);background:var(--cream-soft);
+  border:1.6px solid var(--line-soft);border-radius:10px;padding:10px 12px;
+}
+.mpc-form textarea{resize:vertical;min-height:120px;line-height:1.5}
+.mpc-form textarea:focus,
+.mpc-form input[type="email"]:focus{outline:none;border-color:var(--blue)}
+.mpc-send{font-family:var(--display);font-weight:700;font-size:1rem;
+  color:#fff;background:var(--blue);border:0;border-radius:999px;
+  padding:11px 26px;cursor:pointer;min-height:44px}
+.mpc-send:hover{filter:brightness(1.06)}
+.mpc-send:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.mpc-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 </style><!-- MPC:CSS:END -->
 <!-- MPC:SEO:START -->
 <meta name="robots" content="noindex, follow">
@@ -570,7 +599,7 @@ body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
            is what shows if nothing has been saved. -->
       <span data-foot-copy>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
       <span data-foot-note>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
-      <span class="foot-links"><a href="/about.html">About us</a><a href="/editorial.html">How these guides happen</a></span>
+      <span class="foot-links"><a href="/about.html">About us</a><a href="/editorial.html">How these guides happen</a><a href="/privacy.html">Privacy</a></span>
     </div>
   </div>
 </footer>
