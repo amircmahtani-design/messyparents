@@ -427,6 +427,9 @@
     m.name = "robots";
     m.content = "noindex, follow";
     document.head.appendChild(m);
+    /* Same reasoning for analytics: a 200 on a dead slug would otherwise be
+       counted as a guide someone read. mpc-analytics.js reads this. */
+    window.MPC_NOT_FOUND = true;
     document.title = "Guide not found \u2014 The Messy Parents Collection";
     el.className = "article wrap";
     el.innerHTML = '<div class="article-inner"><h1>We can\u2019t find that one</h1>' +

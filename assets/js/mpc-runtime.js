@@ -226,4 +226,25 @@
       setTimeout(fn, 1);
     }
   };
+
+  /* ---- analytics -------------------------------------------------------
+     Fetched, not linked. A <script src> in the page template would put a third
+     script tag on every generated guide page, which tests/verify.js forbids on
+     purpose — a guide page is meant to need the runtime and its own behaviour
+     and nothing else. Injecting it here keeps that true and keeps the tag off
+     the critical path entirely.
+
+     window.MPC_GA is written by scripts/build.js from the GA_MEASUREMENT_ID
+     environment variable. Unset, this does nothing at all: no request, no
+     cookie, no banner. All the consent logic lives in the file itself. */
+  if (window.MPC_GA) {
+    var loadAnalytics = function () {
+      var s = document.createElement("script");
+      s.src = "/assets/js/mpc-analytics.js";
+      s.defer = true;
+      document.head.appendChild(s);
+    };
+    if (document.readyState === "complete") MPC.idle(loadAnalytics);
+    else window.addEventListener("load", function () { MPC.idle(loadAnalytics); });
+  }
 })();
