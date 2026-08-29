@@ -254,6 +254,28 @@
         </div>
       </div>
 
+      <!-- AGE RANGES: which of the age pills are public. Sits next to Topics
+           because it is the same kind of decision — what the browse rows on
+           Home and All guides offer a reader. -->
+      <div id="agesEditor" class="editor hidden">
+        <h2 style="margin:0 0 4px;font-size:19px">Browse ages</h2>
+        <p class="field hint" style="margin:0 0 16px">These are the &ldquo;How old is your little one?&rdquo; pills on the Home and Guides pages. Untick a range to take it off the public site.</p>
+
+        <div class="col-card">
+          <span class="tag tip">What unticking does</span>
+          <p class="field hint" style="margin:0 0 8px">The pill disappears from Home and All guides, and its landing page comes down. Any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next, the structured data and the guide count, and its own address returns &ldquo;not found&rdquo; to readers and to Google.</p>
+          <p class="field hint" style="margin:0"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, shown under its public ranges only.</p>
+        </div>
+
+        <div id="ageRows"></div>
+        <p class="hint" id="agesNote" style="margin:10px 0 0"></p>
+
+        <div class="actions">
+          <button id="saveAges" class="btn primary" type="button">Save</button>
+          <span id="agesMsg" class="msg"></span>
+        </div>
+      </div>
+
       <!-- BOOKS MANAGER: the Our Books page (cover on top, summary below) -->
       <div id="booksEditor" class="editor hidden">
         <h2 style="margin:0 0 4px;font-size:19px">Our Books</h2>
@@ -301,14 +323,6 @@
           <label class="check-field"><input id="seo_related" type="checkbox"> <span><strong>Read next</strong> &mdash; link the related guides at the bottom.</span></label>
           <label class="check-field"><input id="seo_questions" type="checkbox"> <span><strong>Where this one came from</strong> &mdash; the real questions behind the guide, with the date asked.</span></label>
           <label class="check-field"><input id="seo_crumbs" type="checkbox"> <span><strong>Breadcrumbs</strong> &mdash; Home &rsaquo; age &rsaquo; topic, above the guide. <span class="hint">This one <em>does</em> change the first thing on screen.</span></span></label>
-        </div>
-
-        <div class="col-card">
-          <span class="tag tip">Which ages are public</span>
-          <p class="field hint" style="margin:0 0 10px">Untick a range to take it off the public site. Its pill disappears from Home and All guides, its landing page comes down, and any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next and the guide count, and its own address returns &ldquo;not found&rdquo;.</p>
-          <p class="field hint" style="margin:0 0 10px"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, under its public ranges only.</p>
-          <div id="seo_ages"></div>
-          <p class="hint" id="seo_agesNote" style="margin:8px 0 0"></p>
         </div>
 
         <div class="col-card">
@@ -2060,29 +2074,36 @@ function setRebuildBanner(text, kind){
 /* illustration-generator.js lives in its own IIFE and needs this too. */
 window.MPCQueueRebuild = queueRebuild;
 
-/* ------------------------------------------------------------------------
-   WHICH AGES ARE PUBLIC
+/* ========================================================================
+   BROWSE AGES — which age ranges are public.
 
-   The switch itself. It writes meta/seo.ageVisibility — a plain map of age
-   label -> true/false — and that map is the only place the decision is
-   recorded. scripts/lib/ages.js reads it at build time and every public
-   surface follows from there: the pills, the filters, the landing pages, the
-   sitemap, the search index, the structured data, the guide counts and the
-   404s. There is no second list to keep in step.
+   The switch. It writes ONE field, `ageVisibility` on meta/seo in Firestore:
+   a plain map of age label -> true/false. That map is the only record of the
+   decision anywhere. scripts/lib/ages.js reads it at build time and every
+   public surface follows from there — the pills, the filters, the landing
+   pages, the sitemap, the search index, the structured data, the guide counts
+   and the 404s. There is no second list to keep in step.
 
-   A range that has never been saved falls back to the default in
+   A range the map says nothing about falls back to the default in
    scripts/lib/ages.js, which is what starts 12–18 and 18–24 months off.
-   ---------------------------------------------------------------------- */
+
+   Saved with merge:true. meta/seo also holds the Search & AI settings, which
+   are written whole by their own Save — merging is what stops these two
+   screens overwriting each other.
+   ====================================================================== */
 const AGE_BANDS = ["0–1 month","2–3 months","4–6 months","7–9 months",
                    "10–12 months","12–18 months","18–24 months"];
 const AGE_DEFAULT_OFF = ["12–18 months","18–24 months"];
 
+/* Labels carry an en-dash. One that has been round-tripped through a keyboard
+   or a spreadsheet can come back with a plain hyphen, and a switch that
+   silently stops working is worse than one that is obviously broken. */
 const normAge = (s) => String(s == null ? "" : s)
   .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
 
-/* Every band the site knows about, plus anything a guide is actually tagged
-   with that is not on the list — so a band added straight to a guide still
-   gets a switch rather than being silently unswitchable. */
+/* Every band the site knows about, plus any a guide is actually tagged with
+   that is not on the list — so a band added straight to a guide still gets a
+   switch rather than being unswitchable. */
 function ageBands(){
   const out = AGE_BANDS.slice();
   const seen = new Set(out.map(normAge));
@@ -2100,33 +2121,31 @@ function ageIsPublic(label, saved){
   return !AGE_DEFAULT_OFF.some(d => normAge(d) === k);
 }
 
-function renderAgeToggles(){
-  const box = $("#seo_ages");
+function renderAgeRows(){
+  const box = $("#ageRows");
   if(!box) return;
   const saved = (state.seo && state.seo.ageVisibility) || {};
   const bands = ageBands();
-  box.innerHTML = bands.map((a, i) =>
-    `<label class="check-field"><input type="checkbox" data-age-band="${a.replace(/"/g,"&quot;")}"` +
-    `${ageIsPublic(a, saved) ? " checked" : ""}> <span><strong>${a}</strong>` +
-    ` <span class="hint">— <span data-age-count="${i}"></span></span></span></label>`
-  ).join("");
+  box.innerHTML = bands.map((a, i) => {
+    const n = (state.guides || []).filter(g =>
+      (g.ages || []).some(x => normAge(x) === normAge(a))).length;
+    return `<label class="check-field"><input type="checkbox" data-age-band="${a.replace(/"/g,"&quot;")}"` +
+      `${ageIsPublic(a, saved) ? " checked" : ""}> <span><strong>${a}</strong>` +
+      ` <span class="hint">&mdash; ${n === 1 ? "1 guide" : n + " guides"} tagged</span></span></label>`;
+  }).join("");
   box.querySelectorAll("input[data-age-band]").forEach(inp =>
     inp.addEventListener("change", updateAgeNote));
-  bands.forEach((a, i) => {
-    const n = (state.guides || []).filter(g => (g.ages || []).some(x => normAge(x) === normAge(a))).length;
-    const slot = box.querySelector(`[data-age-count="${i}"]`);
-    if (slot) slot.textContent = n === 1 ? "1 guide tagged" : n + " guides tagged";
-  });
+  $("#agesMsg").textContent = ""; $("#agesMsg").className = "msg";
   updateAgeNote();
 }
 
-/* The one number that matters before you press Save: how many guides would
-   actually leave the site. A guide tagged to a public range as well stays. */
+/* The number that matters before pressing Save: how many guides would
+   actually leave the site. One tagged to a public range as well stays. */
 function updateAgeNote(){
-  const note = $("#seo_agesNote");
+  const note = $("#agesNote");
   if(!note) return;
   const off = new Set();
-  $("#seo_ages").querySelectorAll("input[data-age-band]").forEach(inp => {
+  $("#ageRows").querySelectorAll("input[data-age-band]").forEach(inp => {
     if(!inp.checked) off.add(normAge(inp.dataset.ageBand));
   });
   if(!off.size){ note.textContent = "Every age range is public."; return; }
@@ -2135,11 +2154,32 @@ function updateAgeNote(){
     return ages.length && ages.every(a => off.has(normAge(a)));
   });
   note.innerHTML =
-    `<strong>${off.size}</strong> range(s) hidden — <strong>${held.length}</strong> guide(s) ` +
+    `<strong>${off.size}</strong> range(s) hidden &mdash; <strong>${held.length}</strong> guide(s) ` +
     `would come off the site` +
     (held.length ? `: ${held.map(g => g.title || g.id).join(", ")}` : "") +
-    `. They stay saved and come straight back when you tick the range again.`;
+    `. They stay saved, and come straight back when you tick the range again.`;
 }
+
+$("#saveAges") && $("#saveAges").addEventListener("click", async () => {
+  const btn = $("#saveAges"), msg = $("#agesMsg");
+  if(MODE !== "firebase"){ msg.className="msg err"; msg.textContent="Saving needs Firebase mode."; return; }
+  const ageVisibility = {};
+  $("#ageRows").querySelectorAll("input[data-age-band]").forEach(inp => {
+    ageVisibility[inp.dataset.ageBand] = inp.checked;
+  });
+  btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+  try{
+    const {fs, db} = state.fb;
+    /* merge:true — meta/seo also holds the Search & AI settings. */
+    await fs.setDoc(fs.doc(db, "meta", "seo"), { ageVisibility, updated: Date.now() }, { merge: true });
+    state.seo = Object.assign({}, state.seo, { ageVisibility });
+    msg.className = "msg ok";
+    msg.textContent = "Saved. The site updates on the next publish.";
+    queueRebuild();
+  }catch(err){
+    msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
+  }finally{ btn.disabled = false; }
+});
 
 function renderSeoFields(){
   const d = (state.seo || {});
@@ -2149,7 +2189,6 @@ function renderSeoFields(){
   $("#seo_crumbs").checked    = d.showBreadcrumbs === true;
   $("#seo_google").value      = d.googleVerification || "";
   $("#seo_bing").value        = d.bingVerification || "";
-  renderAgeToggles();
   try{ $("#seo_hook").value = localStorage.getItem(HOOK_KEY) || ""; }catch(e){}
   $("#seoMsg").textContent = ""; $("#seoMsg").className = "msg";
   $("#seoHookMsg").textContent = ""; $("#seoHookMsg").className = "msg";
@@ -2173,16 +2212,10 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     showBreadcrumbs: $("#seo_crumbs").checked,
     googleVerification: $("#seo_google").value.trim(),
     bingVerification:   $("#seo_bing").value.trim(),
-    /* Written whole, every band, every time — this doc is saved with setDoc,
-       so a partial map would drop the bands it left out and silently republish
-       them. Labels are the keys because the build matches on them. */
-    ageVisibility: (function(){
-      const out = {};
-      $("#seo_ages").querySelectorAll("input[data-age-band]").forEach(inp => {
-        out[inp.dataset.ageBand] = inp.checked;
-      });
-      return out;
-    })(),
+    /* Carried through untouched. The age switches live on Site -> Ages and
+       write the same document; this Save replaces the doc wholesale, so
+       leaving the field out would silently republish every hidden range. */
+    ageVisibility: (state.seo && state.seo.ageVisibility) || {},
     updated: Date.now()
   };
   try{ localStorage.setItem(HOOK_KEY, $("#seo_hook").value.trim()); }catch(e){}
@@ -2229,7 +2262,12 @@ $("#seo_rebuild") && $("#seo_rebuild").addEventListener("click", async () => {
    SITE SECTIONS — Topics manager + Books manager
    ====================================================================== */
 function showPanel(which){
-  ["empty","pageEditor","editor","topicsEditor","booksEditor","footerEditor","siteTextEditor"].forEach(id=>{
+  /* seoEditor was missing from this list, so selecting Search & AI hid every
+     panel and unhid nothing — the middle column went blank and that section
+     had never once rendered. agesEditor is here for the same reason: a panel
+     that is not named here can never be shown. */
+  ["empty","pageEditor","editor","topicsEditor","agesEditor","booksEditor",
+   "footerEditor","siteTextEditor","seoEditor"].forEach(id=>{
     const el=$("#"+id); if(el) el.classList.toggle("hidden", id!==which);
   });
 }
@@ -2237,13 +2275,14 @@ function renderSiteList(){
   const cur=state.currentSection;
   $("#siteList").innerHTML =
     `<button class="gitem ${cur==="topics"?"active":""}" data-section="topics">Topics</button>` +
+    `<button class="gitem ${cur==="ages"?"active":""}" data-section="ages">Ages</button>` +
     `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Book list</button>` +
     `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>` +
     `<button class="gitem ${cur==="sitetext"?"active":""}" data-section="sitetext">Menu</button>` +
     `<button class="gitem ${cur==="guidelayout"?"active":""}" data-section="guidelayout">Guide layout</button>` +
     `<button class="gitem ${cur==="seo"?"active":""}" data-section="seo">Search &amp; AI</button>`;
 }
-const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor",
+const SITE_PANELS = { topics:"topicsEditor", ages:"agesEditor", books:"booksEditor", footer:"footerEditor",
                       sitetext:"siteTextEditor", guidelayout:"siteTextEditor",
                       seo:"seoEditor" };
 /* Which entry in site-text.js each standalone section edits, and where it is
@@ -2254,6 +2293,7 @@ function selectSection(which){
   showPanel(SITE_PANELS[which] || "empty");
   $("#pvId").textContent = "· " + which;
   if(which==="topics") renderTopicRows();
+  else if(which==="ages") renderAgeRows();
   else if(which==="books") renderBookRows();
   else if(which==="footer") renderFooterFields();
   else if(which==="seo") renderSeoFields();
