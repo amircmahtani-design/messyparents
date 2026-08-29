@@ -818,9 +818,16 @@
 }
 .gitem.dot-has::before   { background: #2e8b57; }
 .gitem.dot-stale::before { background: #d19a20; }
+/* Not known yet — hollow, so it cannot be read as "no illustration". */
+.gitem.dot-unknown::before { background: transparent; box-shadow: 0 0 0 1.5px #cbd5e1 inset; }
 `;
 
   let guideStatusCache = {};
+  /* Whether the read behind the dots has actually succeeded yet. Without this,
+     "we have not looked" and "there is no hero" both render as a grey dot — so
+     a failed or still-running read is indistinguishable from a library with no
+     illustrations, which is a trap rather than a signal. */
+  let statusesLoaded = false;
 
   async function fetchGuideStatuses() {
     try {
@@ -837,8 +844,12 @@
         out[doc.id] = (t && (now - t) > stale) ? "stale" : "has";
       });
       guideStatusCache = out;
+      statusesLoaded = true;
       return out;
     } catch (e) {
+      /* Leave statusesLoaded false, so the dots stay hollow rather than
+         claiming every guide has no illustration. */
+      console.warn("[MPC] could not read hero status — dots left unknown.", e);
       return {};
     }
   }
@@ -857,15 +868,24 @@
       const id = el.dataset && el.dataset.id;
       if (!id) return;
       const status = guideStatusCache[id];
-      el.classList.remove("dot-has", "dot-stale");
+      el.classList.remove("dot-has", "dot-stale", "dot-unknown");
+      if (!statusesLoaded) { el.classList.add("dot-unknown"); return; }
       if (status === "has")   el.classList.add("dot-has");
       if (status === "stale") el.classList.add("dot-stale");
     });
   }
 
+  /* Read, paint, and — if the read did not land — try again rather than
+     leaving the sidebar permanently uninformative. Three attempts, backing
+     off, then it gives up quietly and the hollow dots say so. */
+  let dotRetries = 0;
   async function refreshSidebarDots() {
     await fetchGuideStatuses();
     applyDotsToDom();
+    if (!statusesLoaded && dotRetries < 3) {
+      dotRetries++;
+      setTimeout(refreshSidebarDots, 1500 * dotRetries);
+    }
   }
 
   /* Published so the editor can tell us a hero has just landed.
@@ -1046,6 +1066,9 @@
     document.getElementById("galleryModal").classList.remove("open");
     document.getElementById("galleryModal").setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
+    /* The gallery has just re-read every guide, so the sidebar may as well be
+       right too — cheap, and it catches a hero approved in another session. */
+    applyDotsToDom();
   }
 
   /* ---- gallery state ----------------------------------------------------
