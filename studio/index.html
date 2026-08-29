@@ -304,6 +304,14 @@
         </div>
 
         <div class="col-card">
+          <span class="tag tip">Which ages are public</span>
+          <p class="field hint" style="margin:0 0 10px">Untick a range to take it off the public site. Its pill disappears from Home and All guides, its landing page comes down, and any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next and the guide count, and its own address returns &ldquo;not found&rdquo;.</p>
+          <p class="field hint" style="margin:0 0 10px"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, under its public ranges only.</p>
+          <div id="seo_ages"></div>
+          <p class="hint" id="seo_agesNote" style="margin:8px 0 0"></p>
+        </div>
+
+        <div class="col-card">
           <span class="tag ok">Verification</span>
           <p class="field hint" style="margin:0 0 10px">Paste the codes Google and Bing give you when you add the site. Leave blank until you have the real ones &mdash; a made-up code fails verification and stays on every page.</p>
           <div class="field">
@@ -2052,6 +2060,87 @@ function setRebuildBanner(text, kind){
 /* illustration-generator.js lives in its own IIFE and needs this too. */
 window.MPCQueueRebuild = queueRebuild;
 
+/* ------------------------------------------------------------------------
+   WHICH AGES ARE PUBLIC
+
+   The switch itself. It writes meta/seo.ageVisibility — a plain map of age
+   label -> true/false — and that map is the only place the decision is
+   recorded. scripts/lib/ages.js reads it at build time and every public
+   surface follows from there: the pills, the filters, the landing pages, the
+   sitemap, the search index, the structured data, the guide counts and the
+   404s. There is no second list to keep in step.
+
+   A range that has never been saved falls back to the default in
+   scripts/lib/ages.js, which is what starts 12–18 and 18–24 months off.
+   ---------------------------------------------------------------------- */
+const AGE_BANDS = ["0–1 month","2–3 months","4–6 months","7–9 months",
+                   "10–12 months","12–18 months","18–24 months"];
+const AGE_DEFAULT_OFF = ["12–18 months","18–24 months"];
+
+const normAge = (s) => String(s == null ? "" : s)
+  .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+
+/* Every band the site knows about, plus anything a guide is actually tagged
+   with that is not on the list — so a band added straight to a guide still
+   gets a switch rather than being silently unswitchable. */
+function ageBands(){
+  const out = AGE_BANDS.slice();
+  const seen = new Set(out.map(normAge));
+  (state.guides || []).forEach(g => (g.ages || []).forEach(a => {
+    if (a && !seen.has(normAge(a))) { seen.add(normAge(a)); out.push(a); }
+  }));
+  return out;
+}
+
+function ageIsPublic(label, saved){
+  const k = normAge(label);
+  for (const key of Object.keys(saved || {})) {
+    if (normAge(key) === k) return saved[key] !== false;
+  }
+  return !AGE_DEFAULT_OFF.some(d => normAge(d) === k);
+}
+
+function renderAgeToggles(){
+  const box = $("#seo_ages");
+  if(!box) return;
+  const saved = (state.seo && state.seo.ageVisibility) || {};
+  const bands = ageBands();
+  box.innerHTML = bands.map((a, i) =>
+    `<label class="check-field"><input type="checkbox" data-age-band="${a.replace(/"/g,"&quot;")}"` +
+    `${ageIsPublic(a, saved) ? " checked" : ""}> <span><strong>${a}</strong>` +
+    ` <span class="hint">— <span data-age-count="${i}"></span></span></span></label>`
+  ).join("");
+  box.querySelectorAll("input[data-age-band]").forEach(inp =>
+    inp.addEventListener("change", updateAgeNote));
+  bands.forEach((a, i) => {
+    const n = (state.guides || []).filter(g => (g.ages || []).some(x => normAge(x) === normAge(a))).length;
+    const slot = box.querySelector(`[data-age-count="${i}"]`);
+    if (slot) slot.textContent = n === 1 ? "1 guide tagged" : n + " guides tagged";
+  });
+  updateAgeNote();
+}
+
+/* The one number that matters before you press Save: how many guides would
+   actually leave the site. A guide tagged to a public range as well stays. */
+function updateAgeNote(){
+  const note = $("#seo_agesNote");
+  if(!note) return;
+  const off = new Set();
+  $("#seo_ages").querySelectorAll("input[data-age-band]").forEach(inp => {
+    if(!inp.checked) off.add(normAge(inp.dataset.ageBand));
+  });
+  if(!off.size){ note.textContent = "Every age range is public."; return; }
+  const held = (state.guides || []).filter(g => {
+    const ages = (g.ages || []).filter(Boolean);
+    return ages.length && ages.every(a => off.has(normAge(a)));
+  });
+  note.innerHTML =
+    `<strong>${off.size}</strong> range(s) hidden — <strong>${held.length}</strong> guide(s) ` +
+    `would come off the site` +
+    (held.length ? `: ${held.map(g => g.title || g.id).join(", ")}` : "") +
+    `. They stay saved and come straight back when you tick the range again.`;
+}
+
 function renderSeoFields(){
   const d = (state.seo || {});
   $("#seo_detail").checked    = d.showDetail !== false;      // default on
@@ -2060,6 +2149,7 @@ function renderSeoFields(){
   $("#seo_crumbs").checked    = d.showBreadcrumbs === true;
   $("#seo_google").value      = d.googleVerification || "";
   $("#seo_bing").value        = d.bingVerification || "";
+  renderAgeToggles();
   try{ $("#seo_hook").value = localStorage.getItem(HOOK_KEY) || ""; }catch(e){}
   $("#seoMsg").textContent = ""; $("#seoMsg").className = "msg";
   $("#seoHookMsg").textContent = ""; $("#seoHookMsg").className = "msg";
@@ -2083,6 +2173,16 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     showBreadcrumbs: $("#seo_crumbs").checked,
     googleVerification: $("#seo_google").value.trim(),
     bingVerification:   $("#seo_bing").value.trim(),
+    /* Written whole, every band, every time — this doc is saved with setDoc,
+       so a partial map would drop the bands it left out and silently republish
+       them. Labels are the keys because the build matches on them. */
+    ageVisibility: (function(){
+      const out = {};
+      $("#seo_ages").querySelectorAll("input[data-age-band]").forEach(inp => {
+        out[inp.dataset.ageBand] = inp.checked;
+      });
+      return out;
+    })(),
     updated: Date.now()
   };
   try{ localStorage.setItem(HOOK_KEY, $("#seo_hook").value.trim()); }catch(e){}
