@@ -579,7 +579,11 @@
     if (!gpState.url) return;
     const heroInput = document.getElementById("f_hero");
     if (heroInput) {
+      /* This function does its own Firestore write a few lines down, so the
+         hero-field watcher must not race it with a second identical one. */
+      suppressHeroAutoSave = true;
       heroInput.value = gpState.url;
+      suppressHeroAutoSave = false;
       heroInput.dispatchEvent(new Event("input", { bubbles: true }));
       heroInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
@@ -602,6 +606,7 @@
         };
         if (altText) patch.panel.heroAlt = altText;
         await fs.setDoc(fs.doc(db, "guides", id), patch, { merge: true });
+        lastHeroSaved[id] = gpState.url;
         savedOk = true;
       }
     } catch (e) {
@@ -664,6 +669,12 @@
       patch(S.state.orig);
       (S.state.guides || []).forEach(patch);
     }
+
+    /* The sidebar dot is painted from its own cache, not from state, so it has
+       to be told separately — otherwise a guide that just got a picture keeps
+       a grey dot until something else happens to refetch. */
+    guideStatusCache[id] = "has";
+    applyDotsToDom();
 
     try { refreshCurrentPreview(); } catch (e) {}
   }
@@ -2870,6 +2881,123 @@
     }, true);
   }
 
+  /* ==========================================================================
+     FEATURE: an uploaded hero saves itself
+     ------------------------------------------------------------------------
+     There are two ways a hero reaches a guide, and they did not behave the
+     same way.
+
+       Generate illustration -> Approve   writes panel.hero to Firestore itself,
+                                          stamps heroUpdated and queues a build.
+
+       Choose File (upload)              uploads the picture to Storage, puts
+                                          the URL in the hero field, and says
+                                          "click Save to keep it".
+
+     So an uploaded picture that you did not then Save sat in Storage, attached
+     to nothing. The guide still had no hero, the sidebar dot stayed grey, and
+     nothing said anything was wrong. That is a step which exists only to be
+     forgotten.
+
+     WHY IT IS DONE FROM HERE
+
+     The upload handler lives in studio/index.html, which cannot be edited
+     safely from a repo copy. But it finishes by assigning to #f_hero, and a
+     programmatic assignment fires no event — so this wraps that one element's
+     `value` property and saves when it changes. Same merge write approve()
+     does, so both routes now end in the same place.
+
+     WHAT IT DELIBERATELY DOES NOT DO
+
+     Clearing the field is left alone. An empty hero is how a picture is
+     removed on purpose, index.html has its own careful handling for it
+     (state.heroCleared), and auto-writing an empty value is how an
+     illustration gets destroyed by accident. Only a real URL is saved.
+
+     Switching guides is not a change either: filling the form for a newly
+     selected guide sets the field, and saving on that would write the guide's
+     own hero straight back to it on every click.
+     ========================================================================== */
+
+  let suppressHeroAutoSave = false;
+  let heroSaveTimer = null;
+  let lastHeroSaved = {};         // guide id -> the URL last written, to avoid repeats
+
+  function installHeroAutoSave() {
+    const el = document.getElementById("f_hero");
+    if (!el || el.__mpcHeroWatched) return;
+    el.__mpcHeroWatched = true;
+
+    const proto = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
+    Object.defineProperty(el, "value", {
+      configurable: true,
+      get() { return proto.get.call(this); },
+      set(v) {
+        proto.set.call(this, v);
+        onHeroFieldChanged(String(v == null ? "" : v));
+      }
+    });
+    /* Typing or pasting a URL by hand goes through the same path. */
+    el.addEventListener("input", () => onHeroFieldChanged(el.value));
+  }
+
+  /* Is this a picture being attached, or just the form being filled in?
+
+     The first attempt told them apart by watching which guide was selected,
+     which was wrong: fillForm() in index.html writes #f_hero BEFORE #f_id, so
+     currentGuideId() still answered with the PREVIOUS guide and the new
+     guide's hero was written onto the old one. A guard that can attach a
+     picture to the wrong guide is worse than no guard.
+
+     The reliable test is the data, not the timing: compare the field against
+     the hero the loaded guide already has (state.orig, set by selectGuide
+     before any field is touched). Filling the form always reproduces exactly
+     that value, so it never saves. An upload puts something different there,
+     so it always does. */
+  function onHeroFieldChanged(v) {
+    if (suppressHeroAutoSave) return;
+
+    const S = window.MPCStudio;
+    const orig = (S && S.state && S.state.orig) || null;
+    const id = (S && S.state && S.state.current) || null;
+    if (!id || !orig || orig.id !== id) return;     // mid-load, or nothing selected
+
+    const url = String(v || "").trim();
+    if (!url) return;                               // clearing is Save's business
+    if (!/^https?:\/\//i.test(url)) return;         // a path typed by hand, not an upload
+
+    const stored = (orig.panel && orig.panel.hero) ? String(orig.panel.hero).trim() : "";
+    if (url === stored) return;                     // the form being filled
+    if (lastHeroSaved[id] === url) return;          // already written this one
+
+    /* Debounced: the upload handler assigns once, but a paste can fire input
+       several times, and each save is a network write. */
+    clearTimeout(heroSaveTimer);
+    heroSaveTimer = setTimeout(() => saveHeroNow(id, url), 400);
+  }
+
+  async function saveHeroNow(id, url) {
+    const msg = document.getElementById("genMsg");
+    try {
+      const { fs, db } = await getFirebase();
+      lastHeroSaved[id] = url;
+      await fs.setDoc(fs.doc(db, "guides", id),
+        { panel: { hero: url }, heroUpdated: Date.now() }, { merge: true });
+      attachHeroLocally(id, url, "");
+      const queued = typeof window.MPCQueueRebuild === "function";
+      if (queued) window.MPCQueueRebuild();
+      if (msg) {
+        msg.textContent = "Uploaded and saved ✓" +
+          (queued ? " — publishing shortly." : " — rebuild to publish it.");
+      }
+    } catch (e) {
+      /* Never claim it saved when it did not: the picture is in Storage but
+         attached to nothing, and Save is the way to rescue it. */
+      if (msg) msg.textContent = "Uploaded, but saving it to the guide failed — " +
+        "press Save to keep it. (" + (e.message || e) + ")";
+    }
+  }
+
   function installSections() {
     if (!document.getElementById("mpc-sec-css")) {
       const st = document.createElement("style");
@@ -2879,6 +3007,7 @@
     installEditorSections();
     installSidebarGroups();
     installAgesSection();
+    installHeroAutoSave();
   }
 
   /* ---- diag() is now silent — the restore system works reliably so we
