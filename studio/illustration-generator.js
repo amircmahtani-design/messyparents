@@ -1056,6 +1056,7 @@
   let currentGalleryBatch = "*";      // "*" = every batch
   let galleryQuery = "";
   let galleryGuides = null;           // fetched once per open, not per keystroke
+  let galleryBatchMeta = {};          // meta/batches: { assign, origin, batches }
   let galleryLoadError = "";
 
   async function loadGalleryGuides() {
@@ -1064,34 +1065,54 @@
     grid.innerHTML = "<div style='padding:20px;color:#6b7684'>Loading guides…</div>";
     try {
       const { fs, db } = await getFirebase();
-      const snap = await fs.getDocs(fs.collection(db, "guides"));
+      const [snap, meta] = await Promise.all([
+        fs.getDocs(fs.collection(db, "guides")),
+        /* Batch membership, straight from the source. This used to ask
+           window.MPCBatches, the read-only view batches.js publishes — but that
+           depends on batches.js having loaded AND having finished reading its
+           own meta document first, and when either was not true every guide
+           came back unbatched and the whole grouping silently disappeared.
+           Reading meta/batches here needs neither. */
+        fs.getDoc(fs.doc(db, "meta", "batches")).catch(() => null)
+      ]);
       const out = [];
       snap.forEach(doc => out.push({ id: doc.id, ...doc.data() }));
       galleryGuides = out;
+      galleryBatchMeta = (meta && meta.exists && meta.exists()) ? (meta.data() || {}) : {};
     } catch (e) {
       galleryLoadError = e.message || String(e);
       galleryGuides = [];
+      galleryBatchMeta = {};
     }
   }
 
-  /* Batch membership lives in studio/batches.js, which publishes a read-only
-     view of it. If that add-on is not loaded — its <script> tag is removable
-     by design — everything below degrades to one unlabelled group and the
-     gallery works exactly as it did before. */
+  /* Which batch a guide is in. Same order of authority as batches.js: a
+     deliberate manual move, then the batch it first arrived in, then the tag on
+     the guide document itself. Read from meta/batches directly so this holds up
+     whether or not batches.js is loaded. */
+  const bKey = (v) => (v == null || v === "") ? "" : String(v).trim();
+
   function galleryBatchOf(g) {
-    try {
-      if (window.MPCBatches && window.MPCBatches.batchOf) return window.MPCBatches.batchOf(g) || "";
-    } catch (e) {}
-    return (g && g.batch != null) ? String(g.batch).trim() : "";
+    if (!g) return "";
+    const m = galleryBatchMeta || {};
+    const assign = m.assign || {}, origin = m.origin || {};
+    if (assign[g.id] != null) return bKey(assign[g.id]);
+    if (origin[g.id] != null) return bKey(origin[g.id]);
+    return bKey(g.batch);
   }
+
   function galleryBatchLabel(k) {
-    try {
-      if (window.MPCBatches && window.MPCBatches.labelOf) return window.MPCBatches.labelOf(k);
-    } catch (e) {}
-    return k ? "Batch " + k : "Unbatched";
+    if (!k) return "Unbatched";
+    const b = (galleryBatchMeta.batches || {})[k];
+    return (b && b.label) || ("Batch " + k);
   }
-  function hasBatches() {
-    return !!(window.MPCBatches && window.MPCBatches.batchOf);
+
+  /* Group as soon as ANY guide has a batch. The old test also demanded more
+     than one distinct key, which meant a library entirely inside Batch 1 —
+     or one where the batch data had not been read — showed no grouping at all
+     and looked like the feature had not shipped. */
+  function hasBatches(guides) {
+    return (guides || []).some(g => galleryBatchOf(g) !== "");
   }
 
   /* Numeric batches in numeric order (so 2 comes before 10), anything else
@@ -1156,7 +1177,8 @@
        guides still have no hero — which is the number you are actually
        hunting for when you open this. */
     const batchBar = document.getElementById("galleryBatches");
-    if (!hasBatches() || keys.length <= 1) {
+    const grouped = hasBatches(guides);
+    if (!grouped) {
       batchBar.innerHTML = "";
       if (currentGalleryBatch !== "*") currentGalleryBatch = "*";
     } else {
@@ -1198,7 +1220,7 @@
       return;
     }
 
-    const groupKeys = (hasBatches() && keys.length > 1)
+    const groupKeys = grouped
       ? (currentGalleryBatch === "*" ? keys : [currentGalleryBatch])
       : [null];
 
