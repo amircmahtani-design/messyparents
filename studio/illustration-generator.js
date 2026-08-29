@@ -929,16 +929,56 @@
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   margin-bottom: 14px;
 }
-#galleryHead h2 { margin: 0; font-size: 18px; font-family: inherit; flex: 1; }
+#galleryHead h2 { margin: 0; font-size: 18px; font-family: inherit; }
 #galleryHead .btn { padding: 8px 14px; }
-#galleryFilters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-#galleryFilters button {
+
+/* Search sits in the header, not with the filters: at fourteen batches it is
+   the fastest way to a named guide, and it should be reachable without
+   thinking about which row of pills to look at. */
+#gallerySearchWrap { flex: 1 1 220px; min-width: 160px; position: relative; }
+#gallerySearch {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 30px 8px 12px; border: 2px solid #e3e6ea; border-radius: 999px;
+  font-family: inherit; font-size: 14px; color: #1f2733; background: #fff;
+  min-height: 36px;
+}
+#gallerySearch:focus { outline: none; border-color: #3f6fa3; }
+#gallerySearchClear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  border: 0; background: none; cursor: pointer; font-size: 16px; line-height: 1;
+  color: #6b7684; padding: 4px 6px; display: none;
+}
+#gallerySearchWrap.has-value #gallerySearchClear { display: block; }
+
+#galleryFilters, #galleryBatches { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+#galleryBatches { margin-bottom: 14px; }
+#galleryFilters button, #galleryBatches button {
   background: #fff; border: 2px solid #e3e6ea; color: #1f2733;
   padding: 6px 12px; border-radius: 999px; font-family: inherit; font-size: 13px;
   font-weight: 700; cursor: pointer; min-height: 34px;
 }
-#galleryFilters button.active { background: #3f6fa3; border-color: #3f6fa3; color: #fff; }
-#galleryGrid {
+#galleryFilters button.active, #galleryBatches button.active {
+  background: #3f6fa3; border-color: #3f6fa3; color: #fff;
+}
+#galleryBatches button small { font-weight: 500; opacity: .7; margin-left: 4px; }
+#galleryBatches button .miss { color: #c0392b; opacity: 1; font-weight: 700; }
+#galleryBatches button.active .miss { color: #ffd9d3; }
+
+#galleryCount { font-size: 12.5px; color: #6b7684; margin: 0 0 10px; }
+
+/* One block per batch. The heading sticks to the top of the modal as you
+   scroll, so at batch 14 you can always see which batch you are looking at
+   without scrolling back up to find out. */
+#galleryGrid .g-group { margin-bottom: 18px; }
+#galleryGrid .g-group h3 {
+  position: sticky; top: 0; z-index: 1;
+  margin: 0 0 10px; padding: 8px 10px;
+  font-family: inherit; font-size: 13px; font-weight: 800; color: #1f2733;
+  background: #e9edf2; border-radius: 8px;
+}
+#galleryGrid .g-group h3 small { font-weight: 500; color: #6b7684; margin-left: 6px; }
+#galleryGrid .g-group h3 .miss { color: #c0392b; font-weight: 700; }
+#galleryGrid .g-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px;
@@ -969,6 +1009,11 @@
   <div id="galleryCard">
     <div id="galleryHead">
       <h2>🖼 Brand consistency gallery</h2>
+      <span id="gallerySearchWrap">
+        <input type="search" id="gallerySearch" placeholder="Search by title…"
+               autocomplete="off" spellcheck="false" aria-label="Search guides by title">
+        <button type="button" id="gallerySearchClear" title="Clear" aria-label="Clear search">&times;</button>
+      </span>
       <button type="button" class="btn" id="galleryCloseBtn">Close</button>
     </div>
     <div id="galleryFilters">
@@ -977,6 +1022,8 @@
       <button type="button" data-filter="none">Missing hero</button>
       <button type="button" data-filter="stale">Stale (>30d)</button>
     </div>
+    <div id="galleryBatches"></div>
+    <p id="galleryCount"></p>
     <div id="galleryGrid"></div>
   </div>
 </div>
@@ -987,88 +1034,244 @@
     document.getElementById("galleryModal").setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
     await refreshSidebarDots();  // also refresh the cache
-    renderGallery(currentGalleryFilter);
+    await loadGalleryGuides();
+    renderGallery();
+    /* Straight into the search box. On a full library that is what you came
+       for; on a small one it costs nothing. Not on a touch keyboard, though —
+       focusing there throws up the on-screen keyboard over the grid. */
+    const box = document.getElementById("gallerySearch");
+    if (box && !matchMedia("(pointer: coarse)").matches) box.focus();
   }
   function closeGallery() {
     document.getElementById("galleryModal").classList.remove("open");
     document.getElementById("galleryModal").setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
-  let currentGalleryFilter = "all";
 
-  async function renderGallery(filter) {
-    currentGalleryFilter = filter;
-    document.querySelectorAll("#galleryFilters button").forEach(b => {
-      b.classList.toggle("active", b.dataset.filter === filter);
-    });
+  /* ---- gallery state ----------------------------------------------------
+     Three independent filters, combined: the hero-status pills, the batch
+     pills, and the search box. Held here rather than passed around so typing
+     a character does not have to know what the pills are set to. */
+  let currentGalleryFilter = "all";   // all | has | none | stale
+  let currentGalleryBatch = "*";      // "*" = every batch
+  let galleryQuery = "";
+  let galleryGuides = null;           // fetched once per open, not per keystroke
+  let galleryLoadError = "";
+
+  async function loadGalleryGuides() {
+    galleryGuides = null; galleryLoadError = "";
     const grid = document.getElementById("galleryGrid");
     grid.innerHTML = "<div style='padding:20px;color:#6b7684'>Loading guides…</div>";
-    let guides = [];
     try {
       const { fs, db } = await getFirebase();
       const snap = await fs.getDocs(fs.collection(db, "guides"));
-      snap.forEach(doc => guides.push({ id: doc.id, ...doc.data() }));
+      const out = [];
+      snap.forEach(doc => out.push({ id: doc.id, ...doc.data() }));
+      galleryGuides = out;
     } catch (e) {
-      grid.innerHTML = "<div style='padding:20px;color:#c0392b'>Failed to load: " + (e.message || e) + "</div>";
-      return;
+      galleryLoadError = e.message || String(e);
+      galleryGuides = [];
     }
-    const filtered = guides.filter(g => {
-      const s = guideStatusCache[g.id] || "none";
-      if (filter === "all")   return true;
-      if (filter === "has")   return s === "has" || s === "stale";
-      if (filter === "none")  return s === "none";
-      if (filter === "stale") return s === "stale";
-      return true;
+  }
+
+  /* Batch membership lives in studio/batches.js, which publishes a read-only
+     view of it. If that add-on is not loaded — its <script> tag is removable
+     by design — everything below degrades to one unlabelled group and the
+     gallery works exactly as it did before. */
+  function galleryBatchOf(g) {
+    try {
+      if (window.MPCBatches && window.MPCBatches.batchOf) return window.MPCBatches.batchOf(g) || "";
+    } catch (e) {}
+    return (g && g.batch != null) ? String(g.batch).trim() : "";
+  }
+  function galleryBatchLabel(k) {
+    try {
+      if (window.MPCBatches && window.MPCBatches.labelOf) return window.MPCBatches.labelOf(k);
+    } catch (e) {}
+    return k ? "Batch " + k : "Unbatched";
+  }
+  function hasBatches() {
+    return !!(window.MPCBatches && window.MPCBatches.batchOf);
+  }
+
+  /* Numeric batches in numeric order (so 2 comes before 10), anything else
+     alphabetically after them, and Unbatched last — it is the pile you have
+     not filed yet, not batch zero. */
+  function galleryBatchKeys(guides) {
+    const set = {};
+    guides.forEach(g => { set[galleryBatchOf(g)] = 1; });
+    const keys = Object.keys(set).filter(k => k !== "");
+    keys.sort((a, b) => {
+      const na = parseFloat(a), nb = parseFloat(b);
+      if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+      if (!isNaN(na) && isNaN(nb)) return -1;
+      if (isNaN(na) && !isNaN(nb)) return 1;
+      return String(a).localeCompare(String(b));
     });
-    if (filtered.length === 0) {
-      grid.innerHTML = "<div style='padding:20px;color:#6b7684'>Nothing to show for this filter.</div>";
+    if (set[""]) keys.push("");
+    return keys;
+  }
+
+  const galleryStatus = (g) => guideStatusCache[g.id] || "none";
+
+  function matchesStatus(g) {
+    const st = galleryStatus(g);
+    if (currentGalleryFilter === "all")   return true;
+    if (currentGalleryFilter === "has")   return st === "has" || st === "stale";
+    if (currentGalleryFilter === "none")  return st === "none";
+    if (currentGalleryFilter === "stale") return st === "stale";
+    return true;
+  }
+
+  /* Every typed word has to appear somewhere, in any order — so "sleep
+     regression" finds "Is this sleep regression?" and so does "regression
+     sleep". The id is searched too, because that is what the URL says and it
+     is often what you have in front of you. */
+  function matchesQuery(g) {
+    if (!galleryQuery) return true;
+    const hay = ((g.title || "") + " " + (g.id || "") + " " + (g.summary || "")).toLowerCase();
+    return galleryQuery.split(/\s+/).filter(Boolean).every(w => hay.indexOf(w) !== -1);
+  }
+
+  function renderGallery() {
+    document.querySelectorAll("#galleryFilters button").forEach(b => {
+      b.classList.toggle("active", b.dataset.filter === currentGalleryFilter);
+    });
+
+    const grid = document.getElementById("galleryGrid");
+    const countEl = document.getElementById("galleryCount");
+
+    if (galleryLoadError) {
+      document.getElementById("galleryBatches").innerHTML = "";
+      countEl.textContent = "";
+      grid.innerHTML = "<div style='padding:20px;color:#c0392b'>Failed to load: " +
+        escapeHtml(galleryLoadError) + "</div>";
       return;
     }
-    filtered.sort((a, b) => String(a.title || a.id).localeCompare(String(b.title || b.id)));
-    grid.innerHTML = "";
-    filtered.forEach(g => {
-      const hero = ((g.panel && g.panel.hero) || g.hero || "").trim();
-      const status = guideStatusCache[g.id] || "none";
-      const card = document.createElement("button");
-      card.className = "g-card";
-      card.type = "button";
-      card.dataset.guideId = g.id;
-      const badge = status === "has" ? "✓ has hero"
-                  : status === "stale" ? "⚠ stale"
-                  : "○ missing";
-      card.innerHTML = `
-        <div class="g-thumb">
-          ${hero
-            ? `<img src="${hero}" alt="" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='broken URL'">`
-            : "no hero yet"}
-        </div>
-        <div class="g-title">${escapeHtml(g.title || g.id)}<small>${badge}</small></div>
-      `;
-      card.addEventListener("click", () => {
-        const targetId = g.id;
-        const targetTitle = g.title || g.id;
-        closeGallery();
 
-        // If they clicked the guide they're already on, no-op
-        const currentlyActive = document.querySelector(".gitem.active");
-        if (currentlyActive && currentlyActive.dataset.id === targetId) {
-          showToast("Already on this guide", "success");
-          return;
-        }
+    const guides = galleryGuides || [];
+    const keys = galleryBatchKeys(guides);
 
-        // No fast-path anymore — the .gitem click was failing silently
-        // for reasons that vary per guide (state.guides can lag Firestore,
-        // some guides may lack an `id` field in data, etc.). Reload always
-        // works because Studio re-reads guides fresh from Firestore.
-        // We store the target in localStorage; the boot handler picks it up.
-        showToast("Opening " + targetTitle + "…");
-        try { localStorage.setItem("mpc-jump-to-guide", targetId); } catch(_) {}
-        try { localStorage.setItem("mpc-jump-to-guide-title", targetTitle); } catch(_) {}
-        // Short delay so the toast is visible before the reload wipes it
-        setTimeout(() => { location.reload(); }, 400);
+    /* The batch pills. Each carries its size and, in red, how many of its
+       guides still have no hero — which is the number you are actually
+       hunting for when you open this. */
+    const batchBar = document.getElementById("galleryBatches");
+    if (!hasBatches() || keys.length <= 1) {
+      batchBar.innerHTML = "";
+      if (currentGalleryBatch !== "*") currentGalleryBatch = "*";
+    } else {
+      const pill = (k, label) => {
+        const inK = k === "*" ? guides : guides.filter(g => galleryBatchOf(g) === k);
+        const missing = inK.filter(g => galleryStatus(g) === "none").length;
+        return `<button type="button" data-batch="${escapeHtml(k)}"` +
+          `${k === currentGalleryBatch ? ' class="active"' : ""}>${escapeHtml(label)}` +
+          `<small>${inK.length}${missing ? ` · <span class="miss">${missing} missing</span>` : ""}</small></button>`;
+      };
+      batchBar.innerHTML = pill("*", "All batches") +
+        keys.map(k => pill(k, galleryBatchLabel(k))).join("");
+      batchBar.querySelectorAll("button[data-batch]").forEach(b => {
+        b.addEventListener("click", () => {
+          currentGalleryBatch = b.dataset.batch;
+          renderGallery();
+          document.getElementById("galleryCard").scrollIntoView({ block: "start" });
+        });
       });
-      grid.appendChild(card);
+    }
+
+    /* One pass, then grouped — so the counts on screen are the counts of what
+       is on screen, whatever combination of filters produced it. */
+    const shown = guides.filter(g =>
+      matchesStatus(g) && matchesQuery(g) &&
+      (currentGalleryBatch === "*" || galleryBatchOf(g) === currentGalleryBatch));
+
+    const total = guides.length;
+    countEl.textContent = shown.length === total
+      ? `${total} guide${total === 1 ? "" : "s"}`
+      : `${shown.length} of ${total} guides` +
+        (galleryQuery ? ` matching “${galleryQuery}”` : "");
+
+    if (!shown.length) {
+      grid.innerHTML = "<div style='padding:20px;color:#6b7684'>" +
+        (galleryQuery
+          ? "Nothing matches “" + escapeHtml(galleryQuery) + "”."
+          : "Nothing to show for this filter.") + "</div>";
+      return;
+    }
+
+    const groupKeys = (hasBatches() && keys.length > 1)
+      ? (currentGalleryBatch === "*" ? keys : [currentGalleryBatch])
+      : [null];
+
+    grid.innerHTML = "";
+    groupKeys.forEach(k => {
+      const list = (k === null) ? shown : shown.filter(g => galleryBatchOf(g) === k);
+      if (!list.length) return;   // a batch with nothing left after filtering
+
+      list.sort((a, b) => String(a.title || a.id).localeCompare(String(b.title || b.id)));
+
+      const group = document.createElement("section");
+      group.className = "g-group";
+
+      if (k !== null) {
+        const missing = list.filter(g => galleryStatus(g) === "none").length;
+        const h = document.createElement("h3");
+        h.innerHTML = escapeHtml(galleryBatchLabel(k)) +
+          `<small>${list.length} guide${list.length === 1 ? "" : "s"}` +
+          (missing ? ` · <span class="miss">${missing} missing a hero</span>` : "") + "</small>";
+        group.appendChild(h);
+      }
+
+      const cards = document.createElement("div");
+      cards.className = "g-cards";
+      list.forEach(g => cards.appendChild(galleryCard(g)));
+      group.appendChild(cards);
+      grid.appendChild(group);
     });
+  }
+
+  /* One card. Unchanged behaviour — clicking still jumps to the guide. */
+  function galleryCard(g) {
+    const hero = ((g.panel && g.panel.hero) || g.hero || "").trim();
+    const status = galleryStatus(g);
+    const card = document.createElement("button");
+    card.className = "g-card";
+    card.type = "button";
+    card.dataset.guideId = g.id;
+    const badge = status === "has" ? "✓ has hero"
+                : status === "stale" ? "⚠ stale"
+                : "○ missing";
+    card.innerHTML = `
+      <div class="g-thumb">
+        ${hero
+          ? `<img src="${hero}" alt="" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='broken URL'">`
+          : "no hero yet"}
+      </div>
+      <div class="g-title">${escapeHtml(g.title || g.id)}<small>${badge}</small></div>
+    `;
+    card.addEventListener("click", () => {
+      const targetId = g.id;
+      const targetTitle = g.title || g.id;
+      closeGallery();
+
+      // If they clicked the guide they're already on, no-op
+      const currentlyActive = document.querySelector(".gitem.active");
+      if (currentlyActive && currentlyActive.dataset.id === targetId) {
+        showToast("Already on this guide", "success");
+        return;
+      }
+
+      // No fast-path anymore — the .gitem click was failing silently
+      // for reasons that vary per guide (state.guides can lag Firestore,
+      // some guides may lack an `id` field in data, etc.). Reload always
+      // works because Studio re-reads guides fresh from Firestore.
+      // We store the target in localStorage; the boot handler picks it up.
+      showToast("Opening " + targetTitle + "…");
+      try { localStorage.setItem("mpc-jump-to-guide", targetId); } catch(_) {}
+      try { localStorage.setItem("mpc-jump-to-guide-title", targetTitle); } catch(_) {}
+      // Short delay so the toast is visible before the reload wipes it
+      setTimeout(() => { location.reload(); }, 400);
+    });
+    return card;
   }
 
   function escapeHtml(s) {
@@ -1278,7 +1481,35 @@
       if (e.key === "Escape" && document.getElementById("galleryModal").classList.contains("open")) closeGallery();
     });
     document.querySelectorAll("#galleryFilters button").forEach(b => {
-      b.addEventListener("click", () => renderGallery(b.dataset.filter));
+      b.addEventListener("click", () => {
+        currentGalleryFilter = b.dataset.filter;
+        renderGallery();
+      });
+    });
+
+    /* Search. Filters what is already in memory, so it redraws on the
+       keystroke rather than waiting on Firestore. */
+    const search = document.getElementById("gallerySearch");
+    const searchWrap = document.getElementById("gallerySearchWrap");
+    search.addEventListener("input", () => {
+      galleryQuery = search.value.trim().toLowerCase();
+      searchWrap.classList.toggle("has-value", !!search.value);
+      renderGallery();
+    });
+    /* Escape clears the box rather than closing the modal, which is what you
+       want mid-search; a second Escape then closes as usual. */
+    search.addEventListener("keydown", e => {
+      if (e.key === "Escape" && search.value) {
+        e.stopPropagation();
+        search.value = ""; galleryQuery = "";
+        searchWrap.classList.remove("has-value");
+        renderGallery();
+      }
+    });
+    document.getElementById("gallerySearchClear").addEventListener("click", () => {
+      search.value = ""; galleryQuery = "";
+      searchWrap.classList.remove("has-value");
+      renderGallery(); search.focus();
     });
   }
 
@@ -2332,6 +2563,268 @@
     applyGroupCollapse();
   }
 
+  /* ==========================================================================
+     FEATURE: Site -> Ages, and un-blanking Site -> Search & AI
+     ------------------------------------------------------------------------
+     WHY THIS IS HERE AND NOT IN studio/index.html
+
+     Both of these are, on the face of it, edits to index.html. They are not
+     made there because that file cannot be edited safely from a repo copy:
+     the version in the repo is not the version that is deployed (the repo copy
+     has no <script> tag for THIS file, yet the Gallery button exists on the
+     live Studio, so the live file has something the repo does not). Shipping an
+     edited index.html would overwrite the live one and take away whatever the
+     repo copy is missing.
+
+     So both changes install themselves from here instead, the same way the
+     gallery and the batch button do. Upload one file, change nothing else.
+
+     WHAT IT ADDS
+
+     1. "Ages" in the SITE list, directly under Topics — a checkbox per age
+        range, saved to meta/seo.ageVisibility, which is what scripts/lib/ages.js
+        reads at build time. That map is the one source of truth for which
+        ranges are public.
+
+     2. A fix for Search & AI, which renders blank. showPanel() in index.html
+        toggles `hidden` on a hard-coded list of panel ids and seoEditor is not
+        in it, so selecting that section hides every panel and unhides nothing.
+        Cannot be fixed from out here — that function is module-scoped — but the
+        effect can: after the click, unhide #seoEditor ourselves.
+
+     If index.html is ever updated to include either of these properly, this
+     stands down: the panel is only created when one does not already exist,
+     and unhiding an already-visible element is a no-op.
+     ========================================================================== */
+
+  const AGE_BANDS = ["0–1 month", "2–3 months", "4–6 months", "7–9 months",
+                     "10–12 months", "12–18 months", "18–24 months"];
+  /* Must match DEFAULT_VISIBILITY in scripts/lib/ages.js. These are the ranges
+     that are off until the saved map says otherwise. */
+  const AGE_DEFAULT_OFF = ["12–18 months", "18–24 months"];
+
+  /* Labels carry an en-dash. One round-tripped through a keyboard or a
+     spreadsheet comes back with a plain hyphen, and a toggle that silently
+     stops matching is worse than one that is obviously broken. */
+  const normAge = (v) => String(v == null ? "" : v)
+    .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+
+  let ageSaved = null;   // meta/seo.ageVisibility, once read
+
+  function studioGuides() {
+    try { return (window.MPCStudio && window.MPCStudio.state.guides) || []; }
+    catch (e) { return []; }
+  }
+
+  /* Every band the site knows about, plus any a guide is actually tagged with
+     that is not on the list — so a band added straight to a guide still gets a
+     switch rather than being unswitchable. */
+  function ageBands() {
+    const out = AGE_BANDS.slice();
+    const seen = new Set(out.map(normAge));
+    studioGuides().forEach(g => (g.ages || []).forEach(a => {
+      if (a && !seen.has(normAge(a))) { seen.add(normAge(a)); out.push(a); }
+    }));
+    return out;
+  }
+
+  function ageIsPublic(label) {
+    const k = normAge(label);
+    const saved = ageSaved || {};
+    for (const key of Object.keys(saved)) if (normAge(key) === k) return saved[key] !== false;
+    return !AGE_DEFAULT_OFF.some(d => normAge(d) === k);
+  }
+
+  const AGES_HTML = `
+<div id="agesEditor" class="editor hidden">
+  <h2 style="margin:0 0 4px;font-size:19px">Browse ages</h2>
+  <p class="field hint" style="margin:0 0 16px">These are the &ldquo;How old is your little one?&rdquo; pills on the Home and Guides pages. Untick a range to take it off the public site.</p>
+
+  <div class="col-card">
+    <span class="tag tip">What unticking does</span>
+    <p class="field hint" style="margin:0 0 8px">The pill disappears from Home and All guides, and its landing page comes down. Any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next, the structured data and the guide count, and its own address returns &ldquo;not found&rdquo; to readers and to Google.</p>
+    <p class="field hint" style="margin:0"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, shown under its public ranges only.</p>
+  </div>
+
+  <div id="ageRows"></div>
+  <p class="hint" id="agesNote" style="margin:10px 0 0"></p>
+
+  <div class="actions">
+    <button id="saveAges" class="btn primary" type="button">Save</button>
+    <span id="agesMsg" class="msg"></span>
+  </div>
+</div>`;
+
+  function renderAgeRows() {
+    const box = document.getElementById("ageRows");
+    if (!box) return;
+    box.innerHTML = ageBands().map(a => {
+      const n = studioGuides().filter(g =>
+        (g.ages || []).some(x => normAge(x) === normAge(a))).length;
+      return `<label class="check-field"><input type="checkbox" data-age-band="${escapeHtml(a)}"` +
+        `${ageIsPublic(a) ? " checked" : ""}> <span><strong>${escapeHtml(a)}</strong>` +
+        ` <span class="hint">&mdash; ${n === 1 ? "1 guide" : n + " guides"} tagged</span></span></label>`;
+    }).join("");
+    box.querySelectorAll("input[data-age-band]").forEach(inp =>
+      inp.addEventListener("change", updateAgeNote));
+    const msg = document.getElementById("agesMsg");
+    if (msg) { msg.textContent = ""; msg.className = "msg"; }
+    updateAgeNote();
+  }
+
+  /* The number that matters before pressing Save: how many guides would
+     actually leave the site. One tagged to a public range as well stays. */
+  function updateAgeNote() {
+    const note = document.getElementById("agesNote");
+    const box = document.getElementById("ageRows");
+    if (!note || !box) return;
+    const off = new Set();
+    box.querySelectorAll("input[data-age-band]").forEach(inp => {
+      if (!inp.checked) off.add(normAge(inp.dataset.ageBand));
+    });
+    if (!off.size) { note.textContent = "Every age range is public."; return; }
+    const held = studioGuides().filter(g => {
+      const ages = (g.ages || []).filter(Boolean);
+      return ages.length && ages.every(a => off.has(normAge(a)));
+    });
+    note.innerHTML =
+      `<strong>${off.size}</strong> range(s) hidden &mdash; <strong>${held.length}</strong> guide(s) ` +
+      `would come off the site` +
+      (held.length ? `: ${escapeHtml(held.map(g => g.title || g.id).join(", "))}` : "") +
+      `. They stay saved, and come straight back when you tick the range again.`;
+  }
+
+  async function loadAgeVisibility() {
+    if (ageSaved) return ageSaved;
+    try {
+      const { fs, db } = await getFirebase();
+      const snap = await fs.getDoc(fs.doc(db, "meta", "seo"));
+      const d = snap.exists() ? (snap.data() || {}) : {};
+      ageSaved = d.ageVisibility || {};
+    } catch (e) { ageSaved = {}; }
+    return ageSaved;
+  }
+
+  async function saveAgeVisibility() {
+    const btn = document.getElementById("saveAges");
+    const msg = document.getElementById("agesMsg");
+    const map = {};
+    document.querySelectorAll("#ageRows input[data-age-band]").forEach(inp => {
+      map[inp.dataset.ageBand] = inp.checked;
+    });
+    btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+    try {
+      const { fs, db } = await getFirebase();
+      /* merge:true — meta/seo also holds the Search & AI settings, which are
+         written whole by their own Save. Without merge the two screens would
+         overwrite each other. */
+      await fs.setDoc(fs.doc(db, "meta", "seo"),
+        { ageVisibility: map, updated: Date.now() }, { merge: true });
+      ageSaved = map;
+      msg.className = "msg ok";
+      msg.textContent = "Saved. The site updates on the next publish.";
+      if (window.MPCQueueRebuild) window.MPCQueueRebuild();
+    } catch (err) {
+      msg.className = "msg err";
+      msg.textContent = "Save failed: " + (err.message || err);
+    } finally { btn.disabled = false; }
+  }
+
+  /* Studio's own showPanel() hides a fixed list of panels. #agesEditor is not
+     on it, so it has to be hidden by hand whenever anything else is selected —
+     otherwise it would stay on screen underneath the next section. */
+  function hideAgesPanel() {
+    const el = document.getElementById("agesEditor");
+    if (el) el.classList.add("hidden");
+    document.querySelectorAll('#siteList .gitem[data-mpc-ages]').forEach(b =>
+      b.classList.remove("active"));
+  }
+
+  async function showAgesPanel() {
+    /* Hide everything Studio knows about, plus the empty state. */
+    ["empty", "pageEditor", "editor", "topicsEditor", "booksEditor",
+     "footerEditor", "siteTextEditor", "seoEditor"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    });
+    document.querySelectorAll("#pageList .gitem, #siteList .gitem, #list .gitem")
+      .forEach(b => b.classList.remove("active"));
+    document.querySelectorAll('#siteList .gitem[data-mpc-ages]').forEach(b =>
+      b.classList.add("active"));
+
+    const panel = document.getElementById("agesEditor");
+    if (panel) panel.classList.remove("hidden");
+    const pv = document.getElementById("pvId");
+    if (pv) pv.textContent = "· ages";
+
+    await loadAgeVisibility();
+    renderAgeRows();
+  }
+
+  /* The SITE list is re-rendered by Studio on every section change, which wipes
+     anything added to it. Re-inserting on mutation is what keeps the entry
+     there, rather than adding it once and watching it disappear. */
+  function ensureAgesButton() {
+    const list = document.getElementById("siteList");
+    if (!list) return;
+    if (list.querySelector("[data-mpc-ages]")) return;
+    const topics = list.querySelector('[data-section="topics"]');
+    if (!topics) return;                       // list not rendered yet
+
+    const btn = document.createElement("button");
+    btn.className = "gitem";
+    btn.type = "button";
+    btn.setAttribute("data-mpc-ages", "1");
+    btn.textContent = "Ages";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      showAgesPanel();
+    });
+    topics.insertAdjacentElement("afterend", btn);
+  }
+
+  function installAgesSection() {
+    if (document.getElementById("mpc-ages-installed")) return;
+    const topicsEditor = document.getElementById("topicsEditor");
+    const siteList = document.getElementById("siteList");
+    if (!topicsEditor || !siteList) return;    // Studio DOM not up yet
+
+    const flag = document.createElement("meta");
+    flag.id = "mpc-ages-installed";
+    document.head.appendChild(flag);
+
+    /* Only build a panel if index.html does not already provide one. */
+    if (!document.getElementById("agesEditor")) {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = AGES_HTML.trim();
+      topicsEditor.insertAdjacentElement("afterend", wrap.firstElementChild);
+    }
+    document.getElementById("saveAges").addEventListener("click", saveAgeVisibility);
+
+    ensureAgesButton();
+    new MutationObserver(ensureAgesButton)
+      .observe(siteList, { childList: true, subtree: true });
+
+    /* Any other section takes the Ages panel back off screen. Capture phase,
+       so this runs before Studio's own handler redraws the list out from
+       under the click. */
+    document.addEventListener("click", (e) => {
+      const t = e.target.closest && e.target.closest(".gitem, [data-section], #pageList button");
+      if (!t || t.hasAttribute("data-mpc-ages")) return;
+      hideAgesPanel();
+
+      /* And while we are here: Search & AI is blank because showPanel() in
+         index.html never unhides #seoEditor. Do it after Studio's own handler
+         has run, so it is not immediately re-hidden. */
+      if (t.getAttribute("data-section") === "seo") {
+        setTimeout(() => {
+          const seo = document.getElementById("seoEditor");
+          if (seo) seo.classList.remove("hidden");
+        }, 0);
+      }
+    }, true);
+  }
+
   function installSections() {
     if (!document.getElementById("mpc-sec-css")) {
       const st = document.createElement("style");
@@ -2340,6 +2833,7 @@
     }
     installEditorSections();
     installSidebarGroups();
+    installAgesSection();
   }
 
   /* ---- diag() is now silent — the restore system works reliably so we
