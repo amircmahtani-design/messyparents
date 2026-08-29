@@ -23,6 +23,7 @@ const zlib = require("zlib");
 const ROOT = path.resolve(__dirname, "..");
 const R = require("../assets/js/guide-render.js");
 const S = require("../scripts/lib/site");
+const A = require("../scripts/lib/ages");
 
 let pass = 0, fail = 0;
 const failures = [];
@@ -73,7 +74,31 @@ function loadBrowserCardRenderer(topics, icons) {
 }
 
 const client = loadClient();
-const GUIDES = client.GUIDES;
+
+/* ---------------------------------------------------------------------------
+   THE PUBLIC VIEW
+
+   An age range can be switched off (Studio -> Site -> Search & AI). When one
+   is, the build deliberately does NOT write pages, sitemap entries, index rows
+   or landing pages for it, so checking against the raw bundle would fail every
+   one of those for the wrong reason.
+
+   These verify runs offline, so they resolve visibility the same way an
+   offline build does: scripts/lib/ages.js with no saved map, i.e. the repo
+   defaults. Anything switched off in Studio only is invisible here — which is
+   correct, because it is invisible to this checkout's build too.
+   ------------------------------------------------------------------------ */
+const VIS = A.resolve(client.AGES, null);
+const ALL_GUIDES = client.GUIDES;
+const HIDDEN_GUIDES = ALL_GUIDES.filter(g => VIS.isGuideHidden(g.ages));
+const GUIDES = ALL_GUIDES.filter(g => !VIS.isGuideHidden(g.ages));
+const AGES = VIS.visible;
+
+if (VIS.hidden.length) {
+  console.log(`\nAge ranges switched off: ${VIS.hidden.join(", ")} ` +
+    `— ${HIDDEN_GUIDES.length} of ${ALL_GUIDES.length} guides held back, ` +
+    `${GUIDES.length} expected to be published.`);
+}
 
 /* ==========================================================================
    1. The server and the browser must render a card identically.
@@ -220,7 +245,7 @@ section("Crawlable links and honesty checks");
 section("Topic and age landing pages");
 {
   const topics = client.TOPICS.map(t => t.id);
-  const ages = client.AGES;
+  const ages = AGES;
   let missingT = 0, missingA = 0, thin = 0;
 
   for (const id of topics) {
@@ -243,6 +268,121 @@ section("Topic and age landing pages");
   const t = readMarkup(`topics/${topics[0]}/index.html`);
   check("Landing pages do not repeat the browse-links block",
     !/browse-links/.test(t));
+}
+
+/* ==========================================================================
+   4b. Age ranges that are switched off.
+
+   The whole point of the switch is that it holds a set of guides back
+   COMPLETELY — not "mostly", with one surface still listing them. So this
+   checks every surface a hidden guide could leak through, and the reverse:
+   that a range still switched on is untouched.
+
+   When nothing is hidden, these are no-ops that still assert the site looks
+   exactly as it did before the feature existed.
+   ======================================================================== */
+section("Age-range visibility");
+{
+  const guidesMarkup = readMarkup("guides.html");
+  const homeMarkup = readMarkup("index.html");
+  const sm = readIf("sitemap.xml") || "";
+  const red = readIf("_redirects") || "";
+  const llms = readIf("llms.txt") || "";
+  const idx = JSON.parse(readIf("data/guide-index.json") || '{"guides":[]}');
+  const searchBlob = JSON.parse(readIf("data/guide-search.json") || '{"text":{}}');
+  const settings = JSON.parse(readIf("data/site-settings.json") || '{"ages":[]}');
+
+  /* --- the ranges themselves ------------------------------------------- */
+  check("Hidden ranges have no landing page",
+    VIS.hidden.every(a => !exists(`ages/${S.ageSlug(a)}/index.html`)),
+    VIS.hidden.filter(a => exists(`ages/${S.ageSlug(a)}/index.html`)).join(", "));
+  check("Visible ranges still have theirs",
+    AGES.every(a => exists(`ages/${S.ageSlug(a)}/index.html`)),
+    AGES.filter(a => !exists(`ages/${S.ageSlug(a)}/index.html`)).join(", "));
+
+  const pillFor = (html, a) => html.includes(`data-age="${a}"`);
+  check("Hidden ranges have no pill on /guides.html",
+    VIS.hidden.every(a => !pillFor(guidesMarkup, a)));
+  check("Hidden ranges have no pill on the home page",
+    VIS.hidden.every(a => !pillFor(homeMarkup, a)));
+  check("Visible ranges keep their pills",
+    AGES.every(a => pillFor(guidesMarkup, a) && pillFor(homeMarkup, a)),
+    AGES.filter(a => !pillFor(guidesMarkup, a)).join(", "));
+
+  check("Hidden ranges are absent from the sitemap",
+    VIS.hidden.every(a => !sm.includes(`/ages/${S.ageSlug(a)}/`)));
+  check("Hidden ranges are absent from site-settings.json",
+    (settings.ages || []).every(a => !VIS.isHidden(a)));
+
+  /* --- guides that live only in a hidden range -------------------------- */
+  const leaked = (slug) => ({
+    page: exists(`guides/${slug}/index.html`),
+    sitemap: sm.includes(`/guides/${slug}/`),
+    index: (idx.guides || []).some(g => (g.slug || g.id) === slug),
+    llms: llms.includes(`/guides/${slug}`),
+    guidesPage: guidesMarkup.includes(`href="/guides/${slug}/"`),
+    homePage: homeMarkup.includes(`href="/guides/${slug}/"`)
+  });
+
+  const breaches = HIDDEN_GUIDES
+    .map(g => ({ id: g.id, where: leaked(g.slug || g.id) }))
+    .filter(x => Object.values(x.where).some(Boolean));
+  check(`${HIDDEN_GUIDES.length} held-back guide(s) leak nowhere`, breaches.length === 0,
+    breaches.map(b => `${b.id}: ${Object.keys(b.where).filter(k => b.where[k]).join(", ")}`).join(" | "));
+
+  check("Held-back guides are absent from the search index",
+    HIDDEN_GUIDES.every(g => !(searchBlob.text || {})[g.id]));
+
+  check("Held-back guides return a real 404, not a soft one",
+    HIDDEN_GUIDES.every(g => new RegExp(
+      `^/guides/${g.slug || g.id}/?\\s+\\S+\\s+404$`, "m").test(red)),
+    HIDDEN_GUIDES.filter(g => !red.includes(`/guides/${g.slug || g.id}/  /404.html  404`))
+      .map(g => g.id).join(", "));
+
+  /* Order matters more than presence: the /guides/* catch-all rewrites to
+     guide.html with a 200, and Netlify takes the first match. A 404 rule
+     written after it would never fire. */
+  const lines = red.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
+  const catchAll = lines.findIndex(l => /^\/guides\/\*\s+\/guide\.html\s+200$/.test(l));
+  const last404 = lines.reduce((acc, l, i) => /\s404$/.test(l) ? i : acc, -1);
+  check("Every 404 rule sits above the /guides/* catch-all",
+    catchAll === -1 || last404 < catchAll, `404 at ${last404}, catch-all at ${catchAll}`);
+
+  /* --- guides in BOTH a hidden and a visible range ---------------------- */
+  const mixed = GUIDES.filter(g => (g.ages || []).some(a => VIS.isHidden(a)));
+  check(`${mixed.length} guide(s) in both a hidden and a visible range still publish`,
+    mixed.every(g => exists(`guides/${g.slug || g.id}/index.html`)),
+    mixed.filter(g => !exists(`guides/${g.slug || g.id}/index.html`)).map(g => g.id).join(", "));
+  check("...and their pages never link to a hidden range",
+    mixed.every(g => {
+      const html = readMarkup(`guides/${g.slug || g.id}/index.html`);
+      return VIS.hidden.every(a => !html.includes(`/ages/${S.ageSlug(a)}/`));
+    }));
+  check("...and the index carries only their visible ages",
+    (idx.guides || []).every(row => (row.ages || []).every(a => !VIS.isHidden(a))));
+
+  /* --- the runtime safety net ------------------------------------------ */
+  const gh = readIf("guide.html") || "";
+  const hiddenInline = (gh.match(/window\.MPC_HIDDEN_AGES=(\[[^\]]*\])/) || [])[1];
+  check("guide.html carries the hidden-range list for the fallback renderer",
+    !!hiddenInline, "no MPC_HIDDEN_AGES inline");
+  if (hiddenInline) {
+    let parsed = [];
+    try { parsed = JSON.parse(hiddenInline); } catch (e) { /* reported below */ }
+    check("...and it matches the ranges that are actually off",
+      parsed.length === VIS.hidden.length &&
+      VIS.hidden.every(a => parsed.includes(a)),
+      `${JSON.stringify(parsed)} vs ${JSON.stringify(VIS.hidden)}`);
+  }
+  check("Only one MPC_HIDDEN_AGES block survives a repeat build",
+    (gh.match(/window\.MPC_HIDDEN_AGES=/g) || []).length === 1);
+
+  /* --- nothing was destroyed -------------------------------------------- */
+  check("Held-back guides still exist in the catalogue",
+    HIDDEN_GUIDES.every(g => g.ages && g.ages.length && g.title),
+    "a held-back guide lost its data");
+  check("Every age band is still defined in the data",
+    client.AGES.length === VIS.all.length && VIS.all.length >= VIS.visible.length);
 }
 
 /* ==========================================================================
@@ -482,8 +622,20 @@ section("Performance architecture");
       raw += Buffer.byteLength(src);
       gz += zlib.gzipSync(Buffer.from(src), { level: 9 }).length;
     }
-    check(`Guide-page JS transfers under 12KB gzipped (${(gz / 1024).toFixed(1)}KB, ` +
-      `${(raw / 1024).toFixed(1)}KB raw)`, gz < 12 * 1024, `${gz} bytes gzipped`);
+    /* The ceiling moved from 12KB to 14KB in August 2026, when guide.js learned
+       to refuse a guide from a switched-off age range on the /guides/* fallback
+       path (see "AGE RANGES THAT ARE SWITCHED OFF" in that file). That cost
+       ~0.8KB gzipped against 11 bytes of headroom, so the old number would have
+       failed on the first line of it.
+
+       Moving it is only defensible because of what this check is actually for,
+       which is the sentence above: the figure must be a CONSTANT, not something
+       that grows with the catalogue. 31 guides or 500, this is the same number.
+       A rise here should always come with a reason written down like this one —
+       if the next one cannot be justified in a sentence, the code is the thing
+       to change, not the budget. */
+    check(`Guide-page JS transfers under 14KB gzipped (${(gz / 1024).toFixed(1)}KB, ` +
+      `${(raw / 1024).toFixed(1)}KB raw)`, gz < 14 * 1024, `${gz} bytes gzipped`);
 
     /* The renderer is 16KB and a generated page must never need it. */
     check("The renderer is not on the critical path of a guide page",
