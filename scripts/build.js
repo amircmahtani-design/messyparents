@@ -145,6 +145,26 @@ async function main() {
   data.warnings.forEach(note);
   log(`${guides.length} guides from ${data.source}`);
 
+  /* -------------------------------------------------------------------------
+     AGE RANGES THAT ARE SWITCHED OFF
+
+     `ages` and `guides` above are already the public view — scripts/lib/data.js
+     applied the switch before anything here saw the data, so every landing
+     page, pill row, sitemap entry, search index, breadcrumb and prev/next link
+     below is correct without a single extra check.
+
+     The two things that still need saying out loud are the build log (so a
+     deploy shows what it held back) and the 404 rules further down (so a
+     hidden guide's own URL stops resolving).
+     ---------------------------------------------------------------------- */
+  const hiddenAges = data.ageVisibility.hidden;
+  const hiddenGuides = data.hiddenGuides;
+  if (hiddenAges.length) {
+    log(`age ranges switched off: ${hiddenAges.join(", ")} ` +
+        `— ${hiddenGuides.length} guide(s) held back, ${guides.length} published`);
+    log("  (Studio -> Site -> Search & AI -> Which ages are public. Nothing is deleted.)");
+  }
+
   if (!guides.length) {
     note("No guides available from any source. Leaving the existing site untouched.");
     return;
@@ -292,9 +312,20 @@ async function main() {
       return (p && k) ? { p: p[1], k: k[1] } : null;
     } catch (e) { return null; }
   })();
-  const fsInline = fbCfg
-    ? `<script>window.MPC_FS=${JSON.stringify(fbCfg)};</script>`
-    : "";
+  /* Alongside it, the age bands that are switched off.
+
+     guide.js needs this for exactly one reason. _redirects rewrites any
+     /guides/<slug>/ it did not generate to guide.html, which then looks the
+     slug up in Firestore and renders whatever it finds — which is what lets a
+     guide saved in Studio five minutes ago work before the next deploy. Without
+     this list that same path would happily render a guide whose age range is
+     off, straight from Firestore, on its real public URL. The build writes
+     explicit 404 rules for every hidden slug it knows about; this covers the
+     one it cannot know about, a guide moved into a hidden band since the last
+     deploy. Empty array when nothing is hidden. */
+  const runtimeInline =
+    (fbCfg ? `window.MPC_FS=${JSON.stringify(fbCfg)};` : "") +
+    `window.MPC_HIDDEN_AGES=${JSON.stringify(hiddenAges)};`;
 
   /* ---- critical CSS, inlined ---------------------------------------------
      First Contentful Paint was 2.7s on a phone against 0.7s on desktop, and
@@ -422,11 +453,13 @@ async function main() {
      to look the guide up with and would show "We can't find that one" for a
      guide that exists. That is precisely the failure this architecture was
      built to avoid (see "HTTP status codes" in SEO_AI_ARCHITECTURE.md). */
-  const guideTpl = fsInline
-    ? bakeCommon(absolutise(read("guide.html")), "guide")
-        .replace(/<script>window\.MPC_FS=[\s\S]*?<\/script>\s*/g, "")
-        .replace("</head>", fsInline + "\n</head>")
-    : bakeCommon(absolutise(read("guide.html")), "guide");
+  const guideTpl = (function () {
+    let html = bakeCommon(absolutise(read("guide.html")), "guide");
+    /* Both keys are stripped before being re-added, so running the build twice
+       over the same tree replaces the block instead of stacking copies of it. */
+    html = html.replace(/<script>window\.MPC_(?:FS|HIDDEN_AGES)=[\s\S]*?<\/script>\s*/g, "");
+    return html.replace("</head>", `<script>${runtimeInline}</script>\n</head>`);
+  })();
 
   /* guide.html is served, not just used as a template: _redirects rewrites any
      unknown /guides/<slug>/ to it so a guide saved since the last deploy still
@@ -889,6 +922,38 @@ async function main() {
   redirects.push("# the slashless form. Ordinary directory-index behaviour.");
   redirects.push("");
   redirects.push("# ---------------------------------------------------------------------");
+  redirects.push("# AGE RANGES THAT ARE SWITCHED OFF");
+  redirects.push("#");
+  redirects.push("# Studio -> Site -> Search & AI -> Which ages are public. The guides below");
+  redirects.push("# are tagged only to bands that are currently off. Nothing has been deleted:");
+  redirects.push("# their Firestore documents, ages, slugs and illustrations are all intact,");
+  redirects.push("# and switching the band back on republishes them at these same URLs.");
+  redirects.push("#");
+  redirects.push("# While they are off their addresses must not resolve, or the one thing");
+  redirects.push("# hiding them was for — nobody reading them yet — fails for anyone holding");
+  redirects.push("# the link. A real 404 is the honest answer: it is what the site already");
+  redirects.push("# does for an address that is not published, it keeps them out of the");
+  redirects.push("# index without naming them in robots.txt, and it is what makes Google");
+  redirects.push("# drop any that were indexed before.");
+  redirects.push("#");
+  redirects.push("# These sit ABOVE the catch-all below, which would otherwise rewrite them");
+  redirects.push("# to guide.html and render them from Firestore. First match wins.");
+  let hidden404 = 0;
+  const hidden404Slugs = new Set();
+  hiddenGuides.forEach(g => {
+    [g.slug, g.id].concat(g.previousSlugs || []).forEach(slug => {
+      if (!slug || hidden404Slugs.has(slug)) return;
+      hidden404Slugs.add(slug);
+      /* Both forms. Netlify resolves the slashless address to the same page, so
+         a rule on only one of them leaves the other reachable. */
+      redirects.push(`/guides/${slug}/  /404.html  404`);
+      redirects.push(`/guides/${slug}  /404.html  404`);
+      hidden404++;
+    });
+  });
+  if (!hidden404) redirects.push("# (none — every age range is currently public)");
+  redirects.push("");
+  redirects.push("# ---------------------------------------------------------------------");
   redirects.push("# Slugs this build did not generate — must stay last.");
   redirects.push("#");
   redirects.push("# Not forced, so Netlify serves a real generated file whenever one exists");
@@ -910,7 +975,8 @@ async function main() {
   redirects.push("# which is a far worse failure and one that happens far more often.");
   redirects.push("/guides/*  /guide.html  200");
   write("_redirects", redirects.join("\n") + "\n");
-  log(`_redirects: ${guides.length} legacy URLs, ${renames} renamed slugs`);
+  log(`_redirects: ${guides.length} legacy URLs, ${renames} renamed slugs` +
+      (hidden404 ? `, ${hidden404Slugs.size} hidden slug(s) 404ed` : ""));
 
   /* ---- 7. llms.txt ------------------------------------------------------
      Supplementary only. Proper HTML, the sitemap and structured data do the
@@ -948,7 +1014,10 @@ async function main() {
 
   /* ---- 9. Audit --------------------------------------------------------- */
 
-  const audit = runAudit({ guides, topics, ages, topicPages, agePages, settings, source: data.source });
+  const audit = runAudit({
+    guides, topics, ages, topicPages, agePages, settings, source: data.source,
+    hiddenAges, hiddenGuides
+  });
   audit.buildProblems = problems;
   writeAuditPage(ROOT, audit, { write });
 
