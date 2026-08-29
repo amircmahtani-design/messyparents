@@ -185,7 +185,6 @@
   <span class="spacer"></span>
   <span id="who" class="who"></span>
   <button id="charBtn" class="btn ghost hidden" title="View and reset the persistent character sessions">Characters</button>
-  <button id="seedBtn" class="btn ghost hidden" title="Copy every guide in the bundled file into Firestore">Import site guides</button>
   <button id="signout" class="btn ghost hidden">Sign out</button>
 </div>
 
@@ -251,28 +250,6 @@
         <div class="actions">
           <button id="saveTopics" class="btn primary" type="button">Save</button>
           <span id="topicsMsg" class="msg"></span>
-        </div>
-      </div>
-
-      <!-- AGE RANGES: which of the age pills are public. Sits next to Topics
-           because it is the same kind of decision — what the browse rows on
-           Home and All guides offer a reader. -->
-      <div id="agesEditor" class="editor hidden">
-        <h2 style="margin:0 0 4px;font-size:19px">Browse ages</h2>
-        <p class="field hint" style="margin:0 0 16px">These are the &ldquo;How old is your little one?&rdquo; pills on the Home and Guides pages. Untick a range to take it off the public site.</p>
-
-        <div class="col-card">
-          <span class="tag tip">What unticking does</span>
-          <p class="field hint" style="margin:0 0 8px">The pill disappears from Home and All guides, and its landing page comes down. Any guide tagged <em>only</em> to ranges that are off stops being reachable &mdash; it drops out of search, the sitemap, Read next, Previous/Next, the structured data and the guide count, and its own address returns &ldquo;not found&rdquo; to readers and to Google.</p>
-          <p class="field hint" style="margin:0"><strong>Nothing is deleted.</strong> The guides, their ages, their pictures and their web addresses all stay exactly as they are. Tick a range again and the next publish puts everything back at the same addresses. A guide tagged to <em>both</em> a public and a hidden range stays on the site, shown under its public ranges only.</p>
-        </div>
-
-        <div id="ageRows"></div>
-        <p class="hint" id="agesNote" style="margin:10px 0 0"></p>
-
-        <div class="actions">
-          <button id="saveAges" class="btn primary" type="button">Save</button>
-          <span id="agesMsg" class="msg"></span>
         </div>
       </div>
 
@@ -1146,8 +1123,7 @@ async function savePage(){
     // clears the old value instead of leaving a stale image behind.
     await fs.setDoc(fs.doc(db,"pages",id), data);
     state.pagesData[id]=data;
-    msg.className="msg ok"; msg.textContent="Saved.";
-    queueRebuild();
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
     pushPagePreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
@@ -1190,8 +1166,16 @@ async function importAll(){
   const {fs, db} = state.fb;
   const src = (window.GUIDES || []);
   if(!src.length) throw new Error("No built-in guides found to import.");
+  /* Merges rather than replaces, and never carries an empty hero over a real
+     one. The old version replaced whole documents and destroyed every
+     illustration in Firestore the one time it was run by mistake. */
   const batch = fs.writeBatch(db);
-  src.forEach((g,i)=>{ const gg = JSON.parse(JSON.stringify(g)); gg.order = i; batch.set(fs.doc(db,"guides",g.id), gg); });
+  src.forEach((g,i)=>{
+    const gg = JSON.parse(JSON.stringify(g));
+    gg.order = i;
+    if(gg.panel && !gg.panel.hero) delete gg.panel.hero;
+    batch.set(fs.doc(db,"guides",g.id), gg, { merge: true });
+  });
   await batch.commit();
   return src.length;
 }
@@ -1200,8 +1184,7 @@ async function saveGuide(guide){
     const {fs, db} = state.fb;
     const clean = JSON.parse(JSON.stringify(guide));   // drops any undefined fields
     await fs.setDoc(fs.doc(db, "guides", guide.id), clean);
-    queueRebuild();
-    return "Saved.";
+    return "Saved to Firestore — live on the site.";
   }
   // local preview mode: offer the updated data as a download
   const i = state.guides.findIndex(g => g.id === guide.id);
@@ -1400,29 +1383,8 @@ function draftGuide(){
   if(typeof g.body !== "string") g.body = "";
   g.panel = g.panel || {};
   g.panel.eyebrow = $("#f_eyebrow").value;
-  /* An empty hero field is ambiguous: it can mean "I cleared this" or "nothing
-     ever put a value here". The old line treated both as delete.
-
-     That mattered because the illustration panel used to write an approved
-     hero straight to Firestore without touching this field, so the form could
-     be empty while the guide genuinely had a picture — and the next Save
-     removed it. An illustration lost because a bullet was edited afterwards.
-
-     The panel now mirrors the URL back into the field, so the ambiguity should
-     not arise. This distinguishes the two cases anyway, because the costs are
-     not symmetric: an unwanted hero is one click to clear, a destroyed one has
-     to be regenerated or re-uploaded. state.heroCleared is set only when the
-     field is emptied by hand — see the input handler — so a deliberate clear
-     still works exactly as before. */
   const hero = $("#f_hero").value.trim();
-  const hadHero = !!(state.orig && state.orig.panel && state.orig.panel.hero);
-  if(hero) g.panel.hero = hero;
-  else if(hadHero && !state.heroCleared) g.panel.hero = state.orig.panel.hero;
-  else delete g.panel.hero;
-  /* A hero attached by upload stamps heroUpdated the same way approve() does,
-     so the field means "when the hero last changed" regardless of which route
-     it arrived by. */
-  if(state.pendingHeroUpdated){ g.heroUpdated = state.pendingHeroUpdated; }
+  if(hero) g.panel.hero = hero; else delete g.panel.hero;
   g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
   g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
@@ -1613,10 +1575,6 @@ function selectGuide(id){
   if(!g) return;
   state.current = id; state.orig = g; state.isNew = false;
   state.currentPage = null; state.currentSection = null;
-  /* Don't carry a pending hero stamp, or a hero-cleared flag, from the guide
-     we just left. */
-  state.pendingHeroUpdated = null;
-  state.heroCleared = false;
   showPanel("editor"); renderSiteList();
   renderPageList();
   $("#pvId").textContent = "· " + id;
@@ -1849,338 +1807,6 @@ $("#revert").addEventListener("click", () => { if(state.orig){ fillForm(state.or
    ====================================================================== */
 const HOOK_KEY = "mpc.netlifyBuildHook";
 
-/* ------------------------------------------------------------------------
-   AUTO-REBUILD ON SAVE
-
-   The public site is static: every guide page is written to disk by
-   scripts/build.js during a Netlify deploy. Saving in Studio writes to
-   Firestore, which is NOT the same thing as publishing — until a build runs,
-   readers keep getting the HTML from the last deploy.
-
-   guide.js does have a client-side catch-up for that window, but it is a
-   safety net (one check per browser session), not a publishing mechanism. So
-   Studio fires the build hook itself.
-
-   Debounced by 90 seconds: a save is rarely a single save, and every hook POST
-   costs a full build. The timer restarts on each save, so a run of edits ends
-   in one deploy. beforeunload flushes it, so closing the tab still publishes.
-   ---------------------------------------------------------------------- */
-const REBUILD_DELAY_MS = 90000;
-let rebuildTimer = null;
-
-/* Declared alongside the other publish timers, above every function that
-   touches them — Studio's test suite enforces that ordering. */
-const PUBLISH_WINDOW_MS = 60 * 60 * 1000;
-let coalesceTimer = null, pendingSince = 0, pendingCount = 0;
-
-function buildHookURL(){
-  try{
-    const u = (localStorage.getItem(HOOK_KEY) || "").trim();
-    return /^https:\/\/api\.netlify\.com\/build_hooks\//.test(u) ? u : "";
-  }catch(e){ return ""; }
-}
-
-/* Publish via the server-side function first, falling back to a locally
-   pasted hook.
-
-   The function keeps the hook in a Netlify environment variable, so it is set
-   once for the whole site instead of once per browser — no more "Saved. Not
-   published yet" on a device where you happen not to have pasted it. The
-   localStorage path stays as a fallback so nothing breaks before
-   NETLIFY_BUILD_HOOK is configured. */
-async function fireRebuildViaFunction(){
-  /* Report WHY a publish failed rather than falling silently back.
-
-     This used to swallow every non-OK response and return false, so a missing
-     environment variable, an expired login and a rejected token all surfaced
-     as the same "not published" line — with the real reason sitting unread in
-     the response body. The function distinguishes them deliberately (it checks
-     the hook BEFORE the token, so the status code localises the fault), and
-     that information should reach the screen. */
-  /* The auth instance lives on state.fb.a — there is no bare `a` at this
-     scope. Reaching for one threw a ReferenceError that the surrounding
-     try/catch swallowed, so a perfectly signed-in Studio reported itself as
-     signed out. Read it the same way every other function here does. */
-  const fbAuth = state.fb && state.fb.a;
-  const user = fbAuth && fbAuth.currentUser;
-  if(!user){
-    setRebuildBanner("Not published — Studio is not signed in. Reload and sign in, then Publish now.", "action");
-    return true;                       // handled: do not fall through
-  }
-
-  let r, body = {};
-  try{
-    const token = await user.getIdToken(/* forceRefresh */ true);
-    r = await fetch("/.netlify/functions/publish", {
-      method:"POST",
-      headers:{ "Authorization": "Bearer " + token }
-    });
-    try { body = await r.json(); } catch(e){ body = {}; }
-  }catch(e){
-    setRebuildBanner("Not published — could not reach the publish function: " + (e.message || e), "action");
-    return true;
-  }
-
-  if(r.ok){
-    setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
-    return true;
-  }
-
-  /* Only a missing/!invalid hook is worth falling back to a locally pasted one;
-     everything else is a real fault the operator needs to see. */
-  if(r.status === 500 && /NETLIFY_BUILD_HOOK is not set/.test(body.error || "")){
-    return false;
-  }
-
-  setRebuildBanner("Not published — publish function said " + r.status + ": " +
-    (body.error || "no detail") + (body.hint ? (" — " + body.hint) : ""), "action");
-  return true;
-}
-
-function fireRebuild(){
-  fireRebuildViaFunction().then(done => {
-    if(done) return;
-    const url = buildHookURL();
-    if(!url){
-      setRebuildBanner("Saved. Not published yet — set NETLIFY_BUILD_HOOK in Netlify (Site configuration → Environment variables).", "action");
-      return;
-    }
-    // Build hooks take a POST with no body and answer with an empty 200.
-    // no-cors keeps the browser from blocking it; there is no response to read.
-    try{ fetch(url, { method:"POST", mode:"no-cors", keepalive:true }); }catch(e){}
-    setRebuildBanner("Publishing… the site rebuilds in about a minute.", "busy");
-  });
-  return true;
-}
-
-function queueRebuild(){
-  /* A save joins the same hourly window as an upload, so editing text and
-     uploading pictures in the same sitting still produces one deploy. */
-  if(coalesceTimer){ pendingCount++; pendingBanner(); return; }
-  if(rebuildTimer) clearTimeout(rebuildTimer);
-  rebuildTimer = setTimeout(() => { rebuildTimer = null; fireRebuild(); }, REBUILD_DELAY_MS);
-  setRebuildBanner("Saved. Publishing in 90s.", "ok");
-}
-
-/* Flush a pending rebuild rather than losing it when the tab closes. */
-window.addEventListener("beforeunload", () => {
-  /* One build, whichever timer was waiting — firing both would spend two
-     deploys on the same set of changes. */
-  let due = false;
-  if(coalesceTimer){ clearTimeout(coalesceTimer); coalesceTimer = null; pendingCount = 0; due = true; }
-  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; due = true; }
-  if(due) fireRebuild();
-});
-
-/* Collect changes and publish at most once an hour.
-
-   Every trigger of the build hook spends build minutes off the Netlify
-   allowance, so publishing on each upload is expensive when you are working
-   through a whole set in one sitting: thirty uploads would be thirty deploys,
-   almost all of them superseded within minutes.
-
-   Saves and uploads therefore accumulate. The first change starts a one-hour
-   window; everything after it joins the same pending deploy, and one build
-   goes out at the end covering all of it. "Publish now" overrides at any
-   point, and closing the tab flushes rather than losing the work.
-
-   Nothing is at risk while it waits — every change is already saved in
-   Firestore. What is pending is only the rebuild of the public pages. */
-
-function pendingBanner(){
-  const mins = Math.max(1, Math.round((PUBLISH_WINDOW_MS - (Date.now() - pendingSince)) / 60000));
-  setRebuildBanner(
-    pendingCount + (pendingCount === 1 ? " change" : " changes") +
-    " saved, publishing in about " + mins + " min. Hit Publish now to go live immediately.",
-    "action");
-}
-
-function publishSoon(){
-  /* The old 90-second save debounce is superseded while a window is open. */
-  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
-
-  pendingCount++;
-  if(!coalesceTimer){
-    pendingSince = Date.now();
-    coalesceTimer = setTimeout(() => {
-      coalesceTimer = null; pendingCount = 0;
-      fireRebuild();
-    }, PUBLISH_WINDOW_MS);
-  }
-  pendingBanner();
-}
-
-function publishNow(){
-  if(coalesceTimer){ clearTimeout(coalesceTimer); coalesceTimer = null; pendingCount = 0; }
-  if(rebuildTimer){ clearTimeout(rebuildTimer); rebuildTimer = null; }
-  if(!fireRebuild()){
-    setRebuildBanner("No build hook set. Add NETLIFY_BUILD_HOOK in Netlify, then redeploy once.", "action");
-  }
-}
-
-/* A single line in the header that tells the truth about publish state.
-   Created on first use so no markup change is needed elsewhere. */
-/* The publish status, as a self-contained toast rather than loose text.
-
-   It used to be appended into the header as an inline-flex span. The header is
-   not laid out to receive it, so on a narrow window the text escaped its box
-   and printed straight across the sidebar and the editor — unreadable, and
-   overlapping the guide titles underneath.
-
-   It is now a fixed toast in the bottom-left with its own background, and it
-   takes itself away: a success message fades after a few seconds, since
-   "publishing" is not something you need told about permanently. Only a
-   message you have to act on stays put. */
-function setRebuildBanner(text, kind){
-  let el = document.getElementById("rebuildState");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "rebuildState";
-    el.style.cssText =
-      "position:fixed;left:16px;bottom:16px;z-index:9999;max-width:min(420px,calc(100vw - 32px));" +
-      "display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;" +
-      "background:#fff;border:1px solid #e3e6ea;box-shadow:0 6px 20px rgba(20,24,31,.13);" +
-      "font-size:12.5px;line-height:1.4;color:#33404f;" +
-      "opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease";
-    const txt = document.createElement("span");
-    txt.id = "rebuildStateText";
-    txt.style.cssText = "flex:1 1 auto;min-width:0";
-    const btn = document.createElement("button");
-    btn.type = "button"; btn.className = "btn sm"; btn.id = "rebuildStateBtn";
-    btn.textContent = "Publish now";
-    btn.style.cssText = "flex:0 0 auto";
-    btn.addEventListener("click", publishNow);
-    el.appendChild(txt); el.appendChild(btn);
-    document.body.appendChild(el);
-  }
-  document.getElementById("rebuildStateText").textContent = text;
-
-  /* Publishing is already under way, so there is nothing to press. */
-  const btn = document.getElementById("rebuildStateBtn");
-  if(btn) btn.style.display = (kind === "busy" || kind === "ok") ? "none" : "";
-
-  el.style.opacity = "1";
-  el.style.transform = "translateY(0)";
-
-  clearTimeout(el.__hide);
-  if(kind === "ok" || kind === "busy"){
-    el.__hide = setTimeout(() => {
-      el.style.opacity = "0";
-      el.style.transform = "translateY(6px)";
-    }, 6000);
-  }
-}
-
-/* illustration-generator.js lives in its own IIFE and needs this too. */
-window.MPCQueueRebuild = queueRebuild;
-
-/* ========================================================================
-   BROWSE AGES — which age ranges are public.
-
-   The switch. It writes ONE field, `ageVisibility` on meta/seo in Firestore:
-   a plain map of age label -> true/false. That map is the only record of the
-   decision anywhere. scripts/lib/ages.js reads it at build time and every
-   public surface follows from there — the pills, the filters, the landing
-   pages, the sitemap, the search index, the structured data, the guide counts
-   and the 404s. There is no second list to keep in step.
-
-   A range the map says nothing about falls back to the default in
-   scripts/lib/ages.js, which is what starts 12–18 and 18–24 months off.
-
-   Saved with merge:true. meta/seo also holds the Search & AI settings, which
-   are written whole by their own Save — merging is what stops these two
-   screens overwriting each other.
-   ====================================================================== */
-const AGE_BANDS = ["0–1 month","2–3 months","4–6 months","7–9 months",
-                   "10–12 months","12–18 months","18–24 months"];
-const AGE_DEFAULT_OFF = ["12–18 months","18–24 months"];
-
-/* Labels carry an en-dash. One that has been round-tripped through a keyboard
-   or a spreadsheet can come back with a plain hyphen, and a switch that
-   silently stops working is worse than one that is obviously broken. */
-const normAge = (s) => String(s == null ? "" : s)
-  .replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
-
-/* Every band the site knows about, plus any a guide is actually tagged with
-   that is not on the list — so a band added straight to a guide still gets a
-   switch rather than being unswitchable. */
-function ageBands(){
-  const out = AGE_BANDS.slice();
-  const seen = new Set(out.map(normAge));
-  (state.guides || []).forEach(g => (g.ages || []).forEach(a => {
-    if (a && !seen.has(normAge(a))) { seen.add(normAge(a)); out.push(a); }
-  }));
-  return out;
-}
-
-function ageIsPublic(label, saved){
-  const k = normAge(label);
-  for (const key of Object.keys(saved || {})) {
-    if (normAge(key) === k) return saved[key] !== false;
-  }
-  return !AGE_DEFAULT_OFF.some(d => normAge(d) === k);
-}
-
-function renderAgeRows(){
-  const box = $("#ageRows");
-  if(!box) return;
-  const saved = (state.seo && state.seo.ageVisibility) || {};
-  const bands = ageBands();
-  box.innerHTML = bands.map((a, i) => {
-    const n = (state.guides || []).filter(g =>
-      (g.ages || []).some(x => normAge(x) === normAge(a))).length;
-    return `<label class="check-field"><input type="checkbox" data-age-band="${a.replace(/"/g,"&quot;")}"` +
-      `${ageIsPublic(a, saved) ? " checked" : ""}> <span><strong>${a}</strong>` +
-      ` <span class="hint">&mdash; ${n === 1 ? "1 guide" : n + " guides"} tagged</span></span></label>`;
-  }).join("");
-  box.querySelectorAll("input[data-age-band]").forEach(inp =>
-    inp.addEventListener("change", updateAgeNote));
-  $("#agesMsg").textContent = ""; $("#agesMsg").className = "msg";
-  updateAgeNote();
-}
-
-/* The number that matters before pressing Save: how many guides would
-   actually leave the site. One tagged to a public range as well stays. */
-function updateAgeNote(){
-  const note = $("#agesNote");
-  if(!note) return;
-  const off = new Set();
-  $("#ageRows").querySelectorAll("input[data-age-band]").forEach(inp => {
-    if(!inp.checked) off.add(normAge(inp.dataset.ageBand));
-  });
-  if(!off.size){ note.textContent = "Every age range is public."; return; }
-  const held = (state.guides || []).filter(g => {
-    const ages = (g.ages || []).filter(Boolean);
-    return ages.length && ages.every(a => off.has(normAge(a)));
-  });
-  note.innerHTML =
-    `<strong>${off.size}</strong> range(s) hidden &mdash; <strong>${held.length}</strong> guide(s) ` +
-    `would come off the site` +
-    (held.length ? `: ${held.map(g => g.title || g.id).join(", ")}` : "") +
-    `. They stay saved, and come straight back when you tick the range again.`;
-}
-
-$("#saveAges") && $("#saveAges").addEventListener("click", async () => {
-  const btn = $("#saveAges"), msg = $("#agesMsg");
-  if(MODE !== "firebase"){ msg.className="msg err"; msg.textContent="Saving needs Firebase mode."; return; }
-  const ageVisibility = {};
-  $("#ageRows").querySelectorAll("input[data-age-band]").forEach(inp => {
-    ageVisibility[inp.dataset.ageBand] = inp.checked;
-  });
-  btn.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
-  try{
-    const {fs, db} = state.fb;
-    /* merge:true — meta/seo also holds the Search & AI settings. */
-    await fs.setDoc(fs.doc(db, "meta", "seo"), { ageVisibility, updated: Date.now() }, { merge: true });
-    state.seo = Object.assign({}, state.seo, { ageVisibility });
-    msg.className = "msg ok";
-    msg.textContent = "Saved. The site updates on the next publish.";
-    queueRebuild();
-  }catch(err){
-    msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
-  }finally{ btn.disabled = false; }
-});
-
 function renderSeoFields(){
   const d = (state.seo || {});
   $("#seo_detail").checked    = d.showDetail !== false;      // default on
@@ -2212,10 +1838,6 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     showBreadcrumbs: $("#seo_crumbs").checked,
     googleVerification: $("#seo_google").value.trim(),
     bingVerification:   $("#seo_bing").value.trim(),
-    /* Carried through untouched. The age switches live on Site -> Ages and
-       write the same document; this Save replaces the doc wholesale, so
-       leaving the field out would silently republish every hidden range. */
-    ageVisibility: (state.seo && state.seo.ageVisibility) || {},
     updated: Date.now()
   };
   try{ localStorage.setItem(HOOK_KEY, $("#seo_hook").value.trim()); }catch(e){}
@@ -2230,7 +1852,7 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     await fs.setDoc(fs.doc(db, "meta", "seo"), data);
     state.seo = data;
     msg.className = "msg ok";
-    msg.textContent = "Saved."; queueRebuild();
+    msg.textContent = "Saved. These take effect on the next rebuild.";
   }catch(err){
     msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
   }finally{ btn.disabled = false; }
@@ -2262,12 +1884,7 @@ $("#seo_rebuild") && $("#seo_rebuild").addEventListener("click", async () => {
    SITE SECTIONS — Topics manager + Books manager
    ====================================================================== */
 function showPanel(which){
-  /* seoEditor was missing from this list, so selecting Search & AI hid every
-     panel and unhid nothing — the middle column went blank and that section
-     had never once rendered. agesEditor is here for the same reason: a panel
-     that is not named here can never be shown. */
-  ["empty","pageEditor","editor","topicsEditor","agesEditor","booksEditor",
-   "footerEditor","siteTextEditor","seoEditor"].forEach(id=>{
+  ["empty","pageEditor","editor","topicsEditor","booksEditor","footerEditor","siteTextEditor"].forEach(id=>{
     const el=$("#"+id); if(el) el.classList.toggle("hidden", id!==which);
   });
 }
@@ -2275,14 +1892,13 @@ function renderSiteList(){
   const cur=state.currentSection;
   $("#siteList").innerHTML =
     `<button class="gitem ${cur==="topics"?"active":""}" data-section="topics">Topics</button>` +
-    `<button class="gitem ${cur==="ages"?"active":""}" data-section="ages">Ages</button>` +
     `<button class="gitem ${cur==="books"?"active":""}" data-section="books">Book list</button>` +
     `<button class="gitem ${cur==="footer"?"active":""}" data-section="footer">Footer</button>` +
     `<button class="gitem ${cur==="sitetext"?"active":""}" data-section="sitetext">Menu</button>` +
     `<button class="gitem ${cur==="guidelayout"?"active":""}" data-section="guidelayout">Guide layout</button>` +
     `<button class="gitem ${cur==="seo"?"active":""}" data-section="seo">Search &amp; AI</button>`;
 }
-const SITE_PANELS = { topics:"topicsEditor", ages:"agesEditor", books:"booksEditor", footer:"footerEditor",
+const SITE_PANELS = { topics:"topicsEditor", books:"booksEditor", footer:"footerEditor",
                       sitetext:"siteTextEditor", guidelayout:"siteTextEditor",
                       seo:"seoEditor" };
 /* Which entry in site-text.js each standalone section edits, and where it is
@@ -2293,7 +1909,6 @@ function selectSection(which){
   showPanel(SITE_PANELS[which] || "empty");
   $("#pvId").textContent = "· " + which;
   if(which==="topics") renderTopicRows();
-  else if(which==="ages") renderAgeRows();
   else if(which==="books") renderBookRows();
   else if(which==="footer") renderFooterFields();
   else if(which==="seo") renderSeoFields();
@@ -2460,7 +2075,7 @@ $("#saveTopics").addEventListener("click", async ()=>{
     await fs.setDoc(fs.doc(db,"meta","topics"), { items, updated:Date.now() });
     state.topics=items.map(x=>({...x})); renderTopicRows();
     if(state.current) $("#f_topic").innerHTML=topicOptionsHTML(state.orig&&state.orig.topic);
-    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
@@ -2533,7 +2148,7 @@ $("#saveBooks").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
     state.booksList=items.map(x=>({...x})); renderBookRows();
-    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
+    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
@@ -2558,7 +2173,7 @@ $("#saveSiteText").addEventListener("click", async ()=>{
     const data=Object.assign({}, state.pagesData[id], { text:draftText(id) });
     await fs.setDoc(fs.doc(db,"pages",id), data);
     state.pagesData[id]=data;
-    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
+    msg.className="msg ok"; msg.textContent="Saved — live across the site.";
     pushSiteTextPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
@@ -2577,7 +2192,7 @@ $("#saveFooter").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","footer"), Object.assign({}, data, { updated:Date.now() }));
     state.footer=data;
-    msg.className="msg ok"; msg.textContent="Saved."; queueRebuild();
+    msg.className="msg ok"; msg.textContent="Saved — live on every page.";
     pushFooterPreview();
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
@@ -2588,13 +2203,17 @@ function showApp(user){
   $("#loginView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   if(user){ $("#who").textContent = user.email; $("#signout").classList.remove("hidden"); }
-  if(MODE === "firebase") $("#seedBtn").classList.remove("hidden");
+  /* "Import site guides" was removed. It wrote every guide from the bundled
+     file with a plain set() and no merge, so one click blanked panel.hero on
+     all 31 guides — the file does not carry illustrations. Batches → "Import
+     this batch" is the only import route now: it merges, and it keeps
+     anything the file does not carry. */
   renderPageList();
   renderSiteList();
   renderList();
   if(state.guides.length && !state.current) selectGuide(state.guides[0].id);
   else if(!state.guides.length && MODE === "firebase")
-    $("#empty").innerHTML = "No guides in Firestore yet.<br><br>Click <b>“Import site guides”</b> (top right) to load them all in one go.";
+    $("#empty").innerHTML = "No guides in Firestore yet.<br><br>Open <b>Batches</b> (top right) and import them one batch at a time.";
 }
 async function boot(){
   const badge = $("#modeBadge");
@@ -2615,24 +2234,6 @@ async function boot(){
     catch(err){ $("#loginErr").textContent = err.message || "Sign-in failed."; }
   });
   $("#signout").addEventListener("click", () => auth.signOut(a));
-  $("#seedBtn").addEventListener("click", async () => {
-    if(!confirm("Import " + (window.GUIDES||[]).length + " guides into Firestore?\n\nThis overwrites any guides with the same IDs.")) return;
-    const btn = $("#seedBtn"); const old = btn.textContent; btn.disabled = true; btn.textContent = "Importing…";
-    try{
-      const n = await importAll();
-      state.guides = await loadGuides();
-      $("#empty").textContent = "Select a guide from the left to edit it.";
-      renderList(); if(state.guides[0]) selectGuide(state.guides[0].id);
-      btn.textContent = "Imported " + n + " ✓"; setTimeout(()=>{ btn.textContent = old; }, 2500);
-    }catch(e){ alert("Import failed: " + (e.message || e)); btn.textContent = old; }
-    finally{ btn.disabled = false; }
-  });
-  /* Emptying the hero field by hand is a deliberate clear; anything else
-     leaving it empty is not. draftGuide() relies on this distinction. */
-  $("#f_hero").addEventListener("input", () => {
-    state.heroCleared = $("#f_hero").value.trim() === "";
-  });
-
   $("#f_upload").addEventListener("change", async e => {
     const file = e.target.files && e.target.files[0]; e.target.value = ""; if(!file) return;
     const g = draftGuide(); const msg = $("#genMsg");
@@ -2640,46 +2241,8 @@ async function boot(){
       const blob = await openCropper(file, GUIDE_HERO);
       msg.textContent = "Uploading…";
       const url = await uploadImage("guides", g.id, blob, blob.__ext || "png");
-      $("#f_hero").value = url;
-      /* Stamp heroUpdated here too. Only approve() in the illustration
-         generator used to set it, so a hero attached by upload left the field
-         showing an older time than the image it described — which made it
-         useless for working out which path a hero actually came from. Both
-         routes now stamp it. */
-      state.pendingHeroUpdated = Date.now();
-      pushPreview();
-
-      /* Save and publish in one go.
-
-         An uploaded hero used to need two more deliberate actions before a
-         reader could see it: click Save, then wait out the 90-second publish
-         debounce. Neither adds anything when you have just chosen the picture
-         by hand — the decision was made at the file dialog.
-
-         The order matters. The build reads the guide from Firestore, so the
-         save has to COMPLETE before the build is triggered; firing them
-         together would race and could bake the previous hero. */
-      msg.textContent = "Uploaded ✓ — saving…";
-      const fresh = draftGuide();
-      await saveGuide(fresh);
-      state.orig = fresh;
-      const gi = state.guides.findIndex(x => x.id === fresh.id);
-      if(gi >= 0) state.guides[gi] = fresh;
-      state.pendingHeroUpdated = null;
-      renderList();
-
-      /* Tell the sidebar the hero exists. Its dots are painted from a cached
-         Firestore read, so without this the guide stayed grey until some
-         unrelated action happened to refetch — the picture was attached, the
-         list just had not heard. Patch first for instant feedback, then
-         confirm against Firestore. */
-      if (window.MPCIllustration) {
-        window.MPCIllustration.markHero(fresh.id);
-        Promise.resolve(window.MPCIllustration.refreshDots()).catch(() => {});
-      }
-
-      msg.textContent = "Uploaded and saved ✓";
-      publishSoon();
+      $("#f_hero").value = url; pushPreview();
+      msg.textContent = "Uploaded ✓ — click Save to keep it.";
     }catch(err){ if(err.message!=="cancelled") msg.textContent = "Upload failed: " + (err.message || err); }
   });
   auth.onAuthStateChanged(a, async user => {
