@@ -150,6 +150,27 @@ URL. `guide.js` `notFound()` sets `window.MPC_NOT_FOUND`, and this file reports
 `page_type: "not_found"` and drops the guide fields — otherwise every dead link
 would count as a guide someone read.
 
+### Site search
+
+Enhanced measurement's **Site search** is left ON in the GA4 stream settings.
+
+It captures a term only when one is in the URL. `/guides.html` accepts `?q=`
+(and the WebSite schema advertises that form to search engines), but
+`guides-search.js` filters as you type and makes no `pushState` or
+`replaceState` call, so typing never puts the term in the address. In practice
+the only terms recorded are ones carried by a shared or hand-built link, which
+means the report is close to empty today.
+
+It is on rather than off because the setting is where it needs to be if the
+search box is ever changed to write `?q=` — which would also give shareable
+result links and a working back button. `privacy.html` describes this
+accurately as it stands: the search runs in the browser, nothing typed leaves
+the device, and a term is only seen when it was already in the address.
+
+If that change is ever made, no analytics work is needed — but re-read the
+search paragraphs on the privacy page, because they are written for the current
+behaviour.
+
 ### Guide-to-guide navigation
 
 GA4 reconstructs guide A → B → C from ordinary page views by itself (Explore →
