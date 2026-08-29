@@ -54,14 +54,14 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "A sudden drop in bottles or feeds is usually distraction, a growth plateau, or teething — not a problem.",
-  "body": "\n<p>You measured it, you wrote it down, and the number went down. That is genuinely unsettling at 2am. It is also, most of the time, completely ordinary.</p>\n<h2>The usual suspects</h2>\n<ul>\n<li><strong>Distraction.</strong> Around four months babies discover the world. A dog, a sibling, a ceiling fan — all more interesting than milk. Feeds get shorter, not smaller: they become efficient.</li>\n<li><strong>The growth curve flattens.</strong> Intake per kilo drops steadily through the first year. A baby who drank 900ml at four months may genuinely need less relative to their size at seven.</li>\n<li><strong>Teething.</strong> Sucking pressure hurts a sore gum. Expect a few rough days, then a return to normal.</li>\n<li><strong>Solids.</strong> Once food arrives, milk gives ground. That is the design, not a fault.</li>\n<li><strong>A cold.</strong> A blocked nose makes it impossible to suck and breathe at once. Short, frequent feeds are the workaround.</li>\n</ul>\n<h2>What to actually watch</h2>\n<p>Forget the daily total. Look at the week, and look at the baby.</p>\n<ul>\n<li>Wet nappies: roughly five or more heavy ones a day.</li>\n<li>Mood: alert and interested between feeds, even if grumpier than usual.</li>\n<li>Weight: following its own curve at the next check, not necessarily the printed one.</li>\n</ul>\n<div class=\"quiet\">A baby who is bored of feeding still feeds. A baby who is unwell stops being interested in everything, not just the bottle.</div>\n<h2>Things that help</h2>\n<ul>\n<li>Feed in a dull, dim room. No toys, no TV, no chatty relatives.</li>\n<li>Try a dream feed if daytime is a write-off.</li>\n<li>Check the teat flow. Too slow is tiring; too fast is alarming. Both end feeds early.</li>\n<li>Offer, don't insist. Pushing a bottle teaches a baby to fight it.</li>\n</ul>",
+  "body": "",
   "callout": {
     "title": "Call your doctor if",
     "items": [
-      "Fewer than four wet nappies in 24 hours, or dark, strong-smelling urine",
-      "Refusing nearly all feeds for more than 8 hours in a young baby",
-      "Floppy, unusually sleepy, or hard to rouse",
-      "Vomiting after most feeds, or a feed refusal alongside a fever"
+      "Fewer wet nappies than usual, or dark urine",
+      "Refusing most feeds",
+      "Floppy, unusually sleepy or hard to wake",
+      "Vomiting with fever or obvious illness"
     ]
   },
   "panel": {
@@ -69,38 +69,56 @@ var GUIDES = [
     "normal": {
       "title": "Usually normal",
       "items": [
-        "Distraction — the world got interesting",
-        "A flattening growth curve",
-        "Teething",
-        "Solids taking over",
-        "A cold or blocked nose"
-      ]
-    },
-    "warn": {
-      "title": "Call your doctor if",
-      "items": [
-        "Fewer than 4 wet nappies a day, or dark urine",
-        "Refusing nearly all feeds for 8+ hours",
-        "Floppy, very sleepy or hard to rouse",
-        "Vomiting most feeds, or refusal with a fever"
+        "Distraction or teething",
+        "A cold or blocked nose",
+        "Feeds becoming quicker",
+        "More interest in solids"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Feed in a dim, quiet room",
-        "Try a dream feed",
+        "Try a dim, quiet room",
         "Check the teat flow",
-        "Offer, don't insist"
+        "Look at the whole day",
+        "Offer calmly; do not insist"
       ]
     },
-    "quick": "A dip is usually distraction, a growth plateau or teething — watch the baby and the whole week, not the daily total."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Fewer wet nappies than usual, or dark urine",
+        "Refusing most feeds",
+        "Floppy, unusually sleepy or hard to wake",
+        "Vomiting with fever or obvious illness"
+      ]
+    },
+    "dont": null,
+    "quick": "A temporary dip is often distraction, teething or a cold; wet nappies, energy and the pattern across the day matter more than one feed."
   },
   "related": [
     "reflux-or-spit-up",
     "starting-solids",
     "teething"
-  ]
+  ],
+  "seo": {
+    "description": "A sudden drop in bottles or feeds is usually distraction, a growth plateau, or teething — not a problem."
+  },
+  "longform": [
+    {
+      "h": "The number went down and you noticed",
+      "t": "You measured it, wrote it down and saw less than yesterday. Of course your mind went straight to: is something wrong?\n\nOften, a baby is simply distracted, teething, getting over a cold or becoming more interested in solids. Sometimes feeds also get shorter because they have become quicker at drinking."
+    },
+    {
+      "h": "Look at the baby, not one bottle",
+      "t": "One smaller feed does not tell you much. The whole day, wet nappies, energy and weight over time give you a clearer picture.\n\nA quiet, dim room helped when Ari suddenly found everything more interesting than milk. We also checked the teat flow. Too slow can make a feed tiring; too fast can make it overwhelming."
+    },
+    {
+      "h": "Offer, pause and try again later",
+      "t": "We found that pushing usually made everyone more upset. Offering calmly, then stopping and trying again later, took some of the pressure out of it.\n\nA sudden bottle refusal can also be about the bottle itself. That happened to us, but it belongs in the bottle-refusal guide rather than being squeezed into this one.\n\nIf wet nappies drop, your baby is hard to wake, or they are refusing almost everything, speak quickly to your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "wont-nap",
@@ -115,9 +133,9 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Nine times out of ten it's the wake window — too short and they're not tired, too long and they're wired.",
-  "body": "\n<p>You did the routine. You did the dark room. You did the shushing that makes you sound like a broken radiator. They are still awake, and furious about it.</p>\n<h2>Start with the wake window</h2>\n<p>The gap between waking and the next sleep matters more than anything else you can control. Rough guide, from the end of one sleep to the start of the next:</p>\n<ul>\n<li>0–3 months: 45–90 minutes</li>\n<li>4–6 months: 1.5–2.5 hours</li>\n<li>7–9 months: 2.5–3.5 hours</li>\n<li>10–14 months: 3–4 hours</li>\n</ul>\n<p>Too short and there's no sleep pressure. Too long and you get an overtired baby running on adrenaline, which looks exactly like a baby who isn't tired at all. That is the trap.</p>\n<h2>Read the first sign, not the third</h2>\n<p>The first yawn or the first glazed stare is your window. By the time you get eye-rubbing and back-arching you are already late, and the nap will be short and hard-won.</p>\n<h2>The boring fixes that work</h2>\n<ul>\n<li><strong>Darker.</strong> Properly dark. Hold your hand up — if you can see your fingers clearly, it's a nightclub in there.</li>\n<li><strong>Same three things, same order.</strong> Nappy, sleeping bag, one song. Predictability does the heavy lifting.</li>\n<li><strong>Start earlier than feels right.</strong> Begin winding down ten minutes before the window closes.</li>\n<li><strong>White noise, continuously.</strong> Not a track that stops after fifteen minutes.</li>\n</ul>\n<h2>When the nap is 35 minutes and that's it</h2>\n<p>That's one sleep cycle. It's normal, especially between three and six months, and it usually resolves on its own. If you want to extend it, be in the room before they surface and settle them at the first stir rather than after the full wake-up.</p>\n<div class=\"quiet\">Some days there is no nap. There is only survival, a walk, and an early bedtime. That is a legitimate plan.</div>",
+  "body": "",
   "callout": {
-    "title": "Worth a chat with your doctor or health visitor if",
+    "title": "Call your doctor if",
     "items": [
       "Your baby seems to be in pain when laid flat",
       "Loud snoring, gasping, or long pauses in breathing during sleep",
@@ -127,7 +145,7 @@ var GUIDES = [
   "panel": {
     "eyebrow": "Sleeping • 2–9 months",
     "normal": {
-      "title": "Usually just",
+      "title": "Usually normal",
       "items": [
         "Wake window too short (not tired) or too long (overtired)",
         "You caught the third tired sign, not the first",
@@ -135,30 +153,49 @@ var GUIDES = [
         "A 35-minute single-cycle nap — normal at 3–6 months"
       ]
     },
-    "warn": {
-      "title": "Chat to your doctor or health visitor if",
-      "items": [
-        "Your baby seems in pain laid flat",
-        "Loud snoring, gasping or pauses in breathing",
-        "Naps collapse alongside feeding refusal or weight worries"
-      ]
-    },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Make it properly dark",
-        "Same three things, same order",
+        "Make it really dark",
+        "Same three things, same order: nappy, white noise, love to dream sack",
         "Start winding down early",
         "Continuous white noise"
       ]
     },
-    "quick": "Nine times out of ten it's the wake window — too short and they're not tired, too long and they're wired."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby seems to be in pain when laid flat",
+        "Loud snoring, gasping, or long pauses in breathing during sleep",
+        "Naps have collapsed alongside feeding refusal or weight concerns"
+      ]
+    },
+    "dont": null,
+    "quick": "Nap trouble is often a timing problem: too early and they are not tired, too late and they are overtired."
   },
   "related": [
     "sleep-regression",
     "early-waking",
     "touched-out"
-  ]
+  ],
+  "seo": {
+    "description": "Nine times out of ten it's the wake window — too short and they're not tired, too long and they're overtired."
+  },
+  "longform": [
+    {
+      "h": "You did the routine. They are still awake.",
+      "t": "You changed the nappy, darkened the room and made enough shushing noises to lose your mind. The baby is still wide awake.\n\nFor us, nap trouble was often about timing. Too early and Ari was not tired. Too late and she was overtired and much harder to settle."
+    },
+    {
+      "h": "Watch your baby before the clock",
+      "t": "Wake windows can be a useful starting point, but babies do not read them. We got better results when we noticed Ari’s first quiet stare or yawn and started the routine then.\n\nOur routine stayed very simple: nappy, white noise and her Love to Dream sleeping bag. Doing the same few things in the same order made sleep feel familiar."
+    },
+    {
+      "h": "When the nap lasted one sleep cycle",
+      "t": "Some naps were only about half an hour. We sometimes went in at the first stir and rested a warm palm gently on her chest while she stayed flat on her back. Sometimes it helped her settle; sometimes the nap was simply over.\n\nAnd on the days when nothing worked, a walk and an earlier bedtime were enough. That was not a failed day. It was just a hard nap day."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "sleep-regression",
@@ -174,9 +211,9 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Probably. But 'regression' is a bad word for it — it's usually a permanent change in how your baby sleeps, or a new skill breaking through.",
-  "body": "\n<p>They slept. For weeks, they slept. Now they're up four times a night and you're googling at 3am with one eye open.</p>\n<h2>What's actually happening</h2>\n<p>At around four months, sleep architecture changes for good. Newborns drop into deep sleep immediately; older babies cycle through lighter stages and surface fully between them. If your baby has always been rocked or fed to sleep, they now notice they've been moved — and call for the thing that got them there.</p>\n<p>The later disruptions are usually skills. Rolling, sitting, crawling and pulling to stand all get rehearsed at 2am, enthusiastically, by a baby who cannot yet get back down.</p>\n<h2>Rough timing</h2>\n<ul>\n<li><strong>4 months:</strong> the real one. A permanent change, not a phase to wait out.</li>\n<li><strong>6 months:</strong> often teeth, or a nap transition.</li>\n<li><strong>8–10 months:</strong> crawling, pulling up, and separation anxiety arriving together.</li>\n<li><strong>12 and 18 months:</strong> walking, words, and dropping to one nap.</li>\n</ul>\n<h2>What helps</h2>\n<ul>\n<li><strong>Practise the new skill in daylight.</strong> Floor time, lots of it. A baby who can roll both ways confidently stops getting stuck at night.</li>\n<li><strong>Put them down drowsy but awake, sometimes.</strong> Even once a day builds the skill you need at 2am.</li>\n<li><strong>Hold the schedule.</strong> Bedtimes that drift later make everything worse.</li>\n<li><strong>Pick one response and stick to it for a week.</strong> Changing tactics nightly is what actually prolongs it.</li>\n</ul>\n<div class=\"quiet\">Two weeks is typical. Four is not unusual. It ends — usually right after you've given up and accepted your new life.</div>\n<h2>The bit nobody says</h2>\n<p>You do not have to sleep train to get through this. You also do not have to refuse to. Both work, both have happy babies at the end, and the only wrong choice is the one you're doing because someone made you feel guilty.</p>",
+  "body": "",
   "callout": {
-    "title": "Check in with a professional if",
+    "title": "Call your doctor if",
     "items": [
       "Night waking comes with fever, pulling at ears, or inconsolable crying",
       "Your baby has stopped feeding well as well as sleeping badly",
@@ -188,36 +225,55 @@ var GUIDES = [
     "normal": {
       "title": "Usually normal",
       "items": [
-        "A permanent 4-month change in how they sleep",
-        "A new skill (rolling, crawling, standing) rehearsed at 2am",
-        "Teeth, or a nap transition",
-        "Separation anxiety around 8–10 months"
-      ]
-    },
-    "warn": {
-      "title": "Check in with a professional if",
-      "items": [
-        "Night waking with fever, ear-pulling or inconsolable crying",
-        "Feeding has dropped off too, not just sleep",
-        "You're so exhausted that driving feels unsafe — a real reason to ask for help"
+        "Sleep changes around four months",
+        "New skills practised at night",
+        "Teething or a nap change",
+        "Separation anxiety"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Practise the new skill in daylight",
-        "Put down drowsy but awake, sometimes",
-        "Hold the schedule",
-        "Pick one response and stick with it a week"
+        "Practise new skills by day",
+        "Keep the bedtime routine familiar",
+        "Choose one response for a few nights",
+        "Share the nights if you can"
       ]
     },
-    "quick": "Usually real — and usually not just a phase, but a permanent change or a new skill breaking through. Two weeks is typical."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Night waking comes with fever, pulling at ears, or inconsolable crying",
+        "Your baby has stopped feeding well as well as sleeping badly",
+        "You are so exhausted that driving or daily tasks feel unsafe — this is a real reason to ask for help"
+      ]
+    },
+    "dont": null,
+    "quick": "It may be a sleep change or a new skill, and there can be several of these—not just one famous regression."
   },
   "related": [
     "wont-nap",
     "early-waking",
     "splitting-nights"
-  ]
+  ],
+  "seo": {
+    "description": "Probably. But 'regression' is a bad word for it — it's usually a permanent change in how your baby sleeps, or a new skill breaking through."
+  },
+  "longform": [
+    {
+      "h": "They slept. Now they do not.",
+      "t": "You finally thought sleep was improving, and suddenly you are awake four times a night again. We had more than one stretch like this.\n\nA “regression” often comes with a real change: lighter sleep, a new skill, teething, separation anxiety or a nap change. Babies are learning constantly, so there is not only one regression."
+    },
+    {
+      "h": "New skills do not clock off at bedtime",
+      "t": "Rolling, sitting, crawling and standing can all be practised in the cot at ridiculous hours. Ari could be exhausted and still seem determined to rehearse something new.\n\nFloor time during the day helped. So did keeping the bedtime routine familiar instead of changing everything after one bad night."
+    },
+    {
+      "h": "Choose one gentle response for a few nights",
+      "t": "We tried to agree how we would respond before bedtime, because inventing a new plan at three in the morning never brought out our best thinking.\n\nYou do not have to follow somebody else’s sleep method. Pick what feels workable and safe for your family, then give it a little time before deciding it has failed.\n\nIf poor sleep arrives with fever, pain, feeding changes or unusual crying, it may be more than a sleep phase. Ask your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "starting-solids",
@@ -231,56 +287,77 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "One food, once a day, after a milk feed. Everything else is detail you can add later.",
-  "body": "\n<p>The internet will tell you solids is a philosophy. It's mostly just mess with a spoon in it.</p>\n<h2>When to start</h2>\n<p>Around six months, and when your baby can sit with support, hold their head steady, and bring things to their mouth deliberately. Age alone isn't the signal — the three skills are.</p>\n<h2>The first two weeks</h2>\n<ul>\n<li>Milk stays the main meal. Food is practice, not nutrition, at this stage.</li>\n<li>Offer food <em>after</em> a milk feed, when they're not desperate.</li>\n<li>One new food every couple of days, so you can spot a reaction.</li>\n<li>Once a day is plenty. Build to twice around seven months, three times by nine.</li>\n</ul>\n<h2>Purée or baby-led?</h2>\n<p>Either. Both. The research doesn't crown a winner, and most families end up doing a mix because that's what real life looks like. What matters more: a range of textures by nine months, so they don't get stuck on smooth.</p>\n<h2>Allergens: earlier, not later</h2>\n<p>Current guidance is to introduce common allergens — egg, peanut (as smooth butter thinned with water, never whole nuts), dairy, wheat, fish — from around six months rather than delaying. Introduce them at home, in the daytime, one at a time. If there's eczema or a family history of food allergy, speak to your doctor before you start.</p>\n<h2>Choking vs gagging</h2>\n<p>Gagging is loud, red-faced and productive. It's a reflex doing its job, and it happens a lot. Choking is silent. Learn the difference, sit them upright, never leave them alone with food, and consider a short infant first-aid course — it's the highest-value two hours you'll spend this year.</p>\n<div class=\"quiet\">They will eat about four grams and wear the rest. That is a successful meal.</div>",
+  "body": "",
   "callout": {
-    "title": "Get medical advice if",
+    "title": "Call your doctor if",
     "items": [
-      "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call emergency services for breathing difficulty or swelling",
-      "Persistent refusal of all textures beyond around nine months",
-      "Your baby has significant eczema or an existing allergy — get a plan before introducing allergens"
+      "Hives, swelling or vomiting after a new food",
+      "Breathing difficulty after food—call emergency services",
+      "Feeding or swallowing is not progressing",
+      "You need an allergy plan before starting"
     ]
   },
   "panel": {
     "eyebrow": "Feeding • 4–9 months",
     "normal": {
-      "title": "Where to start",
+      "title": "Usually normal",
       "items": [
-        "Around 6 months — when they can sit supported, hold their head steady and reach for food",
-        "Milk stays the main meal at first",
-        "One new food every couple of days",
-        "Purée, baby-led or a mix — all fine"
-      ]
-    },
-    "warn": {
-      "title": "Get medical advice if",
-      "items": [
-        "Hives, swelling, vomiting or wheezing after a food — call emergency services for breathing trouble or swelling",
-        "Refusing all textures beyond around 9 months",
-        "Significant eczema or an existing allergy — get a plan before allergens"
+        "Mess and tiny tastes",
+        "Milk still doing most of the work",
+        "Readiness around six months",
+        "Premature babies taking longer"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Offer food after a milk feed",
-        "Introduce allergens early, at home, one at a time",
-        "Learn choking vs gagging",
-        "Expect 4g eaten and the rest worn"
+        "Let them touch and smell food",
+        "Try a small taste before milk",
+        "Use safe textures and sit upright",
+        "Give it time"
       ]
     },
-    "quick": "One food, once a day, after a milk feed. Everything else is detail you can add later."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Hives, swelling or vomiting after a new food",
+        "Breathing difficulty after food—call emergency services",
+        "Feeding or swallowing is not progressing",
+        "You need an allergy plan before starting"
+      ]
+    },
+    "dont": null,
+    "quick": "Start with small, safe tastes when your baby seems ready, and expect practice and mess rather than a proper meal."
   },
   "related": [
     "drinking-less-milk",
     "reflux-or-spit-up"
-  ]
+  ],
+  "seo": {
+    "description": "Starting solids can be slow and messy; readiness, safe textures and gentle practice matter more than a perfect timetable."
+  },
+  "longform": [
+    {
+      "h": "It is mostly mess with a spoon in it",
+      "t": "Starting solids can look like a whole new parenting exam. For us, it was mainly tiny tastes, sticky hands and food in places food should never reach.\n\nAround six months is a guide, but readiness matters too: steady head control, sitting with support and bringing things to the mouth."
+    },
+    {
+      "h": "Let food be interesting first",
+      "t": "We let Ari sit near us while we ate. She could look, smell, touch and play. That exploration mattered, even when almost nothing went into her mouth.\n\nAri was premature and, even after her first birthday, solids were still slow. Her doctor was happy for us to keep offering food gently and give her time. We still worried and occasionally felt as if we were losing our minds."
+    },
+    {
+      "h": "Before milk worked better for us",
+      "t": "Ari was often too full to care about food after milk, so we offered a small taste before her usual milk feed. Another baby may prefer a different rhythm. Milk still did most of the work at the beginning.\n\nPurées, finger foods or a mixture can all fit. We cared more about safe textures, sitting upright and staying beside her than choosing a camp.\n\nGagging is noisy; choking can be silent. Knowing the difference and learning infant first aid gave us more confidence.\n\nPremature babies may follow their own pace. If feeding feels stuck, growth is a concern or you are worried about swallowing, ask your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "bottle-refusal",
   "topic": "feeding",
   "icon": "bottle",
   "featured": false,
-  "title": "My baby suddenly refuses the bottle",
+  "title": "Why is my baby suddenly refusing the bottle?",
   "ages": [
     "2–3 months",
     "4–6 months",
@@ -288,57 +365,75 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Usually flow, temperature, position or a sore mouth. Rarely the bottle itself.",
-  "body": "\n<p>Yesterday: fine. Today: arched back, sealed lips, and a look of profound betrayal.</p>\n<h2>Work through the list</h2>\n<ul>\n<li><strong>Flow rate.</strong> Babies outgrow teats. A newborn-flow teat at five months is exhausting work for a small person.</li>\n<li><strong>Temperature.</strong> Fussier than you'd think. Try slightly warmer than you've been doing.</li>\n<li><strong>Position.</strong> Try more upright, or facing outward. Some babies hate the cradle hold once they can see the room.</li>\n<li><strong>Sore mouth.</strong> Teething, a cold, or thrush (white patches that don't wipe off) all make sucking unpleasant.</li>\n<li><strong>Who's holding it.</strong> A breastfed baby often refuses a bottle from the parent who breastfeeds, and takes it happily from someone else. Leave the room entirely.</li>\n</ul>\n<h2>Don't escalate</h2>\n<p>Forcing, or persisting through crying, teaches a baby that bottles are a fight. Stop, reset, try again in 20 minutes. Offer when they're sleepy — half-asleep babies feed on autopilot.</p>\n<h2>If it's a nursery deadline</h2>\n<p>Start two to three weeks out. Once a day, same time, someone else offering, in a different room from where you feed. If the bottle is losing badly, an open cup or a sippy cup works from around six months and skips the fight completely.</p>",
+  "body": "",
   "callout": {
     "title": "Call your doctor if",
     "items": [
-      "Refusing feeds for more than 8 hours, or fewer than four wet nappies a day",
-      "White patches inside the mouth that don't wipe away",
-      "Refusal with fever, vomiting, or unusual sleepiness"
+      "Refusing most feeds or fewer wet nappies",
+      "White mouth patches that do not wipe away",
+      "Fever, vomiting or unusual sleepiness"
     ]
   },
   "panel": {
     "eyebrow": "Feeding • 2–9 months",
     "normal": {
-      "title": "Usually it's",
+      "title": "Usually normal",
       "items": [
-        "Flow rate — the teat's been outgrown",
-        "Temperature — try slightly warmer",
-        "Position — more upright, or facing out",
-        "A sore mouth (teething, cold or thrush)",
-        "Who's holding it — try someone else"
-      ]
-    },
-    "warn": {
-      "title": "Call your doctor if",
-      "items": [
-        "Refusing feeds 8+ hours, or under 4 wet nappies a day",
-        "White patches inside the mouth that don't wipe off",
-        "Refusal with fever, vomiting or unusual sleepiness"
+        "The teat flow has changed",
+        "Milk temperature or position",
+        "A sore mouth or blocked nose",
+        "The bottle itself"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Don't force — stop and retry in 20 minutes",
-        "Offer when they're sleepy",
-        "Someone else offers, in another room",
-        "From 6 months, a cup skips the fight"
+        "Pause instead of forcing",
+        "Try another person or room",
+        "Offer when calm or sleepy",
+        "Consider a different bottle"
       ]
     },
-    "quick": "Usually flow, temperature, position or a sore mouth — rarely the bottle itself."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Refusing most feeds or fewer wet nappies",
+        "White mouth patches that do not wipe away",
+        "Fever, vomiting or unusual sleepiness"
+      ]
+    },
+    "dont": null,
+    "quick": "Check the flow, temperature, position and sore mouth—but yes, sometimes your baby has simply rejected that bottle."
   },
   "related": [
     "drinking-less-milk",
     "teething"
-  ]
+  ],
+  "seo": {
+    "description": "A sudden bottle refusal may be the flow, temperature, position, a sore mouth — or simply the bottle itself."
+  },
+  "longform": [
+    {
+      "h": "Yesterday the bottle was fine. Today it is betrayal.",
+      "t": "This one happened to us with no warning. Ari had used the same Perfect Match bottle from the beginning. Then one day she decided it was absolutely not acceptable."
+    },
+    {
+      "h": "We checked the usual things",
+      "t": "The teat flow, milk temperature, feeding position, a blocked nose, teething and who was holding the bottle can all change a feed. Sometimes the bottle itself is the answer.\n\nWe bought bottle after bottle over three very long days. While trying to make sure Ari was fed, we used a pipette. That was something we did in a stressful moment, not advice for another parent to copy without help from their baby’s doctor or nurse."
+    },
+    {
+      "h": "Then she accepted a Dr Brown’s bottle",
+      "t": "There was no grand logic to it. She simply accepted that bottle, and we never switched back. When she had thicker AR formula, we also needed a teat that could handle the thicker milk.\n\nWhat helped most was stopping the fight. We offered calmly, paused when she became upset and tried again later. Forcing it only made the bottle feel like a battle.\n\nIf you have a nursery deadline, start practising before the last few days if you can. A different person, a different room or a sleepy feed may help.\n\nIf your baby is refusing most feeds, has fewer wet nappies, seems unusually sleepy or has signs of illness, speak quickly to your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "reflux-or-spit-up",
   "topic": "feeding",
   "icon": "bottle",
   "featured": false,
-  "title": "Spit-up, reflux, or something else?",
+  "title": "Is my baby’s spit-up reflux or something else?",
   "ages": [
     "0–1 month",
     "2–3 months",
@@ -346,57 +441,76 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "A happy spitter is a laundry problem. A distressed one is worth a conversation with your doctor.",
-  "body": "\n<p>Almost half of babies bring milk back up regularly. The volume looks catastrophic — a tablespoon on a muslin looks like the entire feed. It usually isn't.</p>\n<h2>The distinction that matters</h2>\n<p><strong>Posseting</strong> is effortless. Milk appears, baby is unbothered, weight gain is fine. Nothing needs treating except your washing machine. It peaks around four months and mostly resolves once they're upright and on solids.</p>\n<p><strong>Reflux that's causing problems</strong> looks different: crying during or after feeds, arching away mid-feed, refusing to lie flat, poor weight gain, frequent hiccups and unsettled sleep. That's worth medical advice.</p>\n<h2>Things that genuinely help</h2>\n<ul>\n<li>Smaller feeds, more often.</li>\n<li>Upright for 20–30 minutes after a feed. Not in a car seat — the slump makes it worse.</li>\n<li>Winding partway through, not just at the end.</li>\n<li>Paced bottle feeding: horizontal-ish bottle, breaks, let them set the rhythm.</li>\n</ul>\n<p>Do not tilt the cot or add anything to the sleep surface. Babies sleep flat on their back, on a firm mattress, with nothing else in the cot. That rule doesn't bend for reflux.</p>",
+  "body": "",
   "callout": {
-    "title": "See a doctor if",
+    "title": "Call your doctor if",
     "items": [
-      "Green or yellow vomit, blood in vomit, or forceful projectile vomiting",
-      "Poor weight gain, or persistent refusal to feed",
-      "Arching and crying with most feeds, or blood in stools",
-      "Any vomiting alongside fever or a swollen tummy"
+      "Green, yellow, bloody or forceful vomit",
+      "Poor weight gain or repeated feed refusal",
+      "Pain and arching with most feeds",
+      "Vomiting with fever or a swollen tummy"
     ]
   },
   "panel": {
     "eyebrow": "Feeding • 0–6 months",
     "normal": {
-      "title": "Usually just posseting",
+      "title": "Usually normal",
       "items": [
-        "Effortless spit-up, baby unbothered, weight fine",
-        "A tablespoon looks like the whole feed — it isn't",
-        "Peaks around 4 months, eases with sitting up and solids"
-      ]
-    },
-    "warn": {
-      "title": "See a doctor if",
-      "items": [
-        "Green or yellow vomit, blood, or forceful projectile vomiting",
-        "Poor weight gain, or persistent feed refusal",
-        "Arching and crying with most feeds, or blood in stools",
-        "Vomiting with fever or a swollen tummy"
+        "Easy spit-up with no distress",
+        "Small amounts looking enormous",
+        "Reflux easing as babies grow"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Smaller feeds, more often",
-        "Upright 20–30 min after (not a car seat)",
-        "Wind partway through",
-        "Keep sleep flat on the back — reflux doesn't change that"
+        "Try smaller, more frequent feeds",
+        "Pause to burp",
+        "Hold upright after feeds",
+        "Use prescribed thicker milk only if advised"
       ]
     },
-    "quick": "A happy spitter is a laundry problem. A distressed one is worth a conversation with your doctor."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Green, yellow, bloody or forceful vomit",
+        "Poor weight gain or repeated feed refusal",
+        "Pain and arching with most feeds",
+        "Vomiting with fever or a swollen tummy"
+      ]
+    },
+    "dont": null,
+    "quick": "Comfortable spit-up is often harmless; pain, feeding trouble or poor growth deserves a conversation with your baby’s doctor or nurse."
   },
   "related": [
     "drinking-less-milk",
     "bottle-refusal"
-  ]
+  ],
+  "seo": {
+    "description": "A happy spitter is a laundry problem. A distressed one is worth a conversation with your doctor."
+  },
+  "longform": [
+    {
+      "h": "It always looks like the whole feed",
+      "t": "Milk spreads dramatically across a muslin. It can look as though the entire bottle has come back when the real amount is much smaller.\n\nIf your baby spits up easily, seems comfortable and is growing, it is often more of a washing problem than a medical one."
+    },
+    {
+      "h": "Our reflux story was not quite that simple",
+      "t": "Ari was premature and reflux made feeding harder for her. Her doctor prescribed AR formula, which was thicker and stayed down better for her. It helped us, but it was a plan made for Ari, not something every baby needs.\n\nSmaller feeds, pauses to burp and keeping her upright after a feed also helped. We avoided leaving her slumped in a car seat after feeding."
+    },
+    {
+      "h": "Yes, we did tilt the cot",
+      "t": "We raised one end of Ari’s cot a little because gravity seemed as though it should help. We later learned that current safe-sleep advice is a flat, firm mattress, even with reflux.\n\nSo we are not going to rewrite our story and pretend we never did it. We did. We just would not suggest it now, and we did not add wedges, towels or positioners to the cot.\n\nIf vomiting is green, yellow, bloody or forceful, or your baby is distressed, feeding poorly or not gaining weight, call your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "early-waking",
   "topic": "sleeping",
   "icon": "moon",
   "featured": false,
-  "title": "The 5am wake-up",
+  "title": "Why is my baby waking at 5am?",
   "ages": [
     "7–9 months",
     "10–12 months",
@@ -405,24 +519,24 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Usually bedtime too late, nap timing, or light. Rarely a baby who's finished sleeping.",
-  "body": "\n<p>Anything before 6am is a night waking wearing a disguise. Treat it as one.</p>\n<h2>The four causes, in order of likelihood</h2>\n<ul>\n<li><strong>Overtired at bedtime.</strong> Counterintuitive, but a late bedtime almost always produces an earlier wake-up. Try bedtime 20 minutes earlier for five nights before judging.</li>\n<li><strong>Light.</strong> Sunrise creeps forward. Blackout that actually blacks out, taped at the edges if needed.</li>\n<li><strong>Nap too close to bedtime, or too long.</strong> The last nap should end at least three hours before bed for an older baby.</li>\n<li><strong>Habit.</strong> If 5am means lights on, milk, and downstairs, that's a good deal and they'll keep taking it.</li>\n</ul>\n<h2>The fix that takes patience</h2>\n<p>Keep the room dark and boring until your chosen \"morning\" time. Don't start the day. Same low voice, same dim light, no getting up. It takes a week or two of holding the line before it moves.</p>\n<div class=\"quiet\">Some babies are simply larks. If they wake at 5.30 cheerful and well-rested, you may be fixing a scheduling problem that only exists for you.</div>",
-  "callout": null,
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Early waking comes with pain, fever or feeding changes",
+      "Loud snoring, gasping or pauses in breathing",
+      "Exhaustion is making everyday care feel unsafe"
+    ]
+  },
   "panel": {
     "eyebrow": "Sleeping • 7–24 months",
     "normal": {
-      "title": "Usually just",
+      "title": "Usually normal",
       "items": [
         "Bedtime too late — overtired brings the wake-up earlier",
         "Light — sunrise creeping in",
         "Last nap too long, or too close to bedtime",
         "Habit — 5am means lights, milk and downstairs"
-      ]
-    },
-    "warn": {
-      "title": "Worth knowing",
-      "items": [
-        "Anything before 6am is a night waking in disguise — treat it as one",
-        "A cheerful, well-rested early riser may simply be a lark"
       ]
     },
     "helped": {
@@ -433,28 +547,55 @@ var GUIDES = [
         "Hold the line for a week or two"
       ]
     },
-    "quick": "Usually bedtime too late, nap timing or light — rarely a baby who's finished sleeping."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Early waking comes with pain, fever or feeding changes",
+        "Loud snoring, gasping or pauses in breathing",
+        "Exhaustion is making everyday care feel unsafe"
+      ]
+    },
+    "dont": null,
+    "quick": "Early waking is often linked to light, bedtime or the last nap, though some babies really are tiny morning roosters."
   },
   "related": [
     "wont-nap",
     "sleep-regression"
-  ]
+  ],
+  "seo": {
+    "description": "Usually bedtime too late, nap timing, or light. Rarely a baby who's finished sleeping."
+  },
+  "longform": [
+    {
+      "h": "Five in the morning still feels like night",
+      "t": "If your baby wakes ready for the day while you can barely open your eyes, it is reasonable to want to shift things later.\n\nFor us, the first things to check would be light, bedtime and the last nap. Oddly, a later bedtime can create an even earlier wake-up when a baby is overtired."
+    },
+    {
+      "h": "Keep early morning boring",
+      "t": "A dark room, a quiet voice and no cheerful trip downstairs can help five o’clock stay part of the night. It usually takes more than one morning to see a change.\n\nWe would try one small change at a time, such as moving bedtime a little earlier or ending the last nap sooner. Changing everything together makes it hard to know what helped."
+    },
+    {
+      "h": "Sometimes you simply have a tiny rooster",
+      "t": "If your baby wakes early, cheerful and rested, that may be their natural pattern for now. It can still be exhausting for you, but it does not automatically mean something is wrong.\n\nIf early waking comes with pain, feeding changes, breathing problems or unusual tiredness, ask your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "day-night-confusion",
   "topic": "sleeping",
   "icon": "moon",
   "featured": false,
-  "title": "Awake all night, asleep all day",
+  "title": "Why is my newborn awake all night and asleep all day?",
   "ages": [
     "0–1 month",
     "2–3 months"
   ],
   "read": 3,
   "summary": "Newborns have no body clock yet. You build it for them, with light and contrast.",
-  "body": "\n<p>Your baby spent nine months in the dark being rocked to sleep every time you walked around. The moment you lay down was the moment the rocking stopped and the party started. That pattern doesn't switch off at birth.</p>\n<h2>Building the body clock</h2>\n<ul>\n<li><strong>Daylight in the morning.</strong> Curtains open, outside if you can manage it, even for ten minutes. Light is the strongest signal there is.</li>\n<li><strong>Make days loud.</strong> Normal noise, normal talking, feeds with eye contact and chat.</li>\n<li><strong>Make nights dull.</strong> Dim, quiet, minimal talking, nappy change only if needed. Boring is the whole strategy.</li>\n<li><strong>Cap day sleeps.</strong> Wake them after two to two and a half hours in the day so the sleep migrates to the night.</li>\n</ul>\n<p>It usually starts sorting itself out between six and ten weeks as melatonin production begins. You're not training them so much as giving them the cues to sort it out sooner.</p>\n<h2>Meanwhile, survive</h2>\n<p>Split the night into shifts with whoever else is there. One person takes until 2am, the other takes after. Four unbroken hours is worth more than eight broken ones, and this is the single most useful thing you can do in the first six weeks.</p>",
+  "body": "",
   "callout": {
-    "title": "Speak to a midwife or doctor if",
+    "title": "Call your doctor if",
     "items": [
       "Your baby is very difficult to wake for feeds",
       "Fewer wet nappies than expected, or weight loss beyond the first week",
@@ -467,34 +608,52 @@ var GUIDES = [
       "title": "Usually normal",
       "items": [
         "Newborns have no body clock yet",
-        "The womb rocked them by day and stopped at night — that lingers",
-        "It starts sorting itself at 6–10 weeks as melatonin kicks in"
-      ]
-    },
-    "warn": {
-      "title": "Speak to a midwife or doctor if",
-      "items": [
-        "Your baby is very hard to wake for feeds",
-        "Fewer wet nappies than expected, or weight loss beyond the first week",
-        "You feel unable to cope, low or frightened — common, treatable, worth saying out loud"
+        "Day and night taking time to settle",
+        "Short, broken sleep in the early weeks"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Morning daylight, curtains open",
-        "Loud, chatty days",
-        "Dim, dull nights",
-        "Cap day sleeps at 2–2.5 hours",
+        "Open curtains in the morning",
+        "Keep nights dim and quiet",
+        "Follow the feeding plan",
         "Split the night into shifts"
       ]
     },
-    "quick": "Newborns have no body clock yet. You build it for them, with light and contrast."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your baby is very difficult to wake for feeds",
+        "Fewer wet nappies than expected, or weight loss beyond the first week",
+        "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
+      ]
+    },
+    "dont": null,
+    "quick": "Newborns need time to learn day from night; morning light, quiet nights and shared shifts can make the wait easier."
   },
   "related": [
     "splitting-nights",
     "sleep-regression"
-  ]
+  ],
+  "seo": {
+    "description": "Newborns have no body clock yet. You build it for them, with light and contrast."
+  },
+  "longform": [
+    {
+      "h": "Your newborn is not doing it on purpose",
+      "t": "In the womb, movement through the day often rocked them to sleep. Then you lay down at night, the movement stopped and the party began. That pattern can follow them home.\n\nNewborns need time to learn the difference between day and night. Morning light and ordinary daytime noise can help give the day a clear shape."
+    },
+    {
+      "h": "Make nights wonderfully boring",
+      "t": "We kept lights low, voices quiet and nappy changes practical. There was no need to entertain Ari at three in the morning, even when she looked delighted to see us.\n\nLong daytime sleeps can sometimes be broken gently for a feed if that matches the plan from your baby’s doctor or nurse, especially for a premature or very young baby."
+    },
+    {
+      "h": "The shift that saved us",
+      "t": "One of us covered the first part of the night until about four. The other took over from four until nine. It still took time to fall asleep, but a protected block was far better than both of us waking for everything.\n\nIt did not make the nights easy. It made them survivable while Ari slowly worked out where sleep belonged.\n\nIf your newborn is hard to wake for feeds, has fewer wet nappies or is not gaining as expected, speak to your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "rolling-sitting-crawling",
@@ -509,60 +668,77 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Ranges are wide and order varies. Some babies skip crawling entirely and are completely fine.",
-  "body": "\n<p>The chart in the app says one thing. Your friend's baby did it two months ago. Your baby is lying there, considering.</p>\n<h2>Typical ranges</h2>\n<ul>\n<li><strong>Rolling front to back:</strong> 3–6 months. Back to front usually follows.</li>\n<li><strong>Sitting unsupported:</strong> 5–8 months.</li>\n<li><strong>Crawling:</strong> 6–11 months — or never. Bum-shuffling and commando-crawling both count.</li>\n<li><strong>Pulling to stand:</strong> 8–11 months.</li>\n<li><strong>Walking:</strong> 9–18 months. Eighteen months is still within normal.</li>\n</ul>\n<p>Skipping crawling is not a red flag on its own. What matters is that a baby is moving somehow, using both sides of their body, and adding new skills over time.</p>\n<h2>What actually helps</h2>\n<ul>\n<li><strong>Floor time.</strong> More than anything else. Babies parked in seats, bouncers and slings don't get to practise.</li>\n<li><strong>Tummy time in small doses</strong> — a few minutes, many times a day, on your chest if the floor causes outrage.</li>\n<li><strong>Put toys just out of reach.</strong> Motivation is half of motor development.</li>\n<li><strong>Skip the walkers.</strong> They don't help walking, and they're a genuine injury risk.</li>\n</ul>\n<p>If your baby was born prematurely, use their corrected age — from the due date, not the birth date — until at least two years.</p>",
+  "body": "",
   "callout": {
-    "title": "Ask your doctor or health visitor if",
+    "title": "Call your doctor if",
     "items": [
-      "No rolling in either direction by 6 months, or not sitting with support by 9 months",
-      "Consistently using only one side of the body, or a strongly preferred hand before 12 months",
-      "Loss of a skill your baby previously had — always worth checking promptly",
-      "Persistently stiff or floppy limbs"
+      "A skill your baby had disappears",
+      "One side is used much more than the other",
+      "Your baby seems very stiff or floppy",
+      "You are worried progress has stopped"
     ]
   },
   "panel": {
     "eyebrow": "Development • 4–12 months",
     "normal": {
-      "title": "Typical ranges",
+      "title": "Usually normal",
       "items": [
-        "Roll front-to-back: 3–6 months",
-        "Sit unsupported: 5–8 months",
-        "Crawl: 6–11 months — or never (bum-shuffling counts)",
-        "Pull to stand: 8–11 months",
-        "Walk: 9–18 months"
-      ]
-    },
-    "warn": {
-      "title": "Ask your doctor or health visitor if",
-      "items": [
-        "No rolling by 6 months, or not sitting with support by 9",
-        "Using only one side, or a strong hand preference before 12 months",
-        "Loss of a skill they had — check promptly",
-        "Persistently stiff or floppy limbs"
+        "Wide milestone ranges",
+        "Skills arriving in a different order",
+        "Commando crawling or shuffling",
+        "Corrected age after premature birth"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Lots of floor time",
-        "Tummy time in small, frequent doses",
-        "Toys just out of reach",
-        "Skip walkers",
-        "Use corrected age if premature"
+        "Offer plenty of floor time",
+        "Try short bursts of tummy time",
+        "Put toys just out of reach",
+        "Notice progress, not comparison"
       ]
     },
-    "quick": "Ranges are wide and order varies. Some babies skip crawling entirely and are completely fine."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "A skill your baby had disappears",
+        "One side is used much more than the other",
+        "Your baby seems very stiff or floppy",
+        "You are worried progress has stopped"
+      ]
+    },
+    "dont": null,
+    "quick": "Milestone ranges are wide and the order varies, so look for steady progress rather than a perfect month on a chart."
   },
   "related": [
     "first-words",
     "sleep-regression"
-  ]
+  ],
+  "seo": {
+    "description": "Ranges are wide and order varies. Some babies skip crawling entirely and are completely fine."
+  },
+  "longform": [
+    {
+      "h": "The chart says one thing. Your baby says another.",
+      "t": "Milestone ranges are wide, and babies do not always learn things in the same order. One child crawls early; another sits and watches the world for longer.\n\nThe useful question is not whether your baby copied somebody else’s timetable. It is whether they are gaining skills, moving in different ways and using both sides of their body."
+    },
+    {
+      "h": "Tiny amounts of practice still count",
+      "t": "We started tummy time from the early days in very short bursts. With Ari, one minute felt like a win. Then it became two, then three, and eventually we stopped counting.\n\nOne day we noticed she was simply comfortable on her tummy, as if she had always known how. That is how many milestones arrived for us: slowly, then suddenly."
+    },
+    {
+      "h": "Floor time helped more than equipment",
+      "t": "We used toys just out of reach and gave Ari space to move. Commando crawling, shuffling or finding another way across the floor still counts as movement.\n\nBecause Ari was premature, we used corrected age rather than comparing everything with her birthday. That removed a lot of worry.\n\nIf your baby loses a skill, uses one side much more than the other, or seems very stiff or floppy, ask your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "first-words",
   "topic": "development",
   "icon": "blocks",
   "featured": false,
-  "title": "Babbling, pointing and first words",
+  "title": "When should my baby babble, point and say first words?",
   "ages": [
     "7–9 months",
     "10–12 months",
@@ -571,53 +747,70 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Understanding comes long before speaking, and gestures matter more than word count.",
-  "body": "\n<p>Word counts are the least useful measure of early language. What professionals actually watch is communication: does your baby try to get your attention, and do they understand you?</p>\n<h2>Roughly what to expect</h2>\n<ul>\n<li><strong>6–9 months:</strong> babbling with consonants — bababa, dadada. Responds to their name.</li>\n<li><strong>9–12 months:</strong> pointing, waving, giving you things. This is the big one. Gestures are the foundation of speech.</li>\n<li><strong>12 months:</strong> often one or two words used meaningfully. Understands simple requests.</li>\n<li><strong>18 months:</strong> commonly 10–50 words, and following simple instructions.</li>\n<li><strong>24 months:</strong> putting two words together — \"more milk\", \"daddy gone\".</li>\n</ul>\n<h2>What builds language</h2>\n<ul>\n<li><strong>Narrate everything.</strong> Boring, out loud, constantly. This is the single strongest driver.</li>\n<li><strong>Leave gaps.</strong> Ask, then wait five long seconds. Babies need far more processing time than feels natural.</li>\n<li><strong>Follow their attention.</strong> Name what they're already looking at, not what you want them to look at.</li>\n<li><strong>Books, daily.</strong> Pointing at pictures beats reading the text.</li>\n</ul>\n<p>Raising a child with two or more languages does not delay speech. Total words across all languages is what counts — keep each parent consistent in their own language.</p>",
+  "body": "",
   "callout": {
-    "title": "Ask for a hearing check or speech referral if",
+    "title": "Call your doctor if",
     "items": [
-      "No babbling by 9 months, or no gestures like pointing or waving by 12 months",
-      "No words by 18 months, or no two-word phrases by around 2 years",
-      "Loss of words or social skills previously present — check this promptly",
-      "Doesn't startle at loud sounds or turn toward voices"
+      "Babbling or gestures are not developing",
+      "Words or communication are not progressing",
+      "A word or social skill disappears",
+      "Your baby does not respond to sounds or voices"
     ]
   },
   "panel": {
     "eyebrow": "Development • 7–24 months",
     "normal": {
-      "title": "Roughly expect",
+      "title": "Usually normal",
       "items": [
-        "6–9 months: babbling (bababa), responds to name",
-        "9–12 months: pointing, waving, giving — the big one",
-        "12 months: a word or two, understands simple requests",
-        "18 months: 10–50 words",
-        "24 months: two-word combos"
-      ]
-    },
-    "warn": {
-      "title": "Ask for a hearing or speech check if",
-      "items": [
-        "No babbling by 9 months, or no gestures by 12",
-        "No words by 18 months, or no two-word phrases by ~2 years",
-        "Loss of words or social skills — check promptly",
-        "Doesn't startle at loud sounds or turn to voices"
+        "Babbling before clear words",
+        "Gestures counting as communication",
+        "Understanding coming first",
+        "More than one language"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Narrate everything, out loud",
-        "Ask, then leave a 5-second gap",
-        "Follow their attention",
-        "Books daily",
-        "Two languages don't delay speech"
+        "Talk through ordinary life",
+        "Pause and let them answer",
+        "Follow what interests them",
+        "Share books without pressure"
       ]
     },
-    "quick": "Understanding comes long before speaking, and gestures matter more than word count."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Babbling or gestures are not developing",
+        "Words or communication are not progressing",
+        "A word or social skill disappears",
+        "Your baby does not respond to sounds or voices"
+      ]
+    },
+    "dont": null,
+    "quick": "Communication starts with sounds, looks and gestures long before clear words, and all of your baby’s languages count."
   },
   "related": [
     "rolling-sitting-crawling",
     "teething"
-  ]
+  ],
+  "seo": {
+    "description": "Understanding comes long before speaking, and gestures matter more than word count."
+  },
+  "longform": [
+    {
+      "h": "Communication starts before clear words",
+      "t": "Babbling, pointing, waving, looking at you and handing you things are all part of language. Understanding usually arrives before speaking.\n\nWe tried to talk through ordinary life: nappy on, bottle here, Papa is coming back. It felt repetitive to us, but it was all new to Ari."
+    },
+    {
+      "h": "Pause long enough for an answer",
+      "t": "Babies need time to process. Asking a question and leaving a quiet gap gave Ari a chance to make a sound, look or gesture before we filled the silence for her.\n\nBooks did not need to be read perfectly. Pointing at a picture and naming what interested her was enough."
+    },
+    {
+      "h": "Our multilingual home",
+      "t": "Ari hears two languages now, and we plan to bring in our third language later. That timing is simply what feels manageable for our family.\n\nLearning more than one language does not cause a speech delay. Words and communication across all the languages count together, even if one language has fewer words on its own.\n\nIf babbling, gestures or words are not developing, or a skill disappears, bring it up with your baby’s doctor or nurse. Hearing is worth checking too."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "teething",
@@ -633,60 +826,77 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere.",
-  "body": "\n<p>Teething gets blamed for everything between four months and two years, which is convenient but occasionally dangerous — because it means real illness gets waved off as teeth.</p>\n<h2>What teething actually looks like</h2>\n<ul>\n<li>Heavy drooling, and a dribble rash on the chin</li>\n<li>Chewing on everything, including your fingers, with intent</li>\n<li>Red, swollen gums; sometimes a visible white ridge</li>\n<li>Irritability and disrupted sleep for a day or two either side of a tooth</li>\n<li>A slightly raised temperature — below 38°C</li>\n</ul>\n<h2>What it doesn't cause</h2>\n<p>A fever of 38°C or more, diarrhoea, vomiting, a rash on the body, or a baby who is genuinely unwell. If those are present, something else is going on and it deserves a proper look.</p>\n<h2>What helps</h2>\n<ul>\n<li>Something cold and firm to chew — a chilled (not frozen) teether, a cold flannel</li>\n<li>Firm gum pressure with a clean finger</li>\n<li>A barrier cream on the chin for dribble rash</li>\n<li>Infant paracetamol or ibuprofen at the correct dose for weight and age, if they're in real pain — check with a pharmacist if unsure</li>\n</ul>\n<p>Skip amber necklaces: they're a strangulation and choking risk with no evidence behind them. Skip teething gels containing choline salicylate or benzocaine, and any unregulated herbal powders.</p>",
+  "body": "",
   "callout": {
     "title": "Call your doctor if",
     "items": [
-      "Temperature of 38°C or above (any age under 3 months: seek care straight away)",
-      "Diarrhoea, vomiting, or a rash on the body",
-      "Refusing all feeds, or unusually drowsy and hard to rouse",
-      "Pulling at one ear with distress — often an ear infection, not teeth"
+      "Under three months with 38°C or more",
+      "Fever, vomiting, diarrhoea or a body rash",
+      "Refusing feeds or hard to wake",
+      "Ear pulling with fever or strong pain"
     ]
   },
   "panel": {
     "eyebrow": "Health • 4–18 months",
     "normal": {
-      "title": "Usually teething",
+      "title": "Usually normal",
       "items": [
-        "Heavy drooling, and a dribble rash on the chin",
-        "Chewing everything, with intent",
-        "Red, swollen gums; sometimes a white ridge",
-        "Grumpiness and broken sleep for a day or two",
-        "A slightly raised temperature — below 38°C"
-      ]
-    },
-    "warn": {
-      "title": "Call your doctor if",
-      "items": [
-        "38°C or above (any age under 3 months: seek care straight away)",
-        "Diarrhoea, vomiting, or a rash on the body",
-        "Refusing all feeds, or unusually drowsy and hard to rouse",
-        "Pulling at one ear with distress — often an ear infection, not teeth"
+        "Drooling and chewing",
+        "Sore-looking gums",
+        "A grumpy day or broken sleep",
+        "Ear pulling can happen"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Something cold and firm to chew (chilled, not frozen)",
-        "Firm gum pressure with a clean finger",
-        "Barrier cream on the chin for dribble rash",
-        "Correct-dose infant pain relief if they're in real pain — ask a pharmacist",
-        "Skip amber necklaces and unregulated gels"
+        "Offer a chilled teether",
+        "Try gentle gum pressure",
+        "Protect dribble-sore skin",
+        "Check products with a pharmacist"
       ]
     },
-    "quick": "Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Under three months with 38°C or more",
+        "Fever, vomiting, diarrhoea or a body rash",
+        "Refusing feeds or hard to wake",
+        "Ear pulling with fever or strong pain"
+      ]
+    },
+    "dont": null,
+    "quick": "Drool, chewing and sore gums can be teething; fever or a baby who seems unwell needs another explanation."
   },
   "related": [
     "first-fever",
     "drinking-less-milk"
-  ]
+  ],
+  "seo": {
+    "description": "Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere."
+  },
+  "longform": [
+    {
+      "h": "Teething gets blamed for everything",
+      "t": "Drool, chewing, sore-looking gums and a grumpy night can all come with a tooth. A baby who seems properly unwell needs a different explanation.\n\nA high temperature, vomiting, diarrhoea or a body rash should not be brushed off as “just teething”."
+    },
+    {
+      "h": "The ear pulling fooled us too",
+      "t": "Ari often pulled at her ear when teeth were on the way. Most times, for us, it was teeth. But ear pulling with strong pain, fever or a very unhappy baby can also be an ear problem, so it is worth checking."
+    },
+    {
+      "h": "What soothed Ari",
+      "t": "Chilled teethers, gentle pressure on the gums and barrier cream for the dribble rash were simple things we used.\n\nCamilia drops and Zammies teething gel also seemed to help Ari. That is our experience, not a promise that they will suit every baby. Check medicines and teething products with your baby’s doctor or pharmacist.\n\nWe would skip anything worn around the neck and anything that is not clearly made and approved for babies.\n\nIf your baby has a temperature of 38°C or more, refuses feeds, is hard to wake or seems genuinely unwell, call your baby’s doctor or nurse."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "first-fever",
   "topic": "health",
   "icon": "cross",
   "featured": false,
-  "title": "Your baby's first fever",
+  "title": "What should I know about my baby’s first fever?",
   "ages": [
     "0–1 month",
     "2–3 months",
@@ -698,60 +908,79 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "The number matters far less than the age of your baby and how they look between temperature spikes.",
-  "body": "\n<p>Fever is the immune system working, not the illness itself. That's true, and it is no comfort at all at midnight with a hot, floppy baby.</p>\n<h2>The age rule, first</h2>\n<p><strong>Under 3 months, a temperature of 38°C or above needs same-day medical assessment.</strong> Not tomorrow. Young babies show very few signs before becoming seriously unwell, so the threshold for being seen is deliberately low. Under 6 months, get advice for anything at or above 39°C.</p>\n<h2>How to take a temperature</h2>\n<p>Under the arm with a digital thermometer is reliable enough at home. Forehead strips aren't. Don't add or subtract a correction figure — just report what the thermometer said and how you took it.</p>\n<h2>Watch the baby, not the number</h2>\n<p>A baby with 39°C who's drinking, alert between spikes and still cross about their nappy is usually less concerning than a baby at 38.2°C who is limp and won't focus on you. Trust that comparison.</p>\n<h2>Managing at home</h2>\n<ul>\n<li>Fluids, offered often and in small amounts. Milk counts.</li>\n<li>One light layer. Don't wrap up, don't strip down, don't sponge with cold water.</li>\n<li>Infant paracetamol (from 2 months, if over 4kg) or ibuprofen (from 3 months and over 5kg) at the weight-appropriate dose, for discomfort rather than for the number itself. Check the packaging or ask a pharmacist.</li>\n</ul>",
+  "body": "",
   "callout": {
-    "title": "Seek urgent medical care if",
+    "title": "Call your doctor if",
     "items": [
-      "Under 3 months with a temperature of 38°C or above",
-      "A rash that doesn't fade when you press a glass against it",
-      "Difficulty breathing, grunting, or drawing in under the ribs",
-      "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
-      "A fit or seizure, cold mottled hands and feet, or fewer than four wet nappies in a day",
-      "Fever lasting more than 5 days, or your own instinct that something is badly wrong — that instinct is good data"
+      "Under three months with 38°C or more",
+      "Three to six months with 39°C or more",
+      "A rash that does not fade under a glass",
+      "Hard to wake, floppy or struggling to breathe",
+      "A seizure, very few wet nappies or your instinct says something is wrong"
     ]
   },
   "panel": {
     "eyebrow": "Health • 0–24 months",
     "normal": {
-      "title": "The basics",
+      "title": "Usually normal",
       "items": [
-        "Fever is the immune system working, not the illness itself",
-        "Watch the baby, not the number — how they look between spikes matters most",
-        "Take it under the arm with a digital thermometer (forehead strips aren't reliable)",
-        "Report what it said and how you took it — don't add a correction"
-      ]
-    },
-    "warn": {
-      "title": "Seek urgent medical care if",
-      "items": [
-        "Under 3 months with a temperature of 38°C or above",
-        "A rash that doesn't fade under a pressed glass",
-        "Trouble breathing, grunting, or drawing in under the ribs",
-        "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
-        "A seizure, cold mottled hands and feet, or fewer than 4 wet nappies a day"
+        "A mild fever in an older baby",
+        "Being alert between temperature spikes",
+        "Drinking and wet nappies continuing",
+        "The number changing through the day"
       ]
     },
     "helped": {
-      "title": "Managing at home",
+      "title": "What helped us",
       "items": [
-        "Fluids often, in small amounts — milk counts",
-        "One light layer; don't wrap up or sponge with cold water",
-        "Infant paracetamol (from 2 months, over 4kg) or ibuprofen (from 3 months, over 5kg) for discomfort — check the packet"
+        "Use a digital underarm thermometer",
+        "Offer small, frequent drinks",
+        "Keep clothing light and comfortable",
+        "Ask before giving medicine"
       ]
     },
-    "quick": "The number matters far less than your baby's age and how they look between temperature spikes."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Under three months with 38°C or more",
+        "Three to six months with 39°C or more",
+        "A rash that does not fade under a glass",
+        "Hard to wake, floppy or struggling to breathe",
+        "A seizure, very few wet nappies or your instinct says something is wrong"
+      ]
+    },
+    "dont": null,
+    "quick": "Your baby’s age and how they look matter as much as the number, so a young baby with fever needs quick medical advice."
   },
   "related": [
     "teething",
     "nappy-rash"
-  ]
+  ],
+  "seo": {
+    "description": "The number matters far less than the age of your baby and how they look between temperature spikes."
+  },
+  "longform": [
+    {
+      "h": "The age rule comes first",
+      "t": "A temperature of 38°C or above in a baby under three months needs urgent medical advice. Do not wait until morning to see whether it settles.\n\nFor babies aged three to six months, 39°C or above is a reason to get urgent advice. At any age, how your baby looks and acts matters as much as the number."
+    },
+    {
+      "h": "How we check a temperature",
+      "t": "A digital thermometer in the armpit is the usual home method for a young child. We report the number and where we took it rather than adding or subtracting anything."
+    },
+    {
+      "h": "Watch the baby between the spikes",
+      "t": "Are they looking at you, drinking and reacting normally? Or are they floppy, unusually quiet, hard to wake or struggling to breathe? Those changes matter.\n\nAt home, small frequent drinks and one comfortable light layer can help. A cool cloth may feel soothing, as it did for Ari, but it does not treat the fever.\n\nFor pain or discomfort, use only medicine suitable for your child and follow advice from your baby’s doctor, nurse or pharmacist. We are leaving exact dosing out because age, weight and the product all matter.\n\nTrust the part of you that knows your baby. If something looks wrong, ask for help quickly even if the thermometer has not reached a neat threshold."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "nappy-rash",
   "topic": "health",
   "icon": "cross",
   "featured": false,
-  "title": "Nappy rash that won't shift",
+  "title": "Why won’t my baby’s nappy rash clear up?",
   "ages": [
     "0–1 month",
     "2–3 months",
@@ -762,58 +991,76 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Ordinary rash improves in two or three days. If it's spreading, spotty or in the skin creases, it's probably thrush.",
-  "body": "\n<p>Most nappy rash is contact irritation: skin, moisture, and friction. It sits on the raised surfaces and spares the deep creases.</p>\n<h2>The basic routine</h2>\n<ul>\n<li>Change more often than feels necessary, especially after a dirty nappy</li>\n<li>Plain water or fragrance-free wipes; pat dry, don't rub</li>\n<li>A thick barrier cream — zinc oxide or petroleum-based — as a visible layer, not rubbed in</li>\n<li>Nappy-free time on a towel. Air does more than any cream.</li>\n</ul>\n<h2>When it's thrush instead</h2>\n<p>Suspect a yeast infection if the rash is bright red, has a defined edge, sits <em>in</em> the skin folds, or has small satellite spots around the main patch — and if it hasn't budged after three days of good barrier care. It needs an antifungal cream, so it's worth a pharmacist or doctor visit.</p>\n<h2>What to avoid</h2>\n<p>Talc, fragranced wipes, plastic pants, and steroid creams unless prescribed for this specific rash.</p>",
+  "body": "",
   "callout": {
-    "title": "Get it looked at if",
+    "title": "Call your doctor if",
     "items": [
-      "No improvement after 3 days of barrier care, or it's getting worse",
-      "Blisters, open sores, pus, or bleeding",
-      "Rash spreading beyond the nappy area, or with fever",
-      "Your baby seems in significant pain"
+      "No improvement after a few days",
+      "Blisters, open sores, pus or bleeding",
+      "Rash spreading beyond the nappy area",
+      "Fever or significant pain"
     ]
   },
   "panel": {
     "eyebrow": "Health • 0–18 months",
     "normal": {
-      "title": "Usually just irritation",
+      "title": "Usually normal",
       "items": [
-        "Contact irritation from skin, moisture and friction",
-        "Sits on the raised skin, spares the deep creases",
-        "Clears in two or three days with good barrier care"
-      ]
-    },
-    "warn": {
-      "title": "Get it looked at if",
-      "items": [
-        "No improvement after 3 days of barrier care, or it's getting worse",
-        "Blisters, open sores, pus, or bleeding",
-        "Spreading beyond the nappy area, or with a fever",
-        "Your baby seems in significant pain"
+        "Moisture and rubbing",
+        "Rash on raised skin",
+        "Improvement with barrier care"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Change more often, especially after a dirty nappy",
-        "Water or fragrance-free wipes; pat dry, don't rub",
-        "A thick barrier cream as a visible layer, not rubbed in",
-        "Nappy-free time on a towel — air beats any cream",
-        "In the creases with satellite spots? Likely thrush — needs an antifungal"
+        "Change nappies often",
+        "Use water or fragrance-free wipes",
+        "Pat dry; do not rub",
+        "Leave barrier cream visible"
       ]
     },
-    "quick": "Ordinary rash improves in two or three days. If it's spreading, spotty or in the skin creases, it's probably thrush."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "No improvement after a few days",
+        "Blisters, open sores, pus or bleeding",
+        "Rash spreading beyond the nappy area",
+        "Fever or significant pain"
+      ]
+    },
+    "dont": null,
+    "quick": "Simple nappy rash often improves with gentle cleaning, dry skin and barrier cream; spreading or persistent rash needs checking."
   },
   "related": [
     "first-fever",
     "teething"
-  ]
+  ],
+  "seo": {
+    "description": "Simple nappy rash often improves with gentle cleaning, dry skin and barrier cream; spreading or persistent rash needs another look."
+  },
+  "longform": [
+    {
+      "h": "Most nappy rash is moisture plus rubbing",
+      "t": "A sore bottom can appear quickly when skin stays wet or rubs against a nappy. Ordinary irritation often sits on the raised skin rather than deep in the creases."
+    },
+    {
+      "h": "Our simple routine",
+      "t": "We changed Ari often, especially after a dirty nappy. Fragrance-free 99.9% water wipes were gentler for us, and washing under running water worked even better when she was very sore.\n\nWe patted dry instead of rubbing, then left a visible layer of barrier cream. Frezyderm Baby Bottom Cream was the one we liked for Ari, though another baby may suit something else.\n\nA little nappy-free time on a towel also helped. It was messy, but her skin got a break."
+    },
+    {
+      "h": "When it needs another look",
+      "t": "If the rash reaches the skin folds, spreads, develops little spots or does not improve after a few days of careful barrier care, ask your baby’s doctor or pharmacist.\n\nBlisters, open sores, bleeding, pus, fever or a baby in a lot of pain also deserve medical advice.\n\nWe would avoid talc, fragranced products and leftover medicated creams that were prescribed for something else."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "touched-out",
   "topic": "sanity",
   "icon": "heart",
   "featured": false,
-  "title": "When you're completely touched out",
+  "title": "Is it normal to feel like I can’t handle one more person touching me?",
   "ages": [
     "0–1 month",
     "2–3 months",
@@ -825,56 +1072,74 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Wanting your body back for twenty minutes doesn't make you a bad parent. It makes you a mammal.",
-  "body": "\n<p>You've been held, climbed, fed from and slept on for fourteen hours. Someone touches your arm affectionately and you want to leave the country. That reaction has a name, it's extremely common, and it is not a verdict on how much you love anyone.</p>\n<h2>What's going on</h2>\n<p>Constant physical contact with no gaps is a sensory load, and load without recovery becomes intolerance. It has nothing to do with your feelings for your baby or your partner. It is the nervous system asking for a break in the only language it has.</p>\n<h2>What helps, practically</h2>\n<ul>\n<li><strong>Twenty minutes of no contact, daily, defended.</strong> Not a nap, not chores. A shower, a walk, sitting in the car. Schedule it like a medical appointment.</li>\n<li><strong>Hand over completely.</strong> Leave the room. Supervising from the sofa isn't a break.</li>\n<li><strong>Say it out loud, early.</strong> \"I'm touched out, it's not about you\" prevents a partner from reading it as rejection, which is where this quietly damages relationships.</li>\n<li><strong>Change the contact, not just the amount.</strong> A carrier with the baby facing out, floor play instead of lap play, sitting side by side rather than being climbed on.</li>\n<li><strong>Cut input elsewhere.</strong> Noise, screens, and podcasts all add to the same load. Quiet helps more than distraction.</li>\n</ul>\n<div class=\"quiet\">You are allowed to love your child enormously and want them off you immediately. Both things, same moment.</div>",
+  "body": "",
   "callout": {
-    "title": "Reach out for support if",
+    "title": "Call your doctor if",
     "items": [
-      "The feeling is constant, rather than arriving at the end of long days",
-      "You feel persistently low, numb, anxious, or disconnected from your baby",
-      "You're having thoughts of harming yourself or your baby — contact your doctor or a crisis line today; this is treatable and you will be taken seriously, not judged"
+      "The feeling is constant, not only after long days",
+      "You feel low, numb, anxious or disconnected",
+      "You may harm yourself or your baby—seek urgent help now"
     ]
   },
   "panel": {
     "eyebrow": "Parent Sanity • 0–24 months",
     "normal": {
-      "title": "What's going on",
+      "title": "Usually normal",
       "items": [
-        "Constant contact with no gaps is a real sensory load",
-        "Load without recovery becomes intolerance — it's your nervous system, not your feelings",
-        "Extremely common, and not a verdict on how much you love anyone"
-      ]
-    },
-    "warn": {
-      "title": "Reach out for support if",
-      "items": [
-        "The feeling is constant, not just at the end of long days",
-        "You feel persistently low, numb, anxious, or disconnected from your baby",
-        "Any thoughts of harming yourself or your baby — contact your doctor or a crisis line today; you'll be taken seriously, not judged"
+        "Feeling overloaded by touch",
+        "Needing space at the end of the day",
+        "Loving your family and wanting quiet"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Twenty minutes of no contact, daily, defended like an appointment",
-        "Hand over completely — leave the room",
-        "Say it out loud early: \"I'm touched out, it's not about you\"",
-        "Change the contact, not just the amount (carrier facing out, side-by-side play)",
-        "Cut other input — noise and screens add to the same load"
+        "Take a real no-contact break",
+        "Hand over and leave the room",
+        "Say “I need a time-out”",
+        "Reduce noise and screens"
       ]
     },
-    "quick": "Wanting your body back for twenty minutes doesn't make you a bad parent. It makes you a mammal."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "The feeling is constant, not only after long days",
+        "You feel low, numb, anxious or disconnected",
+        "You may harm yourself or your baby—seek urgent help now"
+      ]
+    },
+    "dont": null,
+    "quick": "Wanting twenty minutes without anybody touching you does not make you a bad parent; it means you need a real break."
   },
   "related": [
     "splitting-nights",
     "visitors"
-  ]
+  ],
+  "seo": {
+    "description": "Wanting your body back for twenty minutes doesn't make you a bad parent. It makes you a mammal."
+  },
+  "longform": [
+    {
+      "h": "You love them. You also need everybody off you.",
+      "t": "After a whole day of feeding, holding and being climbed on, one more touch can feel unbearable. That does not mean you love your baby or partner any less.\n\nFor us, it helped to see this as overload rather than guilt. A nervous system that has had no quiet space eventually asks for one."
+    },
+    {
+      "h": "Ask for a real break",
+      "t": "Twenty minutes without holding anyone can make a difference. A shower, a short walk or sitting alone counts. Chores do not.\n\nHanding the baby over while still supervising from the sofa did not feel like a break. Leaving the room did."
+    },
+    {
+      "h": "The sentence that helped",
+      "t": "“I need a time-out. It is not about you.” Saying it early was kinder than waiting until we were angry.\n\nTurning down other noise helped too. Sometimes the answer was not more entertainment. It was less sound, fewer screens and nobody asking another question.\n\nIf this feeling is constant, or comes with low mood, panic, numbness or feeling disconnected from your baby, tell your doctor or nurse. You deserve support."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "splitting-nights",
   "topic": "sanity",
   "icon": "heart",
   "featured": false,
-  "title": "Splitting the nights so nobody breaks",
+  "title": "How do we split the nights so nobody breaks?",
   "ages": [
     "0–1 month",
     "2–3 months",
@@ -883,89 +1148,141 @@ var GUIDES = [
   ],
   "read": 3,
   "summary": "Both of you half-sleeping is worse than one of you sleeping properly. Shifts beat solidarity.",
-  "body": "\n<p>The instinct is to suffer together. It's romantic and it's a mistake — two people at 40% function badly, where one at 80% can hold a household up.</p>\n<h2>The shift system</h2>\n<p>Split the night in two. Person A covers from bedtime to roughly 2am. Person B covers 2am until morning. The off-duty person sleeps somewhere else with earplugs, and is genuinely off duty — not a backup, not \"just help me with this one\".</p>\n<p>Four consecutive hours of protected sleep is the target. It's the block that restores function, and it beats seven fragmented hours comfortably.</p>\n<h2>If you're breastfeeding</h2>\n<p>The other person still does everything except the feed: nappy, settling, resettling, the walking-around bit. One expressed bottle covering the first stretch buys a four-hour block that changes the whole week.</p>\n<h2>If you're doing it alone</h2>\n<p>Then shifts mean daytime. One protected nap while someone else — a friend, a relative, anyone you can ask — holds the baby for 90 minutes. Ask more directly than feels comfortable. Most people want to help and are waiting for a specific request.</p>\n<h2>Rules that stop this collapsing</h2>\n<ul>\n<li>Swap which shift each person gets, or resentment builds fast.</li>\n<li>No scorekeeping conversations after 10pm. Nothing decided at 3am is fair or true.</li>\n<li>Review it weekly, out loud, in daylight.</li>\n</ul>",
-  "callout": null,
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Exhaustion is making driving or baby care feel unsafe",
+      "You feel persistently low, anxious or unable to cope",
+      "Either parent has thoughts of harming themselves or the baby"
+    ]
+  },
   "panel": {
     "eyebrow": "Parent Sanity • 0–9 months",
     "normal": {
-      "title": "Why shifts win",
+      "title": "Usually normal",
       "items": [
-        "Two people at 40% function worse than one at 80%",
-        "Four unbroken hours restores you more than seven broken ones",
-        "Even breastfeeding: the other person does everything but the feed"
-      ]
-    },
-    "warn": {
-      "title": "Rules that stop it collapsing",
-      "items": [
-        "Swap which shift each person takes, or resentment builds fast",
-        "No scorekeeping after 10pm — nothing decided at 3am is fair or true",
-        "Review it weekly, out loud, in daylight"
+        "Both parents feeling exhausted",
+        "Broken sleep feeling worse",
+        "Needing help even when you feel guilty"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Split the night in two: one covers till ~2am, the other after",
-        "Off-duty person sleeps elsewhere with earplugs — genuinely off",
-        "One expressed bottle buys the first four-hour block",
-        "Alone? Shifts mean daytime — ask someone to hold the baby 90 minutes"
+        "Split the night into shifts",
+        "Let off-duty mean off-duty",
+        "Accept specific offers of help",
+        "Review the plan in daylight"
       ]
     },
-    "quick": "Both of you half-sleeping is worse than one of you sleeping properly. Shifts beat solidarity."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Exhaustion is making driving or baby care feel unsafe",
+        "You feel persistently low, anxious or unable to cope",
+        "Either parent has thoughts of harming themselves or the baby"
+      ]
+    },
+    "dont": null,
+    "quick": "Protected sleep shifts usually help more than both parents waking for everything, even if the split is not perfectly equal."
   },
   "related": [
     "touched-out",
     "day-night-confusion"
-  ]
+  ],
+  "seo": {
+    "description": "Both of you half-sleeping is worse than one of you sleeping properly. Shifts beat solidarity."
+  },
+  "longform": [
+    {
+      "h": "Both awake and exhausted was not helping anyone",
+      "t": "At first it can feel more loving to get up together. In practice, it left both of us shattered and nobody properly rested."
+    },
+    {
+      "h": "The split that worked for us",
+      "t": "One of us covered bedtime until about four in the morning. The other took over from four until nine. The off-duty parent was allowed to be properly off duty.\n\nIt takes time to fall asleep, even when you are exhausted, so the shift had to be long enough to give us a real block of sleep."
+    },
+    {
+      "h": "If one parent is breastfeeding",
+      "t": "The other person can still do the nappy, lifting, winding and settling. An expressed bottle may work for some families, but it is not the only way to share the load.\n\nIf you are doing nights alone, the shift may need to happen in daylight. A relative or friend holding the baby while you sleep can still be the thing that gets you through.\n\nWhen somebody offered help, we learned to say, “Yes, please,” instead of automatically being polite. We all need help. Taking it is not failing.\n\nReview the plan in daylight, not during an argument at three in the morning. If tiredness is making driving or baby care feel unsafe, ask for help now."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "visitors",
   "topic": "sanity",
   "icon": "heart",
   "featured": false,
-  "title": "Managing visitors without losing the plot",
+  "title": "How do we manage visitors after the baby arrives?",
   "ages": [
     "0–1 month",
     "2–3 months"
   ],
   "read": 3,
   "summary": "Decide the rules before you're standing in the doorway holding a baby and a wet muslin.",
-  "body": "\n<p>Everyone wants to meet the baby. Almost nobody thinks about what a visit costs the people who haven't slept.</p>\n<h2>Agree it in advance</h2>\n<p>Between the two of you, before anyone arrives: how long visits run, which days are closed, whether people hold the baby, and who does the saying-no. Written down in a message thread beats remembering at the door.</p>\n<h2>Scripts that work</h2>\n<ul>\n<li>\"We'd love to see you — can you do Thursday between 2 and 3?\" A window, not an open door.</li>\n<li>\"We're not doing visitors this week, but we'd love a photo when you get yours.\"</li>\n<li>\"She's due a feed, so I'm going to take her.\" No explanation follows.</li>\n<li>\"If you're coming, could you bring dinner and put a wash on?\" Most people are delighted to have a job.</li>\n</ul>\n<h2>Non-negotiables you're allowed</h2>\n<ul>\n<li>Nobody unwell, including \"just a cold\" — in a newborn that isn't a small thing</li>\n<li>Hands washed, no kissing the baby's face or hands</li>\n<li>Anyone who wakes a sleeping baby loses baby-holding rights, cheerfully but firmly</li>\n</ul>\n<div class=\"quiet\">The person who is offended by a boundary in week two has forgotten week two. You won't.</div>",
-  "callout": null,
+  "body": "",
+  "callout": {
+    "title": "Call your doctor if",
+    "items": [
+      "Your newborn has a temperature of 38°C or more",
+      "Your baby feeds much less or is hard to wake",
+      "Breathing looks difficult or your baby seems very unwell"
+    ]
+  },
   "panel": {
     "eyebrow": "Parent Sanity • 0–3 months",
     "normal": {
-      "title": "Agree it in advance",
+      "title": "Usually normal",
       "items": [
-        "Decide the rules before anyone's at the door",
-        "How long visits run, which days are closed, who holds the baby",
-        "Written in a message thread beats remembering in the moment"
-      ]
-    },
-    "warn": {
-      "title": "Non-negotiables you're allowed",
-      "items": [
-        "Nobody unwell — \"just a cold\" isn't a small thing for a newborn",
-        "Hands washed; no kissing the baby's face or hands",
-        "Wake a sleeping baby and you lose holding rights — cheerfully but firmly"
+        "Setting limits before visits",
+        "Keeping visits short",
+        "Closing some days to visitors"
       ]
     },
     "helped": {
-      "title": "Scripts that work",
+      "title": "What helped us",
       "items": [
-        "\"We'd love to see you — can you do Thursday 2–3?\" A window, not an open door",
-        "\"Not doing visitors this week, but we'd love a photo\"",
-        "\"She's due a feed, so I'm taking her\" — no explanation follows",
-        "\"If you're coming, could you bring dinner and put a wash on?\""
+        "Give visitors a time window",
+        "Ask unwell people to stay away",
+        "Wash hands and avoid kissing",
+        "Ask people to bring dinner"
       ]
     },
-    "quick": "Decide the rules before you're standing in the doorway holding a baby and a wet muslin."
+    "warn": {
+      "title": "Call your doctor if",
+      "items": [
+        "Your newborn has a temperature of 38°C or more",
+        "Your baby feeds much less or is hard to wake",
+        "Breathing looks difficult or your baby seems very unwell"
+      ]
+    },
+    "dont": null,
+    "quick": "Decide your visitor rules before the doorbell rings, then keep the message short, kind and firm."
   },
   "related": [
     "touched-out",
     "splitting-nights"
-  ]
+  ],
+  "seo": {
+    "description": "Decide the rules before you're standing in the doorway holding a baby and a wet muslin."
+  },
+  "longform": [
+    {
+      "h": "Everybody wants to meet the baby",
+      "t": "Almost nobody remembers what a visit costs when you have barely slept. People are excited. You are still allowed to protect your home and your energy."
+    },
+    {
+      "h": "Decide the rules before the doorbell rings",
+      "t": "We agreed how long visits would be, which days were closed and who would say no. Putting it in a message was much easier than making it up at the door.\n\nBecause Ari was premature, we were extra careful. We asked visitors to wash their hands, not kiss her face or hands, and stay away if they felt unwell. At times, especially during flu season, we also asked people to wear a mask.\n\nThose were our boundaries for our baby. If you are unsure what precautions your newborn needs, ask your baby’s doctor or nurse."
+    },
+    {
+      "h": "Simple words are enough",
+      "t": "“We would love to see you. Can you come between two and three?”\n\n“We are not doing visitors this week.”\n\n“She is due a feed, so I am taking her now.”\n\n“If you are coming, could you bring dinner?”\n\nYou do not owe anyone a long explanation. A short visit, a closed week or no baby-holding can all be the right choice for your family."
+    }
+  ],
+  "batch": "2"
 },
 {
   "id": "safe-sleep-newborn",
