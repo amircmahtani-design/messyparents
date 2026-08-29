@@ -5,7 +5,7 @@
   "description": "Seed/admin tooling for The Messy Parents Collection guides.",
   "scripts": {
     "build": "node scripts/build.js",
-    "verify": "node tests/verify.js && node tests/runtime-sim.js",
+    "verify": "node tests/verify.js && node tests/age-visibility.js && node tests/runtime-sim.js",
     "check": "node scripts/build.js && npm run verify",
     "seed": "node seed.js",
     "serve": "node tests/static-server.js",
@@ -14,7 +14,8 @@
     "audit": "playwright test && node -e \"process.stdout.write(require('fs').readFileSync('test-results/audit-report.md','utf8'))\"",
     "audit:standalone": "node tests/run-audit.js",
     "verify:static": "node tests/verify.js",
-    "verify:runtime": "node tests/runtime-sim.js"
+    "verify:runtime": "node tests/runtime-sim.js",
+    "verify:ages": "node tests/age-visibility.js"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0",
