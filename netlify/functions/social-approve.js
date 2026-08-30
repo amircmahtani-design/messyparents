@@ -27,7 +27,7 @@ const { guard, json, col, readPackage, stamp } = require("../../scripts/lib/soci
 const CFG = require("../../scripts/lib/social/config");
 const V = require("../../scripts/lib/social/validate");
 const Safety = require("../../scripts/lib/social/safety");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 const W = require("../../scripts/lib/social/workflow");
 
 exports.handler = guard("POST", async ({ db, body, user }) => {
@@ -35,7 +35,7 @@ exports.handler = guard("POST", async ({ db, body, user }) => {
 
   const pkg = await readPackage(db, body.id);
 
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const guide = (loaded.guides || []).find(g => g.slug === pkg.guideSlug) || null;
   const findings = V.validatePackage(pkg).concat(guide ? Safety.lintPackage(pkg, guide) : []);
 

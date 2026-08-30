@@ -10,14 +10,14 @@
    ========================================================================== */
 
 const { guard, json, readPackage } = require("../../scripts/lib/social/server");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 
 exports.handler = guard("GET", async ({ db, event }) => {
   const id = (event.queryStringParameters || {}).id;
   if (!id) return json(400, { error: "id is required" });
 
   const pkg = await readPackage(db, id);
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const g = (loaded.guides || []).find(x => x.slug === pkg.guideSlug) || null;
 
   return json(200, {

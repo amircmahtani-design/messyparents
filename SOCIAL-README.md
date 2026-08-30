@@ -96,6 +96,25 @@ panel your reader already recognises from the guide page. The templates import
 
 ---
 
+## Where the guides come from
+
+The build uses `scripts/lib/data.js` `load()`, which reads the repository from
+disk. That is right for the build and wrong inside a Netlify function: the
+function is bundled into a single file in a Lambda, so `data/guides-bundle.js`,
+`assets/js/firebase-config.js` and the JSON fallbacks are simply not there.
+Every read fails, every fallback fails after it, and `load()` returns an empty
+list with a warning — which looks exactly like an empty dashboard.
+
+So `scripts/lib/social/guides.js` reads Firestore directly through the Admin SDK
+the functions already have. It reuses `normaliseGuide()` and `ages.resolve()`
+from the existing libraries rather than copying them, so a guide has the same
+shape here as on the public site and a switched-off age band is invisible to
+Instagram for free.
+
+Only the reading is different. The meaning of a guide is not.
+
+---
+
 ## The content checks
 
 `scripts/lib/social/safety.js`, in three layers.
@@ -176,6 +195,7 @@ step.
     social/social.css                     its layout (imports tokens.css)
 
     scripts/lib/social/config.js          the publishing lock, states, formats
+    scripts/lib/social/guides.js          reads guides from Firestore (server)
     scripts/lib/social/select.js          which guides are eligible
     scripts/lib/social/compose.js         guide fields → package
     scripts/lib/social/templates.js       slide + story markup (shared)

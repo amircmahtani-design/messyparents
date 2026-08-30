@@ -5,17 +5,18 @@
    that were skipped and why, plus the topic and age vocabularies so the
    dashboard's filters come from the data rather than from a hard-coded list.
 
-   Eligibility is scripts/lib/social/select.js, which is a thin reading of
-   scripts/lib/data.js load() — so age-band visibility applies here exactly as
-   it applies to the public site, without this file knowing the rule exists.
+   Eligibility is scripts/lib/social/select.js reading what
+   scripts/lib/social/guides.js returns — the same normaliseGuide() and the
+   same ages.js visibility rule the build uses, so a band switched off in
+   Studio is invisible here too, without this file knowing the rule exists.
    ========================================================================== */
 
 const { guard, json, listPackages } = require("../../scripts/lib/social/server");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 const Sel = require("../../scripts/lib/social/select");
 
 exports.handler = guard("GET", async ({ db, event }) => {
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const packages = await listPackages(db);
   const q = (event.queryStringParameters || {});
 

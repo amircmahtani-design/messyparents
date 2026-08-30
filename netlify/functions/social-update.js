@@ -22,7 +22,7 @@ const { guard, json, col, readPackage, stamp } = require("../../scripts/lib/soci
 const CFG = require("../../scripts/lib/social/config");
 const V = require("../../scripts/lib/social/validate");
 const Safety = require("../../scripts/lib/social/safety");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 const W = require("../../scripts/lib/social/workflow");
 
 exports.handler = guard("POST", async ({ db, body, user }) => {
@@ -44,7 +44,7 @@ exports.handler = guard("POST", async ({ db, body, user }) => {
   /* Re-validate against the live guide, so a hand-edit is checked exactly as
      hard as a generated one. Amir may write whatever he likes; he is simply
      told what it trips. */
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const guide = (loaded.guides || []).find(g => g.slug === before.guideSlug) || null;
   const validation = V.validatePackage(step.after)
     .concat(guide ? Safety.lintPackage(step.after, guide) : []);

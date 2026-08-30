@@ -19,7 +19,7 @@
    ========================================================================== */
 
 const { guard, json, col, listPackages, stamp } = require("../../scripts/lib/social/server");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 const Sel = require("../../scripts/lib/social/select");
 const C = require("../../scripts/lib/social/compose");
 const V = require("../../scripts/lib/social/validate");
@@ -27,7 +27,7 @@ const Safety = require("../../scripts/lib/social/safety");
 const CFG = require("../../scripts/lib/social/config");
 
 exports.handler = guard("POST", async ({ db, body, user }) => {
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const eligible = Sel.eligibleGuides(loaded);
   const existing = await listPackages(db);
 

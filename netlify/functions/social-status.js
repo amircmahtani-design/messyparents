@@ -13,11 +13,11 @@
 
 const { guard, json, listPackages } = require("../../scripts/lib/social/server");
 const CFG = require("../../scripts/lib/social/config");
-const D = require("../../scripts/lib/data");
+const { loadGuides } = require("../../scripts/lib/social/guides");
 const Sel = require("../../scripts/lib/social/select");
 
 exports.handler = guard("GET", async ({ db }) => {
-  const loaded = await D.load();
+  const loaded = await loadGuides(db);
   const eligible = Sel.eligibleGuides(loaded);
   const packages = await listPackages(db);
 
