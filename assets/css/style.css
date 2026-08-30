@@ -115,7 +115,7 @@ h3{font-size:1.3rem}
 .hero{padding:0;position:relative}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);
   gap:clamp(6px,1.1vw,18px);align-items:start}
-.hero-copy{padding:clamp(2px,1.4vh,14px) 0 8px}
+.hero-copy{padding:clamp(2px,1.4vh,14px) 0 8px;min-width:0}
 .hero h1{margin-bottom:12px}
 .hero .lede{font-family:var(--hand);font-size:1.28rem;line-height:1.36;
   color:var(--ink-70);max-width:40ch}
@@ -569,7 +569,16 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   .row > .eyebrow{padding-top:0}
   /* tidy two-column chip grid instead of a ragged wrap */
   .pills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .pill{width:100%;justify-content:flex-start;height:46px;padding:0 14px;font-size:.95rem}
+  .pill{width:100%;justify-content:flex-start;height:46px;padding:0 14px;font-size:.95rem;
+    min-width:0;overflow:hidden}
+  /* A long label ("Development", "Parent Sanity") used to push its chip past
+     the end of its column and the page with it, which is what let a phone be
+     dragged sideways into empty margin. The label gives way inside the chip
+     instead of the chip giving way inside the page. */
+  .pill > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* Five chips in two columns left half a row blank. The odd one out takes the
+     whole row rather than sitting next to a gap. */
+  .pills > .pill:last-child:nth-child(odd){grid-column:1 / -1}
   .pill--age{justify-content:center}
   .row-note{grid-column:1}
   .rows-hint{padding-left:0}
@@ -664,7 +673,8 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
    Studio and its innerHTML is replaced when a custom one is saved, so these sit
    in their own span rather than inside it — otherwise saving a footer note in
    Studio would silently delete them. */
-.foot-note .foot-links{display:flex;gap:14px;flex:none}
+.foot-note .foot-links{display:flex;flex-wrap:wrap;gap:8px 14px;
+  flex:0 1 auto;min-width:0}
 .foot-note .foot-links a{color:var(--ink-70);text-decoration:underline;text-underline-offset:2px}
 .foot-note .foot-links a:hover{color:var(--blue)}
 
