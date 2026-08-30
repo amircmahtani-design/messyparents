@@ -33,6 +33,8 @@
 
 "use strict";
 
+const S = require("./site");
+
 /* Age labels contain an en-dash ("0–1 month"). Same slug the build uses, so a
    pill's href and the generated page agree. */
 const ageSlug = (label) =>
@@ -243,33 +245,81 @@ function applyFooter(html, footer) {
    configured — so it can never be baked into the HTML as a link that opens
    nothing.
    ------------------------------------------------------------------------ */
-/* The official Instagram account. One link, in the footer, on every page.
+/* The accounts that are this site somewhere else. The list itself lives in
+   site.js, because `sameAs` on the Organization entity reads the same list —
+   a profile linked in the footer but missing from sameAs is a profile a search
+   engine cannot tie back to this publisher.
 
-   Deliberately NOT a promotional banner and not a row of social icons: there
-   is one account, so there is one small link, sitting in the row that already
-   holds About and Privacy. The glyph is inline SVG so it costs no request and
-   inherits the link colour already defined for .foot-note .foot-links a.
+   Deliberately NOT a promotional banner and not a row of coloured badges:
+   these are small monochrome glyphs sitting in the row that already holds
+   About and Privacy. Inline SVG so they cost no request and inherit the link
+   colour already defined for .foot-note .foot-links a.
 
-   currentColor everywhere, aria-label because the link has no text, and
-   rel="noopener noreferrer" because it opens in a new tab. */
-const INSTAGRAM_URL = "https://www.instagram.com/themessyparentscollection/";
-const INSTAGRAM_LINK =
-  '<a class="foot-ig" href="' + INSTAGRAM_URL + '" target="_blank" rel="noopener noreferrer" ' +
-  'aria-label="The Messy Parents Collection on Instagram (opens in a new tab)">' +
-  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" ' +
-  'fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
-  '<rect x="3" y="3" width="18" height="18" rx="5"/>' +
-  '<circle cx="12" cy="12" r="4"/>' +
-  '<circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>' +
-  '</svg></a>';
+   currentColor everywhere, aria-label because the links have no text, and
+   rel="noopener noreferrer" because they open in a new tab.
+
+   The glyphs share one geometry — a rounded square with the mark inside — so
+   a row of them reads as a set rather than as icons borrowed from three
+   different places. */
+const SOCIAL_GLYPHS = {
+  instagram:
+    '<rect x="3" y="3" width="18" height="18" rx="5"/>' +
+    '<circle cx="12" cy="12" r="4"/>' +
+    '<circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>',
+  facebook:
+    '<rect x="3" y="3" width="18" height="18" rx="5"/>' +
+    '<path d="M15 7.6h-1.3a1.9 1.9 0 0 0-1.6 1.9V19"/>' +
+    '<path d="M10.2 12.4h4.6"/>'
+};
+
+function socialLink(p) {
+  const glyph = SOCIAL_GLYPHS[p.id];
+  if (!glyph) return "";
+  return '<a class="' + p.cls + '" href="' + p.url + '" target="_blank" rel="noopener noreferrer" ' +
+    'aria-label="' + S.SITE_NAME + ' on ' + p.name + ' (opens in a new tab)">' +
+    '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" ' +
+    'fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+    glyph +
+    '</svg></a>';
+}
+
+/* Kept as a named export because it was one before this list existed. */
+const INSTAGRAM_URL =
+  (S.SOCIAL_PROFILES.find(p => p.id === "instagram") || {}).url || "";
+
+/* The glyphs are wrapped in one <span> rather than sitting loose in the row.
+   Loose, they are two separate flex items, and on a phone the row wraps
+   wherever it runs out of width — which put Instagram at the end of one line
+   and Facebook at the start of the next. Grouped, they wrap as one thing.
+
+   The closing tag is matched with a lookahead for </div> instead of just the
+   first </span>, because that group IS a nested span and the old pattern would
+   otherwise stop inside it on the second run. .foot-links is the last child of
+   .foot-note on every page, so this is exact; end-of-string is allowed too so
+   a bare footer fragment (which is what the tests hand it) still matches.
+
+   Rather than appending only what is missing, the whole group is rebuilt from
+   SOCIAL_PROFILES every time: any group or loose social link already in the
+   HTML is removed first. That keeps it idempotent, and it means a changed URL
+   or a redrawn glyph actually reaches pages that were built before the change
+   — appending-if-absent would have left the old one sitting there forever. */
+const SOCIAL_GROUP_RE = /<span class="foot-soc">[\s\S]*?<\/span>/g;
+
+function socialGroup() {
+  const links = S.SOCIAL_PROFILES.map(socialLink).join("");
+  return links ? '<span class="foot-soc">' + links + "</span>" : "";
+}
 
 function applyFootLinks(html) {
+  const looseRe = new RegExp(
+    "<a class=\"(?:" + S.SOCIAL_PROFILES.map(p => p.cls).join("|") + ")\"[\\s\\S]*?<\\/a>", "g");
+
   return html.replace(
-    /(<span class="foot-links">)([\s\S]*?)(<\/span>)/g,
+    /(<span class="foot-links">)([\s\S]*?)(<\/span>(?=\s*(?:<\/div>|$)))/g,
     (whole, open, inner, close) => {
-      let out = inner;
+      let out = inner.replace(SOCIAL_GROUP_RE, "").replace(looseRe, "");
       if (!/href="\/privacy\.html"/.test(out)) out += '<a href="/privacy.html">Privacy</a>';
-      if (!/class="foot-ig"/.test(out)) out += INSTAGRAM_LINK;
+      out += socialGroup();
       return open + out + close;
     }
   );

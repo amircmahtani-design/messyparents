@@ -61,9 +61,17 @@ function organizationSchema() {
       "@type": "ImageObject",
       url: S.absolute(S.LOGO),
       caption: S.SITE_NAME
-    })
-    /* sameAs is deliberately absent. It is added the moment there are real
-       social profiles to point at — see SEO_AI_ARCHITECTURE.md. */
+    }),
+    /* The profiles that are this publisher somewhere else. This is what tells
+       a search engine that the domain, the Instagram account and the Facebook
+       page are one entity rather than three — so the profiles reinforce the
+       site instead of competing with it for the same name.
+
+       The list is SOCIAL_PROFILES in site.js, shared with the footer link row,
+       because a profile linked in the footer but missing here is exactly the
+       drift this is meant to avoid. compact() drops it while the list is
+       empty, so the shape is unchanged on a site with no accounts. */
+    sameAs: (S.SOCIAL_PROFILES || []).map(p => p.url)
   });
 }
 

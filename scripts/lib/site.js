@@ -30,6 +30,29 @@ const DEFAULT_SHARE_IMAGE = "/assets/img/family.webp";
 const LOGO = "/assets/img/logo.png";
 
 /* --------------------------------------------------------------------------
+   SOCIAL PROFILES — the accounts that ARE this site somewhere else.
+
+   One list, two consumers: the footer link row (applyFootLinks in bake.js)
+   and `sameAs` on the Organization entity (head.js). That second one is the
+   point of writing them down here rather than in the footer — sameAs is how a
+   search engine learns that this domain, this Instagram account and this
+   Facebook page are one publisher rather than three strangers, which is what
+   lets the profiles reinforce the site instead of competing with it.
+
+   `cls` is the CSS class the footer link gets. Instagram's is `foot-ig`
+   because that is what is already in the HTML and in style.css; do not rename
+   it. A new network gets a new class and a matching rule in style.css.
+
+   Add a network here and it appears in both places. Nothing else to edit.
+   ------------------------------------------------------------------------ */
+const SOCIAL_PROFILES = [
+  { id: "instagram", name: "Instagram", cls: "foot-ig",
+    url: "https://www.instagram.com/themessyparentscollection/" },
+  { id: "facebook", name: "Facebook", cls: "foot-fb",
+    url: "https://www.facebook.com/profile.php?id=61594125893530" }
+];
+
+/* --------------------------------------------------------------------------
    URL SHAPES
 
    Guides:     /guides/<slug>/
@@ -91,7 +114,7 @@ const PRIVATE_ROUTES = [
 
 module.exports = {
   ORIGIN, SITE_NAME, AUTHOR_NAME, TAGLINE,
-  DEFAULT_SHARE_IMAGE, LOGO,
+  DEFAULT_SHARE_IMAGE, LOGO, SOCIAL_PROFILES,
   guideUrl, topicUrl, ageUrl, absolute, ageSlug,
   STATIC_PAGES, PRIVATE_ROUTES
 };
