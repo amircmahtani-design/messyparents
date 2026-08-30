@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Social — The Messy Parents Collection</title>
+<link rel="icon" href="/assets/img/favicon.svg">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=1">
+<link rel="stylesheet" href="/social/social.css?v=1">
+<!--
+  THE PRIVATE SOCIAL DASHBOARD.
+
+  Separate from Studio on purpose. studio/index.html in the repository is not
+  the file that is deployed (see the project notes), so nothing here opens it.
+
+  This page reads and writes NOTHING directly. Every action goes to an
+  authenticated Netlify function which verifies a Firebase ID token and then
+  writes through the Admin SDK. Firestore rules say `allow write: if false` for
+  social packages, so even a signed-in browser console cannot forge an
+  approval.
+-->
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="loginView" class="login">
+  <h1>Social</h1>
+  <p>The Messy Parents Collection — private dashboard.</p>
+  <input id="email" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn" id="loginBtn" style="width:100%">Sign in</button>
+  <p class="err" id="loginErr"></p>
+  <p style="margin-top:14px;font-size:.8rem">Same sign-in as Studio.</p>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="appView" class="hidden">
+
+  <div class="lockbar" id="lockbar" role="status">
+    <span class="dot"></span>
+    <strong id="lockTitle">Publishing disabled</strong>
+    <span class="why" id="lockWhy">Checking…</span>
+  </div>
+
+  <div class="wrap">
+    <header class="top">
+      <h1>Social</h1>
+      <span class="badge-later" id="metaBadge">Meta not connected</span>
+      <span class="who"><span id="who"></span> · <button class="link" id="signout">Sign out</button></span>
+    </header>
+
+    <nav class="tabs" id="tabs" role="tablist">
+      <button role="tab" data-tab="make"     aria-selected="true">Make a package</button>
+      <button role="tab" data-tab="DRAFT">Drafts <span class="count" data-count="DRAFT">0</span></button>
+      <button role="tab" data-tab="NEEDS_REVIEW">Needs review <span class="count" data-count="NEEDS_REVIEW">0</span></button>
+      <button role="tab" data-tab="APPROVED_HELD">Approved &amp; held <span class="count" data-count="APPROVED_HELD">0</span></button>
+      <button role="tab" data-tab="REJECTED">Rejected <span class="count" data-count="REJECTED">0</span></button>
+      <button role="tab" data-tab="PUBLISHED">Published <span class="count" data-count="PUBLISHED">0</span></button>
+      <button role="tab" data-tab="status">Status</button>
+    </nav>
+
+    <main id="view" aria-live="polite"></main>
+    <div style="height:48px"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/scripts/lib/social/templates.js?v=1"></script>
+<script src="/assets/js/firebase-config.js?v=1"></script>
+<script src="/social/app.js?v=1" type="module"></script>
+</body>
+</html>

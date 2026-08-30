@@ -1,0 +1,188 @@
+/* ============================================================================
+   THE SOCIAL DASHBOARD — its own layout, the site's own paint.
+
+   Colour and type come from assets/css/tokens.css, which social/index.html
+   loads BEFORE this file. Nothing here defines a colour or a typeface; if the
+   site's cream changes, this changes with it.
+
+   Deliberately not an @import: _headers caches /assets/css/* as immutable for
+   a year, and an @import inside a cached stylesheet is a second request the
+   page cannot version. Two <link>s in the HTML, each with its own ?v=, means
+   a change to either one actually arrives.
+
+   Everything else here is layout for a private tool that does not exist on the
+   public site — the queue, the slide preview, the editor. None of it belongs
+   in assets/css/style.css, which every reader downloads, and none of it is
+   inline, so it can be read and changed in one place.
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{ color:var(--blue); }
+button{ font:inherit; }
+
+/* --- the lock banner. Loud on purpose. --------------------------------- */
+.lockbar{
+  position:sticky; top:0; z-index:50;
+  background:var(--red-fill); border-bottom:3px solid var(--red-line);
+  color:var(--red-ink); padding:10px 18px;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-size:.8rem;
+}
+.lockbar .dot{ width:12px; height:12px; border-radius:50%; background:var(--red-ink); flex:none;
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--red-ink) 22%, transparent); }
+.lockbar .why{ font-weight:700; text-transform:none; letter-spacing:0; color:var(--ink-70); font-size:.82rem; }
+.lockbar.is-live{ background:var(--amber-fill); border-bottom-color:var(--amber-line); color:var(--amber-ink); }
+.lockbar.is-live .dot{ background:var(--amber-ink); box-shadow:none; }
+
+/* --- shell -------------------------------------------------------------- */
+.wrap{ width:min(100% - 32px, 1240px); margin:0 auto; }
+header.top{ padding:18px 0 10px; display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+header.top h1{ font-family:var(--hand); -webkit-text-stroke:var(--stroke-title) currentColor;
+  font-weight:400; font-size:2rem; margin:0; color:var(--ink-hand); }
+header.top .who{ margin-left:auto; color:var(--ink-50); font-size:.85rem; }
+header.top button.link{ background:none; border:0; color:var(--blue); cursor:pointer;
+  text-decoration:underline; padding:0; }
+
+nav.tabs{ display:flex; gap:6px; overflow-x:auto; padding:8px 0 0; margin:0 0 14px;
+  border-bottom:1.5px solid var(--line-soft); }
+nav.tabs button{
+  background:none; border:0; border-bottom:3px solid transparent; cursor:pointer;
+  padding:9px 12px; color:var(--ink-70); font-weight:700; font-size:.9rem; white-space:nowrap;
+}
+nav.tabs button[aria-selected="true"]{ color:var(--blue); border-bottom-color:var(--blue); }
+nav.tabs .count{ display:inline-block; min-width:20px; padding:0 6px; margin-left:6px;
+  border-radius:99px; background:var(--blue-wash); color:var(--blue-dark);
+  font-size:.72rem; font-weight:800; }
+
+/* --- status grid -------------------------------------------------------- */
+.stats{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin:0 0 18px; }
+.stat{ background:var(--card); border:1.5px solid var(--line-soft); border-radius:var(--radius); padding:12px 14px; }
+.stat b{ display:block; font-family:var(--display); font-size:1.6rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+.stat span{ color:var(--ink-50); font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+.stat.is-bad b{ color:var(--red-ink); }
+
+/* --- controls ----------------------------------------------------------- */
+.bar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 14px; }
+.bar input[type="search"], .bar select{
+  font:inherit; padding:9px 12px; border:1.5px solid var(--line-soft);
+  border-radius:10px; background:var(--card); color:var(--ink); min-width:0;
+}
+.bar input[type="search"]{ flex:1 1 240px; }
+.btn{
+  border:1.5px solid var(--blue); background:var(--blue); color:#fff;
+  padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:700;
+}
+.btn.ghost{ background:var(--card); color:var(--blue); }
+.btn.quiet{ background:var(--card); color:var(--ink-70); border-color:var(--line-soft); }
+.btn.warn{ background:var(--card); color:var(--red-ink); border-color:var(--red-line); }
+.btn.go{ background:var(--sage); border-color:var(--sage); color:#173217; }
+.btn[disabled]{ opacity:.45; cursor:not-allowed; }
+.btn.tiny{ padding:5px 9px; font-size:.8rem; border-radius:8px; }
+
+/* --- lists -------------------------------------------------------------- */
+.rows{ display:grid; gap:8px; }
+.row{
+  display:grid; gap:4px 12px; grid-template-columns:auto 1fr auto; align-items:center;
+  background:var(--card); border:1.5px solid var(--line-soft); border-radius:var(--radius);
+  padding:11px 14px;
+}
+.row .t{ font-weight:700; }
+.row .m{ grid-column:2; color:var(--ink-50); font-size:.8rem; }
+.row .acts{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.row input[type="checkbox"]{ width:20px; height:20px; }
+.tag{ display:inline-block; padding:1px 8px; border-radius:99px; font-size:.7rem; font-weight:800;
+  letter-spacing:.05em; text-transform:uppercase; border:1.5px solid currentColor; }
+.tag.draft{ color:var(--ink-50); background:var(--cream-soft); }
+.tag.review{ color:var(--amber-ink); background:var(--amber-fill); }
+.tag.held{ color:#35633a; background:color-mix(in srgb, var(--sage) 26%, #fff); border-color:var(--sage); }
+.tag.rejected{ color:var(--red-ink); background:var(--red-fill); }
+.tag.test{ color:var(--tape-ink); background:var(--tape-fill); }
+.tag.err{ color:var(--red-ink); background:var(--red-fill); }
+
+.empty{ background:var(--card); border:1.5px dashed var(--line-soft); border-radius:var(--radius);
+  padding:26px; text-align:center; color:var(--ink-50); }
+
+/* --- package view ------------------------------------------------------- */
+.pkg{ display:grid; gap:18px; grid-template-columns:minmax(300px,420px) 1fr; align-items:start; }
+@media (max-width:900px){ .pkg{ grid-template-columns:1fr; } }
+/* Grid and flex children default to min-width:auto, so the 1080px-wide slide
+   inside .frame would widen its own column before the preview scale is
+   measured — and the preview would then be measured against a column it had
+   itself stretched. Pinning these to 0 is what keeps the scale honest. */
+.pkg > *{ min-width:0; }
+.stage, .frame, .panelbox, .sidebyside > *, .row > *{ min-width:0; }
+
+.stage{ background:var(--card); border:1.5px solid var(--line-soft); border-radius:var(--radius); padding:14px; }
+.frame{ width:100%; max-width:100%; overflow:hidden; border-radius:12px; border:1.5px solid var(--line-soft); background:var(--cream); }
+.frame .scaler{ transform-origin:top left; }
+.stage .nav{ display:flex; align-items:center; gap:10px; justify-content:center; margin-top:10px; }
+.stage .nav .pos{ font-variant-numeric:tabular-nums; color:var(--ink-50); font-size:.85rem; min-width:56px; text-align:center; }
+.dots{ display:flex; gap:6px; justify-content:center; margin-top:8px; flex-wrap:wrap; }
+.dots button{ width:10px; height:10px; padding:0; border-radius:50%; border:1.5px solid var(--line-soft);
+  background:var(--cream); cursor:pointer; }
+.dots button[aria-current="true"]{ background:var(--blue); border-color:var(--blue); }
+
+.panelbox{ background:var(--card); border:1.5px solid var(--line-soft); border-radius:var(--radius);
+  padding:14px 16px; margin:0 0 12px; }
+.panelbox h3{ margin:0 0 8px; font-family:var(--display); font-size:1rem; }
+.panelbox h3 small{ font-family:var(--body); font-weight:700; color:var(--ink-50); font-size:.75rem;
+  text-transform:uppercase; letter-spacing:.06em; margin-left:8px; }
+
+.sidebyside{ display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+@media (max-width:640px){ .sidebyside{ grid-template-columns:1fr; } }
+.source{ background:var(--paper); border:1.5px solid var(--rule-hand); border-radius:10px; padding:10px 12px;
+  font-size:.86rem; color:var(--ink-hand-soft); }
+.source h4{ margin:0 0 6px; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-50); }
+.source ul{ margin:0; padding-left:16px; } .source li{ margin:3px 0; }
+
+textarea, input.text{ width:100%; font:inherit; padding:8px 10px; border:1.5px solid var(--line-soft);
+  border-radius:10px; background:var(--cream-soft); color:var(--ink); resize:vertical; }
+textarea{ min-height:80px; }
+label.fld{ display:block; font-size:.75rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-50); margin:10px 0 4px; }
+
+.slidelist{ display:grid; gap:6px; }
+.slideitem{ display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center;
+  border:1.5px solid var(--line-soft); border-radius:10px; padding:7px 10px; background:var(--cream-soft); }
+.slideitem.is-current{ border-color:var(--blue); background:var(--blue-wash); }
+.slideitem .k{ font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-50); }
+.slideitem .locked{ color:var(--ink-50); font-size:.72rem; }
+
+.findings{ display:grid; gap:6px; margin:8px 0 0; }
+.finding{ font-size:.85rem; padding:8px 10px; border-radius:10px; border:1.5px solid; }
+.finding.error{ background:var(--red-fill); border-color:var(--red-line); color:var(--red-ink); }
+.finding.warn{ background:var(--amber-fill); border-color:var(--amber-line); color:var(--amber-ink); }
+.finding code{ font-size:.85em; }
+
+.actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.held{ background:var(--sage); color:#173217; border-radius:var(--radius); padding:10px 14px;
+  font-weight:800; letter-spacing:.03em; }
+
+.future{ opacity:.62; }
+.future .btn{ cursor:not-allowed; }
+.badge-later{ display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.08em;
+  text-transform:uppercase; padding:2px 7px; border-radius:99px;
+  background:var(--tape-fill); border:1.5px solid var(--tape-line); color:var(--tape-ink); margin-left:8px; }
+
+.toast{ position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  background:var(--ink); color:var(--cream); padding:10px 16px; border-radius:99px;
+  font-size:.88rem; z-index:80; max-width:calc(100% - 32px); }
+.toast.bad{ background:var(--red-ink); }
+
+/* --- login -------------------------------------------------------------- */
+.login{ width:min(100% - 32px, 380px); margin:12vh auto; background:var(--card);
+  border:1.5px solid var(--line-soft); border-radius:var(--radius); padding:22px; }
+.login h1{ font-family:var(--hand); -webkit-text-stroke:var(--stroke-title) currentColor;
+  font-weight:400; margin:0 0 4px; color:var(--ink-hand); }
+.login p{ margin:0 0 14px; color:var(--ink-50); font-size:.9rem; }
+.login input{ width:100%; font:inherit; padding:10px 12px; margin:0 0 10px;
+  border:1.5px solid var(--line-soft); border-radius:10px; background:var(--cream-soft); }
+.err{ color:var(--red-ink); font-size:.86rem; min-height:1.2em; }
+
+.hidden{ display:none !important; }
+@media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }

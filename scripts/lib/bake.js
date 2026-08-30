@@ -243,13 +243,35 @@ function applyFooter(html, footer) {
    configured — so it can never be baked into the HTML as a link that opens
    nothing.
    ------------------------------------------------------------------------ */
+/* The official Instagram account. One link, in the footer, on every page.
+
+   Deliberately NOT a promotional banner and not a row of social icons: there
+   is one account, so there is one small link, sitting in the row that already
+   holds About and Privacy. The glyph is inline SVG so it costs no request and
+   inherits the link colour already defined for .foot-note .foot-links a.
+
+   currentColor everywhere, aria-label because the link has no text, and
+   rel="noopener noreferrer" because it opens in a new tab. */
+const INSTAGRAM_URL = "https://www.instagram.com/themessyparentscollection/";
+const INSTAGRAM_LINK =
+  '<a class="foot-ig" href="' + INSTAGRAM_URL + '" target="_blank" rel="noopener noreferrer" ' +
+  'aria-label="The Messy Parents Collection on Instagram (opens in a new tab)">' +
+  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" ' +
+  'fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+  '<rect x="3" y="3" width="18" height="18" rx="5"/>' +
+  '<circle cx="12" cy="12" r="4"/>' +
+  '<circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>' +
+  '</svg></a>';
+
 function applyFootLinks(html) {
   return html.replace(
     /(<span class="foot-links">)([\s\S]*?)(<\/span>)/g,
-    (whole, open, inner, close) =>
-      /href="\/privacy\.html"/.test(inner)
-        ? whole
-        : open + inner + '<a href="/privacy.html">Privacy</a>' + close
+    (whole, open, inner, close) => {
+      let out = inner;
+      if (!/href="\/privacy\.html"/.test(out)) out += '<a href="/privacy.html">Privacy</a>';
+      if (!/class="foot-ig"/.test(out)) out += INSTAGRAM_LINK;
+      return open + out + close;
+    }
   );
 }
 
@@ -485,6 +507,7 @@ function applyPills(html, topics, ages, selected) {
 
 module.exports = {
   applyText, applyFooter, applyFootLinks, applyHero, applyAbout, applyBooks, applyPills,
+  INSTAGRAM_URL,
   inlineHTML, proseHTML, esc,
   ABOUT_DEFAULTS, BOOK_DEFAULTS
 };

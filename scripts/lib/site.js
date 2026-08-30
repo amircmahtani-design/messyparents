@@ -82,7 +82,11 @@ const STATIC_PAGES = [
    /.netlify/ prefix would make every guide illustration uncrawlable and hand
    Googlebot a page it cannot fully render. Only the functions are closed. */
 const PRIVATE_ROUTES = [
-  "/studio/", "/editor/", "/seo-audit.html", "/.netlify/functions/"
+  /* /social/ is the private Instagram dashboard. It is authenticated, but it
+     also has no business appearing in search results, and robots.txt is
+     GENERATED from this array by buildRobots() in scripts/build.js — so this
+     line is the only place it needs saying. Never edit robots.txt by hand. */
+  "/studio/", "/editor/", "/social/", "/seo-audit.html", "/.netlify/functions/"
 ];
 
 module.exports = {

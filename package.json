@@ -5,7 +5,8 @@
   "description": "Seed/admin tooling for The Messy Parents Collection guides.",
   "scripts": {
     "build": "node scripts/build.js",
-    "verify": "node tests/verify.js && node tests/age-visibility.js && node tests/runtime-sim.js",
+    "verify": "node tests/verify.js && node tests/age-visibility.js && node tests/runtime-sim.js && npm run verify:social",
+    "verify:social": "node tests/social-publishing-lock.js && node tests/social-safety.js && node tests/social-approval.js",
     "check": "node scripts/build.js && npm run verify",
     "seed": "node seed.js",
     "serve": "node tests/static-server.js",
@@ -15,7 +16,8 @@
     "audit:standalone": "node tests/run-audit.js",
     "verify:static": "node tests/verify.js",
     "verify:runtime": "node tests/runtime-sim.js",
-    "verify:ages": "node tests/age-visibility.js"
+    "verify:ages": "node tests/age-visibility.js",
+    "social:render": "node scripts/social-render.js"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0",

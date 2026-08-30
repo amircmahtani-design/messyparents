@@ -17,7 +17,7 @@
 <!-- MPC:CSS:START --><link rel="stylesheet" href="/assets/css/tokens.css"><link rel="stylesheet" href="/assets/css/style.css"><!-- MPC:CSS:END -->
 </head>
 
-<body data-mpc-page="privacy" data-longform>
+<body data-mpc-page="privacy">
 <a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
 
 <header class="site-head">
@@ -127,6 +127,17 @@
       <p>The site itself is hosted by Netlify and the guides are stored with Google Firebase. Like any web host, they
       keep short-lived server logs; we do not use those for analytics.</p>
 
+      <h2>Our Instagram account</h2>
+      <p>We link to our Instagram account from the footer of this site. That is an ordinary link: following it
+      takes you to instagram.com, where Meta&rsquo;s own privacy terms apply, not ours. We do not embed an
+      Instagram feed here, we do not load any Meta script on this site, and clicking the link tells us nothing.</p>
+      <p>Behind the scenes we use a private, password-protected tool to draft posts from guides that are already
+      published on this site. It works only with our own writing and our own illustrations. It does not read
+      Instagram, it does not receive messages, and at the time of writing it cannot post anything &mdash;
+      publishing is switched off. Nothing about you is involved at any point.</p>
+      <p>If that ever changes &mdash; if we start handling Instagram messages, for instance &mdash; we will describe
+      it here before it starts, not after.</p>
+
       <h2>Your rights</h2>
       <p>If you are in the UK or the EU, you have the right to ask what data is held about you, to ask for it to be
       corrected or deleted, and to object to it being processed. Because we do not collect anything that identifies
@@ -144,37 +155,8 @@
       your consent again before it runs. We will not quietly widen what is being collected under an old Accept.</p>
 
       <h2>Getting in touch</h2>
-      <p>Anything on this page, or anything you would like removed, can go through the box below. It goes to us
-      and nowhere else. You do not have to leave an address &mdash; if you do not, we simply have no way to write
-      back, which is a fair trade if you only wanted to tell us something.</p>
-
-      <!-- Netlify Forms. Registered at deploy time because of data-netlify,
-           and every submission is stored in the Netlify dashboard rather than
-           emailed anywhere. There is deliberately no address published on this
-           site for anything to harvest.
-
-           bot-field is a honeypot: hidden from people, so anything that fills
-           it in is a bot and Netlify discards the submission silently. That
-           matters because the free plan counts spam towards its allowance. -->
-      <form name="privacy" method="POST" class="mpc-form"
-            data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="privacy">
-        <p class="mpc-hp">
-          <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-        </p>
-
-        <div class="mpc-field">
-          <label for="pf_message">What you would like to say</label>
-          <textarea id="pf_message" name="message" rows="6" required></textarea>
-        </div>
-
-        <div class="mpc-field">
-          <label for="pf_reply">An email address <span class="mpc-opt">&mdash; only if you want a reply</span></label>
-          <input id="pf_reply" name="reply" type="email" autocomplete="email">
-        </div>
-
-        <button type="submit" class="mpc-send">Send</button>
-      </form>
+      <p>Anything on this page, or anything you would like removed, can go through the contact route on our
+      <a href="/about.html">About us</a> page.</p>
 
     </div>
   </div>
