@@ -42,6 +42,16 @@
 const { normaliseGuide } = require("../data");
 const AGES = require("../ages");
 
+/* Keep the guide's already-approved longform headings available to the social
+   composer. These are the strongest hooks in the catalogue; losing them here
+   silently turns every cover into the flatter SEO-title fallback. */
+function attachLongform(normalised, raw) {
+  const headings = (Array.isArray(raw && raw.longform) ? raw.longform : [])
+    .map(s => (s && s.h ? String(s.h).replace(/\s+/g, " ").trim() : ""))
+    .filter(Boolean);
+  return headings.length ? Object.assign({}, normalised, { longformHeadings: headings }) : normalised;
+}
+
 /* Read a whole collection into a plain object keyed by document id. */
 async function readCollection(db, name) {
   const snap = await db.collection(name).get();
@@ -122,7 +132,7 @@ async function loadGuides(db) {
 
   const topics = topicsFrom(meta, rawGuides);
   const allAges = agesFromGuides(rawGuides);
-  const everyGuide = rawGuides.map(g => normaliseGuide(g, { topics }));
+  const everyGuide = rawGuides.map(g => attachLongform(normaliseGuide(g, { topics }), g));
 
   const visibility = AGES.resolve(allAges, (meta.seo && meta.seo.ageVisibility) || null);
 
@@ -148,4 +158,4 @@ async function loadGuides(db) {
   };
 }
 
-module.exports = { loadGuides, agesFromGuides, topicsFrom };
+module.exports = { loadGuides, agesFromGuides, topicsFrom, attachLongform };

@@ -24,6 +24,26 @@ const V = "10.12.2";
 const T = window.MPCSocialTemplates;
 const CFG = window.FIREBASE_CONFIG;
 
+/* ---- the asset map the renderer needs ---------------------------------- *
+   templates.js resolves object icons, the logo and character cutouts through
+   ctx.assets. The export renderer hands it data URIs because its page has no
+   URL to resolve a relative path against; the dashboard is a real page, so it
+   hands over real paths instead. Passing nothing is not a cosmetic shortfall:
+   the vignette layouts test ctx.assets.icons to decide whether a slide can be
+   drawn as objects at all, so a preview without this map picks a DIFFERENT
+   layout from the one that would export. Same functions, same assets, same
+   pixels. */
+const ICON_DIR = "/assets/img/social-icons/";
+function frameAssets(frame) {
+  const icons = {};
+  const add = (n) => { if (n && !icons[n]) icons[n] = ICON_DIR + n + ".png"; };
+  add(frame && frame.watermark);
+  ((frame && frame.items) || []).forEach(it => add(it && it.icon));
+  /* images: {} on purpose — BRAND paths are already site-absolute, so
+     templates.js resolve() falls through to the real URL. */
+  return { logo: "/assets/img/logo.webp", images: {}, icons };
+}
+
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (s) => String(s == null ? "" : s)
@@ -35,6 +55,8 @@ const state = {
   status: null, guides: [], skipped: [], topics: [], ages: [],
   packages: [], current: null, slide: 0, storyMode: false,
   filter: { q: "", topic: "", age: "" },
+  platform: "instagram",   /* which platform preview is on screen */
+  surface: "feed",         /* feed | story */
   selected: new Set(),
   busy: false
 };
@@ -275,11 +297,15 @@ function openPackage(id) {
 
 function renderPackage(view) {
   const p = state.current;
-  const frames = state.storyMode ? ((p.story && p.story.frames) || []) : (p.slides || []);
+  const story = state.surface === "story";
+  const frames = story ? ((p.story && p.story.frames) || []) : (p.slides || []);
   const idx = Math.min(state.slide, Math.max(0, frames.length - 1));
   const findings = p.validation || [];
   const errs = findings.filter(f => f.level === "error");
   const held = p.status === "APPROVED_HELD";
+  const plat = (p.platforms && p.platforms[state.platform]) || null;
+  const dest = p.destination || "both";
+  const active = dest === "both" || dest === state.platform;
 
   view.innerHTML = `
     <div class="bar">
@@ -290,14 +316,31 @@ function renderPackage(view) {
       <a class="btn tiny ghost" href="${esc(p.guidePath)}" target="_blank" rel="noopener">Open the guide ↗</a>
     </div>
 
-    ${held ? `<div class="held">Approved and held. Publishing is disabled, there is no scheduler, and nothing will send this. Editing it below returns it to review.</div>` : ""}
+    <div class="bar" style="margin-top:-4px">
+      <span class="fldlbl">Destination</span>
+      ${["instagram", "facebook", "both"].map(d =>
+        `<button class="btn tiny ${dest === d ? "" : "quiet"}" data-dest="${d}">${
+          d === "both" ? "Instagram + Facebook" : d[0].toUpperCase() + d.slice(1)}</button>`).join("")}
+    </div>
+
+    ${held ? `<div class="held">Approved and held for ${esc(dest === "both" ? "Instagram and Facebook" : dest)}.
+      Publishing is disabled, there is no scheduler, and nothing will send this. Editing it below returns it to review.</div>` : ""}
 
     <div class="pkg" style="margin-top:12px">
       <div class="stage">
         <div class="bar" style="margin:0 0 10px">
-          <button class="btn tiny ${state.storyMode ? "quiet" : ""}" data-mode="carousel">Carousel 4:5</button>
-          <button class="btn tiny ${state.storyMode ? "" : "quiet"}" data-mode="story">Story 9:16</button>
+          ${["instagram", "facebook"].map(pl =>
+            `<button class="btn tiny ${state.platform === pl ? "" : "quiet"}" data-plat="${pl}">${
+              pl[0].toUpperCase() + pl.slice(1)}</button>`).join("")}
+          <span style="flex:1 1 auto"></span>
+          ${["feed", "story"].map(sf =>
+            `<button class="btn tiny ${state.surface === sf ? "" : "quiet"}" data-surface="${sf}">${
+              sf === "feed" ? (state.platform === "facebook" ? "Feed 4:5" : "Carousel 4:5") : "Story / Reel 9:16"}</button>`).join("")}
         </div>
+
+        ${active ? "" : `<p class="notewarn">This package is not going to ${esc(state.platform)} —
+          the destination above is set to ${esc(dest)}. The preview still works so you can compare.</p>`}
+
         <div class="frame" id="frame"></div>
         <div class="nav">
           <button class="btn tiny quiet" id="prev" ${idx === 0 ? "disabled" : ""}>←</button>
@@ -306,15 +349,21 @@ function renderPackage(view) {
         </div>
         <div class="dots">${frames.map((f, i) =>
           `<button data-go="${i}" aria-current="${i === idx}" aria-label="Slide ${i + 1}"></button>`).join("")}</div>
-        <p id="fit" style="text-align:center;color:var(--ink-50);font-size:.8rem;margin:8px 0 0"></p>
+        <p id="fit" class="fitline"></p>
+
+        ${frames[idx] && (frames[idx].variants || []).length > 1 ? `
+        <div class="bar" style="margin:10px 0 0">
+          <span class="fldlbl">Layout</span>
+          ${frames[idx].variants.map(v =>
+            `<button class="btn tiny ${frames[idx].variant === v ? "" : "quiet"}" data-variant="${esc(v)}">${esc(v)}</button>`).join("")}
+        </div>
+        <p class="hint">Changing the layout does not change a word — only how it is composed.</p>` : ""}
 
         <div class="future" style="margin-top:14px;border-top:1.5px solid var(--line-soft);padding-top:12px">
           <button class="btn tiny quiet" disabled title="Not configured in this phase">Create animated version</button>
           <span class="badge-later">Coming later</span>
-          <p style="font-size:.78rem;color:var(--ink-50);margin:8px 0 0">
-            Reels are 1080×1920. An animation would start from this approved illustration and keep the
-            same characters, faces, clothes and style — see SOCIAL-README.md.
-          </p>
+          <p class="hint">Reels are 1080×1920. An animation would start from this approved illustration and keep the
+            same characters, faces, clothes and style — see SOCIAL-README.md.</p>
         </div>
       </div>
 
@@ -326,13 +375,20 @@ function renderPackage(view) {
         ${slideEditor(p, idx)}
 
         <div class="panelbox">
-          <h3>Caption</h3>
-          <textarea id="caption" style="min-height:190px">${esc(p.caption)}</textarea>
+          <h3>${esc(state.platform[0].toUpperCase() + state.platform.slice(1))} copy</h3>
+          ${plat ? `<p class="hint" style="margin:0 0 8px">${esc(plat.notes)}</p>
+            <pre class="platcopy">${esc(plat.caption)}</pre>
+            <p class="hint">${plat.linkIsClickable
+              ? `Clickable link: <code>${esc(plat.link)}</code>`
+              : `Link is not clickable here — the caption says “${esc(plat.link)}”.`}
+              · ${plat.caption.length} characters (comfortable up to ${plat.limits.comfortable})</p>` : ""}
+          <label class="fld" for="caption">Shared caption — both platforms are built from this</label>
+          <textarea id="caption" style="min-height:170px">${esc(p.caption)}</textarea>
           <label class="fld" for="hashtags">Hashtags</label>
           <input class="text" id="hashtags" value="${esc((p.hashtags || []).join(" "))}">
           <label class="fld" for="when">Suggested date and time (UTC)</label>
           <input class="text" id="when" type="datetime-local" value="${esc(toLocalInput(p.scheduledFor))}">
-          <label class="fld">Destination</label>
+          <label class="fld">Destination URL</label>
           <p style="margin:0;font-size:.8rem;word-break:break-all"><code>${esc(p.destinationUrl)}</code></p>
         </div>
 
@@ -347,11 +403,23 @@ function renderPackage(view) {
       </div>
     </div>`;
 
-  paintFrame(frames[idx], state.storyMode);
+  paintFrame(frames[idx], story);
 
   $("#back").addEventListener("click", () => { state.current = null; render(); });
-  $$("#view [data-mode]").forEach(b => b.addEventListener("click", () => {
-    state.storyMode = b.dataset.mode === "story"; state.slide = 0; render();
+  $$("#view [data-plat]").forEach(b => b.addEventListener("click", () => {
+    state.platform = b.dataset.plat; render();
+  }));
+  $$("#view [data-surface]").forEach(b => b.addEventListener("click", () => {
+    state.surface = b.dataset.surface; state.slide = 0; render();
+  }));
+  $$("#view [data-dest]").forEach(b => b.addEventListener("click", () => {
+    state.current = Object.assign({}, p, { destination: b.dataset.dest });
+    render(); toast("Destination changed. Press Save to keep it.");
+  }));
+  $$("#view [data-variant]").forEach(b => b.addEventListener("click", () => {
+    const list = story ? p.story.frames : p.slides;
+    list[idx] = Object.assign({}, list[idx], { variant: b.dataset.variant });
+    render(); toast("Layout changed. Press Save to keep it.");
   }));
   $("#prev").addEventListener("click", () => { state.slide = Math.max(0, idx - 1); render(); });
   $("#next").addEventListener("click", () => { state.slide = Math.min(frames.length - 1, idx + 1); render(); });
@@ -375,57 +443,59 @@ function renderPackage(view) {
 }
 
 /* ---- the slide editor, with the guide's own words beside it ------------ */
+/* A slide is a headline of coloured lines, an optional kicker, a set of short
+   labels, a band and a call to action. Same shape for the carousel and the
+   Story, so there is one editor rather than two. */
 function slideEditor(p, idx) {
-  if (state.storyMode) {
-    const f = ((p.story && p.story.frames) || [])[idx];
-    if (!f) return "";
-    return `<div class="panelbox">
-      <h3>Story frame ${idx + 1} <small>${esc(f.kind)}</small></h3>
-      <div class="sidebyside">
-        <div>
-          <label class="fld">Heading</label>
-          <input class="text" data-story="heading" value="${esc(f.heading)}">
-          <label class="fld">Body</label>
-          <textarea data-story="body">${esc(f.body || "")}</textarea>
-        </div>
-        ${sourceBox(f.sourceText, "Story source")}
-      </div>
-    </div>`;
-  }
-
-  const s = (p.slides || [])[idx];
+  const story = state.surface === "story";
+  const s = story ? ((p.story && p.story.frames) || [])[idx] : (p.slides || [])[idx];
   if (!s) return "";
-  const canMove = s.movable !== false;
+
+  const lines = (s.lines || []).map((l, i) => `
+    <div class="lineedit">
+      <input class="text" data-line="${i}" value="${esc(l.t)}">
+      <select data-colour="${i}">${["ink", "blue", "orange"].map(c =>
+        `<option value="${c}"${l.c === c ? " selected" : ""}>${c}</option>`).join("")}</select>
+    </div>`).join("");
+
+  const items = (s.items || []).map((it, i) => `
+    <div class="lineedit">
+      <input class="text" data-item="${i}" value="${esc(it.label)}">
+      <span class="iconchip">${it.icon
+        ? `<img src="/assets/img/social-icons/${esc(it.icon)}.png" alt="${esc(it.icon)}" title="${esc(it.icon)}">`
+        : `<span class="noicon" title="no matching object">—</span>`}</span>
+    </div>`).join("");
+
   return `<div class="panelbox">
-    <h3>Slide ${idx + 1} <small>${esc(s.kind)} · from ${esc(s.sourceField)}</small></h3>
+    <h3>${story ? "Story frame" : "Slide"} ${idx + 1}
+      <small>${esc(s.family)}${s.variant ? " · " + esc(s.variant) : ""}${s.sourceField ? " · from " + esc(s.sourceField) : ""}</small></h3>
     <div class="sidebyside">
       <div>
-        ${s.eyebrow !== undefined ? `<label class="fld">Eyebrow</label>
-          <input class="text" data-slide="eyebrow" value="${esc(s.eyebrow)}">` : ""}
-        ${s.heading !== undefined ? `<label class="fld">Heading</label>
-          <input class="text" data-slide="heading" value="${esc(s.heading)}">` : ""}
-        <label class="fld">Lines</label>
-        ${(s.lines || []).map((l, i) =>
-          `<textarea data-line="${i}" style="min-height:60px;margin-bottom:6px">${esc(l)}</textarea>`).join("")
-          || `<p style="font-size:.85rem;color:var(--ink-50)">This slide has no text lines.</p>`}
+        ${s.kicker !== undefined && s.kicker !== "" ? `<label class="fld">Category cue</label>
+          <input class="text" data-field="kicker" value="${esc(s.kicker)}">` : ""}
+        <label class="fld">Headline</label>${lines}
+        ${items ? `<label class="fld">Labels</label>${items}` : ""}
+        ${s.band ? `<label class="fld">Band</label><input class="text" data-field="band" value="${esc(s.band)}">` : ""}
+        ${s.cta ? `<label class="fld">Call to action</label><input class="text" data-field="cta" value="${esc(s.cta)}">` : ""}
       </div>
       ${sourceBox(s.sourceText, "The guide's own words")}
     </div>
 
+    ${story ? "" : `
     <label class="fld">Slides</label>
     <div class="slidelist">${(p.slides || []).map((x, i) => `
       <div class="slideitem ${i === idx ? "is-current" : ""}">
-        <span class="k">${i + 1} ${esc(x.kind)}</span>
-        <span>${esc(x.heading || (x.lines || [])[0] || "")}</span>
+        <span class="k">${i + 1} ${esc(x.family)}</span>
+        <span>${esc((x.lines || []).map(l => l.t).join(" ").slice(0, 44))}</span>
         <span class="acts">
           ${x.movable !== false ? `
             <button class="btn tiny quiet" data-up="${i}" ${i === 0 ? "disabled" : ""}>↑</button>
             <button class="btn tiny quiet" data-down="${i}" ${i === p.slides.length - 1 ? "disabled" : ""}>↓</button>` : ""}
           ${x.optional ? `<button class="btn tiny warn" data-remove="${i}">Remove</button>`
-                       : `<span class="locked">${x.kind === "warn" ? "safety — kept" : "fixed"}</span>`}
+                       : `<span class="locked">${x.family === "warn" ? "safety — kept" : "fixed"}</span>`}
         </span>
       </div>`).join("")}</div>
-    ${canMove ? "" : `<p style="font-size:.78rem;color:var(--ink-50);margin:8px 0 0">The cover and closing slides stay where they are.</p>`}
+    <p class="hint">The hook and the closing slide stay where they are. The warning slide cannot be removed.</p>`}
   </div>`;
 }
 
@@ -439,6 +509,7 @@ function sourceBox(sourceText, title) {
 }
 
 function wireSlideEditor(p, idx) {
+  const story = state.surface === "story";
   $$("#view [data-remove]").forEach(b => b.addEventListener("click", () => {
     const i = Number(b.dataset.remove);
     const copy = p.slides.slice(); copy.splice(i, 1);
@@ -446,6 +517,7 @@ function wireSlideEditor(p, idx) {
     state.slide = Math.min(state.slide, copy.length - 1);
     render(); toast("Slide removed. Press Save to keep it.");
   }));
+
   const swap = (a, b) => {
     const copy = p.slides.slice();
     if (copy[a].movable === false || copy[b].movable === false) return toast("That slide is fixed in place.", true);
@@ -457,16 +529,26 @@ function wireSlideEditor(p, idx) {
   $$("#view [data-down]").forEach(b => b.addEventListener("click", () => swap(Number(b.dataset.down), Number(b.dataset.down) + 1)));
 
   const live = () => {
-    const s = state.storyMode ? ((p.story && p.story.frames) || [])[idx] : (p.slides || [])[idx];
+    const s = story ? ((p.story && p.story.frames) || [])[idx] : (p.slides || [])[idx];
     if (!s) return;
-    $$("#view [data-slide]").forEach(el => { s[el.dataset.slide] = el.value; });
-    $$("#view [data-story]").forEach(el => { s[el.dataset.story] = el.value; });
-    const lines = $$("#view [data-line]");
-    if (lines.length) s.lines = lines.map(el => el.value);
-    paintFrame(s, state.storyMode);
+    $$("#view [data-field]").forEach(el => { s[el.dataset.field] = el.value; });
+    $$("#view [data-line]").forEach(el => {
+      const l = (s.lines || [])[Number(el.dataset.line)];
+      if (l) l.t = el.value;
+    });
+    $$("#view [data-colour]").forEach(el => {
+      const l = (s.lines || [])[Number(el.dataset.colour)];
+      if (l) l.c = el.value;
+    });
+    $$("#view [data-item]").forEach(el => {
+      const it = (s.items || [])[Number(el.dataset.item)];
+      if (it) it.label = el.value;
+    });
+    paintFrame(s, story);
   };
-  $$("#view [data-slide], #view [data-story], #view [data-line]")
-    .forEach(el => el.addEventListener("input", debounce(live, 200)));
+  $$("#view [data-field], #view [data-line], #view [data-item]")
+    .forEach(el => el.addEventListener("input", debounce(live, 220)));
+  $$("#view [data-colour]").forEach(el => el.addEventListener("change", live));
 }
 
 /* ---- the preview frame ------------------------------------------------- */
@@ -474,40 +556,53 @@ function paintFrame(frame, isStory) {
   const host = $("#frame");
   if (!host || !frame) { if (host) host.innerHTML = ""; return; }
   const W = 1080, H = isStory ? 1920 : 1350;
-  const html = isStory ? T.storyHTML(frame)
-                       : T.slideHTML(frame, { index: state.slide, total: (state.current.slides || []).length });
+  const assets = frameAssets(frame);
+  const html = isStory
+    ? T.storyHTML(frame, { assets })
+    : T.slideHTML(frame, { assets, index: state.slide, total: (state.current.slides || []).length });
 
   host.innerHTML = `<div class="scaler" style="width:${W}px;height:${H}px">${html}</div>`;
+
   if (!document.getElementById("mpc-slide-css")) {
     const st = document.createElement("style");
-    st.id = "mpc-slide-css"; st.textContent = T.css();
+    st.id = "mpc-slide-css";
+    st.textContent = ":root{--paper-img:url('/assets/img/paper.jpg')}" + T.css();
     document.head.appendChild(st);
   }
-  /* Measure the space available BEFORE the 1080px slide can influence it.
-     The stylesheet pins the grid children to min-width:0 for the same reason;
-     this clamp is the belt to that braces, so a future layout change cannot
-     silently produce a preview at the wrong size. */
+  /* The brush filters are SVG and have to exist in the document, once. */
+  if (!document.getElementById("mpc-filters")) {
+    const holder = document.createElement("div");
+    holder.id = "mpc-filters";
+    holder.innerHTML = T.FILTERS;
+    document.body.appendChild(holder);
+  }
+
   const avail = Math.min(host.clientWidth || W, host.parentElement ? host.parentElement.clientWidth : W);
   const scale = Math.min(1, (avail || W) / W);
   const scaler = host.firstElementChild;
   scaler.style.transform = `scale(${scale})`;
   host.style.height = Math.round(H * scale) + "px";
 
-  /* The overflow check that only a browser can do. */
+  /* The check only a browser can do: do the WORDS fall outside the slide? The
+     torn sheets and the cutouts bleed past the edge on purpose. */
   requestAnimationFrame(() => {
     const el = scaler.querySelector(".mpc-slide");
     if (!el) return;
-    let worst = Math.max(0, el.scrollHeight - el.clientHeight, el.scrollWidth - el.clientWidth);
-    el.querySelectorAll("*").forEach(n => {
-      const r = n.getBoundingClientRect(), b = el.getBoundingClientRect();
-      if (r.bottom > b.bottom + 1) worst = Math.max(worst, Math.round((r.bottom - b.bottom) / scale));
-      if (r.right > b.right + 1) worst = Math.max(worst, Math.round((r.right - b.right) / scale));
+    const box = el.getBoundingClientRect();
+    let worst = 0;
+    el.querySelectorAll(".s-hl, .s-band, .s-tag, .s-kicker, .s-num").forEach(n => {
+      const r = n.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      worst = Math.max(worst,
+        (r.bottom - box.bottom) / scale, (r.right - box.right) / scale,
+        (box.top - r.top) / scale, (box.left - r.left) / scale);
     });
+    worst = Math.round(Math.max(0, worst));
     const fit = $("#fit");
     if (fit) {
       fit.textContent = worst
-        ? `⚠ Text overflows this slide by ${worst}px — shorten it.`
-        : `Fits, with room inside the safe area. ${W}×${H}, exports as JPEG.`;
+        ? `⚠ Text falls outside the slide by ${worst}px — shorten it or change the layout.`
+        : `Fits. ${W}×${H}, exports as JPEG.`;
       fit.style.color = worst ? "var(--red-ink)" : "var(--ink-50)";
     }
   });
@@ -522,6 +617,7 @@ function collect() {
     hashtags: $("#hashtags").value.split(/[\s,]+/).map(h => h.replace(/^#/, "")).filter(Boolean),
     slides: p.slides,
     story: p.story,
+    destination: p.destination || "both",
     scheduledFor: when ? new Date(when).toISOString() : p.scheduledFor
   };
 }
