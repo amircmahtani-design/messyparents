@@ -673,18 +673,38 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
    Studio and its innerHTML is replaced when a custom one is saved, so these sit
    in their own span rather than inside it — otherwise saving a footer note in
    Studio would silently delete them. */
+/* The links sit at the RIGHT-HAND end of the footer, which is where a reader
+   expects a site's secondary navigation. They rarely share a line with the two
+   sentences above them, so on the line of their own that they usually get,
+   margin-left:auto is what carries them across. On a phone they go back to the
+   left edge — see the 760px block — because a right-aligned block that has
+   wrapped onto two lines reads as an accident. */
 .foot-note .foot-links{display:flex;flex-wrap:wrap;gap:8px 14px;
-  flex:0 1 auto;min-width:0}
+  flex:0 1 auto;min-width:0;margin-left:auto;justify-content:flex-end}
+/* Must sit AFTER the rule above, not up in the other 760px block: the two
+   selectors have the same weight, so whichever is written last wins. */
+@media (max-width:760px){
+  .foot-note .foot-links{margin-left:0;justify-content:flex-start}
+}
 .foot-note .foot-links a{color:var(--ink-70);text-decoration:underline;text-underline-offset:2px}
 .foot-note .foot-links a:hover{color:var(--blue)}
 
-/* The Instagram link. One glyph, the same colour as its neighbours, sized to
-   sit on the same baseline as the words rather than above them. Added by
-   applyFootLinks() in scripts/lib/bake.js, so it is on every page including
-   the generated guides. Deliberately quiet: it is a link, not a banner. */
-.foot-note .foot-links a.foot-ig{display:inline-flex;align-items:center;
+/* The social links — Instagram, Facebook. One small glyph each, the same
+   colour as their neighbours, sized to sit on the same baseline as the words
+   rather than above them. Added by applyFootLinks() in scripts/lib/bake.js
+   from SOCIAL_PROFILES in scripts/lib/site.js, so they are on every page
+   including the generated guides. Deliberately quiet: these are links, not a
+   banner. A new network needs its class adding to the two selectors below. */
+.foot-note .foot-links a.foot-ig,
+.foot-note .foot-links a.foot-fb{display:inline-flex;align-items:center;
   text-decoration:none;line-height:1;padding:2px 0}
-.foot-note .foot-links a.foot-ig svg{display:block;transform:translateY(1px)}
+.foot-note .foot-links a.foot-ig svg,
+.foot-note .foot-links a.foot-fb svg{display:block;transform:translateY(1px)}
+/* The glyphs travel together. Loose in the row they are separate flex items,
+   so on a phone the line could break between them and leave Instagram at the
+   end of one line and Facebook at the start of the next. */
+.foot-note .foot-links .foot-soc{display:inline-flex;align-items:center;
+  gap:14px;flex:0 0 auto}
 
 /* --- Browse links (all-guides page) ---------------------------------------
    Real <a> links to every topic and age page, written in by the build. The
