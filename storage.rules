@@ -22,6 +22,22 @@ service firebase.storage {
     // them itself and cannot sign in as you.
     match /refs/{file=**}     { allow read: if true; allow write: if isAdmin(); }
 
+    // Generated social artwork. Written ONLY by the Admin SDK inside
+    // netlify/functions/social-artwork.js — `allow write: if false` means a
+    // signed-in browser console cannot put a picture into a package any more
+    // than it can approve one.
+    //
+    // Readable, like the book images and for the same reason: the /social/
+    // dashboard shows these in <img> tags on a page that cannot mint a
+    // Storage token, and the export renderer has to fetch them without one.
+    // What protects them is the path, not the wall — every file is
+    // social/<packageId>/<kind>-<n>-<16 hex of the content key>.png, and the
+    // key is a SHA-256 of the guide, the family, the variant, the reference
+    // ids and the prompt version (see scripts/lib/social/artwork.js). These
+    // are also images intended for a public feed once publishing is enabled;
+    // nothing private is in them, because nothing readable is in them at all.
+    match /social/{file=**}   { allow read: if true; allow write: if false; }
+
     // Pictures used inside the book (the Editor). The manuscript text is fully
     // private in Firestore; these files sit behind long unguessable download
     // URLs rather than the sign-in wall, because the <img> tags in the editor

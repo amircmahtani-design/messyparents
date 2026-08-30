@@ -85,14 +85,62 @@ A guide missing a field simply has no slide for it. Empty sections are never
 padded and the carousel length follows the guide — six slides for a full one,
 three for a sparse one, never more than Instagram's ten.
 
-### The panel tints are not a new visual language
+### The visual system: seven poster families
 
-`assets/css/tokens.css` names them after these exact panels: `--amber-*` is
-commented *"what helped us"*, `--red-*` is *"call the doctor if"*,
-`--blue-band` is the quick-answer band. So a slide is a 1080-pixel version of a
-panel your reader already recognises from the guide page. The templates import
-`tokens.css`; they never restate a colour or a typeface, and they use the local
-`.woff2` files in `assets/fonts/`, so rendering needs no network.
+*Rewritten 30 Aug 2026. The previous renderer drew a cream page with a heading
+over a rounded card of bullets, once per slide. It was correct, safe, legible
+and completely inert — a website panel enlarged to 1080 pixels. Nobody stops
+scrolling for a page.*
+
+A slide now belongs to one of seven **families**, each with an approved poster
+reference behind it:
+
+| family | from | poster reference |
+|---|---|---|
+| `cover-hook` | the guide's title | `posters/cover-hook.jpg` |
+| `quick-check` | `panel.quick`, `panel.normal.items` | `posters/quick-check.jpg` |
+| `what-helped-us` | `panel.helped.items` **only** | `posters/what-helped-us.jpg` |
+| `warning` | `panel.warn.items` | `posters/warning.jpg` |
+| `dont` | `panel.dont.items` **only** | `posters/dont.jpg` |
+| `save-cta` | the approved CTA library | `posters/save-cta.jpg` |
+| `story-reel` | 1080×1920 | `posters/story-reel.jpg` |
+
+`kind` (cover, quick, normal, helped, warn, dont, close) is still what the
+guide FIELD was and is what everything downstream keys off. `family` is what
+selects the reference and the layout. Two kinds share the `quick-check` family
+because they are the same poster with different content in it.
+
+Each family has two or three **layout variants**, chosen deterministically from
+the guide's slug so the feed varies without the preview and the export
+disagreeing. Amir can override a variant per slide; the override is stored and
+hashed.
+
+Every slide is two layers:
+
+    .s-scene   the artwork — either a base generated from the approved
+               references, or a composition built from the approved cutouts
+               and painted shapes. Never contains a readable word.
+    .s-type    every readable word, drawn by templates.js from text that has
+               already been through condense.js and safety.js.
+
+That split is why a medical warning can be both illustrated and exact.
+
+**No filter ever touches a letter.** The torn-paper and brush effects are
+feTurbulence displacement filters, and a displacement filter applied to an
+element containing text displaces the text: an early build rendered "Try a dim,
+quiet room" as "TAY A DIM, QUIET ROOM". Every painted chip is two elements — a
+filtered background and an unfiltered text node on top of it. If a node has
+text in it, it has no filter on it.
+
+**Logo restraint.** `refs.js LOGO_FAMILIES` allows the full logo on the cover
+and the closing slide, and nowhere else. `validate.js` makes it an error
+anywhere else, including on a Story frame.
+
+The poster palette (deep MPC blue `#215d9c`, orange `#dc5019`, warning red
+`#cb4a22`, cream `#f8ebc8`, charcoal `#26282b`) lives on `.mpc-slide` inside
+`templates.js`, not in `tokens.css` — `tokens.css` is downloaded by every reader
+of the public site and none of these appear there. The three faces still come
+from `assets/fonts/`, so rendering needs no network.
 
 ---
 
@@ -186,6 +234,142 @@ step.
 
 ---
 
+## The artwork pipeline
+
+OpenAI helps make the **picture**. It is never trusted with a **word**.
+
+    1  read the approved guide fields                     compose.js
+    2  select only the slides the guide supports          compose.js
+    3  pick the poster reference for the slide family     refs.js
+    4  pick the character sheets and one approved scene   refs.js
+    5  send those references to the image model           social-artwork.js
+    6  ask for an illustrated base with NO lettering      artprompt.js
+    7  check the base for stray lettering, reject if any  artwork.js
+    8  store it, package-scoped and deterministic         social-artwork.js
+    9  draw the approved wording over it                  templates.js
+
+### The reference library is the input, not documentation
+
+`assets/img/refs/manifest.json` is the source of truth. `scripts/lib/social/
+refs.js` is the only thing that reads it, and the **References** tab in
+`/social/` renders exactly the list that selection walks — the tab and the
+generator call the same `selectFor()`. If the tab shows the warning poster
+against the warning family, that poster is what gets attached to the warning
+request.
+
+Every image request attaches, in this order:
+
+    1  the poster reference for the family        composition
+    2  the Mama / Papa / Ari character sheets     identity
+    3  one semantically relevant approved scene   finish
+    4  the brand reference board                  palette and texture
+
+A family with no active poster **throws `MISSING_REFERENCE` naming the file**.
+It never falls back to another poster, because a silent substitution is exactly
+how the generic cream cards came back the first time.
+
+The manifest keeps its old flat `characters` / `brand` / `approvedScenes` keys
+untouched: the guide illustration generator reads those, and social is a second
+consumer of the file rather than a replacement for the first.
+
+### The cache key excludes the copy
+
+A generated base contains no words, so a headline edit cannot change what the
+right picture is — and re-charging for an image because somebody fixed a comma
+makes people stop fixing commas. `artKey()` hashes the guide, the family, the
+variant, the cast, the art note, the reference ids, the manifest version, the
+prompt version, the image model, the output size and an `artSeed`.
+
+`artSeed` is the deliberate escape hatch: **Regenerate this frame's artwork**
+increments it, so the key changes and one new image is made while the copy is
+untouched. Reopening a package with matching keys makes no API call at all, and
+`tests/social-artwork.js` asserts the transport is never touched on a cache hit.
+
+### Stray lettering is rejected, not displayed
+
+The model is told at length not to draw words. It mostly obeys. Every base is
+asked about before it is stored, by the same model, with a yes/no schema; a
+base that reports lettering is rejected, **nothing is written to the bucket**,
+the slide keeps its composed fallback and the dashboard says why. An
+unparseable answer counts as "possibly has text": a false positive costs one
+retry, a false negative costs a published typo.
+
+### When no image engine is configured
+
+Without `OPENAI_API_KEY` the pipeline is inert and every slide renders through
+the **composed fallback** — the same approved cutouts, the same painted shapes,
+the same deterministic wording, built entirely in `templates.js`. It is the
+floor, not a placeholder: `npm run social:render` produces complete, exact,
+on-brand 1080×1350 and 1080×1920 output with no network access at all. Setting
+the key raises the ceiling; it is not what makes the system work.
+
+### Generation states
+
+`QUEUED → GENERATING → READY | FAILED`, shown on the package with the error in
+full and a manual **Retry**. There is deliberately no automatic retry: a loop
+that re-requests a failed image on a timer is a loop that spends money while
+nobody is watching. Composing a package leaves it `QUEUED` and costs nothing —
+which is what stops "Generate all" turning into sixty-one image bills.
+
+### Where the media lives
+
+`social/<packageId>/<kind>-<n>-<16 hex of the content key>.png` in Firebase
+Storage. Package-scoped so deletion can remove exactly its own media; the key
+in the filename is what makes the path unguessable, which is what lets an
+`<img>` on the dashboard load it without a token exchange. `storage.rules`
+gives the prefix `allow read: if true; allow write: if false` — only the Admin
+SDK inside `social-artwork.js` can write there. No base64 image is ever stored
+in Firestore.
+
+Recorded on every frame: rendered asset path, dimensions, slide family,
+reference ids, manifest version, prompt version, image model, generation
+timestamp and the content key. All of it is in the approval hash.
+
+---
+
+## Deleting a rejected package
+
+The Rejected tab used to be eternal. **Delete permanently** is the way out, and
+it is deliberately narrow — the policy is `scripts/lib/social/deletion.js`, so
+it is testable without a Firebase project:
+
+* available only when the status is exactly `REJECTED`;
+* the caller has to type the guide's slug, and the confirmation names the guide;
+* it runs in an authenticated Netlify function through the Admin SDK — the
+  browser never gets Firestore delete permission;
+* it removes the package document and the files under `social/<packageId>/`,
+  and **nothing else**. The prefix is derived from the package id rather than
+  read from the document, so a hand-edited `assetPath` pointing at
+  `guides/hero.png` cannot be used to delete a guide illustration;
+* anything else returns a non-success response with a code and the status it
+  actually has.
+
+`tests/social-delete.js` exercises the allowed case and every refused one.
+
+---
+
+## Instagram and Facebook
+
+One grounded package, two destinations, chosen per package
+(`instagram` / `facebook` / `both`). The difference between them is real and it
+is only two things:
+
+* **Instagram** — a caption cannot carry a clickable link, so the copy points
+  at the bio link. Hashtags belong here.
+* **Facebook** — a post can, so the tagged guide URL is in the copy
+  (`utm_source=facebook`, `utm_campaign=fb_YYYY_MM`) and hashtags drop to two.
+
+The artwork, the slide text and the warning are shared, because a warning worth
+showing on one platform is worth showing on the other. Both captions are
+derived from the shared caption by `compose.js platformCopy()`, rebuilt inside
+`workflow.js applyEdit()` *before* the hashes are compared, and both are in the
+approval hash.
+
+Destination controls previews and future held targets only. **No Meta call is
+made and none can be.**
+
+---
+
 ## Files
 
 **New**
@@ -198,7 +382,12 @@ step.
     scripts/lib/social/guides.js          reads guides from Firestore (server)
     scripts/lib/social/select.js          which guides are eligible
     scripts/lib/social/compose.js         guide fields → package
-    scripts/lib/social/templates.js       slide + story markup (shared)
+    scripts/lib/social/condense.js        shorten a sentence to a phrase
+    scripts/lib/social/refs.js            the reference manifest, and selection
+    scripts/lib/social/artprompt.js       the versioned image-prompt builder
+    scripts/lib/social/artwork.js         cache key, plan, stray-text gate
+    scripts/lib/social/deletion.js        the deletion policy
+    scripts/lib/social/templates.js       the poster renderer (shared)
     scripts/lib/social/safety.js          the content checks
     scripts/lib/social/validate.js        structural validation
     scripts/lib/social/hash.js            the approval hash
@@ -218,10 +407,20 @@ step.
     netlify/functions/social-approve.js   approve and hold
     netlify/functions/social-reject.js    reject / return to editing
     netlify/functions/social-publish.js   refuses; dry-run only
+    netlify/functions/social-artwork.js   the ONLY place that reaches OpenAI
+    netlify/functions/social-references.js  the reference library, read-only
+    netlify/functions/social-delete.js    rejected-only permanent deletion
+
+    assets/img/refs/posters/*.jpg         the seven approved poster references
+    assets/img/refs/posters/thumbs/*.jpg  their dashboard thumbnails
 
     tests/social-publishing-lock.js       the lock, and that nothing calls it
     tests/social-safety.js                the content rules + all 61 guides
     tests/social-approval.js              hash and approval integrity
+    tests/social-references.js            the manifest, selection, key safety
+    tests/social-artwork.js               the pipeline, with a fake transport
+    tests/social-delete.js                deletion, and everything it refuses
+    tests/social-output.js                1080×1350 / 1080×1920, safe areas
 
 **Changed**
 
@@ -231,8 +430,11 @@ step.
     privacy.html              a short, accurate section on the Instagram link
     firestore.rules           social_packages, social_state — server-write only
     storage.rules             a public-read social/ prefix for rendered JPEGs
-    package.json              verify:social, social:render
+    package.json              verify:social, social:render, social:proof
     .gitignore                new — ignores social-preview/
+    assets/img/refs/manifest.json  a `library` of reference objects (the old
+                                   flat keys are untouched — see below)
+    tests/verify.js           a pre-existing stale font-filename list
 
 **Not touched.** Anything under `studio/` or `editor/`; `scripts/build.js`;
 `assets/js/*`; the seven existing Netlify functions; `_redirects`, `_headers`,
@@ -349,19 +551,33 @@ existing functions already use:
 |---|---|---|
 | `FIREBASE_SERVICE_ACCOUNT` | all functions, already set | yes, already set |
 | `FIREBASE_STORAGE_BUCKET` | all functions, already set | yes, already set |
+| `OPENAI_API_KEY` | `social-artwork.js`, already set for the illustration generator | optional — without it every slide renders through the composed fallback |
+| `OPENAI_IMAGE_MODEL` | the image model, defaults to `gpt-image-1` | no |
+| `OPENAI_MODEL` | the orchestrator, defaults to `gpt-4o` | no |
+| `OPENAI_IMAGE_QUALITY` | defaults to `medium` | no |
+| `URL` / `DEPLOY_PRIME_URL` | Netlify sets these; used to build absolute reference URLs | set by Netlify |
 | `SOCIAL_ADMIN_EMAIL` | optional override of the admin address | no |
 | `SOCIAL_PUBLISHING_ENABLED` | the lock | **no — leave it unset** |
 | `IG_ACCESS_TOKEN`, `IG_USER_ID` | the future publisher | no |
 
-Nothing here goes in the repository, in client JavaScript, in HTML, in
-Firestore, in local storage or in a generated file.
+Names only. Nothing here goes in the repository, in client JavaScript, in HTML,
+in Firestore, in local storage or in a generated file.
+
+`OPENAI_API_KEY` is read in exactly one social file —
+`netlify/functions/social-artwork.js` — and used in exactly two places there: a
+presence check and an `Authorization` header. `social-references.js` and
+`social-status.js` report only `Boolean(process.env.OPENAI_API_KEY)`, never the
+value. `tests/social-references.js` asserts all of that, and that no script any
+page loads mentions it.
 
 ---
 
 ## Running the tests
 
+    npm run check           build + everything
     npm run verify          everything, including the social suites
-    npm run verify:social   just the three social suites
+    npm run verify:social   just the seven social suites
+    npm run social:proof    render drinking-less-milk at full size, JPEG + PNG
 
 `npm run verify` calls the build's own checks first; those expect
 `npm run build` to have run, and on a fresh checkout they report the missing

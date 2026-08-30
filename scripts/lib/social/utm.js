@@ -19,12 +19,18 @@ const { ORIGIN } = require("../site");
 
 const FORMATS = ["carousel", "single", "story", "reel"];
 
-/* ig_2026_09. Padded, so it sorts. */
-function campaignFor(date) {
+/* ig_2026_09, or fb_2026_09. Padded, so it sorts.
+
+   The prefix follows the SOURCE rather than being hardcoded: once Facebook
+   became a first-class destination, `ig_` on a Facebook link would have put
+   both platforms in one campaign and made "which platform" unanswerable in
+   GA4 without splitting on utm_source everywhere. */
+function campaignFor(date, source) {
   const d = date instanceof Date ? date : new Date(date || Date.now());
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  return `ig_${y}_${m}`;
+  const prefix = source === "facebook" ? "fb" : "ig";
+  return `${prefix}_${y}_${m}`;
 }
 
 /* Build the tagged destination URL for one package.
@@ -32,15 +38,21 @@ function campaignFor(date) {
    `path` is the guide's own url ("/guides/<slug>/"), which already comes from
    site.js guideUrl() — so if the URL shape ever changes, this follows it
    rather than restating it. */
-function taggedUrl({ path, format, slug, date }) {
+const SOURCES = ["instagram", "facebook"];
+
+function taggedUrl({ path, format, slug, date, source }) {
   if (!path) throw new Error("taggedUrl: path is required");
   if (!FORMATS.includes(format)) {
     throw new Error(`taggedUrl: unknown format "${format}" (expected one of ${FORMATS.join(", ")})`);
   }
+  const src = source || "instagram";
+  if (!SOURCES.includes(src)) {
+    throw new Error(`taggedUrl: unknown source "${src}" (expected one of ${SOURCES.join(", ")})`);
+  }
   const url = new URL(path, ORIGIN + "/");
-  url.searchParams.set("utm_source", "instagram");
+  url.searchParams.set("utm_source", src);
   url.searchParams.set("utm_medium", "social");
-  url.searchParams.set("utm_campaign", campaignFor(date));
+  url.searchParams.set("utm_campaign", campaignFor(date, src));
   url.searchParams.set("utm_content", `${format}_${slug}`);
   return url.toString();
 }
@@ -59,4 +71,4 @@ function readTags(href) {
   } catch (e) { return {}; }
 }
 
-module.exports = { taggedUrl, campaignFor, readTags, FORMATS };
+module.exports = { taggedUrl, campaignFor, readTags, FORMATS, SOURCES };

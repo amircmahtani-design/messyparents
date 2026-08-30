@@ -1,6 +1,9 @@
 {
-  "_comment": "Canonical brand references for the illustration generator. Every generation sends the character sheets for the characters in the scene, PLUS the brand board, PLUS one semantically-chosen approved scene. Reference priority is (1) character sheets = identity, (2) approved scene = finish/composition, (3) brand board = palette/texture, (4) slide text = meaning only.",
-  "version": "messy-parents-image-v2",
+  "_comment": "Canonical brand references. TWO CONSUMERS, ONE FILE. (1) The guide illustration generator (netlify/functions/generate-illustration-background.js) reads the flat `characters` / `brand` / `approvedScenes` keys — those are unchanged and must stay exactly as they are. (2) The social artwork system (scripts/lib/social/refs.js) reads `library`, which describes every reference as an object with an id, a group, a role and the slide families it serves. The social system NEVER hardcodes a filename; if a reference is not in `library` it does not exist, and a missing required reference fails loudly rather than being silently substituted with a generic design.",
+  "version": "messy-parents-refs-v3",
+  "updated": "2026-08-30",
+  "imagePromptVersion": "messy-parents-image-v2",
+
   "characters": {
     "mama": "mama.png",
     "papa": "papa.png",
@@ -13,6 +16,43 @@
     "approved-popular-guides.png",
     "approved-not-doctors.png"
   ],
+
+  "groups": [
+    { "id": "poster", "label": "Poster references",           "note": "The approved social poster direction. One per slide family. Every social image request attaches the poster for the family it is drawing." },
+    { "id": "mama",   "label": "Mama character references",   "note": "Identity. Face, hair, outfit palette, proportions." },
+    { "id": "papa",   "label": "Papa character references",   "note": "Identity. Face, beard, outfit palette, proportions." },
+    { "id": "ari",    "label": "Ari character references",    "note": "Identity. Age, hair, outfit palette, proportions." },
+    { "id": "scene",  "label": "Approved family scenes",      "note": "Finished, approved artwork. One semantically relevant scene is attached to every request, for finish and composition language." },
+    { "id": "brand",  "label": "Brand reference board",       "note": "Palette, paper tone and the logo lockup. Attached to every request." },
+    { "id": "asset",  "label": "Paper, brush and decorative", "note": "Local composition assets the deterministic renderer draws with: paper texture, brush stroke, logo badge." }
+  ],
+
+  "library": [
+    { "id": "poster-cover-hook",     "group": "poster", "role": "cover-hook",     "families": ["cover-hook"],     "name": "Cover / hook poster",         "file": "posters/cover-hook.jpg",     "thumb": "posters/thumbs/cover-hook.jpg",     "active": true, "aspect": "4:5",  "note": "Torn cream sheet over deep blue, two-colour painted headline, small category pill, family cut large at the foot, logo badge top-right." },
+    { "id": "poster-quick-check",    "group": "poster", "role": "quick-check",    "families": ["quick-check"],    "name": "Quick check poster",          "file": "posters/quick-check.jpg",    "thumb": "posters/thumbs/quick-check.jpg",    "active": true, "aspect": "4:5",  "note": "Three-colour stacked headline, one character centre, object clues in torn paper discs with orange label chips, blue band at the foot." },
+    { "id": "poster-what-helped-us", "group": "poster", "role": "what-helped-us", "families": ["what-helped-us"], "name": "What helped us poster",       "file": "posters/what-helped-us.jpg", "thumb": "posters/thumbs/what-helped-us.jpg", "active": true, "aspect": "4:5",  "note": "Cream ground, orange and blue headline, character action dominant, numbered steps down one side with hand-drawn arrows." },
+    { "id": "poster-warning",        "group": "poster", "role": "warning",        "families": ["warning"],        "name": "Warning poster",              "file": "posters/warning.jpg",        "thumb": "posters/thumbs/warning.jpg",        "active": true, "aspect": "4:5",  "note": "Painted red banner headline, calm family scene, signs in red discs along the foot, deep blue reassurance band. Serious, never frightening." },
+    { "id": "poster-dont",           "group": "poster", "role": "dont",           "families": ["dont"],           "name": "Don't poster",                "file": "posters/dont.jpg",           "thumb": "posters/thumbs/dont.jpg",           "active": true, "aspect": "4:5",  "note": "Torn cream sheet on blue, red DON'T plus a charcoal line, crossed-out vignettes, one positive blue reset panel." },
+    { "id": "poster-save-cta",       "group": "poster", "role": "save-cta",       "families": ["save-cta"],       "name": "Save / CTA poster",           "file": "posters/save-cta.jpg",       "thumb": "posters/thumbs/save-cta.jpg",       "active": true, "aspect": "4:5",  "note": "Warm cream, blue / charcoal / orange headline, the whole family together, hand-drawn arrow to the link line, small logo at the foot." },
+    { "id": "poster-story-reel",     "group": "poster", "role": "story-reel",     "families": ["story-reel"],     "name": "Story / Reel poster",         "file": "posters/story-reel.jpg",     "thumb": "posters/thumbs/story-reel.jpg",     "active": true, "aspect": "9:16", "note": "9:16. Torn cream sheet over blue in the upper half, two-colour headline, characters large in the lower half, pill CTA above the bottom safe zone." },
+
+    { "id": "char-mama",     "group": "mama", "role": "character-sheet", "character": "mama", "families": ["*"], "name": "Mama — character sheet",  "file": "mama.png",     "thumb": "mama.png",     "active": true,  "cutout": "/assets/img/refs/mama.png", "box": [0, 0, 1, 1], "note": "Canonical Mama. Brown hair in a loose top bun, blue ribbed roll-neck, patched indigo jeans, cream socks." },
+    { "id": "char-papa",     "group": "papa", "role": "character-sheet", "character": "papa", "families": ["*"], "name": "Papa — character sheet",  "file": "papa.png",     "thumb": "papa.png",     "active": true,  "cutout": "/assets/img/refs/papa.png", "box": [0, 0, 1, 1], "note": "Canonical Papa. Black hair, full dark beard, NEVER glasses, grey hoodie with paint marks, blue jeans, white socks." },
+    { "id": "char-ari",      "group": "ari",  "role": "character-sheet", "character": "ari",  "families": ["*"], "name": "Ari — character sheet",   "file": "ari.png",      "thumb": "ari.png",      "active": true,  "cutout": "/assets/img/refs/ari.png", "box": [0.081, 0.079, 0.921, 0.813], "note": "Canonical Ari. Baby, dark tufty hair, pink floral romper with a bow, bare feet." },
+    { "id": "char-ari-baby", "group": "ari",  "role": "character-alt",   "character": "ari",  "families": ["*"], "name": "Ari — younger reference", "file": "ari-baby.png", "thumb": "ari-baby.png", "active": false, "note": "Held inactive. Only for guides whose age band is genuinely younger; never chosen automatically." },
+
+    { "id": "scene-milk-refusal",   "group": "scene", "role": "approved-scene", "families": ["*"],       "topics": ["feeding"],                 "keywords": ["milk", "bottle", "feed", "feeding", "refus", "teat", "formula", "drink", "solids", "wean"],      "name": "Bottle refusal — approved",   "file": "approved-milk-refusal.png",   "thumb": "approved-milk-refusal.png",   "active": true, "note": "Mama offering a bottle, Ari waving it away, Papa thinking. The finish and crop language for feeding guides." },
+    { "id": "scene-family-writing", "group": "scene", "role": "approved-scene", "families": ["*"],       "topics": ["sanity"],                  "keywords": ["write", "notes", "guide", "track", "record", "plan", "split", "night", "visitors", "touched"],   "name": "Writing the guide — approved","file": "approved-family-writing.png", "thumb": "approved-family-writing.png", "active": true, "note": "The family writing together. Warm, practical, three-figure composition." },
+    { "id": "scene-popular-guides", "group": "scene", "role": "approved-scene", "families": ["*"],       "topics": ["development", "sleeping"], "keywords": ["book", "read", "learn", "milestone", "roll", "sit", "crawl", "word", "babble", "sleep", "nap"],  "name": "Books and Ari — approved",    "file": "approved-popular-guides.png", "thumb": "approved-popular-guides.png", "active": true, "note": "Ari on a stack of books between both parents. Calm, curious, developmental." },
+    { "id": "scene-not-doctors",    "group": "scene", "role": "approved-scene", "families": ["warning"], "topics": ["health"],                  "keywords": ["doctor", "fever", "rash", "vomit", "temperature", "sick", "unwell", "medical", "gp", "teeth"],  "name": "Not doctors — approved",      "file": "approved-not-doctors.png",    "thumb": "approved-not-doctors.png",    "active": true, "note": "The crossed-out white-coat scene. The approved way to signal medical territory without pretending to be clinicians." },
+
+    { "id": "brand-board", "group": "brand", "role": "brand-board", "families": ["*"], "name": "Brand reference board", "file": "brand-reference-board.png", "thumb": "brand-reference-board.png", "active": true, "note": "Palette, paper tone and the logo lockup. Attached to every social image request." },
+
+    { "id": "asset-paper",  "group": "asset", "role": "paper", "families": ["*"],                      "name": "Paper texture",  "file": "/assets/img/paper.jpg",  "thumb": "/assets/img/paper.jpg",  "active": true, "external": true, "note": "The cream paper grain laid over every rendered slide." },
+    { "id": "asset-swoosh", "group": "asset", "role": "brush", "families": ["*"],                      "name": "Brush swoosh",   "file": "/assets/img/swoosh.png", "thumb": "/assets/img/swoosh.png", "active": true, "external": true, "note": "The hand-drawn underline used beneath headline words." },
+    { "id": "asset-logo",   "group": "asset", "role": "logo",  "families": ["cover-hook", "save-cta"], "name": "MPC logo badge", "file": "/assets/img/logo.png",   "thumb": "/assets/img/logo.png",   "active": true, "external": true, "note": "Allowed on the cover and the closing slide only. Never on an internal slide, never on a Story information frame." }
+  ],
+
   "_legacy_library": [
     "family-messy-sofa-close.png",
     "mama-papa-hugging.png",

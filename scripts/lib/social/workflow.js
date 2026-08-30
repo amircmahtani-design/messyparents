@@ -16,7 +16,8 @@ const { blocking } = require("./validate");
 /* Fields a browser may write. Anything else in a patch is ignored rather than
    rejected, so a newer dashboard sending an extra key cannot corrupt a
    package — and an older one cannot smuggle a status in as a content field. */
-const EDITABLE = ["caption", "hashtags", "slides", "story", "scheduledFor", "destinationUrl", "note"];
+const EDITABLE = ["caption", "hashtags", "slides", "story", "scheduledFor",
+  "destinationUrl", "destination", "note"];
 
 function sanitisePatch(patch) {
   const out = {};
@@ -35,9 +36,22 @@ function sanitisePatch(patch) {
    dashboard would agree with him. Clearing it here is what keeps the screen
    and the truth in step.
    ------------------------------------------------------------------------ */
-function applyEdit(before, patch, requestedStatus) {
+function applyEdit(before, patch, requestedStatus, derive) {
   const clean = sanitisePatch(patch);
   const after = Object.assign({}, before, clean);
+
+  /* DERIVED CONTENT IS STILL CONTENT.
+
+     The two platform captions are built from the shared caption, the hashtags
+     and the destination, so an edit to any of those changes what would
+     actually be posted. They have to be rebuilt BEFORE the hashes are
+     compared: rebuilding them afterwards would let a package sit in
+     APPROVED_HELD carrying copy nobody approved, and the next hash check
+     would then fail for reasons nobody could see on screen. */
+  if (typeof derive === "function") {
+    const derived = derive(after) || {};
+    Object.keys(derived).forEach(k => { after[k] = derived[k]; clean[k] = derived[k]; });
+  }
 
   /* Compare hashes, not keys: re-saving identical text is not an edit. */
   const contentChanged = contentHash(before) !== contentHash(after);

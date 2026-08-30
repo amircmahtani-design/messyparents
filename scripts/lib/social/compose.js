@@ -1,47 +1,84 @@
 /* ============================================================================
-   SOCIAL — COMPOSING A PACKAGE FROM A GUIDE
+   SOCIAL — PLANNING A PACKAGE FROM A GUIDE
 
-   This is a re-renderer, not a writer. Every sentence it puts on a slide comes
-   out of a field Amir already approved in Studio; the only transformation
-   applied is SHORTENING. Nothing is rephrased, nothing is summarised in new
-   words, nothing is added.
+   This is a re-renderer, not a writer. Every word it puts on a slide comes out
+   of a field Amir already approved in Studio; the only transformation applied
+   is SHORTENING, through condense.js, which can delete words and can capitalise
+   a first letter and can do nothing else.
 
-   That single constraint is what makes safety.js able to check the output
-   mechanically: a composer that can only remove words cannot introduce one, so
-   any word on a slide that is not in the source is a bug with a name.
+   That single constraint is what lets safety.js check the output mechanically:
+   a composer that can only remove words cannot introduce one, so any word on a
+   slide that is not in the source — or in the short fixed list of interface
+   wording in safety.js CHROME_WORDS — is a bug with a name.
 
-   No AI service is involved and none is required. If a future phase wants a
-   model to polish wording, it belongs behind this module as an optional pass
-   whose output goes through exactly the same checks — never in front of it.
+   ---------------------------------------------------------------------------
+   WHAT CHANGED, AND WHY
+
+   The previous version of this file produced one shape for every guide: cover,
+   quick, panel, panel, panel, close, each of them a heading over a rounded
+   card of bullet points. It was a website page cut into 1080-pixel pieces. The
+   approved poster references are not that. They are posters: one idea, a
+   headline in two or three colours at three different sizes, two to four short
+   labels, and a large illustration that the type sits on top of.
+
+   So a slide is no longer "a heading and some lines". It is:
+
+     kicker    a very small category cue                       (optional)
+     lines[]   the headline, as coloured pieces                {t, c}
+     items[]   two to four SHORT labels, each with an object   {label, icon}
+     band      one painted band of text across the slide       (optional)
+     cta       a closing instruction                           (optional)
+
+   and the artwork underneath it is a separate layer (see artwork.js). This
+   file never chooses a colour value or a pixel; it chooses MEANING and LENGTH,
+   and templates.js draws it.
+
+   ---------------------------------------------------------------------------
+   TWO NAMES FOR THE SAME SLIDE
+
+   `kind` is the original discriminator — cover, quick, normal, helped, warn,
+   dont, close. It is what the guide FIELD was, it is what the rest of the
+   system has always keyed off, and existing tests assert the exact sequence it
+   produces, so it stays.
+
+   `family` is the new POSTER family — cover-hook, quick-check, what-helped-us,
+   warning, dont, save-cta, story-reel. It is what selects the reference and
+   the layout. Two kinds (quick and normal) share one family, because they are
+   the same poster with different content in it.
 
    ---------------------------------------------------------------------------
    FIELD MAPPING (from scripts/lib/data.js normaliseGuide)
 
-     title ................. cover slide, caption opening
-     panel.eyebrow ......... cover eyebrow (falls back to topic • ages)
+     title ................. cover headline, caption opening
+     panel.eyebrow ......... cover kicker (falls back to topic • ages)
      panel.quick ........... the quick-answer slide and the caption's answer
-     panel.normal.items[] .. the "usually normal" slide
-     panel.helped.items[] .. the "what helped us" slide — and the ONLY source
-                             for first-person-plural wording anywhere
+     panel.normal.items[] .. the "usually normal" clue slide
+     panel.helped.items[] .. "what helped us" — and the ONLY source for
+                             first-person-plural wording anywhere
      panel.warn.items[] .... the warning slide, which is never optional
      panel.dont.items[] .... the "don't" slide, which is
      panel.hero/heroAlt .... the approved illustration
      summary, ages, topic .. supporting metadata
 
-   A guide missing a field simply has no slide for it. Empty sections are never
-   padded, and the carousel length follows the guide.
+   A guide missing a field simply has no slide for it. Nothing is padded, and
+   the carousel length follows the guide.
    ========================================================================== */
 
 const { guideUrl } = require("../site");
 const { taggedUrl } = require("./utm");
-const { MAX_SLIDES, STATES } = require("./config");
+const { MAX_SLIDES, STATES, FORMATS, INSTAGRAM_HANDLE } = require("./config");
 const { hasHelpedPanel } = require("./safety");
+const { condense } = require("./condense");
+const REFS = require("./refs");
+const { conceptFor } = require("./concept");
 
 /* --------------------------------------------------------------------------
    SHORTENING — the only transformation allowed
 
    Cut at a sentence end if there is one in range; otherwise at a word
-   boundary, with an ellipsis. Never mid-word, never a new word.
+   boundary, with an ellipsis. Never mid-word, never a new word. Kept for the
+   caption and for places where a whole sentence is wanted; the SLIDES use
+   condense(), which chooses a faithful span rather than truncating.
    ------------------------------------------------------------------------ */
 function shorten(text, max) {
   const s = String(text || "").replace(/\s+/g, " ").trim();
@@ -63,43 +100,73 @@ const listOf = (panelPart) => {
   const items = (panelPart && Array.isArray(panelPart.items)) ? panelPart.items : [];
   return items.map(clean).filter(Boolean);
 };
+const wordCount = (s) => clean(s).split(/\s+/).filter(Boolean).length;
 
 /* --------------------------------------------------------------------------
-   SLIDE BUDGETS
+   BUDGETS
 
-   Character limits chosen from the rendered template at 1080×1350: the point
-   where the type has to shrink below comfortable reading size. validate.js
-   re-checks the rendered result, so these are the first line of defence, not
-   the only one.
+   These are POSTER budgets, not page budgets. The old file allowed 190
+   characters of body text on a slide; at 1080px that is 42px type in a box,
+   which is a paragraph on a phone. A headline that has to be readable at
+   thumbnail size is eight to fourteen words, and a label is one to five.
+
+   validate.js re-checks the rendered result, so these are the first line of
+   defence rather than the only one.
    ------------------------------------------------------------------------ */
 const BUDGET = {
-  coverHeading: 78,
-  quickBody: 190,
-  bullet: 88,
-  bulletsPerSlide: 3,
-  storyHeading: 70,
-  storyBody: 150,
+  headlineWords: 9,       /* across all headline lines on one slide */
+  headlineLines: 3,
+  labelWords: 5,          /* one item label on a clue slide */
+  warnLabelWords: 8,      /* a warning label may run longer — condense.js
+                             refuses to truncate a warning's condition, and it
+                             is right to: "call a doctor if the baby is floppy"
+                             is not improved by losing "floppy". The renderer
+                             sets these on two short lines instead. */
+  itemsPerSlide: 4,       /* quick-check caps at four clues */
+  helpedItems: 3,         /* "what helped us" is three actions, maximum */
+  warnItems: 3,
+  dontItems: 2,
+  bandWords: 8,
   caption: 1400
 };
 
-/* The fixed template wording. Short, and listed in safety.js CHROME_WORDS so
-   the grounding check knows these words are ours rather than invented. */
+/* The fixed interface wording. Every word here is listed in safety.js
+   CHROME_WORDS, which is what tells the grounding check that these are ours
+   rather than invented. Adding a phrase here means adding its words there. */
 const CHROME = {
+  quickLabel: "Quick answer",
   closeHeading: "Read the full guide",
-  closeLine: "Link in bio",
+  bioLine: "Full guide in bio",
+  linkLine: "Link in bio",
   brand: "The Messy Parents Collection",
-  captionCta: "Read the full guide — link in bio."
+  handle: INSTAGRAM_HANDLE,
+  site: "themessyparentscollection.com",
+  captionCtaInstagram: "Read the full guide — link in bio.",
+  captionCtaFacebook: "Read the full guide:",
+  storyTap: "Tap for the full guide",
+  moreInGuide: "more in the full guide"
 };
+
+/* The approved CTA library. Chosen by topic so the feed does not say the same
+   thing seven times, and editable afterwards in the dashboard. Every word in
+   it is in safety.js CHROME_WORDS. */
+const CTA_LIBRARY = [
+  { id: "next-3am",   topics: ["sleeping", "sanity"],     lines: ["Save this", "for the next", "3am."] },
+  { id: "next-night", topics: ["sleeping"],               lines: ["Save this", "for the next", "long night."] },
+  { id: "for-later",  topics: ["feeding", "development"], lines: ["Save this", "for later."] },
+  { id: "before",     topics: ["health"],                 lines: ["Save this", "before", "you need it."] },
+  { id: "send-it",    topics: ["sanity"],                 lines: ["Send this", "to the", "other parent."] },
+  { id: "keep-it",    topics: [],                         lines: ["Keep this", "for the night", "you need it."] }
+];
 
 /* --------------------------------------------------------------------------
    SCHEDULING
 
-   Three a week, Monday / Wednesday / Friday at 19:00 UTC. This is a SUGGESTION
-   written onto the package for Amir to change; nothing acts on it in this
-   phase, and nothing acts on it in a later phase either until the package has
-   been approved.
+   Three a week, Monday / Wednesday / Friday at 19:00 UTC. A SUGGESTION written
+   onto the package for Amir to change; nothing acts on it in this phase, and
+   nothing acts on it in a later phase either until the package is approved.
    ------------------------------------------------------------------------ */
-const SLOT_DAYS = [1, 3, 5];   // Mon, Wed, Fri
+const SLOT_DAYS = [1, 3, 5];
 const SLOT_HOUR = 19;
 
 function suggestSlot(from, offset = 0) {
@@ -116,15 +183,12 @@ function suggestSlot(from, offset = 0) {
 }
 
 /* --------------------------------------------------------------------------
-   HASHTAGS
-
-   Built from the guide's own classification, not from a trending list. Capped
-   at eight: past that they read as spam and Instagram does not reward them.
+   HASHTAGS — built from the guide's own classification, capped at eight.
    ------------------------------------------------------------------------ */
 const tagify = (s) => String(s || "")
   .toLowerCase()
   .normalize("NFKD")
-  .replace(/[\u2010-\u2015]/g, " to ")
+  .replace(/[‐-―]/g, " to ")
   .replace(/[^a-z0-9 ]+/g, "")
   .split(/\s+/).filter(Boolean).join("");
 
@@ -134,8 +198,6 @@ function hashtagsFor(guide, topics) {
   if (topicLabel) out.push(tagify(topicLabel.label));
   else if (guide.topic) out.push(tagify(guide.topic));
 
-  /* Age bands become "2to3months", not "23months" — the dash carries meaning
-     and dropping it produces a hashtag that reads as twenty-three months. */
   (guide.ages || []).slice(0, 2).forEach(a => {
     const t = tagify(a);
     if (t) out.push(t);
@@ -149,93 +211,449 @@ function hashtagsFor(guide, topics) {
 }
 
 /* --------------------------------------------------------------------------
-   SLIDES
+   HEADLINES
+
+   A headline is broken into two or three pieces so the renderer can set them
+   at different sizes in different colours — the thing that makes the reference
+   posters read as posters rather than as slides.
+
+   THE BREAK IS BY LENGTH, NOT BY MEANING. Splitting on a comma or on "or"
+   would sometimes produce a line of one word and a line of nine, and at 1080px
+   that is a broken layout rather than a stylish one. Balancing by character
+   count gives the stacked, shape-filling look the references have.
+
+   No word is added, removed or reordered by this — it is the same string with
+   some of its spaces promoted to line breaks.
    ------------------------------------------------------------------------ */
-function buildSlides(guide) {
+function splitBalanced(text, maxLines) {
+  const words = clean(text).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const n = Math.max(1, Math.min(maxLines, Math.ceil(words.length / 3)));
+  if (n === 1) return [words.join(" ")];
+  if (words.length <= n) return words.slice();
+
+  /* Minimise the LONGEST line, then the spread. Balancing greedily by a
+     running character target produced "Call your doctor" / "if", because the
+     first line crossed the target on the word before last. Choosing the best
+     set of break points instead gives "Call your" / "doctor if" — which is
+     what the reference posters do, and what makes a stacked headline read as
+     a deliberate shape rather than as an accident of wrapping.
+
+     Exhaustive over break positions. n is at most three and a headline is at
+     most fourteen words, so this is a handful of combinations. */
+  const lens = words.map(w => w.length);
+  const lineLen = (a, b) => {          /* words[a..b] inclusive, with spaces */
+    let t = b - a;                     /* the spaces */
+    for (let i = a; i <= b; i++) t += lens[i];
+    return t;
+  };
+
+  let best = null;
+  const walk = (start, linesLeft, acc) => {
+    if (linesLeft === 1) {
+      const l = lineLen(start, words.length - 1);
+      const all = acc.concat([[start, words.length - 1, l]]);
+      const max = Math.max.apply(null, all.map(x => x[2]));
+      const spread = max - Math.min.apply(null, all.map(x => x[2]));
+      if (!best || max < best.max || (max === best.max && spread < best.spread)) {
+        best = { max, spread, cuts: all };
+      }
+      return;
+    }
+    /* leave at least one word for each remaining line */
+    for (let end = start; end <= words.length - linesLeft; end++) {
+      walk(end + 1, linesLeft - 1, acc.concat([[start, end, lineLen(start, end)]]));
+    }
+  };
+  walk(0, n, []);
+
+  return best.cuts.map(c => words.slice(c[0], c[1] + 1).join(" "));
+}
+
+/* The colour runs, one per family, cycled across the headline pieces. These
+   are token NAMES, not values — templates.js maps them to tokens.css. */
+const COLOUR_RUNS = {
+  "cover-hook":     ["ink", "orange", "blue"],
+  "quick-check":    ["ink", "blue", "orange"],
+  "what-helped-us": ["orange", "ink", "blue"],
+  /* Coral on paper, not cream reversed out of a red banner. */
+  "warning":        ["coral", "ink", "ink"],
+  "dont":           ["coral", "ink", "ink"],
+  "save-cta":       ["blue", "ink", "orange"],
+  "story-reel":     ["ink", "blue", "orange"]
+};
+
+/* Apply the emphasis rule to a set of lines that did not come from
+   splitBalanced — the CTA library, which arrives pre-broken. */
+function withEmphasis(lines, family) {
+  if (lines.length < 2 || EMPHASIS_FAMILIES.indexOf(family) < 0) return lines;
+  const fits = (l) => l && wordCount(l.t) <= EMPHASIS_MAX_WORDS;
+  const last = lines[lines.length - 1];
+  if (fits(last)) last.em = true;
+  else if (fits(lines[0])) lines[0].em = true;
+  return lines;
+}
+
+/* WHICH FAMILIES MAY SHOUT ONE WORD.
+
+   Every headline used to be set in caps, which is what made the whole system
+   read as a proclamation. Now a headline is sentence case, and at most ONE
+   line per headline may be uppercase — only where emphasis is the point, only
+   when that line is one or two words, and never on a warning, where the job is
+   to be taken seriously rather than to be loud. */
+const EMPHASIS_FAMILIES = ["cover-hook", "dont", "save-cta"];
+const EMPHASIS_MAX_WORDS = 2;
+
+function headline(text, family, maxLines) {
+  const run = COLOUR_RUNS[family] || COLOUR_RUNS["cover-hook"];
+  const lines = splitBalanced(text, maxLines || BUDGET.headlineLines)
+    .map((t, i) => ({ t, c: run[i % run.length] }));
+
+  if (lines.length > 1 && EMPHASIS_FAMILIES.indexOf(family) >= 0) {
+    /* The LAST line if it is short enough, otherwise the FIRST. Never a middle
+       one: "Why is my BABY DRINKING less milk?" emphasises a fragment nobody
+       would stress out loud, whereas "Why is my baby drinking LESS MILK?" is
+       where the sentence actually lands. */
+    const fits = (l) => l && wordCount(l.t) <= EMPHASIS_MAX_WORDS;
+    const last = lines[lines.length - 1];
+    if (fits(last)) last.em = true;
+    else if (fits(lines[0])) lines[0].em = true;
+  }
+  return lines;
+}
+
+/* --------------------------------------------------------------------------
+   OBJECT CLUES
+
+   A label on a clue slide sits on a small torn-paper disc with ONE drawn
+   object in it. The object is chosen from the label's own words against a
+   fixed vocabulary; templates.js draws it as a hand-inked shape in the brand
+   palette, so it is part of the artwork rather than a UI icon.
+
+   No match means no disc — the renderer numbers that item instead, which is
+   what the "numbered path" variant is for.
+   ------------------------------------------------------------------------ */
+const OBJECTS = [
+  ["bottle",      ["bottle", "teat", "formula", "milk", "feed", "feeding", "ounce"]],
+  ["spoon",       ["solid", "solids", "spoon", "puree", "food", "eating", "meal", "wean"]],
+  ["thermometer", ["fever", "temperature", "degrees"]],
+  ["nose",        ["nose", "cold", "blocked", "congest", "breathing"]],
+  ["mouth",       ["mouth", "gum", "gums", "tongue", "thrush", "ulcer"]],
+  ["tooth",       ["teeth", "teething", "tooth", "chewing", "drool"]],
+  ["nappy",       ["nappy", "nappies", "urine", "stool", "wet"]],
+  ["moon",        ["night", "sleep", "asleep", "bedtime", "3am", "waking", "dark"]],
+  ["sun",         ["morning", "5am", "daytime", "nap"]],
+  ["clock",       ["hour", "hours", "minute", "minutes", "week", "schedule"]],
+  ["drop",        ["dehydrat", "fluid", "water", "drink", "thirst", "dry"]],
+  ["weight",      ["weight", "growth", "curve", "centile", "gain", "plateau"]],
+  ["eye",         ["watch", "notice", "sign", "signs", "check", "seeing"]],
+  ["skin",        ["skin", "rash", "spots", "blotch"]],
+  ["sleepy",      ["sleepy", "floppy", "rouse", "listless", "lethargic"]],
+  ["sick",        ["vomit", "vomiting", "sick", "reflux", "spit", "posset"]],
+  ["toy",         ["distract", "distraction", "toy", "play", "interest", "world", "bored"]],
+  ["home",        ["room", "quiet", "dim", "swap", "space", "home", "calm"]],
+  ["pause",       ["pause", "stop", "wait", "break", "offer", "insist", "push", "force"]],
+  ["smile",       ["mood", "happy", "smile", "content", "alert", "cheerful", "settle"]],
+  ["heart",       ["love", "cuddle", "comfort", "hold", "close", "reassur"]],
+  ["phone",       ["doctor", "call", "ring", "advice"]],
+  ["book",        ["guide", "read", "note", "write", "track", "record"]],
+  ["person",      ["partner", "parent", "someone", "help", "visitor"]]
+];
+
+function objectFor(text) {
+  const t = String(text || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ");
+  for (const [name, keys] of OBJECTS) {
+    if (keys.some(k => t.includes(k))) return name;
+  }
+  return "";
+}
+
+/* --------------------------------------------------------------------------
+   LAYOUT VARIANTS
+
+   Chosen deterministically from the slug and the family, so the dashboard
+   preview and the export renderer pick the same one without exchanging a
+   message, and so the feed does not become seven identical compositions.
+   Amir can override per slide; the override is stored and hashed.
+   ------------------------------------------------------------------------ */
+const VARIANTS = {
+  "cover-hook":     ["character-bottom", "split-character", "detail-crop"],
+  "quick-check":    ["orbit-clues", "numbered-path", "character-callouts"],
+  "what-helped-us": ["steps-right", "steps-under"],
+  "warning":        ["banner-discs", "banner-list"],
+  "dont":           ["cross-vignettes", "stop-panel"],
+  "save-cta":       ["family-close", "arrow-line"],
+  "story-reel":     ["torn-top", "band-top"]
+};
+
+function variantFor(family, guide, salt) {
+  const list = VARIANTS[family] || ["default"];
+  const n = REFS.hashInt(String((guide && guide.slug) || "") + "/" + family + "/" + (salt || ""));
+  return list[n % list.length];
+}
+
+/* --------------------------------------------------------------------------
+   THE VISUAL CONCEPT
+
+   Attached AFTER a slide is built, because it is derived from the slide's own
+   finished content — its kind, its source field, its labels and the objects
+   those exact words mention. See concept.js for why a slide FAMILY is not
+   enough: `quick` and `normal` share the quick-check family and its poster, and
+   giving them the same picture is what made a package read as one poster with
+   different words pasted on.
+
+   The concept also OVERRIDES the cast. refs.castFor() picks a cast from the
+   family, which put Mama, Papa and Ari on seven frames out of nine; the concept
+   knows that a "what helped us" slide is one parent doing one thing.
+   ------------------------------------------------------------------------ */
+function attachConcept(s, guide, index) {
+  const concept = conceptFor({ guide, slide: s, index, objectOf: objectFor });
+  s.concept = concept;
+  s.cast = concept.cast;
+  /* Kept for the older field name; it is now the concept's own sentence rather
+     than a generic phrase like "the whole family together". */
+  s.artNote = concept.scene;
+  return s;
+}
+
+/* --------------------------------------------------------------------------
+   THE SLIDES
+   ------------------------------------------------------------------------ */
+function slide(base) {
+  return Object.assign({
+    kind: "", family: "", variant: "", variants: [], cast: [],
+    kicker: "", lines: [], items: [], band: "", cta: "",
+    logo: false,
+    image: "", imageAlt: "",
+    art: null,
+    artNote: "",
+    sourceField: "", sourceText: [],
+    optional: true, movable: true,
+    truncatedItems: 0
+  }, base);
+}
+
+function buildSlides(guide, opts) {
+  const o = opts || {};
+  const ov = o.variantOverrides || {};
   const p = guide.panel || {};
   const slides = [];
+  const title = clean(guide.title);
 
-  const eyebrow = clean(p.eyebrow) ||
+  const kicker = clean(p.eyebrow) ||
     [guide.topic, (guide.ages || [])[0]].filter(Boolean).join(" • ");
 
-  /* 1. Cover — the question, as the guide asks it. */
-  slides.push({
+  /* ---- 1. COVER / HOOK ------------------------------------------------
+     The question as the guide asks it, set large in two or three colours.
+     The logo is allowed here and on the close slide, nowhere else. */
+  slides.push(slide({
     kind: "cover",
-    eyebrow,
-    heading: shorten(guide.title, BUDGET.coverHeading),
-    lines: [],
+    family: "cover-hook",
+    variant: ov.cover || variantFor("cover-hook", guide),
+    variants: VARIANTS["cover-hook"],
+    cast: REFS.castFor("cover-hook", guide),
+    kicker,
+    lines: headline(condense(title, BUDGET.headlineWords), "cover-hook"),
+    logo: true,
     image: guide.image || "",
     imageAlt: guide.imageAlt || "",
+    artNote: "the family together, reacting to the situation in the title",
     sourceField: "title",
     sourceText: [guide.title, p.eyebrow, guide.topic, (guide.ages || []).join(" ")].filter(Boolean),
     optional: false,
     movable: false
-  });
+  }));
 
-  /* 2. The quick answer. */
-  const quick = clean(p.quick) || clean(guide.summary);
-  if (quick) {
-    slides.push({
+  /* ---- 2. THE QUICK ANSWER -------------------------------------------
+     Condensed to a headline rather than set as a paragraph in a box. Whatever
+     faithful clause is LEFT in the sentence afterwards becomes the painted
+     band underneath — still the guide's own words, by deletion only. */
+  const quickText = clean(p.quick) || clean(guide.summary);
+  if (quickText) {
+    const head = condense(quickText, BUDGET.headlineWords);
+    slides.push(slide({
       kind: "quick",
-      eyebrow: "Quick answer",
-      heading: "",
-      lines: [shorten(quick, BUDGET.quickBody)],
-      image: "",
+      family: "quick-check",
+      variant: ov.quick || variantFor("quick-check", guide, "quick"),
+      variants: VARIANTS["quick-check"],
+      cast: REFS.castFor("quick-check", guide),
+      kicker: CHROME.quickLabel,
+      lines: headline(head, "quick-check"),
+      band: bandFrom(quickText, head),
+      artNote: "one parent holding the object the guide is about, thinking",
       sourceField: p.quick ? "panel.quick" : "summary",
-      sourceText: [quick],
+      sourceText: [quickText],
       optional: false,
       movable: true
-    });
+    }));
   }
 
-  /* 3–5. The panels, each only if the guide has one. */
-  const panelSlide = (key, kind, optional) => {
+  /* ---- 3–6. THE PANELS, each only if the guide has one ---------------- */
+  const clueSlide = (key, kind, family, max, optional, artNote) => {
+    const labelWords = family === "warning" ? BUDGET.warnLabelWords : BUDGET.labelWords;
     const items = listOf(p[key]);
     if (!items.length) return;
-    const shown = items.slice(0, BUDGET.bulletsPerSlide);
-    slides.push({
+    const shown = items.slice(0, max);
+    const heading = clean(p[key].title) || "";
+    slides.push(slide({
       kind,
-      /* The question, small, at the top of every panel slide. Someone who
-         lands on slide 4 from a share needs to know what they are reading. */
-      eyebrow: shorten(guide.title, 62),
-      heading: clean(p[key].title) || "",
-      lines: shown.map(i => shorten(i, BUDGET.bullet)),
-      image: "",
-      sourceField: `panel.${key}.items`,
-      sourceText: items.concat([clean(p[key].title), guide.title]).filter(Boolean),
+      family,
+      variant: ov[kind] || variantFor(family, guide, kind),
+      variants: VARIANTS[family],
+      cast: REFS.castFor(family, guide),
+      /* The question, very small, so somebody who lands here from a share
+         knows what they are reading. */
+      kicker: shorten(title, 54),
+      /* A panel title is already short — "Usually normal", "Call your doctor
+         if". Splitting it across two lines turned it into a stacked block,
+         which is the shape this redesign is getting away from. */
+      lines: headline(heading, family, 1),
+      items: shown.map(t => ({ label: condense(t, labelWords), icon: objectFor(t), source: t })),
+      truncatedItems: Math.max(0, items.length - shown.length),
+      artNote,
+      sourceField: "panel." + key + ".items",
+      sourceText: items.concat([heading, guide.title]).filter(Boolean),
       optional,
-      movable: true,
-      truncatedItems: Math.max(0, items.length - shown.length)
-    });
+      movable: true
+    }));
   };
 
-  panelSlide("normal", "normal", true);
-  panelSlide("helped", "helped", true);
-  panelSlide("warn",   "warn",   false);   /* never removable */
-  panelSlide("dont",   "dont",   true);
+  clueSlide("normal", "normal", "quick-check", BUDGET.itemsPerSlide, true,
+    "everyday objects that explain the ordinary reasons behind the title");
+  clueSlide("helped", "helped", "what-helped-us", BUDGET.helpedItems, true,
+    "the family doing the practical thing the guide describes");
+  clueSlide("warn",   "warn",   "warning",       BUDGET.warnItems,   false,
+    "the parents attentive and calm, holding the baby gently");
+  clueSlide("dont",   "dont",   "dont",          BUDGET.dontItems,   true,
+    "one parent's open palms raised in a gentle stop gesture");
 
-  /* 6. Close. Template wording only. */
-  slides.push({
+  /* ---- 7. SAVE / CTA --------------------------------------------------
+     Interface wording only, chosen from the approved library by topic. The
+     band underneath is the guide's own title, so the slide still says what it
+     is about. Logo allowed here. */
+  const cta = ctaFor(guide);
+  slides.push(slide({
     kind: "close",
-    eyebrow: "",
-    heading: CHROME.closeHeading,
-    lines: [shorten(guide.title, BUDGET.coverHeading), CHROME.closeLine],
-    image: "",
+    family: "save-cta",
+    variant: ov.close || variantFor("save-cta", guide),
+    variants: VARIANTS["save-cta"],
+    cast: REFS.castFor("save-cta", guide),
+    lines: withEmphasis(cta.lines.map((t, i) => ({ t, c: COLOUR_RUNS["save-cta"][i % 3] })), "save-cta"),
+    band: shorten(title, 58),
+    cta: CHROME.bioLine,
+    ctaId: cta.id,
+    logo: true,
+    artNote: "the whole family together, warm and relaxed",
     sourceField: "template",
     sourceText: [guide.title],
     optional: false,
     movable: false
-  });
+  }));
 
-  return slides.slice(0, MAX_SLIDES);
+  const kept = slides.slice(0, MAX_SLIDES);
+  kept.forEach((s, i) => attachConcept(s, guide, i));
+  return kept;
+}
+
+/* The band under a condensed headline: whatever faithful clause is LEFT in the
+   source once the headline has taken its span. Deletion only — if nothing
+   usable remains there is no band, rather than an invented one. */
+function bandFrom(sourceText, usedHead) {
+  const src = clean(sourceText);
+  const head = clean(usedHead).replace(/[.]$/, "");
+  const idx = src.toLowerCase().indexOf(head.toLowerCase());
+  let rest = idx >= 0 ? src.slice(idx + head.length) : "";
+  rest = rest.replace(/^[\s,;:.—–-]+/, "").replace(/[\s,;:.]+$/, "");
+  if (!rest) return "";
+  const band = condense(rest, BUDGET.bandWords);
+  return wordCount(band) >= 4 && wordCount(band) <= BUDGET.bandWords ? band : "";
+}
+
+function ctaFor(guide) {
+  const topic = String(guide.topic || "").toLowerCase();
+  const matches = CTA_LIBRARY.filter(c => c.topics.indexOf(topic) >= 0);
+  const pool = matches.length ? matches : CTA_LIBRARY.filter(c => !c.topics.length);
+  const n = REFS.hashInt(String(guide.slug || "") + "/cta");
+  return pool[n % pool.length] || CTA_LIBRARY[CTA_LIBRARY.length - 1];
 }
 
 /* --------------------------------------------------------------------------
-   CAPTION
+   THE STORY / REEL
 
-   Readable, not a reproduction of the guide. The answer, one panel's worth of
-   bullets, and a pointer to the site. Every word comes from the guide or from
-   CHROME.
+   1080×1920. One hook, one focal point, one CTA — never the 4:5 design
+   stretched. The warning frame is carried when the guide has one, because the
+   warning rule does not care which surface it is on.
+   ------------------------------------------------------------------------ */
+function buildStory(guide, opts) {
+  const o = opts || {};
+  const ov = o.variantOverrides || {};
+  const p = guide.panel || {};
+  const title = clean(guide.title);
+  const frames = [];
+
+  frames.push(slide({
+    kind: "hook",
+    family: "story-reel",
+    variant: ov.storyHook || variantFor("story-reel", guide, "hook"),
+    variants: VARIANTS["story-reel"],
+    cast: REFS.castFor("story-reel", guide),
+    lines: headline(condense(title, BUDGET.headlineWords), "story-reel"),
+    band: condense(clean(p.quick) || clean(guide.summary), BUDGET.bandWords),
+    cta: CHROME.storyTap,
+    image: guide.image || "",
+    imageAlt: guide.imageAlt || "",
+    artNote: "the family together, reacting to the situation in the title",
+    sourceField: "title",
+    sourceText: [guide.title, clean(p.quick), clean(guide.summary)].filter(Boolean),
+    optional: false, movable: false
+  }));
+
+  const warn = listOf(p.warn);
+  if (warn.length) {
+    frames.push(slide({
+      kind: "warn",
+      family: "story-reel",
+      variant: "band-top",
+      variants: VARIANTS["story-reel"],
+      cast: REFS.castFor("warning", guide),
+      lines: headline(clean(p.warn.title), "warning", 1),
+      items: warn.slice(0, BUDGET.warnItems)
+        .map(t => ({ label: condense(t, BUDGET.warnLabelWords), icon: objectFor(t), source: t })),
+      truncatedItems: Math.max(0, warn.length - BUDGET.warnItems),
+      cta: CHROME.storyTap,
+      artNote: "the parents attentive and calm, holding the baby gently",
+      sourceField: "panel.warn.items",
+      sourceText: warn.concat([clean(p.warn.title)]),
+      optional: false, movable: true
+    }));
+  }
+
+  const cta = ctaFor(guide);
+  frames.push(slide({
+    kind: "cta",
+    family: "story-reel",
+    variant: "torn-top",
+    variants: VARIANTS["story-reel"],
+    cast: REFS.castFor("save-cta", guide),
+    lines: withEmphasis(cta.lines.map((t, i) => ({ t, c: COLOUR_RUNS["story-reel"][i % 3] })), "save-cta"),
+    band: shorten(title, 58),
+    cta: CHROME.linkLine,
+    ctaId: cta.id,
+    artNote: "the whole family together, warm and relaxed",
+    sourceField: "template",
+    sourceText: [guide.title],
+    optional: false, movable: false
+  }));
+
+  frames.forEach((f, i) => attachConcept(f, guide, 100 + i));
+  return { frames };
+}
+
+/* --------------------------------------------------------------------------
+   THE CAPTION
+
+   One grounded caption; the platform adapters below wrap it. The nuance lives
+   here — the carousel creates recognition, the caption carries the detail.
    ------------------------------------------------------------------------ */
 function buildCaption(guide) {
   const p = guide.panel || {};
@@ -247,25 +665,25 @@ function buildCaption(guide) {
   const quick = clean(p.quick) || clean(guide.summary);
   if (quick) { parts.push("", shorten(quick, 320)); sources.push(quick); }
 
-  /* Prefer the experience panel in the caption when the guide has one — it is
-     the most human thing on the page and it is genuinely ours. Otherwise the
-     reassurance panel. */
+  /* Prefer the experience panel when the guide has one — it is the most human
+     thing on the page and it is genuinely ours. Otherwise the reassurance
+     panel. */
   const pick = hasHelpedPanel(guide) ? p.helped : p.normal;
   const items = listOf(pick);
   if (items.length) {
     parts.push("", clean(pick.title) + ":");
     items.slice(0, 3).forEach(i => parts.push("• " + shorten(i, 110)));
-    sources.push(clean(pick.title), ...items);
+    sources.push(clean(pick.title));
+    items.forEach(i => sources.push(i));
   }
 
   const warn = listOf(p.warn);
   if (warn.length) {
     parts.push("", clean(p.warn.title) + ":");
     parts.push("• " + shorten(warn[0], 130));
-    sources.push(clean(p.warn.title), ...warn);
+    sources.push(clean(p.warn.title));
+    warn.forEach(i => sources.push(i));
   }
-
-  parts.push("", CHROME.captionCta);
 
   /* Cap by whole lines rather than by characters: a caption is read as a
      shape, and shorten() would collapse the blank lines that give it one. */
@@ -277,59 +695,77 @@ function buildCaption(guide) {
     used += line.length + 1;
   }
   while (capped.length && !clean(capped[capped.length - 1])) capped.pop();
-  if (capped.length < parts.length) capped.push("", CHROME.captionCta);
 
   return { text: capped.join("\n"), sources };
 }
 
 /* --------------------------------------------------------------------------
-   STORY
+   PLATFORM ADAPTERS
 
-   Two frames. A hook and a pointer. Anything longer is a carousel.
+   One grounded package, two destinations. The DIFFERENCE between them is real,
+   and it is only these two things:
+
+     Instagram   a caption cannot carry a clickable link, so it says where the
+                 link is. Hashtags belong here.
+     Facebook    a post CAN carry a clickable link, so the tagged guide URL is
+                 in the copy, and hashtags drop to two because more reads as
+                 spam there.
+
+   Everything else — the artwork, the slide text, the warning — is shared,
+   because a warning worth showing on one platform is worth showing on the
+   other.
    ------------------------------------------------------------------------ */
-function buildStory(guide) {
-  const p = guide.panel || {};
-  const frames = [{
-    kind: "hook",
-    heading: shorten(guide.title, BUDGET.storyHeading),
-    body: shorten(clean(p.quick) || clean(guide.summary), BUDGET.storyBody),
-    image: guide.image || "",
-    imageAlt: guide.imageAlt || "",
-    sourceText: [guide.title, clean(p.quick), clean(guide.summary)].filter(Boolean)
-  }];
+function platformCopy(pkg) {
+  const base = String(pkg.caption || "");
+  const tags = (pkg.hashtags || []).map(h => "#" + h);
 
-  const warn = listOf(p.warn);
-  if (warn.length) {
-    frames.push({
-      kind: "warn",
-      heading: shorten(clean(p.warn.title), BUDGET.storyHeading),
-      body: shorten(warn[0], BUDGET.storyBody),
-      image: "",
-      sourceText: warn.concat([clean(p.warn.title)])
-    });
-  }
+  const instagram = [base, "", CHROME.captionCtaInstagram, "", tags.join(" ")]
+    .join("\n").replace(/\n{3,}/g, "\n\n").trim();
 
-  frames.push({
-    kind: "cta",
-    heading: CHROME.closeHeading,
-    body: CHROME.closeLine,
-    image: "",
-    sourceText: [guide.title]
-  });
+  const facebook = [base, "", CHROME.captionCtaFacebook,
+    pkg.destinationUrlFacebook || pkg.destinationUrl, "", tags.slice(0, 2).join(" ")]
+    .join("\n").replace(/\n{3,}/g, "\n\n").trim();
 
-  return { frames };
+  return {
+    instagram: {
+      platform: "instagram",
+      caption: instagram,
+      link: CHROME.linkLine,
+      linkIsClickable: false,
+      hashtags: (pkg.hashtags || []).slice(),
+      formats: { feed: FORMATS.carousel, story: FORMATS.story },
+      limits: { hard: 2200, comfortable: 1400 },
+      notes: "Instagram captions cannot carry a clickable link, so the copy points at the bio link."
+    },
+    facebook: {
+      platform: "facebook",
+      caption: facebook,
+      link: pkg.destinationUrlFacebook || pkg.destinationUrl,
+      linkIsClickable: true,
+      hashtags: (pkg.hashtags || []).slice(0, 2),
+      formats: { feed: FORMATS.carousel, story: FORMATS.story },
+      limits: { hard: 63206, comfortable: 1800 },
+      notes: "Facebook links are clickable, so the tagged guide URL is in the copy. Fewer hashtags — they read as spam there."
+    }
+  };
 }
 
 /* --------------------------------------------------------------------------
    THE PACKAGE
    ------------------------------------------------------------------------ */
-function composePackage(guide, { topics = [], now = Date.now(), slotOffset = 0, isTest = false } = {}) {
-  const slides = buildSlides(guide);
+function composePackage(guide, opts) {
+  const o = opts || {};
+  const topics = o.topics || [];
+  const now = o.now || Date.now();
+  const slotOffset = o.slotOffset || 0;
+  const plan = { variantOverrides: o.variantOverrides || {} };
+
+  const slides = buildSlides(guide, plan);
   const caption = buildCaption(guide);
   const path = guide.url || guideUrl(guide.slug);
   const scheduledFor = suggestSlot(now, slotOffset);
 
-  return {
+  const pkg = {
     /* identity */
     guideId: guide.id,
     guideSlug: guide.slug,
@@ -344,20 +780,25 @@ function composePackage(guide, { topics = [], now = Date.now(), slotOffset = 0, 
     caption: caption.text,
     captionSourceText: caption.sources,
     hashtags: hashtagsFor(guide, topics),
-    story: buildStory(guide),
+    story: buildStory(guide, plan),
 
     /* destination */
+    destination: o.destination || "both",
     destinationUrl: taggedUrl({ path, format: "carousel", slug: guide.slug, date: scheduledFor }),
+    destinationUrlFacebook: taggedUrl({ path, format: "carousel", slug: guide.slug, date: scheduledFor, source: "facebook" }),
     storyUrl: taggedUrl({ path, format: "story", slug: guide.slug, date: scheduledFor }),
     scheduledFor,
 
     /* provenance — which guide field produced which slide, so Amir can check
        that nothing was invented without leaving the dashboard */
-    sourceRefs: slides.map((s, i) => ({ slide: i + 1, kind: s.kind, field: s.sourceField })),
+    sourceRefs: slides.map((s, i) => ({ slide: i + 1, kind: s.kind, family: s.family, field: s.sourceField })),
+
+    /* artwork lifecycle, filled in by artwork.js and social-artwork.js */
+    artwork: { status: "QUEUED", updatedAt: null, error: null, engine: null },
 
     /* lifecycle */
     status: STATES.DRAFT,
-    isTest: !!isTest,
+    isTest: !!o.isTest,
     approvedHash: null,
     approvedAt: null,
     approvedBy: null,
@@ -366,11 +807,16 @@ function composePackage(guide, { topics = [], now = Date.now(), slotOffset = 0, 
     /* the animation extension, documented and switched off */
     animation: { status: "NOT_CONFIGURED", provider: null, assets: [] },
 
-    composerVersion: 1
+    composerVersion: 2
   };
+
+  pkg.platforms = platformCopy(pkg);
+  return pkg;
 }
 
 module.exports = {
-  composePackage, buildSlides, buildCaption, buildStory,
-  shorten, suggestSlot, hashtagsFor, BUDGET, CHROME
+  composePackage, buildSlides, buildCaption, buildStory, platformCopy,
+  shorten, suggestSlot, hashtagsFor, headline, splitBalanced, objectFor,
+  variantFor, ctaFor, bandFrom, attachConcept, withEmphasis,
+  BUDGET, CHROME, CTA_LIBRARY, VARIANTS, COLOUR_RUNS, OBJECTS
 };

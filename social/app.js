@@ -25,23 +25,18 @@ const T = window.MPCSocialTemplates;
 const CFG = window.FIREBASE_CONFIG;
 
 /* ---- the asset map the renderer needs ---------------------------------- *
-   templates.js resolves object icons, the logo and character cutouts through
-   ctx.assets. The export renderer hands it data URIs because its page has no
-   URL to resolve a relative path against; the dashboard is a real page, so it
-   hands over real paths instead. Passing nothing is not a cosmetic shortfall:
-   the vignette layouts test ctx.assets.icons to decide whether a slide can be
-   drawn as objects at all, so a preview without this map picks a DIFFERENT
-   layout from the one that would export. Same functions, same assets, same
-   pixels. */
-const ICON_DIR = "/assets/img/social-icons/";
-function frameAssets(frame) {
-  const icons = {};
-  const add = (n) => { if (n && !icons[n]) icons[n] = ICON_DIR + n + ".png"; };
-  add(frame && frame.watermark);
-  ((frame && frame.items) || []).forEach(it => add(it && it.icon));
-  /* images: {} on purpose — BRAND paths are already site-absolute, so
-     templates.js resolve() falls through to the real URL. */
-  return { logo: "/assets/img/logo.webp", images: {}, icons };
+   templates.js resolves the character cutouts, the logo and the paper grain
+   through ctx.assets.images. The EXPORT renderer fills that map with data
+   URIs, because setContent() gives its page an opaque origin from which a
+   root-absolute path cannot resolve. The dashboard is a real page on a real
+   origin, so the map is empty and templates.js resolve() falls through to the
+   real site path. Same functions, same layout, same pixels — only the bytes
+   arrive differently.
+
+   The object clues are inline SVG inside templates.js, so there is no icon
+   directory to keep in step with anything. */
+function frameAssets() {
+  return { images: {} };
 }
 
 const $  = (s, r = document) => r.querySelector(s);
@@ -54,6 +49,7 @@ const state = {
   auth: null, user: null,
   status: null, guides: [], skipped: [], topics: [], ages: [],
   packages: [], current: null, slide: 0, storyMode: false,
+  refs: null,
   filter: { q: "", topic: "", age: "" },
   platform: "instagram",   /* which platform preview is on screen */
   surface: "feed",         /* feed | story */
@@ -151,6 +147,7 @@ function render() {
   const view = $("#view");
   if (state.current) return renderPackage(view);
   if (state.tab === "make") return renderMake(view);
+  if (state.tab === "references") return renderReferences(view);
   if (state.tab === "status") return renderStatus(view);
   return renderList(view, state.tab);
 }
@@ -251,6 +248,109 @@ function generate(slugs, isTest, replace) {
   });
 }
 
+
+/* ------------------------------------------------------------------------ */
+/* THE REFERENCE LIBRARY                                                     */
+/*                                                                           */
+/* Not documentation. Every row here is a manifest entry that the generator   */
+/* reads through the SAME function it uses to choose what to attach, so the   */
+/* "used by" column is the wiring rather than a description of it. If a       */
+/* poster is missing, this is where it is named — by exact path, and not      */
+/* replaced with something generic.                                          */
+/* ------------------------------------------------------------------------ */
+function renderReferences(view) {
+  if (!state.refs) {
+    view.innerHTML = `<div class="empty">Loading the reference library…</div>`;
+    return busy(async () => { state.refs = await api("social-references"); render(); });
+  }
+  const r = state.refs;
+  const eng = r.engine || {};
+  const byGroup = new Map();
+  (r.references || []).forEach(x => {
+    if (!byGroup.has(x.group)) byGroup.set(x.group, []);
+    byGroup.get(x.group).push(x);
+  });
+
+  const card = (x) => `
+    <figure class="refcard${x.active ? "" : " is-off"}">
+      <img loading="lazy" src="${esc(x.thumb)}" alt="${esc(x.name)}">
+      <figcaption>
+        <span class="t">${esc(x.name)}</span>
+        <span class="m"><code>${esc(x.role)}</code>${x.character ? " · " + esc(x.character) : ""}</span>
+        <span class="tag ${x.active ? "held" : "draft"}">${x.active ? "active" : "inactive"}</span>
+        <span class="m">manifest ${esc(x.manifestVersion)}</span>
+        <span class="m">used by: ${x.usedBy.map(f => `<code>${esc(f)}</code>`).join(" ")}</span>
+        ${x.note ? `<span class="m note">${esc(x.note)}</span>` : ""}
+      </figcaption>
+    </figure>`;
+
+  view.innerHTML = `
+    <div class="panelbox ${eng.configured ? "" : "future"}">
+      <h3>Image engine ${eng.configured
+        ? `<span class="tag held">connected</span>`
+        : `<span class="badge-later">not configured</span>`}</h3>
+      <p style="margin:0 0 6px">${esc(eng.note || "")}</p>
+      <p class="hint" style="margin:0">
+        Image model <code>${esc(eng.imageModel || "—")}</code> ·
+        prompt <code>${esc((r.prompt || {}).version || "—")}</code> ·
+        manifest <code>${esc((r.manifest || {}).version || "—")}</code>
+        (${(r.manifest || {}).count || 0} references, updated ${esc((r.manifest || {}).updated || "—")}).
+        The key is read server-side only — it is never sent to this page, logged, or written to Firestore.
+      </p>
+    </div>
+
+    ${(r.missing || []).length ? `<div class="findings"><div class="finding error">
+      <strong>missing-reference</strong> — ${r.missing.length} manifest entr${r.missing.length === 1 ? "y has" : "ies have"}
+      no file behind ${r.missing.length === 1 ? "it" : "them"}. Nothing generic is substituted; add the files at these exact paths:
+      <br>${r.missing.map(m => `<code>${esc(m.expected)}</code> <span class="m">(${esc(m.id)})</span>`).join("<br>")}
+    </div></div>` : ""}
+
+    <div class="panelbox">
+      <h3>What each slide family sends <small>every image request</small></h3>
+      <div class="rows">${(r.families || []).map(f => f.error
+        ? `<div class="row"><span></span><span><span class="t">${esc(f.family)}</span>
+             <span class="m" style="color:var(--red-ink)">${esc(f.error)}</span></span><span></span></div>`
+        : `<div class="row">
+             <span></span>
+             <span>
+               <span class="t">${esc(f.family)}</span>
+               ${f.logoAllowed ? `<span class="tag test">logo allowed</span>` : ""}
+               <span class="m">poster <code>${esc(f.posterId)}</code> ·
+                 characters ${f.characterIds.map(c => `<code>${esc(c)}</code>`).join(" ")} ·
+                 scene <code>${esc(f.sceneId || "none")}</code> ·
+                 brand <code>${esc(f.brandId)}</code></span>
+               <span class="m">${f.attachedCount} image${f.attachedCount === 1 ? "" : "s"} attached per request</span>
+             </span>
+             <span></span>
+           </div>`).join("")}</div>
+    </div>
+
+    ${(r.manifest.groups || []).map(g => {
+      const list = byGroup.get(g.id) || [];
+      if (!list.length) return "";
+      return `<div class="panelbox">
+        <h3>${esc(g.label)} <small>${list.length}</small></h3>
+        <p class="hint" style="margin:0 0 10px">${esc(g.note || "")}</p>
+        <div class="refgrid">${list.map(card).join("")}</div>
+      </div>`;
+    }).join("")}
+
+    <div class="panelbox future">
+      <h3>The system prompt <small>${esc((r.prompt || {}).version || "")}</small></h3>
+      <pre class="platcopy">${esc((r.prompt || {}).system || "")}</pre>
+      <p class="hint">Sent verbatim with every image request, ahead of the family brief.
+        Wording is versioned: changing it changes the prompt version, which is part of the approval hash.</p>
+    </div>
+
+    <div class="panelbox">
+      <button class="btn ghost" id="refreload">Re-read the manifest</button>
+    </div>`;
+
+  $("#refreload").addEventListener("click", () => busy(async () => {
+    state.refs = await api("social-references"); render(); toast("Manifest re-read.");
+  }));
+}
+
 /* ---- a status list ----------------------------------------------------- */
 function renderList(view, status) {
   busy(async () => {
@@ -326,6 +426,8 @@ function renderPackage(view) {
     ${held ? `<div class="held">Approved and held for ${esc(dest === "both" ? "Instagram and Facebook" : dest)}.
       Publishing is disabled, there is no scheduler, and nothing will send this. Editing it below returns it to review.</div>` : ""}
 
+    ${artworkBar(p)}
+
     <div class="pkg" style="margin-top:12px">
       <div class="stage">
         <div class="bar" style="margin:0 0 10px">
@@ -399,6 +501,8 @@ function renderPackage(view) {
           ${held ? `<button class="btn quiet" id="unapprove">Return to editing</button>` : ""}
           <button class="btn quiet" id="regen">Regenerate from the guide</button>
           <button class="btn quiet" id="dry">Show the payload it would send</button>
+          ${p.status === "REJECTED"
+            ? `<button class="btn warn" id="delete">Delete permanently…</button>` : ""}
         </div>
       </div>
     </div>`;
@@ -425,6 +529,16 @@ function renderPackage(view) {
   $("#next").addEventListener("click", () => { state.slide = Math.min(frames.length - 1, idx + 1); render(); });
   $$("#view [data-go]").forEach(b => b.addEventListener("click", () => { state.slide = Number(b.dataset.go); render(); }));
 
+  const artAll = $("#artAll");
+  if (artAll) artAll.addEventListener("click", () => artwork({}, "Generating artwork"));
+  const artOne = $("#artOne");
+  if (artOne) artOne.addEventListener("click", () => artwork(
+    { only: [(story ? "story:" : "slide:") + idx], regenerateArtwork: true },
+    "Regenerating this frame's artwork"));
+
+  const del = $("#delete");
+  if (del) del.addEventListener("click", () => deletePackage(p));
+
   $("#save").addEventListener("click", saveEdits);
   $("#approve").addEventListener("click", approve);
   $("#reject").addEventListener("click", reject);
@@ -442,6 +556,64 @@ function renderPackage(view) {
   wireSlideEditor(p, idx);
 }
 
+
+/* ---- artwork state ------------------------------------------------------
+   Four states and a Retry button, and deliberately NO automatic retry: a loop
+   that re-requests a failed image on a timer is a loop that spends money while
+   nobody is watching. The state is what the server last wrote, the error is
+   shown in full, and pressing the button is the only thing that tries again. */
+const ART_LABEL = {
+  QUEUED: "Queued — the artwork has not been generated yet.",
+  GENERATING: "Generating…",
+  READY: "Artwork ready.",
+  FAILED: "Artwork generation failed."
+};
+
+function artworkBar(p) {
+  const a = p.artwork || { status: "QUEUED" };
+  const st = a.status || "QUEUED";
+  const engine = (state.status && state.status.artwork) || {};
+  const generated = countGenerated(p);
+  const total = (p.slides || []).length + (((p.story || {}).frames) || []).length;
+
+  return `<div class="artbar is-${esc(st.toLowerCase())}">
+    <span class="tag ${st === "READY" ? "held" : st === "FAILED" ? "rejected" : "review"}">${esc(st)}</span>
+    <span class="m">${esc(ART_LABEL[st] || st)}
+      ${generated}/${total} frame${total === 1 ? "" : "s"} carry generated artwork;
+      the rest use the composed approved-artwork layout.</span>
+    ${a.error ? `<span class="m" style="color:var(--red-ink)">${esc(a.error)}</span>` : ""}
+    ${a.imageModel ? `<span class="m">model <code>${esc(a.imageModel)}</code> ·
+      prompt <code>${esc(a.promptVersion || "—")}</code> ·
+      manifest <code>${esc(a.manifestVersion || "—")}</code></span>` : ""}
+    <span class="acts">
+      ${engine.engineConfigured === false
+        ? `<span class="badge-later">no image engine configured</span>`
+        : `<button class="btn tiny ghost" id="artAll">${st === "FAILED" ? "Retry artwork" : "Generate artwork"}</button>
+           <button class="btn tiny quiet" id="artOne">Regenerate this frame's artwork</button>`}
+    </span>
+  </div>`;
+}
+
+function countGenerated(p) {
+  const has = (f) => f && f.art && f.art.assetUrl && !f.art.strayText;
+  return (p.slides || []).filter(has).length + ((((p.story || {}).frames) || []).filter(has).length);
+}
+
+function artwork(body, what) {
+  busy(async () => {
+    toast(what + "… this can take a minute.");
+    const r = await api("social-artwork", { method: "POST", body: Object.assign({ id: state.current.id }, body) });
+    const bad = (r.results || []).filter(x => x.status === "FAILED" || x.status === "REJECTED");
+    if (bad.length) {
+      toast(bad.map(x => `${x.id}: ${x.error || x.status}`).join(" · "), true);
+    } else {
+      toast(r.note || `${r.counts.generated} generated, ${r.counts.cached} reused.`);
+    }
+    if (r.approvalCleared) toast("Approval cleared — the artwork changed.", true);
+    await refresh(); openPackage(state.current.id);
+  });
+}
+
 /* ---- the slide editor, with the guide's own words beside it ------------ */
 /* A slide is a headline of coloured lines, an optional kicker, a set of short
    labels, a band and a call to action. Same shape for the carousel and the
@@ -451,19 +623,25 @@ function slideEditor(p, idx) {
   const s = story ? ((p.story && p.story.frames) || [])[idx] : (p.slides || [])[idx];
   if (!s) return "";
 
+  /* The colours a headline piece may take. Names, not values — templates.js
+     owns what they look like, and the poster palette is not the site palette. */
+  const COLOURS = ["ink", "blue", "orange", "cream", "red", "yellow"];
+
   const lines = (s.lines || []).map((l, i) => `
     <div class="lineedit">
       <input class="text" data-line="${i}" value="${esc(l.t)}">
-      <select data-colour="${i}">${["ink", "blue", "orange"].map(c =>
+      <select data-colour="${i}">${COLOURS.map(c =>
         `<option value="${c}"${l.c === c ? " selected" : ""}>${c}</option>`).join("")}</select>
     </div>`).join("");
 
+  /* The object clue beside each label is the SAME inline drawing the renderer
+     puts on the slide — templates.js objectSVG(). There is no icon directory
+     to keep in step, and the chip cannot show something the poster will not. */
   const items = (s.items || []).map((it, i) => `
     <div class="lineedit">
       <input class="text" data-item="${i}" value="${esc(it.label)}">
-      <span class="iconchip">${it.icon
-        ? `<img src="/assets/img/social-icons/${esc(it.icon)}.png" alt="${esc(it.icon)}" title="${esc(it.icon)}">`
-        : `<span class="noicon" title="no matching object">—</span>`}</span>
+      <span class="iconchip" title="${esc(it.icon || "no matching object — this label is numbered instead")}">${
+        it.icon && T.objectSVG(it.icon) ? T.objectSVG(it.icon) : `<span class="noicon">—</span>`}</span>
     </div>`).join("");
 
   return `<div class="panelbox">
@@ -474,7 +652,7 @@ function slideEditor(p, idx) {
         ${s.kicker !== undefined && s.kicker !== "" ? `<label class="fld">Category cue</label>
           <input class="text" data-field="kicker" value="${esc(s.kicker)}">` : ""}
         <label class="fld">Headline</label>${lines}
-        ${items ? `<label class="fld">Labels</label>${items}` : ""}
+        ${items ? `<label class="fld">Labels — ${(s.items || []).length} of a maximum four</label>${items}` : ""}
         ${s.band ? `<label class="fld">Band</label><input class="text" data-field="band" value="${esc(s.band)}">` : ""}
         ${s.cta ? `<label class="fld">Call to action</label><input class="text" data-field="cta" value="${esc(s.cta)}">` : ""}
       </div>
@@ -648,6 +826,30 @@ function reject() {
     await api("social-reject", { method: "POST", body: { id: state.current.id, reason } });
     toast("Rejected.");
     await refresh(); state.current = null; state.tab = "REJECTED"; render();
+  });
+}
+
+/* Permanent deletion. Available only on a REJECTED package — the button is
+   not rendered otherwise, and the server refuses anyway, which is the check
+   that matters. The confirmation names the guide and asks for its slug to be
+   typed, because "are you sure?" on a list of rejects is a thing people click
+   without reading. */
+function deletePackage(p) {
+  const typed = prompt(
+    `Delete this package permanently?\n\n` +
+    `Guide:  ${p.guideTitle}\n` +
+    `Slug:   ${p.guideSlug}\n\n` +
+    `The package and its generated social images are removed for good.\n` +
+    `The guide, its illustration and every shared reference asset are untouched.\n\n` +
+    `Type the slug to confirm:`, "");
+  if (typed === null) return;
+  if (String(typed).trim() !== p.guideSlug) return toast("That is not the slug. Nothing was deleted.", true);
+
+  busy(async () => {
+    const r = await api("social-delete", { method: "POST", body: { id: p.id, confirmSlug: p.guideSlug } });
+    toast(`Deleted “${r.guideTitle}”. ${r.mediaRemoved} generated image${r.mediaRemoved === 1 ? "" : "s"} removed.`);
+    await refresh();
+    state.current = null; state.tab = "REJECTED"; render();
   });
 }
 

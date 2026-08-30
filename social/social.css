@@ -186,3 +186,69 @@ label.fld{ display:block; font-size:.75rem; font-weight:800; letter-spacing:.06e
 
 .hidden{ display:none !important; }
 @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+
+/* ============================================================================
+   THE REFERENCE LIBRARY AND THE ARTWORK BAR
+
+   Added with the poster renderer. Everything above this line predates it and
+   is unchanged; these are the two surfaces the new pipeline needed and had
+   nowhere to live.
+   ========================================================================== */
+
+/* --- artwork state ------------------------------------------------------ */
+.artbar{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px;
+  background:var(--card); border:1.5px solid var(--line-soft); border-left-width:6px;
+  border-radius:var(--radius); padding:10px 14px; margin:12px 0 0;
+}
+.artbar .m{ color:var(--ink-50); font-size:.82rem; }
+.artbar .acts{ margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+.artbar.is-queued{ border-left-color:var(--line-soft); }
+.artbar.is-generating{ border-left-color:var(--amber-line); background:var(--amber-fill); }
+.artbar.is-ready{ border-left-color:var(--sage); }
+.artbar.is-failed{ border-left-color:var(--red-line); background:var(--red-fill); }
+
+/* --- the reference grid ------------------------------------------------- */
+.refgrid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); }
+.refcard{
+  margin:0; background:var(--cream-soft); border:1.5px solid var(--line-soft);
+  border-radius:12px; overflow:hidden; display:flex; flex-direction:column;
+}
+.refcard.is-off{ opacity:.55; }
+.refcard img{
+  display:block; width:100%; height:170px; object-fit:contain; background:var(--paper);
+  border-bottom:1.5px solid var(--line-soft); padding:8px;
+}
+.refcard figcaption{ padding:9px 11px 11px; display:flex; flex-direction:column; gap:3px; }
+.refcard .t{ font-weight:800; font-size:.86rem; line-height:1.25; }
+.refcard .m{ color:var(--ink-50); font-size:.72rem; line-height:1.35; }
+.refcard .m.note{ color:var(--ink-70); }
+.refcard .tag{ align-self:flex-start; }
+.refcard code{ font-size:.92em; }
+
+/* --- the object clue beside a label in the editor ----------------------- */
+.lineedit{ display:flex; gap:8px; align-items:center; margin:0 0 6px; }
+.lineedit .text{ flex:1 1 auto; }
+.lineedit select{ font:inherit; padding:7px 8px; border:1.5px solid var(--line-soft);
+  border-radius:9px; background:var(--cream-soft); color:var(--ink); }
+.iconchip{
+  flex:0 0 auto; width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+  border:1.5px solid var(--line-soft); border-radius:50%; background:var(--cream-soft);
+  color:var(--blue-ink);
+}
+.iconchip svg{ width:24px; height:24px; }
+.iconchip .noicon{ color:var(--ink-50); font-weight:800; }
+
+.platcopy{
+  white-space:pre-wrap; word-break:break-word; margin:0 0 8px;
+  background:var(--paper); border:1.5px solid var(--rule-hand); border-radius:10px;
+  padding:10px 12px; font-size:.84rem; line-height:1.45; font-family:var(--body);
+  max-height:320px; overflow:auto;
+}
+.notewarn{ background:var(--amber-fill); border:1.5px solid var(--amber-line); color:var(--amber-ink);
+  border-radius:10px; padding:8px 12px; font-size:.85rem; margin:0 0 10px; }
+.hint{ color:var(--ink-50); font-size:.8rem; margin:6px 0 0; }
+.fldlbl{ font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-50); }
+.fitline{ font-size:.82rem; margin:8px 0 0; text-align:center; }
+.stage .future .hint{ margin-top:6px; }

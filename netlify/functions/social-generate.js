@@ -25,6 +25,7 @@ const C = require("../../scripts/lib/social/compose");
 const V = require("../../scripts/lib/social/validate");
 const Safety = require("../../scripts/lib/social/safety");
 const CFG = require("../../scripts/lib/social/config");
+const ART = require("../../scripts/lib/social/artwork");
 
 exports.handler = guard("POST", async ({ db, body, user }) => {
   const loaded = await loadGuides(db);
@@ -54,7 +55,16 @@ exports.handler = guard("POST", async ({ db, body, user }) => {
       return;
     }
 
-    const pkg = C.composePackage(guide, { topics: loaded.topics, now, slotOffset: i, isTest: !!body.isTest });
+    const pkg = C.composePackage(guide, {
+      topics: loaded.topics, now, slotOffset: i, isTest: !!body.isTest,
+      destination: body.destination || "both"
+    });
+    /* The artwork is a separate, chargeable step. A freshly composed package
+       is QUEUED, renders immediately with the composed approved-artwork
+       layout, and only reaches the image model when somebody presses the
+       button — which is what stops "Generate all" turning into sixty-one
+       image bills. */
+    pkg.artwork = { status: ART.ART_STATES.QUEUED, engine: null, error: null, updatedAt: null };
     pkg.validation = V.validatePackage(pkg).concat(Safety.lintPackage(pkg, guide));
     pkg.guideDataSource = loaded.source;
     pkg.createdAt = new Date().toISOString();
@@ -72,6 +82,7 @@ exports.handler = guard("POST", async ({ db, body, user }) => {
 
     created.push({ id: ref.id, slug: guide.slug, title: guide.title,
       slides: pkg.slides.length,
+      families: pkg.slides.map(s => s.family),
       errors: pkg.validation.filter(f => f.level === "error").length });
   });
 

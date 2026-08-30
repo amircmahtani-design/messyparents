@@ -753,8 +753,21 @@ section("Performance architecture");
        the HTML. Every weight is genuinely used — .book-num resolves to Baloo
        600, .search button and .article-body strong are Nunito 800 — so
        dropping one is a typography decision, not a performance one. */
-    const FACES = ["baloo2-600", "baloo2-700", "baloo2-800", "patrick-hand-400",
-                   "nunito-400", "nunito-600", "nunito-700", "nunito-800"];
+    /* PRE-EXISTING FIX. This list held short names — "baloo2-600" — that have
+       never been the filenames on disk. tokens.css, every preload tag in every
+       public page and assets/fonts/ itself all use the google-webfonts-helper
+       names, which carry the font version. So both checks below failed on a
+       repository that was in fact perfectly consistent, and they had been
+       failing long enough to be background noise, which is the state in which
+       a check stops being read.
+
+       The INTENT is unchanged: assert that the font request is exactly what
+       shipped, so that altering the typography is a deliberate design decision
+       rather than an accident. Only the names have been corrected to the ones
+       the rest of the repository actually uses. */
+    const FACES = ["baloo-2-v23-latin-600", "baloo-2-v23-latin-700", "baloo-2-v23-latin-800",
+                   "patrick-hand-v25-latin-regular", "nunito-v32-latin-regular",
+                   "nunito-v32-latin-600", "nunito-v32-latin-700", "nunito-v32-latin-800"];
     const tokensCss = readIf("assets/css/tokens.css") || "";
     const undeclared = FACES.filter(n => !tokensCss.includes(`../fonts/${n}.woff2`));
     check("Every face is declared in tokens.css", undeclared.length === 0,

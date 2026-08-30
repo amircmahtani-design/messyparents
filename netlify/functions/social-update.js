@@ -24,6 +24,7 @@ const V = require("../../scripts/lib/social/validate");
 const Safety = require("../../scripts/lib/social/safety");
 const { loadGuides } = require("../../scripts/lib/social/guides");
 const W = require("../../scripts/lib/social/workflow");
+const C = require("../../scripts/lib/social/compose");
 
 exports.handler = guard("POST", async ({ db, body, user }) => {
   if (!body.id) return json(400, { error: "id is required" });
@@ -38,7 +39,11 @@ exports.handler = guard("POST", async ({ db, body, user }) => {
     });
   }
 
-  const step = W.applyEdit(before, body.patch || {}, body.status);
+  /* The platform captions are derived from the shared caption, the hashtags
+     and the destination, and applyEdit rebuilds them before it decides
+     whether the content changed — see scripts/lib/social/workflow.js. */
+  const step = W.applyEdit(before, body.patch || {}, body.status,
+    (after) => ({ platforms: C.platformCopy(after) }));
   if (!Object.keys(step.patch).length && !body.status) return json(400, { error: "nothing to change" });
 
   /* Re-validate against the live guide, so a hand-edit is checked exactly as

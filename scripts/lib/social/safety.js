@@ -78,6 +78,9 @@ const CHROME_WORDS = new Set(`
   written by parents not doctors usually normal what helped us call your
   doctor if quick answer here is what we know about this one three minute
   read guides guide
+
+  save this later next 3am long night before need send other parent keep
+  tap full bio dont don't
 `.trim().split(/\s+/));
 
 /* Words too common to be evidence of anything. Excluded from the grounding
@@ -222,21 +225,51 @@ function lintText(text, { guide, sources = [], label = "text" } = {}) {
   return out;
 }
 
+/* EVERY WORD A FOLLOWER WOULD SEE ON ONE SLIDE.
+
+   The slide shape grew when the renderer became a poster renderer: a headline
+   is a list of coloured pieces, and a slide also carries a kicker, short
+   labels, a painted band and a CTA. All of them are visible, so all of them
+   are checked.
+
+   Both shapes are handled. The old shape — eyebrow, heading, lines as plain
+   strings — still appears in fixtures and in packages written before the
+   change, and a checker that quietly produced "[object Object]" for the new
+   shape would have reported a grounding failure on the word "object" while
+   checking nothing at all. */
+function visibleText(s) {
+  if (!s) return [];
+  const out = [];
+  const push = (v) => { if (v) out.push(String(v)); };
+
+  push(s.eyebrow);                    /* legacy */
+  push(s.kicker);
+  push(s.heading);                    /* legacy */
+  (s.lines || []).forEach(l => push(typeof l === "string" ? l : (l && l.t)));
+  (s.items || []).forEach(i => push(typeof i === "string" ? i : (i && i.label)));
+  push(s.band);
+  push(s.cta);
+  push(s.body);                       /* legacy story frame */
+  return out;
+}
+
 /* Check a whole composed package. Every slide is checked against its OWN
    source, which is why compose.js records `sourceRefs` per slide. */
 function lintPackage(pkg, guide) {
   const out = [];
   (pkg.slides || []).forEach((s, i) => {
     const src = (s.sourceText || []);
-    const label = `slide ${i + 1} (${s.kind})`;
-    [s.eyebrow, s.heading].concat(s.lines || []).forEach(piece => {
+    const label = `slide ${i + 1} (${s.family || s.kind})`;
+    visibleText(s).forEach(piece => {
       out.push(...lintText(piece, { guide, sources: src, label }));
     });
   });
 
   ((pkg.story && pkg.story.frames) || []).forEach((f, i) => {
-    out.push(...lintText([f.heading, f.body].filter(Boolean).join(" "),
-      { guide, sources: f.sourceText || [], label: `story frame ${i + 1}` }));
+    const label = `story frame ${i + 1}`;
+    visibleText(f).forEach(piece => {
+      out.push(...lintText(piece, { guide, sources: f.sourceText || [], label }));
+    });
   });
 
   out.push(...lintText(pkg.caption, {
@@ -263,6 +296,6 @@ function lintPackage(pkg, guide) {
 const errorsOnly = (findings) => findings.filter(f => f.level === "error");
 
 module.exports = {
-  lintText, lintPackage, hasHelpedPanel, errorsOnly,
+  lintText, lintPackage, hasHelpedPanel, errorsOnly, visibleText,
   BANNED, EXPERIENCE, CHROME_WORDS, contentWords
 };
