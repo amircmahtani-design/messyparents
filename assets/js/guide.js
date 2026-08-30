@@ -560,40 +560,8 @@
     go(e.key === "ArrowLeft" ? "prev" : "next");
   });
 
-  /* Swipe, deliberately conservative — a reader who meant to scroll and lands
-     on another article has lost their place. Must be clearly horizontal, far
-     enough to be intent, not started at the screen edge (iOS owns that for its
-     own back gesture), and single-touch so a pinch is never read as a swipe.
-     Dragging leftward advances, as on every other app. */
-  var EDGE_GUARD = 32;      // px from either side where iOS owns the gesture
-  var MIN_TRAVEL = 70;      // px before it counts as intent
-  var MAX_DRIFT  = 0.6;     // vertical movement allowed, as a fraction of horizontal
-
-  var sx = 0, sy = 0, tracking = false;
-
-  document.addEventListener("touchstart", function (e) {
-    if (e.touches.length !== 1) { tracking = false; return; }
-    var t0 = e.touches[0];
-    if (t0.clientX < EDGE_GUARD || t0.clientX > window.innerWidth - EDGE_GUARD) {
-      tracking = false; return;
-    }
-    sx = t0.clientX; sy = t0.clientY; tracking = true;
-  }, { passive: true });
-
-  document.addEventListener("touchmove", function (e) {
-    if (e.touches.length !== 1) tracking = false;
-  }, { passive: true });
-
-  document.addEventListener("touchend", function (e) {
-    if (!tracking) return;
-    tracking = false;
-    var t1 = e.changedTouches && e.changedTouches[0];
-    if (!t1) return;
-
-    var dx = t1.clientX - sx, dy = t1.clientY - sy;
-    if (Math.abs(dx) < MIN_TRAVEL) return;
-    if (Math.abs(dy) > Math.abs(dx) * MAX_DRIFT) return;   /* that was a scroll */
-
-    go(dx < 0 ? "next" : "prev");
-  }, { passive: true });
+  /* Swiping sideways used to move to the previous or next guide. It was
+     removed on purpose: nothing on the page announced it, so it only ever
+     surprised a reader who meant to scroll. Keyboard Left/Right above is
+     kept — it is discoverable by trying it and cannot fire by accident. */
 })();
