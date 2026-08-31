@@ -271,22 +271,42 @@ htmlFiles.forEach(h => {
 });
 loaded.add("social/app.js");   /* loaded as a module, and the surface this task built */
 
-const clientLeaks = Array.from(loaded).filter(rel =>
-  /OPENAI_API_KEY|\bsk-[A-Za-z0-9]{20}/.test(stripComments(fs.readFileSync(path.join(ROOT, rel), "utf8"))));
-check(`No script the browser loads mentions the OpenAI key (${loaded.size} checked)`,
+/* What matters is whether a browser script can READ the key or carries its
+   VALUE — not whether it mentions the variable by name. The dashboard's
+   connection test prints "OPENAI_API_KEY is set" as a label, which is exactly
+   the sort of thing an operator needs to see and is not a leak. So the check
+   is for an actual environment read or something shaped like a key. */
+const KEY_READ = /process\s*\.\s*env\s*(\.\s*OPENAI_API_KEY|\[\s*["']OPENAI_API_KEY["']\s*\])/;
+const KEY_VALUE = /\bsk-[A-Za-z0-9_-]{20}/;
+
+const clientLeaks = Array.from(loaded).filter(rel => {
+  const text = stripComments(fs.readFileSync(path.join(ROOT, rel), "utf8"));
+  return KEY_READ.test(text) || KEY_VALUE.test(text);
+});
+check(`No script the browser loads can read the OpenAI key (${loaded.size} checked)`,
   clientLeaks.length === 0, clientLeaks.join(", "));
+
+/* And no key value is committed anywhere in the repository. */
+const everywhere = walk(path.join(ROOT, "social"), [])
+  .concat(walk(path.join(ROOT, "scripts"), []))
+  .concat(walk(path.join(ROOT, "netlify"), []))
+  .concat(walk(path.join(ROOT, "tests"), []));
+const hardcoded = everywhere.filter(f => KEY_VALUE.test(f.text));
+check("No key value is committed anywhere in the source",
+  hardcoded.length === 0, hardcoded.map(f => f.rel).join(", "));
 
 /* The shared social library is bundled into functions, but it is also the
    thing tests import — it must not read the environment for a secret. */
 const libFiles = walk(path.join(ROOT, "scripts", "lib", "social"), []);
-const libLeaks = libFiles.filter(f => /OPENAI_API_KEY/.test(f.text));
-check("No module under scripts/lib/social reads the key",
+const libLeaks = libFiles.filter(f => KEY_READ.test(f.text));
+check("No module under scripts/lib/social reads the key from the environment",
   libLeaks.length === 0, libLeaks.map(f => f.rel).join(", "));
 
 /* Exactly the functions that are supposed to. */
 const fnFiles = walk(path.join(ROOT, "netlify", "functions"), []);
-const readers = fnFiles.filter(f => /OPENAI_API_KEY/.test(f.text)).map(f => path.basename(f.rel));
+const readers = fnFiles.filter(f => KEY_READ.test(f.text)).map(f => path.basename(f.rel));
 const ALLOWED = ["social-artwork.js", "social-references.js", "social-status.js",
+  "social-engine-test.js",
   "generate-illustration.js", "generate-illustration-background.js"];
 const unexpected = readers.filter(r => ALLOWED.indexOf(r) < 0);
 check("Only the server functions that need it read the key",
@@ -309,6 +329,17 @@ check("…and uses it only to test for presence and to hand to the transport",
 const oaFn = stripComments(fs.readFileSync(path.join(ROOT, "scripts/lib/social/openai.js"), "utf8"));
 check("The shared transport never reads the environment",
   !/process\.env/.test(oaFn));
+
+/* The connection test is the one endpoint whose whole job is to talk about the
+   key, so it is worth asserting it talks ABOUT it rather than returning it. */
+const testFn = stripComments(fs.readFileSync(path.join(ROOT, "netlify/functions/social-engine-test.js"), "utf8"));
+check("The connection test reads the key once and passes it to the transport",
+  (testFn.match(/process\.env\.OPENAI_API_KEY/g) || []).length === 1 &&
+  /apiKey:\s*key/.test(testFn));
+check("…and never returns it",
+  !/json\([\s\S]*\bkey\b\s*[,}]/.test(testFn.replace(/apiKey:\s*key/g, "")));
+check("…and generates no image",
+  !/image_generation/.test(testFn));
 check("…it receives the key as an argument and signs one header with it",
   /apiKey/.test(oaFn) && /Bearer \$\{o\.apiKey\}/.test(oaFn));
 check("…and never logs it",

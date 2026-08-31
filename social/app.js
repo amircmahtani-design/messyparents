@@ -287,16 +287,23 @@ function renderReferences(view) {
   view.innerHTML = `
     <div class="panelbox ${eng.configured ? "" : "future"}">
       <h3>Image engine ${eng.configured
-        ? `<span class="tag held">connected</span>`
-        : `<span class="badge-later">not configured</span>`}</h3>
+        ? `<span class="tag held">key configured</span>`
+        : `<span class="badge-later">no key configured</span>`}</h3>
       <p style="margin:0 0 6px">${esc(eng.note || "")}</p>
-      <p class="hint" style="margin:0">
+      <p class="hint" style="margin:0 0 10px">
         Image model <code>${esc(eng.imageModel || "—")}</code> ·
         prompt <code>${esc((r.prompt || {}).version || "—")}</code> ·
         manifest <code>${esc((r.manifest || {}).version || "—")}</code>
         (${(r.manifest || {}).count || 0} references, updated ${esc((r.manifest || {}).updated || "—")}).
         The key is read server-side only — it is never sent to this page, logged, or written to Firestore.
       </p>
+      <p class="hint" style="margin:0 0 10px">
+        “Key configured” only means the variable is set. Press the button to find out whether it
+        actually authenticates and whether this account can use the image model. It makes one tiny
+        text request and one model listing — no image is generated.
+      </p>
+      <button class="btn ghost" id="enginetest">Test the connection</button>
+      <div id="enginetestout" style="margin-top:10px"></div>
     </div>
 
     ${(r.missing || []).length ? `<div class="findings"><div class="finding error">
@@ -349,14 +356,69 @@ function renderReferences(view) {
   $("#refreload").addEventListener("click", () => busy(async () => {
     state.refs = await api("social-references"); render(); toast("Manifest re-read.");
   }));
+  $("#enginetest").addEventListener("click", () => runEngineTest($("#enginetestout")));
 }
 
-/* ---- a status list ----------------------------------------------------- */
+/* The honest answer to "is the OpenAI API in here and is it working". A green
+   badge that only reflects `Boolean(process.env.OPENAI_API_KEY)` says the
+   variable exists, which is not the same thing as the key working — a revoked
+   key, or an account that has not been verified for image generation, both
+   look identical until something is actually asked of them. */
+function runEngineTest(host) {
+  host.innerHTML = `<p class="hint">Testing…</p>`;
+  busy(async () => {
+    let r;
+    try { r = await api("social-engine-test"); }
+    catch (e) {
+      host.innerHTML = `<div class="findings"><div class="finding error">
+        <strong>test failed</strong> — ${esc(e.message)}</div></div>`;
+      return;
+    }
+    const e = r.engine || {}, refs = r.references || {};
+    const row = (ok, label, detail) =>
+      `<div class="finding ${ok ? "" : "error"}" style="${ok
+        ? "background:var(--blue-wash);border-color:var(--blue-band-line);color:var(--ink)" : ""}">
+        <strong>${ok ? "✓" : "✗"} ${esc(label)}</strong>${detail ? " — " + detail : ""}</div>`;
+
+    host.innerHTML = `
+      <div class="findings">
+        ${row(e.keyPresent, "OPENAI_API_KEY is set")}
+        ${row(e.reachable, "api.openai.com is reachable from the function")}
+        ${row(e.authOk, `the key authenticates against ${esc(e.orchestratorModel || "")}`,
+          e.latencyMs ? `${e.latencyMs}ms` : "")}
+        ${e.imageToolAvailable === null
+          ? ""
+          : row(e.imageToolAvailable, `${esc(e.imageModel || "")} is available to this account`,
+              e.availableImageModels && e.availableImageModels.length
+                ? "available here: " + e.availableImageModels.map(m => `<code>${esc(m)}</code>`).join(" ")
+                : "")}
+        ${row(refs.ok, `${refs.count || 0} reference files deployed`,
+          refs.missing && refs.missing.length
+            ? refs.missing.map(m => `<code>${esc(m.expected)}</code>`).join(" ") : "")}
+      </div>
+      <p style="margin:10px 0 0"><strong>${r.ready ? "Ready." : "Not ready."}</strong>
+        ${esc(r.summary || "")}</p>
+      ${r.next ? `<p class="hint" style="margin:6px 0 0"><strong>Next:</strong> ${esc(r.next)}</p>` : ""}`;
+    toast(r.ready ? "Image engine is working." : "Image engine is not ready.", !r.ready);
+  });
+}
+
+/* ---- a status list -----------------------------------------------------
+   Deleting a rejected package used to be available ONLY after opening it,
+   which is the wrong place for it: the Rejected tab is a list of things you
+   have already decided about, and making somebody open each one to clear it
+   is why the list never got cleared. The button is on the row. */
 function renderList(view, status) {
   busy(async () => {
     const r = await api("social-list", { query: { status } });
     state.packages = r.packages;
+    const rejected = status === "REJECTED";
+
     view.innerHTML = r.packages.length ? `
+      ${rejected ? `<p class="hint" style="margin:0 0 12px">
+        ${r.packages.length} rejected package${r.packages.length === 1 ? "" : "s"}.
+        Deleting one removes it and the social images it generated, for good.
+        The guide, its illustration and every shared reference asset are untouched.</p>` : ""}
       <div class="rows">${r.packages.map(p => `
         <div class="row">
           <span></span>
@@ -365,13 +427,23 @@ function renderList(view, status) {
             <span class="tag ${tagClass(p.status)}">${esc(label(p.status))}</span>
             ${p.isTest ? `<span class="tag test">test</span>` : ""}
             ${errorCount(p) ? `<span class="tag err">${errorCount(p)} to fix</span>` : ""}
-            <span class="m">${p.slides ? p.slides.length : 0} slides · suggested ${when(p.scheduledFor)}
-              ${p.approvedAt ? ` · approved ${when(p.approvedAt)}` : ""}</span>
+            <span class="m">${esc(p.guideSlug || "")} · ${p.slides ? p.slides.length : 0} slides ·
+              suggested ${when(p.scheduledFor)}
+              ${p.approvedAt ? ` · approved ${when(p.approvedAt)}` : ""}
+              ${p.rejectedReason ? ` · “${esc(p.rejectedReason)}”` : ""}</span>
           </span>
-          <span class="acts"><button class="btn tiny ghost" data-open="${esc(p.id)}">Open</button></span>
+          <span class="acts">
+            <button class="btn tiny ghost" data-open="${esc(p.id)}">Open</button>
+            ${rejected ? `<button class="btn tiny warn" data-del="${esc(p.id)}"
+              data-slug="${esc(p.guideSlug)}" data-title="${esc(p.guideTitle)}">Delete permanently…</button>` : ""}
+          </span>
         </div>`).join("")}</div>`
       : `<div class="empty">${emptyFor(status)}</div>`;
+
     $$("#view [data-open]").forEach(b => b.addEventListener("click", () => openPackage(b.dataset.open)));
+    $$("#view [data-del]").forEach(b => b.addEventListener("click", () => deletePackage({
+      id: b.dataset.del, guideSlug: b.dataset.slug, guideTitle: b.dataset.title, status: "REJECTED"
+    }, () => renderList(view, status))));
   });
   view.innerHTML = `<div class="empty">Loading…</div>`;
 }
@@ -834,7 +906,7 @@ function reject() {
    that matters. The confirmation names the guide and asks for its slug to be
    typed, because "are you sure?" on a list of rejects is a thing people click
    without reading. */
-function deletePackage(p) {
+function deletePackage(p, after) {
   const typed = prompt(
     `Delete this package permanently?\n\n` +
     `Guide:  ${p.guideTitle}\n` +
@@ -849,6 +921,7 @@ function deletePackage(p) {
     const r = await api("social-delete", { method: "POST", body: { id: p.id, confirmSlug: p.guideSlug } });
     toast(`Deleted “${r.guideTitle}”. ${r.mediaRemoved} generated image${r.mediaRemoved === 1 ? "" : "s"} removed.`);
     await refresh();
+    if (typeof after === "function") { paintCounts(); return after(); }
     state.current = null; state.tab = "REJECTED"; render();
   });
 }
@@ -905,9 +978,28 @@ function renderStatus(view) {
     </div>
 
     <div class="panelbox">
+      <h3>Image engine
+        ${(s.artwork && s.artwork.engineConfigured)
+          ? `<span class="tag held">key configured</span>`
+          : `<span class="badge-later">no key configured</span>`}</h3>
+      <p style="margin:0 0 6px">Model <code>${esc((s.artwork || {}).imageModel || "—")}</code> ·
+        prompt <code>${esc((s.artwork || {}).promptVersion || "—")}</code> ·
+        manifest <code>${esc((s.artwork || {}).manifestVersion || "—")}</code> ·
+        ${(s.artwork || {}).referenceCount || 0} references.</p>
+      <p style="margin:0 0 10px">Packages by artwork state —
+        queued ${(s.artwork || {}).queued || 0} ·
+        generating ${(s.artwork || {}).generating || 0} ·
+        ready ${(s.artwork || {}).ready || 0} ·
+        failed ${(s.artwork || {}).failed || 0}.</p>
+      <button class="btn ghost" id="enginetest2">Test the connection</button>
+      <div id="enginetestout2" style="margin-top:10px"></div>
+    </div>
+
+    <div class="panelbox">
       <h3>Refresh</h3>
       <button class="btn ghost" id="reload">Re-read guides and packages</button>
     </div>`;
+  $("#enginetest2").addEventListener("click", () => runEngineTest($("#enginetestout2")));
   $("#reload").addEventListener("click", () => busy(async () => { await refresh(); render(); toast("Refreshed."); }));
 }
 

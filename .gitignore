@@ -2,6 +2,7 @@
 # are build output, not source — they are regenerated from the guides whenever
 # they are needed, and they must not be committed or deployed.
 social-preview/
+social-preview-all/
 
 # Node and editor noise.
 node_modules/

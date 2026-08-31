@@ -151,8 +151,22 @@ check("Storage rules exist for the social prefix", /match \/social\//.test(stora
 check("…and the browser cannot write there", /match \/social\/\{file=\*\*\}\s*\{[^}]*allow write:\s*if false/.test(storage));
 
 const app = fs.readFileSync(path.join(ROOT, "social/app.js"), "utf8");
-check("The dashboard offers deletion only on a rejected package",
-  /status === "REJECTED"[\s\S]{0,160}id="delete"/.test(app));
+check("The dashboard offers deletion on a rejected package's row",
+  /const rejected = status === "REJECTED"/.test(app) && /data-del=/.test(app));
+check("…and inside the package view too",
+  /status === "REJECTED"[\s\S]{0,200}id="delete"/.test(app));
+/* Both entry points are behind a REJECTED condition. Checked by looking at
+   what precedes each one rather than by trying to strip the template out. */
+check("…and every delete control is behind a REJECTED condition",
+  (() => {
+    const spots = [];
+    const re = /data-del=|id="delete"/g;
+    let m;
+    while ((m = re.exec(app))) spots.push(m.index);
+    return spots.length > 0 && spots.every(i =>
+      /rejected \?|status === "REJECTED"/.test(app.slice(Math.max(0, i - 400), i)));
+  })(),
+  "a delete control was found outside a REJECTED branch");
 check("…and confirms with the guide title and slug",
   /guideTitle[\s\S]{0,200}guideSlug/.test(app) && /confirmSlug/.test(app));
 check("…and calls the server function rather than Firestore",

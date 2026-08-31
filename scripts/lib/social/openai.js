@@ -210,4 +210,94 @@ function buildIo(opts) {
   };
 }
 
-module.exports = { buildIo, extractImage, extractText, diagnose, parseJSONLoose, MODEL_SIZE };
+/* --------------------------------------------------------------------------
+   THE CONNECTION TEST
+
+   "Is the OpenAI key in here and is it working?" should be answerable by
+   pressing a button, not by reading a README or by spending money on a full
+   package and seeing what comes back.
+
+   Three questions, cheapest first, and it stops at the first NO:
+
+     1. is a key configured at all?               (no request)
+     2. does it authenticate, and can this account reach the orchestrator?
+                                                  (one tiny text request)
+     3. is the image model actually available to this account?
+                                                  (one models listing)
+
+   It never generates an image, so it costs a fraction of a cent, and it never
+   returns or logs the key. `imageToolAvailable` is the one that catches the
+   real-world failure: a key that authenticates fine but whose organisation has
+   not been verified for image generation, which otherwise only shows up as a
+   confusing refusal halfway through a package.
+   ------------------------------------------------------------------------ */
+async function testConnection(opts) {
+  const o = opts || {};
+  const started = Date.now();
+  const result = {
+    keyPresent: Boolean(o.apiKey),
+    authOk: false,
+    reachable: false,
+    imageToolAvailable: null,
+    orchestratorModel: o.model || "gpt-4o",
+    imageModel: o.imageModel || PROMPT.DEFAULT_IMAGE_MODEL,
+    latencyMs: null,
+    error: null,
+    checkedAt: new Date().toISOString()
+  };
+  if (!result.keyPresent) {
+    result.error = "OPENAI_API_KEY is not set for this site.";
+    return result;
+  }
+
+  const headers = { Authorization: `Bearer ${o.apiKey}`, "content-type": "application/json" };
+
+  /* 1 — auth and the orchestrator. */
+  try {
+    const r = await fetch(RESPONSES_URL, {
+      method: "POST", headers,
+      body: JSON.stringify({
+        model: result.orchestratorModel,
+        max_output_tokens: 16,
+        input: [{ role: "user", content: [{ type: "input_text", text: "Reply with the single word: ready" }] }]
+      })
+    });
+    result.reachable = true;
+    const j = await r.json();
+    if (!r.ok) {
+      result.error = (j && j.error && j.error.message) || ("HTTP " + r.status);
+      result.latencyMs = Date.now() - started;
+      return result;
+    }
+    result.authOk = true;
+    result.reply = (extractText(j) || "").slice(0, 40);
+  } catch (e) {
+    result.error = "Could not reach api.openai.com — " + String(e.message || e);
+    result.latencyMs = Date.now() - started;
+    return result;
+  }
+
+  /* 2 — is the image model available to this account? */
+  try {
+    const r = await fetch("https://api.openai.com/v1/models", { headers });
+    const j = await r.json();
+    if (r.ok && Array.isArray(j.data)) {
+      const ids = j.data.map(m => m.id);
+      result.imageToolAvailable = ids.indexOf(result.imageModel) >= 0;
+      if (!result.imageToolAvailable) {
+        result.availableImageModels = ids.filter(id => /^gpt-image|^dall-e/.test(id));
+        result.error = `The account authenticates, but "${result.imageModel}" is not in its model ` +
+          "list. Image generation usually needs the organisation to be verified in the OpenAI " +
+          "dashboard. Set OPENAI_IMAGE_MODEL to one of availableImageModels, or complete " +
+          "verification.";
+      }
+    }
+  } catch (e) { /* not fatal: auth already proved the connection works */ }
+
+  result.latencyMs = Date.now() - started;
+  return result;
+}
+
+module.exports = {
+  buildIo, testConnection, extractImage, extractText, diagnose, parseJSONLoose, MODEL_SIZE
+};
