@@ -56,11 +56,11 @@ var GUIDES = [
   "summary": "A sudden drop in bottles or feeds is usually distraction, a growth plateau, or teething — not a problem.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Fewer wet nappies than usual, or dark urine",
       "Refusing most feeds",
-      "Floppy, unusually sleepy or hard to wake",
+      "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
       "Vomiting with fever or obvious illness"
     ]
   },
@@ -85,11 +85,11 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Fewer wet nappies than usual, or dark urine",
         "Refusing most feeds",
-        "Floppy, unusually sleepy or hard to wake",
+        "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
         "Vomiting with fever or obvious illness"
       ]
     },
@@ -135,7 +135,7 @@ var GUIDES = [
   "summary": "Nine times out of ten it's the wake window — too short and they're not tired, too long and they're wired.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your baby seems to be in pain when laid flat",
       "Loud snoring, gasping, or long pauses in breathing during sleep",
@@ -163,7 +163,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your baby seems to be in pain when laid flat",
         "Loud snoring, gasping, or long pauses in breathing during sleep",
@@ -213,7 +213,7 @@ var GUIDES = [
   "summary": "Probably. But 'regression' is a bad word for it — it's usually a permanent change in how your baby sleeps, or a new skill breaking through.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Night waking comes with fever, pulling at ears, or inconsolable crying",
       "Your baby has stopped feeding well as well as sleeping badly",
@@ -241,7 +241,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Night waking comes with fever, pulling at ears, or inconsolable crying",
         "Your baby has stopped feeding well as well as sleeping badly",
@@ -289,10 +289,10 @@ var GUIDES = [
   "summary": "One food, once a day, after a milk feed. Everything else is detail you can add later.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Hives, swelling or vomiting after a new food",
-      "Breathing difficulty after food—call emergency services",
+      "Breathing difficulty after food — call your local emergency number now",
       "Feeding or swallowing is not progressing",
       "You need an allergy plan before starting"
     ]
@@ -318,10 +318,10 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Hives, swelling or vomiting after a new food",
-        "Breathing difficulty after food—call emergency services",
+        "Breathing difficulty after food — call your local emergency number now",
         "Feeding or swallowing is not progressing",
         "You need an allergy plan before starting"
       ]
@@ -367,7 +367,7 @@ var GUIDES = [
   "summary": "Usually flow, temperature, position or a sore mouth. Rarely the bottle itself.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Refusing most feeds or fewer wet nappies",
       "White mouth patches that do not wipe away",
@@ -395,7 +395,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Refusing most feeds or fewer wet nappies",
         "White mouth patches that do not wipe away",
@@ -443,7 +443,7 @@ var GUIDES = [
   "summary": "A happy spitter is a laundry problem. A distressed one is worth a conversation with your doctor.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Green, yellow, bloody or forceful vomit",
       "Poor weight gain or repeated feed refusal",
@@ -471,7 +471,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Green, yellow, bloody or forceful vomit",
         "Poor weight gain or repeated feed refusal",
@@ -521,7 +521,7 @@ var GUIDES = [
   "summary": "Usually bedtime too late, nap timing, or light. Rarely a baby who's finished sleeping.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Early waking comes with pain, fever or feeding changes",
       "Loud snoring, gasping or pauses in breathing",
@@ -548,7 +548,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Early waking comes with pain, fever or feeding changes",
         "Loud snoring, gasping or pauses in breathing",
@@ -595,9 +595,9 @@ var GUIDES = [
   "summary": "Newborns have no body clock yet. You build it for them, with light and contrast.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Your baby is very difficult to wake for feeds",
+      "Your baby is very difficult to wake for feeds — call your local emergency number now",
       "Fewer wet nappies than expected, or weight loss beyond the first week",
       "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
     ]
@@ -622,9 +622,9 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
-        "Your baby is very difficult to wake for feeds",
+        "Your baby is very difficult to wake for feeds — call your local emergency number now",
         "Fewer wet nappies than expected, or weight loss beyond the first week",
         "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
       ]
@@ -670,7 +670,7 @@ var GUIDES = [
   "summary": "Ranges are wide and order varies. Some babies skip crawling entirely and are completely fine.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A skill your baby had disappears",
       "One side is used much more than the other",
@@ -699,7 +699,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A skill your baby had disappears",
         "One side is used much more than the other",
@@ -749,7 +749,7 @@ var GUIDES = [
   "summary": "Understanding comes long before speaking, and gestures matter more than word count.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Babbling or gestures are not developing",
       "Words or communication are not progressing",
@@ -778,7 +778,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Babbling or gestures are not developing",
         "Words or communication are not progressing",
@@ -828,7 +828,7 @@ var GUIDES = [
   "summary": "Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Under three months with 38°C or more",
       "Fever, vomiting, diarrhoea or a body rash",
@@ -857,7 +857,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Under three months with 38°C or more",
         "Fever, vomiting, diarrhoea or a body rash",
@@ -910,12 +910,12 @@ var GUIDES = [
   "summary": "The number matters far less than the age of your baby and how they look between temperature spikes.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Under three months with 38°C or more",
       "Three to six months with 39°C or more",
       "A rash that does not fade under a glass",
-      "Hard to wake, floppy or struggling to breathe",
+      "Hard to wake, floppy or struggling to breathe — call your local emergency number now",
       "A seizure, very few wet nappies or your instinct says something is wrong"
     ]
   },
@@ -940,12 +940,12 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Under three months with 38°C or more",
         "Three to six months with 39°C or more",
         "A rash that does not fade under a glass",
-        "Hard to wake, floppy or struggling to breathe",
+        "Hard to wake, floppy or struggling to breathe — call your local emergency number now",
         "A seizure, very few wet nappies or your instinct says something is wrong"
       ]
     },
@@ -993,7 +993,7 @@ var GUIDES = [
   "summary": "Ordinary rash improves in two or three days. If it's spreading, spotty or in the skin creases, it's probably thrush.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "No improvement after a few days",
       "Blisters, open sores, pus or bleeding",
@@ -1021,7 +1021,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "No improvement after a few days",
         "Blisters, open sores, pus or bleeding",
@@ -1074,7 +1074,7 @@ var GUIDES = [
   "summary": "Wanting your body back for twenty minutes doesn't make you a bad parent. It makes you a mammal.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "The feeling is constant, not only after long days",
       "You feel low, numb, anxious or disconnected",
@@ -1101,7 +1101,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "The feeling is constant, not only after long days",
         "You feel low, numb, anxious or disconnected",
@@ -1150,7 +1150,7 @@ var GUIDES = [
   "summary": "Both of you half-sleeping is worse than one of you sleeping properly. Shifts beat solidarity.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Exhaustion is making driving or baby care feel unsafe",
       "You feel persistently low, anxious or unable to cope",
@@ -1177,7 +1177,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Exhaustion is making driving or baby care feel unsafe",
         "You feel persistently low, anxious or unable to cope",
@@ -1224,11 +1224,11 @@ var GUIDES = [
   "summary": "Decide the rules before you're standing in the doorway holding a baby and a wet muslin.",
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your newborn has a temperature of 38°C or more",
       "Your baby feeds much less or is hard to wake",
-      "Breathing looks difficult or your baby seems very unwell"
+      "Breathing looks difficult or your baby seems very unwell — call your local emergency number now"
     ]
   },
   "panel": {
@@ -1251,11 +1251,11 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your newborn has a temperature of 38°C or more",
         "Your baby feeds much less or is hard to wake",
-        "Breathing looks difficult or your baby seems very unwell"
+        "Breathing looks difficult or your baby seems very unwell — call your local emergency number now"
       ]
     },
     "dont": null,
@@ -1308,12 +1308,12 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Blue, grey or unusually pale colour",
-      "Pauses in breathing, or breathing that looks like hard work",
-      "Grunting with every breath, nostrils flaring, or the chest pulling in",
-      "A baby who is floppy, very hard to wake, or not feeding",
+      "Blue, grey or unusually pale colour — call your local emergency number now",
+      "Pauses in breathing, or breathing that looks like hard work — call your local emergency number now",
+      "Grunting with every breath, nostrils flaring, or the chest pulling in — call your local emergency number now",
+      "A baby who is floppy, very hard to wake, or not feeding — call your local emergency number now",
       "Any instinct that something is wrong — you don't need to justify it"
     ]
   },
@@ -1339,12 +1339,12 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
-        "Blue, grey or unusually pale colour",
-        "Any pause in breathing",
-        "Breathing that looks like hard work — chest pulling in, nostrils flaring",
-        "Floppy, very hard to wake, or not feeding",
+        "Blue, grey or unusually pale colour — call your local emergency number now",
+        "Any pause in breathing — call your local emergency number now",
+        "Breathing that looks like hard work — chest pulling in, nostrils flaring — call your local emergency number now",
+        "Floppy, very hard to wake, or not feeding — call your local emergency number now",
         "Any instinct that something is wrong"
       ]
     },
@@ -1410,7 +1410,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "She is genuinely upset by them rather than carrying on normally",
       "They come with difficulty feeding, or she keeps stopping mid-feed",
@@ -1440,7 +1440,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "She's genuinely distressed",
         "Feeding is affected",
@@ -1512,10 +1512,10 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Breathing looks like hard work — chest pulling in, nostrils flaring, grunting",
-      "Any pause in breathing, or blue or grey colour",
+      "Breathing looks like hard work — chest pulling in, nostrils flaring, grunting — call your local emergency number now",
+      "Any pause in breathing, or blue or grey colour — call your local emergency number now",
       "She's not feeding properly because of it",
       "She has a fever, or she is unusually sleepy or hard to wake",
       "She's under three months and has any fever at all"
@@ -1541,10 +1541,10 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Chest pulling in, flaring nostrils, grunting",
-        "Pauses, or blue or grey colour",
+        "Pauses, or blue or grey colour — call your local emergency number now",
         "She can't feed properly",
         "Fever, especially under three months"
       ]
@@ -1612,13 +1612,13 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Grunting with every breath, or breathing that looks like hard work",
+      "Grunting with every breath, or breathing that looks like hard work — call your local emergency number now",
       "The chest pulling in under the ribs, or nostrils flaring",
-      "Any pause in breathing",
-      "Blue, grey or unusually pale colour",
-      "A baby who is floppy, very hard to wake, or won’t feed"
+      "Any pause in breathing — call your local emergency number now",
+      "Blue, grey or unusually pale colour — call your local emergency number now",
+      "A baby who is floppy, very hard to wake, or won’t feed — call your local emergency number now"
     ]
   },
   "panel": {
@@ -1643,13 +1643,13 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
-        "Grunting with every single breath",
+        "Grunting with every single breath — call your local emergency number now",
         "Chest pulling in, or nostrils flaring",
-        "Any pause in breathing",
-        "Blue, grey or unusually pale colour",
-        "Floppy, very hard to wake, or won’t feed"
+        "Any pause in breathing — call your local emergency number now",
+        "Blue, grey or unusually pale colour — call your local emergency number now",
+        "Floppy, very hard to wake, or won’t feed — call your local emergency number now"
       ]
     },
     "dont": null,
@@ -1719,11 +1719,11 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Difficulty breathing, or persistent choking or coughing",
-      "Blue or grey colour",
-      "A baby who doesn't recover quickly, or is floppy or unresponsive"
+      "Difficulty breathing, or persistent choking or coughing — call your local emergency number now",
+      "Blue or grey colour — call your local emergency number now",
+      "A baby who doesn't recover quickly, or is floppy or unresponsive — call your local emergency number now"
     ]
   },
   "panel": {
@@ -1747,12 +1747,12 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
-        "Breathing difficulty or persistent choking",
-        "Blue or grey colour",
+        "Breathing difficulty or persistent choking — call your local emergency number now",
+        "Blue or grey colour — call your local emergency number now",
         "Doesn’t recover quickly",
-        "Floppy or unresponsive"
+        "Floppy or unresponsive — call your local emergency number now"
       ]
     },
     "dont": null,
@@ -1817,7 +1817,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Forceful or projectile vomiting, especially if it's repeated",
       "Green, yellow-green, or bloody vomit",
@@ -1848,7 +1848,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Forceful or projectile, repeatedly",
         "Green, yellow-green or bloody",
@@ -1921,13 +1921,13 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
-      "Blue or grey colour, especially around the lips",
-      "A pause in breathing with colour change or floppiness",
-      "Chest pulling in hard, nostrils flaring, grunting on every breath",
+      "Blue or grey colour, especially around the lips — call your local emergency number now",
+      "A pause in breathing with colour change or floppiness — call your local emergency number now",
+      "Chest pulling in hard, nostrils flaring, grunting on every breath — call your local emergency number now",
       "Persistent fast breathing at rest, in a calm baby",
-      "A baby who has stopped feeding, or is very hard to wake"
+      "A baby who has stopped feeding, or is very hard to wake — call your local emergency number now"
     ]
   },
   "panel": {
@@ -1951,11 +1951,11 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
-        "Blue or grey, especially the lips",
-        "A pause with colour change or floppiness",
-        "Chest pulling in, flaring, grunting every breath",
+        "Blue or grey, especially the lips — call your local emergency number now",
+        "A pause with colour change or floppiness — call your local emergency number now",
+        "Chest pulling in, flaring, grunting every breath — call your local emergency number now",
         "Fast at rest in a calm baby",
         "Stopped feeding"
       ]
@@ -2021,7 +2021,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Rhythmic, repetitive movement that carries on when you hold the limb",
       "A blank stare, or being less responsive during it",
@@ -2051,7 +2051,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Repeated movement that continues when gently held",
         "Blank stare, less responsive",
@@ -2121,7 +2121,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "It's happening every night rather than occasionally",
       "Persistent noisy or snorting breathing",
@@ -2151,7 +2151,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Every night rather than sometimes",
         "Persistent noisy breathing",
@@ -2223,7 +2223,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A noticeable drop in wet nappies — fewer than expected in 24 hours",
       "Dark, strong-smelling urine",
@@ -2254,7 +2254,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Fewer wet nappies than you'd expect in 24 hours",
         "Dark, strong-smelling urine",
@@ -2328,7 +2328,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "She's too sleepy to wake for feeds, or feeds very briefly and drops off",
       "A drop in wet nappies",
@@ -2358,7 +2358,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Too sleepy to wake for feeds",
         "Fewer wet nappies",
@@ -2429,11 +2429,11 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Feeds are taking much longer than expected",
       "She isn't finishing the volumes she's meant to",
-      "She's very hard to wake for feeds",
+      "She's very hard to wake for feeds — call your local emergency number now",
       "She's vomiting, or refusing feeds",
       "You're consistently unable to keep to the interval"
     ]
@@ -2460,11 +2460,11 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Feeds taking much longer",
         "Not finishing volumes",
-        "Very hard to wake",
+        "Very hard to wake — call your local emergency number now",
         "Vomiting or refusing"
       ]
     },
@@ -2527,7 +2527,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "She hasn't started gaining by around day five",
       "She's not back to birth weight by around two weeks",
@@ -2557,7 +2557,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "No gain by around day five",
         "Not back to birth weight by two weeks",
@@ -2626,7 +2626,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Redness, or discharge that keeps returning",
       "An eye that looks cloudy, or a pupil that doesn't look dark",
@@ -2657,7 +2657,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Redness, or discharge that keeps returning",
         "An eye that looks cloudy, or a pupil that isn't dark",
@@ -2727,7 +2727,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "No social smiling by around three months, corrected for prematurity",
       "She doesn't seem to make eye contact, or follow your face",
@@ -2757,7 +2757,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "No social smile by around three months, corrected",
         "No eye contact, or not following your face",
@@ -2817,7 +2817,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Milk has not started changing after several days and you are worried",
       "Your baby isn't producing wet nappies as expected",
@@ -2851,7 +2851,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Milk has not started changing after several days and you are worried",
         "Your baby isn't producing wet nappies as expected",
@@ -2904,7 +2904,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Supply is dropping and you can't work out why",
       "There's a hot, red, painful area, or you feel flu-like",
@@ -2933,7 +2933,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Supply is dropping and you can't work out why",
         "There's a hot, red, painful area, or you feel flu-like",
@@ -2986,7 +2986,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "There's a hot, red or painful area, or a hard lump",
       "You feel flu-like, shivery or feverish",
@@ -3015,7 +3015,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "There's a hot, red or painful area, or a hard lump",
         "You feel flu-like, shivery or feverish",
@@ -3068,7 +3068,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A red or hot area, especially a wedge-shaped patch",
       "Fever, shivering, aching, or feeling flu-like",
@@ -3098,7 +3098,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A red or hot area, especially a wedge-shaped patch",
         "Fever, shivering, aching, or feeling flu-like",
@@ -3152,7 +3152,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your baby is premature, in hospital, or unwell — the rules are stricter",
       "Milk smells sour or looks unusual",
@@ -3181,7 +3181,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your baby is premature, in hospital, or unwell — the rules are stricter",
         "Milk smells sour or looks unusual",
@@ -3235,7 +3235,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your baby is premature or has feeding difficulties",
       "You've been told to give milk at a specific temperature",
@@ -3266,7 +3266,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your baby is premature or has feeding difficulties",
         "You've been told to give milk at a specific temperature",
@@ -3318,7 +3318,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "You don't understand why she's moved, in either direction",
       "The plan has changed and nobody has explained it",
@@ -3347,7 +3347,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "You don't understand why she's moved, in either direction",
         "The plan has changed and nobody has explained it",
@@ -3399,7 +3399,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Nobody has explained a reading that's worrying you",
       "She feels cold, mottled or unusually pale to you",
@@ -3428,7 +3428,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Nobody has explained a reading that's worrying you",
         "She feels cold, mottled or unusually pale to you",
@@ -3480,7 +3480,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "What would delay discharge, and what would bring it forward",
       "Which follow-up appointments are already booked",
@@ -3509,7 +3509,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "What would delay discharge, and what would bring it forward",
         "Which follow-up appointments are already booked",
@@ -3561,7 +3561,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "She's taking noticeably less by mouth than she was",
       "She goes pale, or her breathing changes during feeds",
@@ -3590,7 +3590,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "She's taking noticeably less by mouth than she was",
         "She goes pale, or her breathing changes during feeds",
@@ -3642,12 +3642,12 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "The abdomen is firm, swollen, or shiny",
       "Vomiting, especially green or bloody",
       "Blood in the stool, or she stops passing anything",
-      "She's unusually sleepy, floppy, or her colour changes",
+      "She's unusually sleepy, floppy, or her colour changes — call your local emergency number now",
       "You're at home and any of this appears — same day, not tomorrow"
     ]
   },
@@ -3672,12 +3672,12 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "The abdomen is firm, swollen, or shiny",
         "Vomiting, especially green or bloody",
         "Blood in the stool, or she stops passing anything",
-        "She's unusually sleepy, floppy, or her colour changes",
+        "She's unusually sleepy, floppy, or her colour changes — call your local emergency number now",
         "You're at home and any of this appears — same day, not tomorrow"
       ]
     },
@@ -3729,7 +3729,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "You're unsure which age applies to vaccinations or a check",
       "A milestone is well outside range even corrected",
@@ -3758,7 +3758,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "You're unsure which age applies to vaccinations or a check",
         "A milestone is well outside range even corrected",
@@ -3812,7 +3812,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Her weight is flat or falling across more than a few days",
       "She's dropping across the chart rather than following her line",
@@ -3841,7 +3841,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Her weight is flat or falling across more than a few days",
         "She's dropping across the chart rather than following her line",
@@ -3894,7 +3894,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "She's under three months with any fever",
       "She's feeding less, unusually sleepy, or breathing differently",
@@ -3923,7 +3923,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "She's under three months with any fever",
         "She's feeding less, unusually sleepy, or breathing differently",
@@ -3976,7 +3976,7 @@ var GUIDES = [
   "keywords": [],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "You feel persistently low, numb or hopeless",
       "You're withdrawing from your partner or the baby",
@@ -4005,7 +4005,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "You feel persistently low, numb or hopeless",
         "You're withdrawing from your partner or the baby",
@@ -4063,7 +4063,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "White or chalky-pale poo",
       "Red streaks or blood",
@@ -4093,7 +4093,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "White or chalky-pale poo",
         "Red streaks or blood",
@@ -4153,7 +4153,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Hard, dry or pellet-like poo",
       "Blood in the nappy",
@@ -4184,7 +4184,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Hard, dry or pellet-like poo",
         "Blood in the nappy",
@@ -4244,7 +4244,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A weak, high-pitched or unusual cry",
       "Fever, vomiting or blood in the nappy",
@@ -4274,7 +4274,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A weak, high-pitched or unusual cry",
         "Fever, vomiting or blood in the nappy",
@@ -4334,7 +4334,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A firm, swollen or shiny tummy",
       "Green or bloody vomit",
@@ -4365,7 +4365,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A firm, swollen or shiny tummy",
         "Green or bloody vomit",
@@ -4425,7 +4425,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your baby was born early",
       "A rash, reaction or increased vomiting",
@@ -4456,7 +4456,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your baby was born early",
         "A rash, reaction or increased vomiting",
@@ -4515,7 +4515,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A rash that does not fade under a glass",
       "Blisters, weeping or crusting",
@@ -4545,7 +4545,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A rash that does not fade under a glass",
         "Blisters, weeping or crusting",
@@ -4604,13 +4604,13 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A weak, high-pitched or unusual cry",
-      "Pale, blue or grey colour",
-      "Choking or struggling to breathe",
+      "Pale, blue or grey colour — call your local emergency number now",
+      "Choking or struggling to breathe — call your local emergency number now",
       "Crying that cannot be settled",
-      "Floppy, hard to wake or refusing feeds"
+      "Floppy, hard to wake or refusing feeds — call your local emergency number now"
     ]
   },
   "panel": {
@@ -4634,13 +4634,13 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A weak, high-pitched or unusual cry",
-        "Pale, blue or grey colour",
-        "Choking or struggling to breathe",
+        "Pale, blue or grey colour — call your local emergency number now",
+        "Choking or struggling to breathe — call your local emergency number now",
         "Crying that cannot be settled",
-        "Floppy, hard to wake or refusing feeds"
+        "Floppy, hard to wake or refusing feeds — call your local emergency number now"
       ]
     },
     "quick": "Groaning, fidgeting and throat clearing can all happen in normal newborn sleep. Watch colour, breathing and whether the sound is truly different."
@@ -4696,7 +4696,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Your baby was born premature",
       "Your baby has reduced immunity",
@@ -4726,7 +4726,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Your baby was born premature",
         "Your baby has reduced immunity",
@@ -4786,10 +4786,10 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "A fever, especially under three months",
-      "Floppy, unusually sleepy or hard to wake",
+      "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
       "Poor feeding or fewer wet nappies",
       "Fast breathing with flushed skin",
       "Unwell after being somewhere very hot"
@@ -4816,10 +4816,10 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "A fever, especially under three months",
-        "Floppy, unusually sleepy or hard to wake",
+        "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
         "Poor feeding or fewer wet nappies",
         "Fast breathing with flushed skin",
         "Unwell after being somewhere very hot"
@@ -4876,7 +4876,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Always turning to one side",
       "Control going backwards",
@@ -4906,7 +4906,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Always turning to one side",
         "Control going backwards",
@@ -4966,7 +4966,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Always turning one way and resisting the other",
       "A tight or painful-looking neck",
@@ -4996,7 +4996,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Always turning one way and resisting the other",
         "A tight or painful-looking neck",
@@ -5056,7 +5056,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Any sign of rolling",
       "Legs held straight and pressed together",
@@ -5087,7 +5087,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Any sign of rolling",
         "Legs held straight and pressed together",
@@ -5151,12 +5151,12 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Vomiting repeatedly or unable to keep feeds down",
       "Fewer wet nappies",
       "A non-fading rash",
-      "Very hard to wake or unusually unresponsive",
+      "Very hard to wake or unusually unresponsive — call your local emergency number now",
       "A swollen painful tummy or blood in poo after rotavirus vaccine"
     ]
   },
@@ -5182,12 +5182,12 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Vomiting repeatedly or unable to keep feeds down",
         "Fewer wet nappies",
         "A non-fading rash",
-        "Very hard to wake or unusually unresponsive",
+        "Very hard to wake or unusually unresponsive — call your local emergency number now",
         "A swollen painful tummy or blood in poo after rotavirus vaccine"
       ]
     },
@@ -5242,7 +5242,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Firm, tight or shiny tummy",
       "Green, bloody or forceful vomit",
@@ -5272,7 +5272,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Firm, tight or shiny tummy",
         "Green, bloody or forceful vomit",
@@ -5332,7 +5332,7 @@ var GUIDES = [
   ],
   "body": "",
   "callout": {
-    "title": "Call your doctor if",
+    "title": "Call your doctor immediately if",
     "items": [
       "Low mood or hopelessness that does not lift",
       "Withdrawing from your partner or baby",
@@ -5362,7 +5362,7 @@ var GUIDES = [
       ]
     },
     "warn": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Low mood or hopelessness that does not lift",
         "Withdrawing from your partner or baby",

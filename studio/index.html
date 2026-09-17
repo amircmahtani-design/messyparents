@@ -436,9 +436,9 @@
            you should have to remember to create. Leave the bullets empty and it
            simply does not render on the page. -->
       <div class="col-card" id="calloutCard" style="margin-top:14px">
-        <span class="tag warn">⚠ Speak to your doctor if</span>
+        <span class="tag warn">⚠ Call your doctor immediately if</span>
         <div class="field"><label>Heading</label>
-          <input id="f_c_title" type="text" placeholder="Call your doctor if"></div>
+          <input id="f_c_title" type="text" placeholder="Call your doctor immediately if"></div>
         <div class="field"><label>Bullets <span class="hint">&mdash; one per line. Leave empty to hide this box on the guide.</span></label>
           <textarea id="f_c_items" rows="5"></textarea></div>
       </div>
@@ -1407,7 +1407,7 @@ function draftGuide(){
 
   const _ci = linesToItems($("#f_c_items").value);
   if(_ci.length){
-    g.callout = { title: ($("#f_c_title").value.trim() || "Call your doctor if"), items:_ci };
+    g.callout = { title: ($("#f_c_title").value.trim() || "Call your doctor immediately if"), items:_ci };
   } else { delete g.callout; }
 
   /* --- Search metadata -------------------------------------------------
@@ -1523,9 +1523,9 @@ function blankGuide(){
     summary: "", body: "",
     panel: {
       eyebrow: "",
-      normal: { title: "Usually normal",     items: [] },
-      warn:   { title: "Call your doctor if", items: [] },
-      helped: { title: "What helped us",      items: [] },
+      normal: { title: "Usually normal",                items: [] },
+      warn:   { title: "Call your doctor immediately if", items: [] },
+      helped: { title: "What helped us",                 items: [] },
       quick: ""
     }
   };

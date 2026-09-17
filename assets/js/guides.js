@@ -35,19 +35,19 @@ var GUIDES = [
   title:"Why is my baby drinking less milk?",
   ages:["4–6 months","7–9 months"], read:3,
   summary:"A sudden drop in bottles or feeds is usually distraction, a growth plateau, or teething — not a problem.",
-  callout:{title:"Call your doctor if",items:[
+  callout:{title:"Call your doctor immediately if",items:[
     "Fewer than four wet nappies in 24 hours, or dark, strong-smelling urine",
     "Refusing nearly all feeds for more than 8 hours in a young baby",
-    "Floppy, unusually sleepy, or hard to rouse",
+    "Floppy, unusually sleepy, or hard to rouse — call your local emergency number now",
     "Vomiting after most feeds, or a feed refusal alongside a fever"]},
   panel:{
     eyebrow:"Feeding • 4–9 months",
     normal:{title:"Usually it's just",items:[
       "Distraction — the world got interesting","A flattening growth curve",
       "Teething","Solids taking over","A cold or blocked nose"]},
-    warn:{title:"Call your doctor if",items:[
+    warn:{title:"Call your doctor immediately if",items:[
       "Fewer than 4 wet nappies a day, or dark urine",
-      "Refusing nearly all feeds for 8+ hours","Floppy, very sleepy or hard to rouse",
+      "Refusing nearly all feeds for 8+ hours","Floppy, very sleepy or hard to rouse — call your local emergency number now",
       "Vomiting most feeds, or refusal with a fever"]},
     helped:{title:"What helped us",items:[
       "Feed in a dim, quiet room","Try a dream feed","Check the teat flow","Offer, don't insist"]},dont:{title:"Don\u2019t",items:["Don't chase the daily total — a single low day means very little","Don't push the bottle when she turns away; it teaches her to fight it","Don't feed in a bright, busy room and expect concentration","Don't leave a teat on longer than it fits — too slow is exhausting work"]},
@@ -115,7 +115,7 @@ var GUIDES = [
   ages:["4–6 months","7–9 months"], read:3,
   summary:"One food, once a day, after a milk feed. Everything else is detail you can add later.",
   callout:{title:"Get medical advice if",items:[
-    "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call emergency services for breathing difficulty or swelling",
+    "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call your local emergency number now for breathing difficulty or swelling",
     "Persistent refusal of all textures beyond around nine months",
     "Your baby has significant eczema or an existing allergy — get a plan before introducing allergens"]},
   panel:{
@@ -125,7 +125,7 @@ var GUIDES = [
       "Milk stays the main meal at first","One new food every couple of days",
       "Purée, baby-led or a mix — all fine"]},
     warn:{title:"Get medical advice if",items:[
-      "Hives, swelling, vomiting or wheezing after a food — call emergency services for breathing trouble or swelling",
+      "Hives, swelling, vomiting or wheezing after a food — call your local emergency number now for breathing trouble or swelling",
       "Refusing all textures beyond around 9 months",
       "Significant eczema or an existing allergy — get a plan before allergens"]},
     helped:{title:"What helped us",items:[
@@ -141,7 +141,7 @@ var GUIDES = [
   title:"My baby suddenly refuses the bottle",
   ages:["2–3 months","4–6 months","7–9 months"], read:3,
   summary:"Usually flow, temperature, position or a sore mouth. Rarely the bottle itself.",
-  callout:{title:"Call your doctor if",items:[
+  callout:{title:"Call your doctor immediately if",items:[
     "Refusing feeds for more than 8 hours, or fewer than four wet nappies a day",
     "White patches inside the mouth that don't wipe away",
     "Refusal with fever, vomiting, or unusual sleepiness"]},
@@ -151,7 +151,7 @@ var GUIDES = [
       "Flow rate — the teat's been outgrown","Temperature — try slightly warmer",
       "Position — more upright, or facing out","A sore mouth (teething, cold or thrush)",
       "Who's holding it — try someone else"]},
-    warn:{title:"Call your doctor if",items:[
+    warn:{title:"Call your doctor immediately if",items:[
       "Refusing feeds 8+ hours, or under 4 wet nappies a day",
       "White patches inside the mouth that don't wipe off",
       "Refusal with fever, vomiting or unusual sleepiness"]},
@@ -220,7 +220,7 @@ var GUIDES = [
   ages:["0–1 month","2–3 months"], read:3,
   summary:"Newborns have no body clock yet. You build it for them, with light and contrast.",
   callout:{title:"Speak to a midwife or doctor if",items:[
-    "Your baby is very difficult to wake for feeds",
+    "Your baby is very difficult to wake for feeds — call your local emergency number now",
     "Fewer wet nappies than expected, or weight loss beyond the first week",
     "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"]},
   panel:{
@@ -230,7 +230,7 @@ var GUIDES = [
       "The womb rocked them by day and stopped at night — that lingers",
       "It starts sorting itself at 6–10 weeks as melatonin kicks in"]},
     warn:{title:"Speak to a midwife or doctor if",items:[
-      "Your baby is very hard to wake for feeds",
+      "Your baby is very hard to wake for feeds — call your local emergency number now",
       "Fewer wet nappies than expected, or weight loss beyond the first week",
       "You feel unable to cope, low or frightened — common, treatable, worth saying out loud"]},
     helped:{title:"What helped us",items:[
@@ -304,7 +304,7 @@ var GUIDES = [
   title:"Is teething making my baby miserable?",
   ages:["4–6 months","7–9 months","10–12 months","12–18 months"], read:3,
   summary:"Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere.",
-  callout:{title:"Call your doctor if",items:[
+  callout:{title:"Call your doctor immediately if",items:[
     "Temperature of 38°C or above (any age under 3 months: seek care straight away)",
     "Diarrhoea, vomiting, or a rash on the body",
     "Refusing all feeds, or unusually drowsy and hard to rouse",
@@ -315,7 +315,7 @@ var GUIDES = [
       "Heavy drooling, and a dribble rash on the chin","Chewing everything, with intent",
       "Red, swollen gums; sometimes a white ridge","Grumpiness and broken sleep for a day or two",
       "A slightly raised temperature — below 38°C"]},
-    warn:{title:"Call your doctor if",items:[
+    warn:{title:"Call your doctor immediately if",items:[
       "38°C or above (any age under 3 months: seek care straight away)",
       "Diarrhoea, vomiting, or a rash on the body","Refusing all feeds, or unusually drowsy and hard to rouse",
       "Pulling at one ear with distress — often an ear infection, not teeth"]},
@@ -336,8 +336,8 @@ var GUIDES = [
   callout:{title:"Seek urgent medical care if",items:[
     "Under 3 months with a temperature of 38°C or above",
     "A rash that doesn't fade when you press a glass against it",
-    "Difficulty breathing, grunting, or drawing in under the ribs",
-    "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
+    "Difficulty breathing, grunting, or drawing in under the ribs — call your local emergency number now",
+    "Very drowsy, floppy, hard to wake, or a weak high-pitched cry — call your local emergency number now",
     "A fit or seizure, cold mottled hands and feet, or fewer than four wet nappies in a day",
     "Fever lasting more than 5 days, or your own instinct that something is badly wrong — that instinct is good data"]},
   panel:{
@@ -350,8 +350,8 @@ var GUIDES = [
     warn:{title:"Seek urgent medical care if",items:[
       "Under 3 months with a temperature of 38°C or above",
       "A rash that doesn't fade under a pressed glass",
-      "Trouble breathing, grunting, or drawing in under the ribs",
-      "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
+      "Trouble breathing, grunting, or drawing in under the ribs — call your local emergency number now",
+      "Very drowsy, floppy, hard to wake, or a weak high-pitched cry — call your local emergency number now",
       "A seizure, cold mottled hands and feet, or fewer than 4 wet nappies a day"]},
     helped:{title:"Managing at home",items:[
       "Fluids often, in small amounts — milk counts","One light layer; don't wrap up or sponge with cold water",
@@ -486,8 +486,8 @@ var GUIDES = [
   subcategory:"Sleep environment",
   summary:"Flat, on her back, on a firm clear surface. Every single sleep. It's the one thing on this whole site that isn't a judgement call.",
   keywords:["safe sleep","back to sleep","cot setup","newborn sleep safety","incline cot reflux"],
-  callout:{title:"Get advice straight away for",items:["Blue, grey or unusually pale colour","Pauses in breathing, or breathing that looks like hard work","Grunting with every breath, nostrils flaring, or the chest pulling in","A baby who is floppy, very hard to wake, or not feeding","Any instinct that something is wrong — you don't need to justify it"]},
-  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's this simple",items:["On her back, every sleep","Flat — not propped or inclined","Firm mattress, not a sofa or your bed","Nothing else in the cot at all"]},warn:{title:"Call your doctor if",items:["Blue, grey or unusually pale colour","Any pause in breathing","Breathing that looks like hard work — chest pulling in, nostrils flaring","Floppy, very hard to wake, or not feeding","Any instinct that something is wrong"]},helped:{title:"What helped us",items:["A sleeping bag instead of blankets","Feet to the foot of the cot","Her own space in our room","We never tilted the cot, however tempting","Feeding somewhere we could put her down safely"]},dont:{title:"Don't",items:["Don't tilt or prop the cot, for reflux or anything else","No sleep positioners, wedges, bumpers, pillows or loose blankets","Don't put her down to sleep on her side, even if you're watching","Don't fall asleep holding her on a sofa or armchair"]},quick:"Back, flat, firm, clear — every sleep. Reflux doesn't change it, and side sleeping isn't made safe by watching, because sleep is exactly when nobody is watching."},
+  callout:{title:"Get advice straight away for",items:["Blue, grey or unusually pale colour — call your local emergency number now","Pauses in breathing, or breathing that looks like hard work — call your local emergency number now","Grunting with every breath, nostrils flaring, or the chest pulling in — call your local emergency number now","A baby who is floppy, very hard to wake, or not feeding — call your local emergency number now","Any instinct that something is wrong — you don't need to justify it"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's this simple",items:["On her back, every sleep","Flat — not propped or inclined","Firm mattress, not a sofa or your bed","Nothing else in the cot at all"]},warn:{title:"Call your doctor immediately if",items:["Blue, grey or unusually pale colour — call your local emergency number now","Any pause in breathing — call your local emergency number now","Breathing that looks like hard work — chest pulling in, nostrils flaring — call your local emergency number now","Floppy, very hard to wake, or not feeding — call your local emergency number now","Any instinct that something is wrong"]},helped:{title:"What helped us",items:["A sleeping bag instead of blankets","Feet to the foot of the cot","Her own space in our room","We never tilted the cot, however tempting","Feeding somewhere we could put her down safely"]},dont:{title:"Don't",items:["Don't tilt or prop the cot, for reflux or anything else","No sleep positioners, wedges, bumpers, pillows or loose blankets","Don't put her down to sleep on her side, even if you're watching","Don't fall asleep holding her on a sofa or armchair"]},quick:"Back, flat, firm, clear — every sleep. Reflux doesn't change it, and side sleeping isn't made safe by watching, because sleep is exactly when nobody is watching."},
   originalQuestions:["Is it safe for a newborn to sleep on her side if a parent is actively watching? (24 August 2025)","Whether a light must stay on, and whether she could be put down while making noise (21 August 2025)"],
   sources:["RAW-20250824-68aa5aee-08","RAW-20250821-68a76ce2-27"],
   medical:true,
@@ -507,7 +507,7 @@ var GUIDES = [
   summary:"They bother you far more than they bother her. She can be put down to sleep still hiccupping.",
   keywords:["newborn hiccups","baby hiccups","hiccups sleep","how long hiccups baby"],
   callout:{title:"Worth mentioning if",items:["She's genuinely distressed by them rather than indifferent","They come with difficulty feeding, or she keeps stopping mid-feed","Frequent vomiting alongside them","Any change in breathing or colour during an episode","She isn't gaining weight as expected"]},
-  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's nothing",items:["Very common, several times a day","They did it in the womb too","Stop on their own","Most babies aren't bothered at all"]},warn:{title:"Call your doctor if",items:["She's genuinely distressed","Feeding is affected","Frequent vomiting with them","Breathing or colour changes"]},helped:{title:"What helped us",items:["Hold her upright a while","Pause the feed if she's unsettled","One gentle burp, not six positions","Put her down anyway — she can sleep through them"]},quick:"Common, harmless, and she can go down to sleep still hiccupping. Watch her face, not the clock — if she's unbothered, so are you."},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's nothing",items:["Very common, several times a day","They did it in the womb too","Stop on their own","Most babies aren't bothered at all"]},warn:{title:"Call your doctor immediately if",items:["She's genuinely distressed","Feeding is affected","Frequent vomiting with them","Breathing or colour changes"]},helped:{title:"What helped us",items:["Hold her upright a while","Pause the feed if she's unsettled","One gentle burp, not six positions","Put her down anyway — she can sleep through them"]},quick:"Common, harmless, and she can go down to sleep still hiccupping. Watch her face, not the clock — if she's unbothered, so are you."},
   originalQuestions:["Asked the best position for hiccups, whether patting helps, how long to keep trying (24 August 2025)",`"No she just hiccups." (24 August 2025)`],
   sources:["RAW-20250824-68aa5aee-01","RAW-20250824-68aa5aee-08"],
   medical:false,
@@ -526,8 +526,8 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"Saline and patience, mostly. And no — you do not turn the baby upside down, however logical that briefly seems at 2am.",
   keywords:["blocked nose baby","newborn congestion","saline drops baby","nasal aspirator","stuffy nose newborn"],
-  callout:{title:"Get her seen if",items:["Breathing looks like hard work — chest pulling in, nostrils flaring, grunting","Any pause in breathing, or blue or grey colour","She's not feeding properly because of it","She has a fever, or she's unusually sleepy or hard to rouse","She's under three months and has any fever at all"]},
-  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's just",items:["Tiny nasal passages block easily","Babies prefer to breathe through the nose","Noisy without being unwell","Worst at feed times"]},warn:{title:"Call your doctor if",items:["Chest pulling in, flaring nostrils, grunting","Pauses, or blue or grey colour","She can't feed properly","Fever, especially under three months"]},helped:{title:"What helped us",items:["Saline drops just before feeds","Gentle suction, not repeated suction","A humidifier at night","Never upside down — we did ask"]},dont:{title:"Don't",items:["Don't turn her upside down to drain it — we did ask","Don't use decongestant drops meant for adults or older children","Don't suction repeatedly — it swells the lining and makes it worse","Don't tilt the cot. Congestion doesn't change safe sleep"]},quick:"Saline before feeds, gentle suction only if it's genuinely in the way, and humidity at night. Don't invert her, don't tilt the cot, don't use adult drops."},
+  callout:{title:"Get her seen if",items:["Breathing looks like hard work — chest pulling in, nostrils flaring, grunting — call your local emergency number now","Any pause in breathing, or blue or grey colour — call your local emergency number now","She's not feeding properly because of it","She has a fever, or she's unusually sleepy or hard to rouse","She's under three months and has any fever at all"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's just",items:["Tiny nasal passages block easily","Babies prefer to breathe through the nose","Noisy without being unwell","Worst at feed times"]},warn:{title:"Call your doctor immediately if",items:["Chest pulling in, flaring nostrils, grunting","Pauses, or blue or grey colour — call your local emergency number now","She can't feed properly","Fever, especially under three months"]},helped:{title:"What helped us",items:["Saline drops just before feeds","Gentle suction, not repeated suction","A humidifier at night","Never upside down — we did ask"]},dont:{title:"Don't",items:["Don't turn her upside down to drain it — we did ask","Don't use decongestant drops meant for adults or older children","Don't suction repeatedly — it swells the lining and makes it worse","Don't tilt the cot. Congestion doesn't change safe sleep"]},quick:"Saline before feeds, gentle suction only if it's genuinely in the way, and humidity at night. Don't invert her, don't tilt the cot, don't use adult drops."},
   originalQuestions:[`Asked how to "blow" a baby's nose and what to do after saline drops (20 August 2025)`,"Asked whether gravity could do the job by turning the baby upside down (20 August 2025)"],
   sources:["RAW-20250820-68a61a70-01","RAW-20250820-68a61a70-04"],
   medical:true,
@@ -546,8 +546,8 @@ var GUIDES = [
   subcategory:"First nights",
   summary:"Newborn sleep is astonishingly loud. Grunting, squeaking, kicking and thrashing are usually a baby deeply asleep, not a baby about to wake.",
   keywords:["newborn noisy sleep","grunting baby","baby squeaks at night","first night home","active sleep"],
-  callout:{title:"Get advice straight away for",items:["Grunting with every breath, or breathing that looks like hard work","The chest pulling in under the ribs, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","A baby who is floppy, very hard to rouse, or won't feed"]},
-  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's active sleep",items:["Grunting, squeaking, snuffling","Kicking and flinging her arms","Faces that look like distress","Sounds exactly like waking, isn't"]},warn:{title:"Call your doctor if",items:["Grunting with every single breath","Chest pulling in, or nostrils flaring","Any pause in breathing","Blue, grey or unusually pale colour","Floppy, very hard to rouse, or won't feed"]},helped:{title:"What helped us",items:["Wait ninety seconds before responding","Dim light — it's for you, not her","Don't burp a settled sleeping baby","Film ten seconds if unsure — better than describing it"]},quick:"Newborn sleep is astonishingly loud and most of it means nothing. Listen for effort rather than volume, and wait before you reach in."},
+  callout:{title:"Get advice straight away for",items:["Grunting with every breath, or breathing that looks like hard work — call your local emergency number now","The chest pulling in under the ribs, or nostrils flaring","Any pause in breathing — call your local emergency number now","Blue, grey or unusually pale colour — call your local emergency number now","A baby who is floppy, very hard to rouse, or won't feed — call your local emergency number now"]},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's active sleep",items:["Grunting, squeaking, snuffling","Kicking and flinging her arms","Faces that look like distress","Sounds exactly like waking, isn't"]},warn:{title:"Call your doctor immediately if",items:["Grunting with every single breath — call your local emergency number now","Chest pulling in, or nostrils flaring","Any pause in breathing — call your local emergency number now","Blue, grey or unusually pale colour — call your local emergency number now","Floppy, very hard to rouse, or won't feed — call your local emergency number now"]},helped:{title:"What helped us",items:["Wait ninety seconds before responding","Dim light — it's for you, not her","Don't burp a settled sleeping baby","Film ten seconds if unsure — better than describing it"]},quick:"Newborn sleep is astonishingly loud and most of it means nothing. Listen for effort rather than volume, and wait before you reach in."},
   originalQuestions:["Asked about little sounds, noisy active sleep, kicking and arm movements (21 August 2025)","Asked how quickly to change a dirty nappy and whether a light must stay on (21 August 2025)","Reported she was making so much noise that she would not settle (21 August 2025)"],
   sources:["RAW-20250821-68a74ea1-07","RAW-20250821-68a76ce2-14","RAW-20250821-68a76ce2-23","RAW-20250821-68a76ce2-25","RAW-20250821-68a76ce2-27"],
   medical:true,
@@ -566,8 +566,8 @@ var GUIDES = [
   subcategory:"Feeding and spit-up",
   summary:"Alarming to watch, usually harmless. The mouth and nose connect at the back of the throat, so milk occasionally takes the wrong exit.",
   keywords:["milk out of nose baby","nasal regurgitation","baby spit up nose","posseting"],
-  callout:{title:"Get help immediately for",items:["Difficulty breathing, or persistent choking or coughing","Blue or grey colour","A baby who doesn't recover promptly, or is floppy or unresponsive","Learn infant choking first aid before you need it — a short course is worth the evening"]},
-  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's plumbing",items:["Mouth and nose connect at the back of the throat","Milk occasionally takes the wrong route","One episode, quick recovery","Looks far worse than it is"]},warn:{title:"Call for help now if",items:["Breathing difficulty or persistent choking","Blue or grey colour","Doesn't recover promptly","Floppy or unresponsive"]},helped:{title:"What helps",items:["Pick her up, keep her face visible","Wipe outside only, don't suction","Watch breathing and colour for a minute","Back down flat afterwards — don't prop the cot"]},dont:{title:"Don't",items:["Don't try to suction it out of her nose — wipe the outside only","Don't prop the cot afterwards, however strongly you want to","Don't put her back down until you've watched her breathing settle"]},quick:"Milk takes the wrong exit sometimes — it's plumbing. Pick her up, wipe, watch her breathing, then straight back down flat."},
+  callout:{title:"Get help immediately for",items:["Difficulty breathing, or persistent choking or coughing — call your local emergency number now","Blue or grey colour — call your local emergency number now","A baby who doesn't recover promptly, or is floppy or unresponsive — call your local emergency number now","Learn infant choking first aid before you need it — a short course is worth the evening"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's plumbing",items:["Mouth and nose connect at the back of the throat","Milk occasionally takes the wrong route","One episode, quick recovery","Looks far worse than it is"]},warn:{title:"Call for help now if",items:["Breathing difficulty or persistent choking — call your local emergency number now","Blue or grey colour — call your local emergency number now","Doesn't recover promptly","Floppy or unresponsive — call your local emergency number now"]},helped:{title:"What helps",items:["Pick her up, keep her face visible","Wipe outside only, don't suction","Watch breathing and colour for a minute","Back down flat afterwards — don't prop the cot"]},dont:{title:"Don't",items:["Don't try to suction it out of her nose — wipe the outside only","Don't prop the cot afterwards, however strongly you want to","Don't put her back down until you've watched her breathing settle"]},quick:"Milk takes the wrong exit sometimes — it's plumbing. Pick her up, wipe, watch her breathing, then straight back down flat."},
   originalQuestions:["Noticed a little milk coming from her nose while she was asleep (23 August 2025)"],
   sources:["RAW-20250823-68a9590b-01"],
   medical:true,
@@ -587,7 +587,7 @@ var GUIDES = [
   summary:"Small spit-ups can arrive long after a feed and mean nothing much. The word that changes the answer is forceful.",
   keywords:["spit up baby","posseting","vomit newborn","reflux baby","clear saliva baby"],
   callout:{title:"Get her checked for",items:["Forceful or projectile vomiting, especially if it's repeated","Green, yellow-green, or bloody vomit","Not gaining weight, or losing it","Real distress with feeds, or refusing to feed","A swollen or firm tummy, or unusual sleepiness"]},
-  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's fine",items:["Small amounts, dribbled not launched","Even a couple of hours after a feed","Milky or curdled","A little clear saliva on its own","A baby who isn't bothered by it"]},warn:{title:"Call your doctor if",items:["Forceful or projectile, repeatedly","Green, yellow-green or bloody","Not gaining weight","Distress with feeds, or refusing","Swollen tummy, or unusually sleepy"]},helped:{title:"What helped us",items:["Watching the weight trend, not the muslins","A tablespoon of milk spreads a long way","Comparing it to what forceful actually looked like","Not propping the cot, however tempting"]},dont:{title:"Don't",items:["Don't incline the cot or use a wedge — she slides into a worse position","Don't switch formula or cut foods on your own to fix it","Don't judge it by the muslins — judge it by the weight trend"]},quick:"Small and dribbled is laundry. Forceful, green, bloody, or a baby who isn't gaining — that's the version that gets checked."},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's fine",items:["Small amounts, dribbled not launched","Even a couple of hours after a feed","Milky or curdled","A little clear saliva on its own","A baby who isn't bothered by it"]},warn:{title:"Call your doctor immediately if",items:["Forceful or projectile, repeatedly","Green, yellow-green or bloody","Not gaining weight","Distress with feeds, or refusing","Swollen tummy, or unusually sleepy"]},helped:{title:"What helped us",items:["Watching the weight trend, not the muslins","A tablespoon of milk spreads a long way","Comparing it to what forceful actually looked like","Not propping the cot, however tempting"]},dont:{title:"Don't",items:["Don't incline the cot or use a wedge — she slides into a worse position","Don't switch formula or cut foods on your own to fix it","Don't judge it by the muslins — judge it by the weight trend"]},quick:"Small and dribbled is laundry. Forceful, green, bloody, or a baby who isn't gaining — that's the version that gets checked."},
   originalQuestions:["Reported she spat up a small amount while asleep about two hours after a feed, and a 90g weight gain over two days (24 August 2025)","Saw her spit a little saliva, and clarified it was transparent (17 August 2025)"],
   sources:["RAW-20250824-68ab97d7-10","RAW-20250824-68ab97d7-13","RAW-20250817-68a1a61a-01","RAW-20250817-68a1a61a-02"],
   medical:true,
@@ -606,8 +606,8 @@ var GUIDES = [
   subcategory:"Newborn body",
   summary:"Newborn breathing is genuinely irregular — bursts of fast, then slower, sometimes short pauses. What matters is effort, not speed.",
   keywords:["newborn fast breathing","baby breathing pattern","periodic breathing","rapid breathing baby"],
-  callout:{title:"Emergency help for",items:["Blue or grey colour, especially around the lips","A pause in breathing with colour change or floppiness","Chest pulling in hard, nostrils flaring, grunting on every breath","Persistent fast breathing at rest, in a calm baby","A baby who has stopped feeding, or is very hard to rouse"]},
-  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's normal variation",items:["Faster than adults by a long way","Irregular — bursts, then slower","Short pauses of a few seconds","Common in babies born early"]},warn:{title:"Call for help now if",items:["Blue or grey, especially the lips","A pause with colour change or floppiness","Chest pulling in, flaring, grunting every breath","Fast at rest in a calm baby","Stopped feeding"]},helped:{title:"What helps",items:["Only count when she's calm","Count a full minute, not fifteen seconds","Look at effort, not just speed","Film twenty seconds if unsure"]},dont:{title:"Don't",items:["Don't count while she's crying, feeding or wriggling","Don't count fifteen seconds and multiply — the rate isn't steady","Don't rely on the number alone. Effort matters more than speed"]},quick:"Count for a full minute while she's calm, and judge effort over speed. Chest pulling in, flaring nostrils and grunting matter far more than the number."},
+  callout:{title:"Emergency help for",items:["Blue or grey colour, especially around the lips — call your local emergency number now","A pause in breathing with colour change or floppiness — call your local emergency number now","Chest pulling in hard, nostrils flaring, grunting on every breath — call your local emergency number now","Persistent fast breathing at rest, in a calm baby","A baby who has stopped feeding, or is very hard to rouse — call your local emergency number now"]},
+  panel:{eyebrow:"Health • Newborn",normal:{title:"Usually it's normal variation",items:["Faster than adults by a long way","Irregular — bursts, then slower","Short pauses of a few seconds","Common in babies born early"]},warn:{title:"Call for help now if",items:["Blue or grey, especially the lips — call your local emergency number now","A pause with colour change or floppiness — call your local emergency number now","Chest pulling in, flaring, grunting every breath — call your local emergency number now","Fast at rest in a calm baby","Stopped feeding"]},helped:{title:"What helps",items:["Only count when she's calm","Count a full minute, not fifteen seconds","Look at effort, not just speed","Film twenty seconds if unsure"]},dont:{title:"Don't",items:["Don't count while she's crying, feeding or wriggling","Don't count fifteen seconds and multiply — the rate isn't steady","Don't rely on the number alone. Effort matters more than speed"]},quick:"Count for a full minute while she's calm, and judge effort over speed. Chest pulling in, flaring nostrils and grunting matter far more than the number."},
   originalQuestions:["Noticed intermittent quick breathing (24 August 2025)"],
   sources:["RAW-20250824-68ab97d7-01"],
   medical:true,
@@ -647,7 +647,7 @@ var GUIDES = [
   summary:"On its own, an observation rather than a problem. It's worth a look at the rest of her breathing before you decide it means anything.",
   keywords:["baby sleeps mouth open","mouth breathing baby","blocked nose sleep","newborn breathing sleep"],
   callout:{title:"Mention it if",items:["It's happening every night rather than occasionally","Persistent noisy or snorting breathing","Feeding is becoming harder","Loud snoring, or any pause in breathing","Any sign of increased effort — flaring, chest pulling in, grunting"]},
-  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's just a slack jaw",items:["A deeply asleep baby with a slack jaw","Mild congestion she's coping with","Occasional rather than constant","Feeding still going fine"]},warn:{title:"Call your doctor if",items:["Every night rather than sometimes","Persistent noisy breathing","Feeding getting harder","Snoring or pauses","Flaring, chest pulling in, grunting"]},helped:{title:"What helped us",items:["Is her breathing easy or effortful?","Is she still feeding well?","Saline only if she's actually blocked","Don't use saline as a test"]},dont:{title:"Don't",items:["Don't squirt saline in to test whether she's blocked","Don't prop her up or tilt the cot to help her breathe","Don't act on the open mouth alone — look at the whole breathing pattern"]},quick:"On its own it's an observation. Check her breathing effort and whether she's still feeding well — feeding is the best sensor you've got."},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it's just a slack jaw",items:["A deeply asleep baby with a slack jaw","Mild congestion she's coping with","Occasional rather than constant","Feeding still going fine"]},warn:{title:"Call your doctor immediately if",items:["Every night rather than sometimes","Persistent noisy breathing","Feeding getting harder","Snoring or pauses","Flaring, chest pulling in, grunting"]},helped:{title:"What helped us",items:["Is her breathing easy or effortful?","Is she still feeding well?","Saline only if she's actually blocked","Don't use saline as a test"]},dont:{title:"Don't",items:["Don't squirt saline in to test whether she's blocked","Don't prop her up or tilt the cot to help her breathe","Don't act on the open mouth alone — look at the whole breathing pattern"]},quick:"On its own it's an observation. Check her breathing effort and whether she's still feeding well — feeding is the best sensor you've got."},
   originalQuestions:["Noticed she slept with her mouth open and asked how to tell whether her nose was blocked (24 August 2025)"],
   sources:["RAW-20250824-68aaeaaa-01","RAW-20250824-68aaeaaa-02","RAW-20250825-68abf33f-01"],
   medical:true,
@@ -667,7 +667,7 @@ var GUIDES = [
   summary:"Poo gets changed promptly. A wet nappy can usually wait until she's up anyway. Modern nappies are better at this than your anxiety suggests.",
   keywords:["night nappy change","wake baby to change nappy","wet nappy sleeping","how often change nappy"],
   callout:{title:"Worth a call if",items:["A noticeable drop in wet nappies — fewer than expected in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling with cream","Blood or mucus in her poo","No poo at all alongside a swollen tummy or vomiting"]},
-  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it can wait",items:["Poo — change promptly","Wet — can wait for the next feed","Clean and dry — no clock rule at all","Modern nappies hold a lot"]},warn:{title:"Call your doctor if",items:["Fewer wet nappies than you'd expect in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling","Blood or mucus in her poo","No poo at all with a swollen tummy or vomiting"]},helped:{title:"What helped us",items:["We let the wet ones wait until the next feed","Poo changed straight away","Changed before the feed, so she fell asleep after","Dim light, no chat, everything in reach","Counted the wet ones — they're your intake monitor"]},dont:{title:"Don't",items:["Don't wake a sleeping newborn for a slightly damp nappy","Don't leave poo until the next feed — that one gets changed","Don't change on autopilot without noticing how many wet ones there are"]},quick:"Poo promptly, wet can wait. Don't wake a sleeping newborn for a damp nappy — but do keep an eye on how many wet ones she's producing."},
+  panel:{eyebrow:"Sleeping • Newborn",normal:{title:"Usually it can wait",items:["Poo — change promptly","Wet — can wait for the next feed","Clean and dry — no clock rule at all","Modern nappies hold a lot"]},warn:{title:"Call your doctor immediately if",items:["Fewer wet nappies than you'd expect in 24 hours","Dark, strong-smelling urine","Nappy rash that's raw, blistered, or not settling","Blood or mucus in her poo","No poo at all with a swollen tummy or vomiting"]},helped:{title:"What helped us",items:["We let the wet ones wait until the next feed","Poo changed straight away","Changed before the feed, so she fell asleep after","Dim light, no chat, everything in reach","Counted the wet ones — they're your intake monitor"]},dont:{title:"Don't",items:["Don't wake a sleeping newborn for a slightly damp nappy","Don't leave poo until the next feed — that one gets changed","Don't change on autopilot without noticing how many wet ones there are"]},quick:"Poo promptly, wet can wait. Don't wake a sleeping newborn for a damp nappy — but do keep an eye on how many wet ones she's producing."},
   originalQuestions:["Asked how often to change a nappy if it was clean (24 August 2025)","Clarified she had urinated but was asleep — could the change wait? (24–25 August 2025)"],
   sources:["RAW-20250824-68aaa2d9-10","RAW-20250824-68ab8989-02","RAW-20250825-68acd842-02","RAW-20250825-68acd842-04"],
   medical:true,
@@ -706,8 +706,8 @@ var GUIDES = [
   subcategory:"Newborn feeding",
   summary:"From the start. It's a tiny rule that quietly reorganises your entire day and night, and nobody tells you.",
   keywords:["feed timing","every three hours","feed interval","when does next feed start"],
-  callout:{title:"Tell your team rather than adjusting the clock if",items:["Feeds are taking much longer than expected","She isn't finishing the volumes she's meant to","She's very hard to wake for feeds","She's vomiting, or refusing feeds","You're consistently unable to keep to the interval"]},
-  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's start to start",items:["Counted start to start","12:00 feed, next starts 15:00","Not from when she finishes","Your own written plan overrides this"]},warn:{title:"Call your team if",items:["Feeds taking much longer","Not finishing volumes","Very hard to wake","Vomiting or refusing"]},helped:{title:"What helped us",items:["Start to start stopped our whole day drifting","We'd been counting from the end, and slipping an hour","Made our feed records actually mean something","We asked rather than adjusting the plan ourselves"]},dont:{title:"Don't",items:["Don't count from the end of the feed — your whole day will drift later","Don't fix a feeding problem by quietly shifting the timings","Don't override a written plan from your team with a general rule"]},quick:"Start to start. A feed at 12:00 on a three-hour plan means the next begins at 15:00 — otherwise your whole day quietly slides later."},
+  callout:{title:"Tell your team rather than adjusting the clock if",items:["Feeds are taking much longer than expected","She isn't finishing the volumes she's meant to","She's very hard to wake for feeds — call your local emergency number now","She's vomiting, or refusing feeds","You're consistently unable to keep to the interval"]},
+  panel:{eyebrow:"Feeding • Newborn",normal:{title:"Usually it's start to start",items:["Counted start to start","12:00 feed, next starts 15:00","Not from when she finishes","Your own written plan overrides this"]},warn:{title:"Call your team if",items:["Feeds taking much longer","Not finishing volumes","Very hard to wake — call your local emergency number now","Vomiting or refusing"]},helped:{title:"What helped us",items:["Start to start stopped our whole day drifting","We'd been counting from the end, and slipping an hour","Made our feed records actually mean something","We asked rather than adjusting the plan ourselves"]},dont:{title:"Don't",items:["Don't count from the end of the feed — your whole day will drift later","Don't fix a feeding problem by quietly shifting the timings","Don't override a written plan from your team with a general rule"]},quick:"Start to start. A feed at 12:00 on a three-hour plan means the next begins at 15:00 — otherwise your whole day quietly slides later."},
   originalQuestions:["Asked whether the three-hour interval begins when she starts drinking or when she finishes (22 August 2025)"],
   sources:["RAW-20250822-68a8b9cf-01"],
   medical:false,
@@ -747,7 +747,7 @@ var GUIDES = [
   summary:"Yes, considerably. That unnerving unbroken stare is a real thing and it's completely ordinary.",
   keywords:["newborn blinking","baby staring","does baby blink","newborn eyes"],
   callout:{title:"Get her eyes checked if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that doesn't look dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent, not an eye question"]},
-  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's normal",items:["Newborns blink far less than adults","The long unbroken stare is normal","Rate changes with light and alertness","A little sticky eye is common"]},warn:{title:"Call your doctor if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that isn't dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent"]},helped:{title:"What helped us",items:["Don't count blinks — it means nothing","Look at the eye, not the rate","Sticky eye: get it seen, don't self-diagnose","Enjoy the stare. She's learning your face"]},quick:"They genuinely blink far less, and the stare is normal. Look at how the eye itself appears rather than counting anything."},
+  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's normal",items:["Newborns blink far less than adults","The long unbroken stare is normal","Rate changes with light and alertness","A little sticky eye is common"]},warn:{title:"Call your doctor immediately if",items:["Redness, or discharge that keeps returning","An eye that looks cloudy, or a pupil that isn't dark","Eyes not moving together, or one that seems fixed","An eye that won't close fully","Staring with reduced responsiveness — that's urgent"]},helped:{title:"What helped us",items:["Don't count blinks — it means nothing","Look at the eye, not the rate","Sticky eye: get it seen, don't self-diagnose","Enjoy the stare. She's learning your face"]},quick:"They genuinely blink far less, and the stare is normal. Look at how the eye itself appears rather than counting anything."},
   originalQuestions:["Asked whether babies genuinely blink less, having noticed long stretches of staring (23 August 2025)"],
   sources:["RAW-20250823-68aa0a45-01"],
   medical:false,
@@ -767,7 +767,7 @@ var GUIDES = [
   summary:"Early smiles are usually spontaneous rather than social. Which does not make them count for nothing — and you're allowed to take it personally.",
   keywords:["newborn smile","first smile","social smile","reflex smile baby","when do babies smile"],
   callout:{title:"Worth raising if",items:["No social smiling by around three months, corrected for prematurity","She doesn't seem to make eye contact, or follow your face","She doesn't respond to your voice","Any loss of a skill she previously had","Anything that's been niggling at you — bring it to the next check rather than sitting on it"]},
-  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's a reflex, early on",items:["Early smiles are spontaneous, often in sleep","Social smile around six to eight weeks","Aimed at you, and repeatable","Count from the due date if she was early"]},warn:{title:"Call your doctor if",items:["No social smile by around three months, corrected","No eye contact, or not following your face","No response to your voice","Any skill she previously had and has lost"]},helped:{title:"What helped us",items:["Smiling back matters even if she didn't mean it","The loop starts before she can do it on purpose","Corrected age causes needless worry — use it","You're allowed to take it personally"]},dont:{title:"Don't",items:["Don't count from her birthday if she was born early — use her due date","Don't compare her to another baby of the same age in weeks","Don't dismiss a niggle because she's 'probably just early' — say it at the next check"]},quick:"Early ones are usually reflex; the real social smile lands around six to eight weeks, or later if she was early. Smile back anyway — it counts."},
+  panel:{eyebrow:"Development • Newborn",normal:{title:"Usually it's a reflex, early on",items:["Early smiles are spontaneous, often in sleep","Social smile around six to eight weeks","Aimed at you, and repeatable","Count from the due date if she was early"]},warn:{title:"Call your doctor immediately if",items:["No social smile by around three months, corrected","No eye contact, or not following your face","No response to your voice","Any skill she previously had and has lost"]},helped:{title:"What helped us",items:["Smiling back matters even if she didn't mean it","The loop starts before she can do it on purpose","Corrected age causes needless worry — use it","You're allowed to take it personally"]},dont:{title:"Don't",items:["Don't count from her birthday if she was born early — use her due date","Don't compare her to another baby of the same age in weeks","Don't dismiss a niggle because she's 'probably just early' — say it at the next check"]},quick:"Early ones are usually reflex; the real social smile lands around six to eight weeks, or later if she was early. Smile back anyway — it counts."},
   originalQuestions:["Had seen her smile several times in the incubator and asked whether she was doing it deliberately (16 August 2025)"],
   sources:["RAW-20250816-68a057a3-09"],
   medical:false,

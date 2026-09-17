@@ -13,11 +13,11 @@
     "summary": "A sudden drop in bottles or feeds is usually distraction, a growth plateau, or teething — not a problem.",
     "body": "\n<p>You measured it, you wrote it down, and the number went down. That is genuinely unsettling at 2am. It is also, most of the time, completely ordinary.</p>\n<h2>The usual suspects</h2>\n<ul>\n<li><strong>Distraction.</strong> Around four months babies discover the world. A dog, a sibling, a ceiling fan — all more interesting than milk. Feeds get shorter, not smaller: they become efficient.</li>\n<li><strong>The growth curve flattens.</strong> Intake per kilo drops steadily through the first year. A baby who drank 900ml at four months may genuinely need less relative to their size at seven.</li>\n<li><strong>Teething.</strong> Sucking pressure hurts a sore gum. Expect a few rough days, then a return to normal.</li>\n<li><strong>Solids.</strong> Once food arrives, milk gives ground. That is the design, not a fault.</li>\n<li><strong>A cold.</strong> A blocked nose makes it impossible to suck and breathe at once. Short, frequent feeds are the workaround.</li>\n</ul>\n<h2>What to actually watch</h2>\n<p>Forget the daily total. Look at the week, and look at the baby.</p>\n<ul>\n<li>Wet nappies: roughly five or more heavy ones a day.</li>\n<li>Mood: alert and interested between feeds, even if grumpier than usual.</li>\n<li>Weight: following its own curve at the next check, not necessarily the printed one.</li>\n</ul>\n<div class=\"quiet\">A baby who is bored of feeding still feeds. A baby who is unwell stops being interested in everything, not just the bottle.</div>\n<h2>Things that help</h2>\n<ul>\n<li>Feed in a dull, dim room. No toys, no TV, no chatty relatives.</li>\n<li>Try a dream feed if daytime is a write-off.</li>\n<li>Check the teat flow. Too slow is tiring; too fast is alarming. Both end feeds early.</li>\n<li>Offer, don't insist. Pushing a bottle teaches a baby to fight it.</li>\n</ul>",
     "callout": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Fewer than four wet nappies in 24 hours, or dark, strong-smelling urine",
         "Refusing nearly all feeds for more than 8 hours in a young baby",
-        "Floppy, unusually sleepy, or hard to rouse",
+        "Floppy, unusually sleepy, or hard to rouse — call your local emergency number now",
         "Vomiting after most feeds, or a feed refusal alongside a fever"
       ]
     },
@@ -34,11 +34,11 @@
         ]
       },
       "warn": {
-        "title": "Call your doctor if",
+        "title": "Call your doctor immediately if",
         "items": [
           "Fewer than 4 wet nappies a day, or dark urine",
           "Refusing nearly all feeds for 8+ hours",
-          "Floppy, very sleepy or hard to rouse",
+          "Floppy, very sleepy or hard to rouse — call your local emergency number now",
           "Vomiting most feeds, or refusal with a fever"
         ]
       },
@@ -192,7 +192,7 @@
     "callout": {
       "title": "Get medical advice if",
       "items": [
-        "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call emergency services for breathing difficulty or swelling",
+        "Hives, swelling around the mouth or eyes, vomiting or wheezing after a new food — call your local emergency number now for breathing difficulty or swelling",
         "Persistent refusal of all textures beyond around nine months",
         "Your baby has significant eczema or an existing allergy — get a plan before introducing allergens"
       ]
@@ -211,7 +211,7 @@
       "warn": {
         "title": "Get medical advice if",
         "items": [
-          "Hives, swelling, vomiting or wheezing after a food — call emergency services for breathing trouble or swelling",
+          "Hives, swelling, vomiting or wheezing after a food — call your local emergency number now for breathing trouble or swelling",
           "Refusing all textures beyond around 9 months",
           "Significant eczema or an existing allergy — get a plan before allergens"
         ]
@@ -247,7 +247,7 @@
     "summary": "Usually flow, temperature, position or a sore mouth. Rarely the bottle itself.",
     "body": "\n<p>Yesterday: fine. Today: arched back, sealed lips, and a look of profound betrayal.</p>\n<h2>Work through the list</h2>\n<ul>\n<li><strong>Flow rate.</strong> Babies outgrow teats. A newborn-flow teat at five months is exhausting work for a small person.</li>\n<li><strong>Temperature.</strong> Fussier than you'd think. Try slightly warmer than you've been doing.</li>\n<li><strong>Position.</strong> Try more upright, or facing outward. Some babies hate the cradle hold once they can see the room.</li>\n<li><strong>Sore mouth.</strong> Teething, a cold, or thrush (white patches that don't wipe off) all make sucking unpleasant.</li>\n<li><strong>Who's holding it.</strong> A breastfed baby often refuses a bottle from the parent who breastfeeds, and takes it happily from someone else. Leave the room entirely.</li>\n</ul>\n<h2>Don't escalate</h2>\n<p>Forcing, or persisting through crying, teaches a baby that bottles are a fight. Stop, reset, try again in 20 minutes. Offer when they're sleepy — half-asleep babies feed on autopilot.</p>\n<h2>If it's a nursery deadline</h2>\n<p>Start two to three weeks out. Once a day, same time, someone else offering, in a different room from where you feed. If the bottle is losing badly, an open cup or a sippy cup works from around six months and skips the fight completely.</p>",
     "callout": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Refusing feeds for more than 8 hours, or fewer than four wet nappies a day",
         "White patches inside the mouth that don't wipe away",
@@ -267,7 +267,7 @@
         ]
       },
       "warn": {
-        "title": "Call your doctor if",
+        "title": "Call your doctor immediately if",
         "items": [
           "Refusing feeds 8+ hours, or under 4 wet nappies a day",
           "White patches inside the mouth that don't wipe off",
@@ -413,7 +413,7 @@
     "callout": {
       "title": "Speak to a midwife or doctor if",
       "items": [
-        "Your baby is very difficult to wake for feeds",
+        "Your baby is very difficult to wake for feeds — call your local emergency number now",
         "Fewer wet nappies than expected, or weight loss beyond the first week",
         "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
       ]
@@ -431,7 +431,7 @@
       "warn": {
         "title": "Speak to a midwife or doctor if",
         "items": [
-          "Your baby is very hard to wake for feeds",
+          "Your baby is very hard to wake for feeds — call your local emergency number now",
           "Fewer wet nappies than expected, or weight loss beyond the first week",
           "You feel unable to cope, low or frightened — common, treatable, worth saying out loud"
         ]
@@ -592,7 +592,7 @@
     "summary": "Teething causes drool, gnawing and grumpiness. It does not cause high fever, diarrhoea or rashes elsewhere.",
     "body": "\n<p>Teething gets blamed for everything between four months and two years, which is convenient but occasionally dangerous — because it means real illness gets waved off as teeth.</p>\n<h2>What teething actually looks like</h2>\n<ul>\n<li>Heavy drooling, and a dribble rash on the chin</li>\n<li>Chewing on everything, including your fingers, with intent</li>\n<li>Red, swollen gums; sometimes a visible white ridge</li>\n<li>Irritability and disrupted sleep for a day or two either side of a tooth</li>\n<li>A slightly raised temperature — below 38°C</li>\n</ul>\n<h2>What it doesn't cause</h2>\n<p>A fever of 38°C or more, diarrhoea, vomiting, a rash on the body, or a baby who is genuinely unwell. If those are present, something else is going on and it deserves a proper look.</p>\n<h2>What helps</h2>\n<ul>\n<li>Something cold and firm to chew — a chilled (not frozen) teether, a cold flannel</li>\n<li>Firm gum pressure with a clean finger</li>\n<li>A barrier cream on the chin for dribble rash</li>\n<li>Infant paracetamol or ibuprofen at the correct dose for weight and age, if they're in real pain — check with a pharmacist if unsure</li>\n</ul>\n<p>Skip amber necklaces: they're a strangulation and choking risk with no evidence behind them. Skip teething gels containing choline salicylate or benzocaine, and any unregulated herbal powders.</p>",
     "callout": {
-      "title": "Call your doctor if",
+      "title": "Call your doctor immediately if",
       "items": [
         "Temperature of 38°C or above (any age under 3 months: seek care straight away)",
         "Diarrhoea, vomiting, or a rash on the body",
@@ -613,7 +613,7 @@
         ]
       },
       "warn": {
-        "title": "Call your doctor if",
+        "title": "Call your doctor immediately if",
         "items": [
           "38°C or above (any age under 3 months: seek care straight away)",
           "Diarrhoea, vomiting, or a rash on the body",
@@ -661,8 +661,8 @@
       "items": [
         "Under 3 months with a temperature of 38°C or above",
         "A rash that doesn't fade when you press a glass against it",
-        "Difficulty breathing, grunting, or drawing in under the ribs",
-        "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
+        "Difficulty breathing, grunting, or drawing in under the ribs — call your local emergency number now",
+        "Very drowsy, floppy, hard to wake, or a weak high-pitched cry — call your local emergency number now",
         "A fit or seizure, cold mottled hands and feet, or fewer than four wet nappies in a day",
         "Fever lasting more than 5 days, or your own instinct that something is badly wrong — that instinct is good data"
       ]
@@ -683,8 +683,8 @@
         "items": [
           "Under 3 months with a temperature of 38°C or above",
           "A rash that doesn't fade under a pressed glass",
-          "Trouble breathing, grunting, or drawing in under the ribs",
-          "Very drowsy, floppy, hard to wake, or a weak high-pitched cry",
+          "Trouble breathing, grunting, or drawing in under the ribs — call your local emergency number now",
+          "Very drowsy, floppy, hard to wake, or a weak high-pitched cry — call your local emergency number now",
           "A seizure, cold mottled hands and feet, or fewer than 4 wet nappies a day"
         ]
       },
