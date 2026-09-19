@@ -610,7 +610,9 @@
         <td class="num">${fmtDate(b.added)}</td>
         <td class="num">${p.total}</td>
         <td class="num">${p.done}/${p.total}${p.changed ? ` <span style="color:#dd8b16">· ${p.changed} changed</span>` : ""}</td>
-        <td><span class="mpb-pill ${ap ? "ap" : "rv"}">${ap ? "Approved " + fmtDate(b.approvedAt) : "In review"}</span></td>
+        <td><span class="mpb-pill ${ap ? "ap" : "rv"}">${ap ? "Approved " + fmtDate(b.approvedAt) : "In review"}</span>
+            ${b.imported ? `<br><span class="mpb-sub" style="font-size:12px;color:${b.deployedAt ? "#6b7480" : "#dd8b16"}">${
+              b.deployedAt ? "Deploy started " + fmtDate(b.deployedAt) : "Imported \u2014 no deploy yet"}</span>` : ""}</td>
         <td><div class="acts">
           <button class="btn sm ghost" data-k="${esc(k)}" data-a="open">Open</button>
           <button class="btn sm ghost" data-k="${esc(k)}" data-a="rename">Rename</button>
@@ -737,6 +739,44 @@
     return out;
   }
 
+  /* ---------- asking the site to rebuild ----------
+     An import writes to Firestore, which is what Studio reads — so the guides
+     appear here at once and on the live site not at all, because the public
+     pages are generated at deploy time. That gap is what makes a successful
+     import feel as though it did not work.
+
+     netlify/functions/publish.js already holds the build hook server-side and
+     starts a deploy for a signed-in Studio user, so the import can simply ask
+     for one. It needs NETLIFY_BUILD_HOOK set in the Netlify environment
+     variables; when it is missing the function says so and that reason is
+     shown, because a silent no-op here is the whole problem repeating itself.
+
+     A deploy that cannot be started never fails the import: the guides are in
+     Firestore either way, and the manual button in Site -> Search & AI still
+     publishes them. */
+  async function requestDeploy() {
+    var f = fb();
+    var user = f && f.a && f.a.currentUser;
+    if (!user) return { ok: false, why: "nobody is signed in" };
+    try {
+      var token = await user.getIdToken();
+      var r = await fetch("/.netlify/functions/publish", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token }
+      });
+      var body = null;
+      try { body = await r.json(); } catch (e) { body = null; }
+      if (r.ok && body && body.ok) return { ok: true };
+      return {
+        ok: false,
+        why: (body && body.error) || ("the publish function answered HTTP " + r.status),
+        hint: (body && body.hint) || ""
+      };
+    } catch (e) {
+      return { ok: false, why: (e && e.message) || String(e) };
+    }
+  }
+
   /* ---------- per-batch import from the uploaded bundle ---------- */
   async function importBatch(k, btn) {
     var f = fb();
@@ -806,7 +846,20 @@
       st().guides = await S().loadGuides();
       S().renderList(qs("#q") ? qs("#q").value : "");
       refreshAll();
-      btn.textContent = "Imported " + src.length + " ✓";
+      btn.textContent = "Imported " + src.length + " · publishing…";
+      var dep = await requestDeploy();
+      if (dep.ok) {
+        META.batches[key(k)].deployedAt = Date.now();
+        await saveMeta();
+        btn.textContent = "Imported " + src.length + " · deploying ✓";
+      } else {
+        btn.textContent = "Imported " + src.length + " ✓";
+        alert("Imported " + src.length + " guide(s) into Firestore.\n\n" +
+          "The site was NOT asked to rebuild: " + dep.why + "." +
+          (dep.hint ? "\n\n" + dep.hint : "") +
+          "\n\nThey are saved, but readers will not see them until a deploy runs. " +
+          "Site \u2192 Search & AI \u2192 Rebuild publishes them.");
+      }
       setTimeout(function () { btn.disabled = false; btn.textContent = old; renderModal(); }, 1600);
     } catch (e) {
       alert("Import failed: " + (e.message || e));
