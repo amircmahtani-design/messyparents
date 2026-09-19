@@ -84,8 +84,13 @@ function posterChecks(pkg) {
       out.push(problem("error", "too-many-labels",
         `${where} ${n} has ${items.length} labels. A poster slide reads at most ${MAX_ITEMS}.`));
     }
-    const budget = LABEL_WARN[family] || LABEL_WARN["default"];
-    const ceiling = LABEL_ERROR[family] || LABEL_ERROR["default"];
+    /* The Story frame that carries the warning is family "story-reel", not
+       "warning", but it carries the same load-bearing words. Budget by what
+       the slide IS, so a warning is not held to a clue slide's allowance
+       just because it appears in the Story. */
+    const budgetFamily = s.kind === "warn" ? "warning" : family;
+    const budget = LABEL_WARN[budgetFamily] || LABEL_WARN["default"];
+    const ceiling = LABEL_ERROR[budgetFamily] || LABEL_ERROR["default"];
     items.forEach((it, k) => {
       const w = words(itemText(it));
       if (w > ceiling) {

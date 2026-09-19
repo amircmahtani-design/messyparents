@@ -90,8 +90,9 @@ function stripTail(text, maxWords) {
   return out;
 }
 
-/* The instruction that must survive any budget. See condense() below. */
-const EMERGENCY = /call your local emergency number now/i;
+/* A sign that ends in an instruction to ring for emergency help. Group 1 is
+   the sign, group 2 the instruction. See condense() below. */
+const EMERGENCY = /^(.*?)\s*[\u2014\u2013-]\s*(call your local emergency number now\b.*)$/i;
 
 const capitalise = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 const tidy = (s) => String(s || "").replace(/\s+/g, " ").replace(/^[\s,;:.]+|[\s,;:]+$/g, "").replace(/[.]$/, "");
@@ -107,11 +108,13 @@ function condense(text, maxWords = 7) {
   if (words(source).length <= maxWords) return capitalise(source);
 
   /* A sign that tells a parent to ring for emergency help keeps that
-     instruction, whatever the word budget says. Choosing a span here would
-     leave the sign on the slide and drop the only sentence that says what to
-     do about it, which is the one cut this file must never make. The template
-     shrinks its type for the longer line, exactly as it does at step 4. */
-  if (EMERGENCY.test(source)) return capitalise(source);
+     instruction, whatever the word budget says. Choosing a span across the
+     whole line would leave the sign on the slide and drop the only sentence
+     that says what to do about it, which is the one cut this file must never
+     make. So the sign is condensed on its own and the instruction is put back
+     whole — still deletion only, and the label stays a label. */
+  const emg = EMERGENCY.exec(source);
+  if (emg) return capitalise(condense(emg[1], maxWords)) + " \u2014 " + emg[2];
 
   const parts = clauses(source).map(tidy).filter(Boolean);
   const ok = (p) => p && words(p).length <= maxWords && contentCount(p) >= 2;

@@ -5400,6 +5400,1349 @@ var GUIDES = [
   ],
   "order": 60,
   "batch": "4"
+},
+{
+  "id": "how-much-should-she-eat",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How much milk should my baby have?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "The calculator feels reassuring until one unfinished bottle makes everybody panic again.",
+  "keywords": [
+    "how much milk baby",
+    "ml per feed",
+    "feeding amounts newborn",
+    "how many feeds a day"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's consistently taking much less than usual",
+      "Fewer wet nappies than you'd expect",
+      "She's not gaining weight, or is losing it",
+      "She's very sleepy and hard to wake for feeds",
+      "You've been given a target and can't get near it"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Around 150–200ml per kilo per day is a general guide after the first week",
+        "Divided across about eight feeds",
+        "Appetite varies feed to feed and day to day",
+        "Premature babies often need a different calculation"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Watching the day's total rather than each individual feed",
+        "Counting wet nappies as the real check",
+        "Letting her stop when she turned away",
+        "Getting her numbers from her baby’s doctor, not a chart"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's consistently taking much less than usual",
+        "Fewer wet nappies than you'd expect",
+        "She's not gaining weight, or is losing it",
+        "She's very sleepy and hard to wake for feeds",
+        "You've been given a target and can't get near it"
+      ]
+    },
+    "quick": "Around 150–200ml per kilo per day is a general guide after the first week. Wet nappies, growth and your baby’s cues matter more than one feed."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "how-much-from-the-breast",
+    "constantly-hungry",
+    "weight-gain-per-day"
+  ],
+  "seo": {
+    "description": "A practical guide to how much milk babies may need, why feeds vary and why nappies and growth matter more than one unfinished bottle."
+  },
+  "longform": [
+    {
+      "h": "The number everyone wants",
+      "t": "How many ml should she be eating. We asked it repeatedly, in different weeks, with different weights, and each time we wanted a single figure.\n\nThe common guide is roughly 150–200ml per kilogram of body weight per day, spread across about eight feeds. So a 3kg baby lands somewhere near 450–600ml a day, which is roughly 55–75ml across eight feeds.\n\nThat's a starting point rather than a prescription, and the moment we started treating it as a target we made things harder.\n\nAppetite isn't steady. She'll take 40ml at one feed and 90ml at the next, and both are fine. Averaging across the day is the only version of the number that means anything.\n\nIt also assumes a term baby. Ari was born at 33 weeks and the calculation her doctor or nurse used was different from the standard one — smaller stomach, different needs, different targets.\n\nAnd once she's growing well and feeding effectively, she becomes a better judge of it than the arithmetic. We asked at one point whether 500ml a day was too much, and the answer was that a baby with a good appetite who isn't fussing or vomiting is generally getting it about right."
+    },
+    {
+      "h": "What we watched instead",
+      "t": "Wet nappies. Roughly five or more heavy ones a day was the daily signal that things were fine, and it costs nothing to notice.\n\nWeight, over weeks rather than days. Scales vary, nappies weigh something, and a single reading tells you very little.\n\nAnd her behaviour. Settled at least some of the time after feeds, alert when awake, and interested in the next one."
+    },
+    {
+      "h": "Letting her stop",
+      "t": "This was the hardest part. When you've measured out what she's supposed to have and she turns away with 20ml left, everything in you wants to get it in.\n\nWe learned not to force it. That last bit is where the discomfort comes from, and it teaches her to fight the bottle rather than to trust it.\n\nIf she's consistently leaving a lot, that's worth mentioning rather than pushing through — but one feed she didn't finish is just one feed she didn't finish."
+    }
+  ],
+  "order": 61,
+  "batch": "5"
+},
+{
+  "id": "how-much-from-the-breast",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How can I tell how much milk my breastfed baby is getting?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "Breasts do not come with millilitre markings, which is deeply inconvenient when the NICU taught you to measure everything.",
+  "keywords": [
+    "how much breastfed baby drinks",
+    "breastfeeding intake",
+    "weighted feeds",
+    "is she getting enough milk"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Fewer wet nappies than expected",
+      "She is not back to birth weight when your baby's doctor or nurse expected",
+      "She feeds for very long stretches and never seems satisfied",
+      "She's very sleepy and hard to wake for feeds",
+      "Feeding is painful, or she can't stay latched"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "No way to see what she's taken",
+        "Feed length tells you very little",
+        "Swallowing sounds and a softer breast are signs",
+        "Weighed feeds are a rough tool, not a precise one"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Counting wet nappies instead of minutes",
+        "Listening for swallowing rather than watching the clock",
+        "Watching the weekly weight, not the daily",
+        "Accepting we'd never have the number we wanted"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Fewer wet nappies than expected",
+        "She is not back to birth weight when your baby's doctor or nurse expected",
+        "She feeds for very long stretches and never seems satisfied",
+        "She's very sleepy and hard to wake for feeds",
+        "Feeding is painful, or she can't stay latched"
+      ]
+    },
+    "quick": "You cannot measure it directly, so watch the useful signs: wet nappies, swallowing and weekly weight. Feed length tells you very little."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "how-much-should-she-eat",
+    "when-does-milk-come-in",
+    "weight-gain-per-day"
+  ],
+  "seo": {
+    "description": "You cannot measure a breastfeed directly, but swallowing, wet nappies and steady growth can show whether your baby is getting enough milk."
+  },
+  "longform": [
+    {
+      "h": "The question with no clean answer",
+      "t": "How do you calculate how much she ate when breastfeeding.\n\nYou can't, really. That's the honest answer and it's the thing that makes breastfeeding harder for people who like numbers — which, after weeks in the NICU where everything was measured in millilitres, we very much did.\n\nGoing from a chart with exact volumes to a breast with no display on it is a genuine adjustment.\n\nA baby can take a substantial feed in eight minutes or dawdle for forty and take less. Efficiency changes as they get older, and it changes between feeds.\n\nSo feed length tells you very little. We spent a while logging every minute before realising the numbers were not helping us at all."
+    },
+    {
+      "h": "The signs that helped",
+      "t": "Swallowing. Not sucking — swallowing. A rhythmic suck-swallow pattern with audible gulps means milk is moving. Fluttery sucking with no swallows means comfort rather than feeding.\n\nHow the breast feels before and after. Softer afterwards means something came out.\n\nWet nappies, which remain the most reliable everyday signal you have.\n\nAnd weight over weeks. That's the one that actually answers the question, just slowly."
+    },
+    {
+      "h": "Weighed feeds",
+      "t": "Weighing before and after a feed can give a rough figure, and professionals sometimes use it for a reason.\n\nPapa tried it at home. Clever idea in theory. In practice, Ari would not stay still, and sometimes she peed mid-feed, so the numbers made absolutely no sense.\n\nAt home it tends to create more anxiety than information. Scale variation, clothing, a nappy that changed weight — the error can be as big as the feed. Doing it repeatedly turns every feed into an exam.\n\nIf you genuinely need the number, ask a midwife or lactation consultant to do it properly once, rather than doing it yourself eight times a day."
+    }
+  ],
+  "order": 62,
+  "batch": "5"
+},
+{
+  "id": "constantly-hungry",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Why does my baby always seem hungry?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "A baby can ask for milk with the confidence of someone who has not just finished a full feed.",
+  "keywords": [
+    "baby always hungry",
+    "underfeeding",
+    "screaming for food",
+    "cluster feeding"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Fewer wet nappies than expected",
+      "She's not gaining weight, or is losing it",
+      "She feeds constantly and never seems satisfied at all",
+      "She's very sleepy and hard to wake between feeds",
+      "She's crying inconsolably in a way that isn't her usual"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Small stomach, fast digestion, frequent feeds",
+        "Cluster feeding, often in the evening",
+        "Comfort, tiredness and closeness look like hunger",
+        "Growth spurts genuinely increase appetite for a few days"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Checking wet nappies before assuming she was short",
+        "Burping her properly before deciding she wanted more",
+        "Offering closeness rather than another bottle",
+        "Trusting the weekly weight over the hourly panic"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Fewer wet nappies than expected",
+        "She's not gaining weight, or is losing it",
+        "She feeds constantly and never seems satisfied at all",
+        "She's very sleepy and hard to wake between feeds",
+        "She's crying inconsolably in a way that isn't her usual"
+      ]
+    },
+    "quick": "Frequent feeding is normal and rarely means underfeeding. Check the nappies and the weekly weight before adding more milk — and burp her before deciding."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "cluster-feeding",
+    "how-much-should-she-eat",
+    "feeding-on-demand"
+  ],
+  "seo": {
+    "description": "Frequent feeding can mean growth, comfort, tiredness or trapped air rather than underfeeding; nappies and growth tell the clearer story."
+  },
+  "longform": [
+    {
+      "h": "The two questions we asked in one breath",
+      "t": "Ari is constantly hungry. And then: if she's eating and not burping and still wants food, do I keep feeding her? And then, straight after: does that mean I'm underfeeding her?\n\nThat third question is the one doing the damage. It's the fear underneath the other two.\n\nIf she's producing plenty of heavy wet nappies and gaining weight over the weeks, she is not being underfed. Whatever the crying suggests.\n\nThat's worth holding onto, because a baby who screams for food an hour after a full feed is extremely convincing. Ours screamed for food like a mad person, in our exact words, and we asked whether that was normal when she'd just eaten.\n\nIt was. And she was gaining well throughout."
+    },
+    {
+      "h": "What else looks like hunger",
+      "t": "Trapped air. This was the big one for us. A baby with trapped air feels uncomfortable, and sucking can briefly soothe her, so she asks for more and then feels worse. Burping partway through and again afterwards often changed the picture more than adding milk did.\n\nTiredness. An overtired baby is hard to distinguish from a hungry one, and the answer to one is not the answer to the other.\n\nWanting to be close. Sucking is comforting, and sometimes the request is for contact rather than calories.\n\nAnd genuine growth spurts, where appetite really does jump for a few days and then settles."
+    },
+    {
+      "h": "So do you keep feeding?",
+      "t": "Not indefinitely, and not automatically.\n\nWhat worked for us: burp her properly. Then try holding, movement or a change of scene for a few minutes. If she settles, it wasn't hunger. If she's still asking and rooting properly after that, offer more.\n\nWhat we never did, and what's worth being firm about: never dilute or stretch formula to make it go further. That's dangerous, not economical.\n\nAnd if the pattern is constant, with poor weight gain or fewer wet nappies, that's a conversation with a doctor rather than a puzzle to solve at 3am."
+    }
+  ],
+  "order": 63,
+  "batch": "5"
+},
+{
+  "id": "feeding-too-fast",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Why does my baby drink too fast and then vomit?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Some babies drink as though the bottle may be taken away at any moment; slowing the whole feed can help.",
+  "keywords": [
+    "baby drinks too fast",
+    "paced bottle feeding",
+    "slow flow teat",
+    "baby sick after feed"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She goes pale, blue or limp during feeds — call your local emergency number now",
+      "She coughs, splutters or chokes at most feeds",
+      "Vomiting is forceful, or green, or has blood in it",
+      "She's not gaining weight despite feeding well",
+      "Her breathing changes while feeding"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "The sucking reflex keeps going past full",
+        "Gravity does the work if the bottle is upright",
+        "Fast feeds bring in more air",
+        "Even the slowest teat can be too fast for some babies"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Holding the bottle more horizontally, teat just full",
+        "Deliberate pauses every ten to fifteen sucks",
+        "Sitting her more upright rather than reclined",
+        "Letting her come off, then offering again"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She goes pale, blue or limp during feeds — call your local emergency number now",
+        "She coughs, splutters or chokes at most feeds",
+        "Vomiting is forceful, or green, or has blood in it",
+        "She's not gaining weight despite feeding well",
+        "Her breathing changes while feeding"
+      ]
+    },
+    "quick": "Hold the bottle more horizontally, sit her upright, and pause deliberately every ten to fifteen sucks. Pacing beats any slow-flow teat."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "reflux-or-spit-up",
+    "wind-and-gas",
+    "overfed-big-tummy"
+  ],
+  "seo": {
+    "description": "Paced bottle feeding can slow a fast drinker, reduce swallowed air and help your baby notice when she has had enough."
+  },
+  "longform": [
+    {
+      "h": "We already had the slowest bottle",
+      "t": "That was our frustration, more or less word for word. We had the slowest teat available, on NUK Perfect Match, and she was still drinking far too quickly and making herself sick.\n\nSo the teat wasn't the problem. The way we were feeding her was.\n\nHold a bottle upright and milk flows whether she's sucking or not. She then has to keep swallowing to keep up, which means she can't pause to breathe properly and takes in air along the way.\n\nHolding the bottle closer to horizontal — just tilted enough that the teat stays full — puts her back in charge. She has to actively draw the milk, which is much closer to how breastfeeding works.\n\nWe asked whether a horizontal bottle would make her swallow more air, which is the obvious worry. It does not, as long as the teat stays full of milk rather than half air. That is the bit to watch. Some newer bottles also have vents designed to reduce swallowed air."
+    },
+    {
+      "h": "Stopping on purpose",
+      "t": "The advice that sounded strangest was to interrupt her — to actually stop feeding her mid-feed, let her have a break, and then start again.\n\nEvery ten to fifteen sucks, tip the bottle down or gently break the seal for a few seconds. She breathes, catches up and has a chance to notice she is full. It sometimes worked beautifully. Other times she treated the pause as the end of the meal and refused to restart. Papa quickly learned that paced feeding helped, but it was not a magic trick every time.\n\nA baby draining a bottle in four minutes hasn't had time to register any of that, which is exactly how you end up with an overfed, uncomfortable baby and a lot of laundry."
+    },
+    {
+      "h": "The rest of the setup",
+      "t": "Sit her more upright rather than reclined. Flat on her back with a bottle is the worst version of all of this.\n\nLet her come off when she wants to, then offer again. If she's done, she's done.\n\nAnd never widen a teat hole. People do it to speed things up and it turns a controlled flow into an uncontrolled one, which is genuinely unsafe."
+    }
+  ],
+  "order": 64,
+  "batch": "5"
+},
+{
+  "id": "cluster-feeding",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "What is cluster feeding?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Cluster feeding is a feeding marathon squeezed into one part of the day, usually when everyone is already tired.",
+  "keywords": [
+    "cluster feeding",
+    "feeding every hour evening",
+    "baby feeding constantly",
+    "evening feeding"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Fewer wet nappies than expected",
+      "She isn't gaining weight",
+      "She feeds constantly and is never settled at any point",
+      "She seems weak, or is hard to wake",
+      "Feeding is painful for you"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Several feeds bunched close together",
+        "Most often late afternoon into evening",
+        "Common in the first months and around growth spurts",
+        "Not a sign your supply has failed"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Planning the evening around it rather than fighting it",
+        "Food, drink and a phone within reach before it starts",
+        "Swapping over so one of us got a break",
+        "Knowing it had a name made it far less frightening"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Fewer wet nappies than expected",
+        "She isn't gaining weight",
+        "She feeds constantly and is never settled at any point",
+        "She seems weak, or is hard to wake",
+        "Feeding is painful for you"
+      ]
+    },
+    "quick": "Feeds bunched together, usually in the evening. Normal, exhausting, and not evidence that your milk has run out."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "constantly-hungry",
+    "feeding-on-demand",
+    "when-does-milk-come-in"
+  ],
+  "seo": {
+    "description": "Cluster feeding means several feeds close together, often in the evening, and does not automatically mean your milk supply is low."
+  },
+  "longform": [
+    {
+      "h": "It has a name, which helps",
+      "t": "We asked what cluster feeding actually means, in the middle of a week where the evenings had become one continuous feed.\n\nKnowing it was a recognised pattern with a name changed how it felt. It stopped being evidence that something had gone wrong and became a thing that happens.\n\nSeveral feeds close together — sometimes almost continuously — usually late afternoon into evening. She feeds, comes off, seems settled for ten minutes, then wants more.\n\nIt turns up most in the early months, around growth spurts, and often alongside the general evening fussiness that everything else in that stretch produces.\n\nIt's also very common right before a longer stretch of sleep, which is some consolation if you can hold on."
+    },
+    {
+      "h": "It is not proof your supply has failed",
+      "t": "This is the thing that causes the most damage, because it's the obvious conclusion. She's feeding constantly, therefore she isn't getting enough, therefore my milk isn't enough.\n\nUsually none of that follows. Frequent feeding is one of the ways supply is driven up, so a cluster-feeding evening is often the system working rather than failing.\n\nThe honest check is the same as always — wet nappies, and weight over weeks. If those are fine, the evening is just an evening."
+    },
+    {
+      "h": "How to survive it rather than fix it",
+      "t": "There isn't a fix. There's setting yourself up before it starts.\n\nFood, a large drink and something to watch or read within arm's reach by five o'clock. A comfortable place to sit that you don't mind being in for two hours.\n\nAnd swapping over if there's someone to swap with, even for twenty minutes. It's a long stretch to do alone every night."
+    }
+  ],
+  "order": 65,
+  "batch": "5"
+},
+{
+  "id": "growth-spurt-signs",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why does my baby get sleepy during feeds?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "A suddenly sleepy feeder may simply be catching up after a busy few days, but sometimes the change deserves a closer look.",
+  "keywords": [
+    "growth spurt baby",
+    "extra sleepy baby",
+    "baby sleeping more",
+    "growth spurt signs"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's hard to wake, or floppy when awake — call your local emergency number now",
+      "She's feeding poorly as well as sleeping more",
+      "Fewer wet nappies",
+      "She has a fever, or seems unwell",
+      "The sleepiness carries on beyond a few days"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "More sleep, alongside good feeding",
+        "Alert and responsive when she is awake",
+        "Often a few days, then back to normal",
+        "Sometimes more feeding rather than more sleeping"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Checking she was alert when awake, not just asleep more",
+        "Letting the extra sleep happen",
+        "Keeping an eye on wet nappies through it",
+        "Waiting a few days before reading anything into it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's hard to wake, or floppy when awake — call your local emergency number now",
+        "She's feeding poorly as well as sleeping more",
+        "Fewer wet nappies",
+        "She has a fever, or seems unwell",
+        "The sleepiness carries on beyond a few days"
+      ]
+    },
+    "quick": "Sleepier but alert when awake and feeding well is usually growth. Sleepy plus feeding badly is the combination that gets checked."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "weight-gain-per-day",
+    "feeding-on-demand",
+    "timing-feeds-start-or-finish"
+  ],
+  "seo": {
+    "description": "Babies often become sleepier after a growth spurt, but being unusually hard to wake or taking much less milk needs checking."
+  },
+  "longform": [
+    {
+      "h": "Two things at once",
+      "t": "She was eating very well and was noticeably sleepier than usual. Our question was whether that meant she was about to grow.\n\nThe follow-up mattered more than the question: she's very alert when awake, and eating well — just sleepy.\n\nThat detail is what separates a growth spurt from something worth checking.\n\nMore sleep, or more feeding, or both, for a few days, in a baby who is otherwise herself.\n\nSome babies do it by feeding constantly. Others do it by sleeping. Ours went sleepy, and then the weight showed up afterwards.\n\nThe pattern is a few days, not a few weeks. And they don't run to a timetable, whatever the lists say about weeks three, six and twelve."
+    },
+    {
+      "h": "The distinction that matters",
+      "t": "Sleepier but alert, responsive and feeding well is growth.\n\nSleepy and feeding badly is not, and those two get looked at together rather than separately. So does sleepiness with fewer wet nappies, or a fever, or floppiness when she is awake.\n\nWith a premature baby the threshold is lower, because a sleepy preemie can quietly miss feeds she needed. If she was born early and is sleeping through feeds, that's worth raising rather than enjoying."
+    },
+    {
+      "h": "What we did",
+      "t": "Let it happen. Kept an eye on nappies through it. Didn't wake her out of anxiety.\n\nAnd waited a few days before drawing any conclusion, which is the hardest part and almost always the right one."
+    }
+  ],
+  "order": 66,
+  "batch": "5"
+},
+{
+  "id": "weight-gain-per-day",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Is my baby gaining enough weight?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "One weigh-in can ruin an afternoon; the trend over weeks tells a much calmer and more useful story.",
+  "keywords": [
+    "baby weight gain",
+    "grams per day",
+    "weight gain newborn",
+    "how much should baby gain"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Weight is flat or falling across more than a few days",
+      "She's crossing downwards through the chart, not following her line",
+      "Fewer wet nappies, or poor feeding alongside",
+      "She is not back to birth weight when your baby's doctor or nurse expected",
+      "You've been given a target and she's well short of it"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Gain per day varies enormously between weighings",
+        "Weekly is the meaningful unit, not daily",
+        "Rates slow as she gets bigger, which is expected",
+        "Premature babies are assessed against their own targets"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Weighing weekly instead of every couple of days",
+        "Same scales, same time, same amount of clothing",
+        "Watching the direction rather than the number",
+        "Getting her expected range from her own baby’s doctor"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Weight is flat or falling across more than a few days",
+        "She's crossing downwards through the chart, not following her line",
+        "Fewer wet nappies, or poor feeding alongside",
+        "She is not back to birth weight when your baby's doctor or nurse expected",
+        "You've been given a target and she's well short of it"
+      ]
+    },
+    "quick": "Daily gain is mostly noise — weigh weekly, same scales, and watch the direction. Rates slowing as she grows is expected, not a warning."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-weight-loss",
+    "how-much-should-she-eat",
+    "preemie-growth-charts"
+  ],
+  "seo": {
+    "description": "Daily weights jump around; growth over time, wet nappies and how your baby feeds give a more useful picture."
+  },
+  "longform": [
+    {
+      "h": "The daily number became an obsession",
+      "t": "Two weigh-ins a few days apart suggested she was gaining around 30 grams a day. We immediately did the arithmetic and asked whether that was good.\n\nIt was. But the maths was less reliable than it looked. Papa became obsessed with the scales. One day Ari had just done a poo and weighed about 75 grams less, and he immediately thought she was losing weight. That was when we understood why daily weighing can create more panic than useful information. The trend matters, not one day's number."
+    },
+    {
+      "h": "Why daily gain is noisy",
+      "t": "Three days is a short window and a lot of things move within it. Different scales, different clothes, a full or empty nappy, a feed that just went in — any of those can be forty or fifty grams on their own.\n\nSo a daily figure from two weighings a few days apart is mostly scale noise, with a little growth mixed in.\n\nWeekly is the unit that means something. Same scales, roughly the same time of day, roughly the same amount of clothing.\n\nWe assumed a bigger baby should gain more each day. It sounds sensible, but it is the other way round.\n\nGain per day is fastest early on and slows as she grows. A rate that would be excellent at one month would be unusual at six. So a slowing rate isn't a warning sign — it's the expected shape.\n\nWhat matters is that she keeps following her own line rather than sliding downwards across the chart."
+    },
+    {
+      "h": "The premature version",
+      "t": "Ari was born at 33 weeks and was due in September, so when we were doing this arithmetic she had only just reached the point when she should have been born.\n\nWe asked whether she was still on preterm expectations or had switched to term ones, and honestly that's a question for the people following her rather than a calculation. Her baby’s doctor had her own targets and they were the ones that counted.\n\nIf your baby is under any kind of follow-up, ask what they expect and what number would concern them. Then you're watching for something real instead of comparing her to a stranger."
+    }
+  ],
+  "order": 67,
+  "batch": "5"
+},
+{
+  "id": "choosing-a-formula",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Which baby formula is best?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "The most expensive tin is not automatically the best one, however persuasive the packaging looks at 2am.",
+  "keywords": [
+    "best baby formula",
+    "goat milk formula",
+    "kendamil",
+    "which formula to choose"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Using any specialist, hypoallergenic or anti-reflux formula",
+      "Switching because you suspect an allergy or intolerance",
+      "Using goat formula if cow's milk protein allergy is suspected",
+      "Changing formula for a premature or unwell baby"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "First infant formula is regulated to a common standard",
+        "Cow's milk based, whey dominant, is the usual starting point",
+        "Goat milk versions are an alternative, not a hypoallergenic one",
+        "Price differences are largely branding"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Choosing a formula available in both places we live",
+        "Letting her doctor decide when reflux needed anti-reflux formula",
+        "Giving each formula time to settle before judging it",
+        "Judging by how she took it, not by the label"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Using any specialist, hypoallergenic or anti-reflux formula",
+        "Switching because you suspect an allergy or intolerance",
+        "Using goat formula if cow's milk protein allergy is suspected",
+        "Changing formula for a premature or unwell baby"
+      ]
+    },
+    "quick": "First infant formulas meet the same regulated standard, so choose on availability and how she takes it. Specialist formulas are a medical decision, not a shopping one."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "making-up-formula",
+    "formula-side-effects",
+    "breast-milk-to-formula"
+  ],
+  "seo": {
+    "description": "Standard first infant formulas are nutritionally complete; availability, preparation and your baby’s medical needs matter more than price."
+  },
+  "longform": [
+    {
+      "h": "We wanted the best one, not the fanciest tin",
+      "t": "That was the question, twice, once for Greece and once for Greece and Dubai together.\n\nAnd the answer is less exciting than we wanted. First infant formula is regulated to a common nutritional standard, so the floor is high everywhere. The differences between a mid-range tin and a premium one are real but small, and a lot of what you're paying for is packaging and story.\n\nWhether it's whey-dominant or casein-dominant. Whey-dominant is the usual first infant formula and the one to start with — casein-based tins marketed as being for hungrier babies aren't necessary and often aren't helpful.\n\nWhat fat sources are used, and whether certain optional ingredients are added.\n\nWhether it is cow or goat based. We looked hard at goat formula. It is a genuine alternative and some babies seem to tolerate it better. But it is not hypoallergenic and it is not suitable when cow's milk protein allergy is suspected. That is an important difference.\n\nPapa did the research and decided goat formula looked like the better choice, so we tried Kendamil. Then Ari's reflux entered the conversation and she kept bringing it back up. What followed was a stressful few days of changing formula, changing poo patterns and feeling as though every decision made something else wobble. Her doctor eventually advised an anti-reflux formula. We needed a brand available in both standard and AR versions, then followed her doctor's plan for how to use them. That was the point where formula stopped being a shopping decision and became a medical one."
+    },
+    {
+      "h": "The practical criteria",
+      "t": "Availability where you live, and where you travel. We move between Greece and Dubai, and a formula you can't buy in both places creates a problem you don't need.\n\nWhether she takes it and tolerates it.\n\nAnd then stop looking. Switching repeatedly in search of a better one causes more unsettled days than it solves, because each change takes time to settle and you never learn anything from any of them."
+    },
+    {
+      "h": "Where it becomes a medical decision",
+      "t": "Hypoallergenic, extensively hydrolysed, anti-reflux and preterm formulas are prescribed for reasons, not chosen from a shelf.\n\nAri had been on Alfaré in the NICU, and it caused projectile vomiting until it was stopped. That's the kind of thing that gets decided and monitored by a doctor.\n\nIf you suspect an allergy or intolerance, that's a conversation before a purchase. Buying a specialist tin to test a theory is how you end up masking something that needed diagnosing."
+    }
+  ],
+  "order": 68,
+  "batch": "5"
+},
+{
+  "id": "breast-milk-to-formula",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How do I move from breast milk to formula?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Moving to formula is a change for the baby and for the person producing the milk, so slow usually feels kinder.",
+  "keywords": [
+    "switching to formula",
+    "weaning off breastfeeding",
+    "combination feeding",
+    "introducing formula"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A rash, swelling, or breathing change after a feed",
+      "Forceful vomiting, or blood or mucus in the nappy",
+      "She refuses feeds altogether for a prolonged stretch",
+      "You develop a hot, red, painful area or feel flu-like",
+      "She's premature or has known allergies — ask before starting"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Replace a single feed, then wait several days",
+        "Two to three weeks is a comfortable pace",
+        "Nappies change colour and consistency — expected",
+        "She may take a few tries to accept the taste"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Starting with a mid-morning feed rather than a night one",
+        "Mixing gradually rather than swapping outright",
+        "Someone else offering the first bottles",
+        "Going slower than the plan when either of them needed it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A rash, swelling, or breathing change after a feed",
+        "Forceful vomiting, or blood or mucus in the nappy",
+        "She refuses feeds altogether for a prolonged stretch",
+        "You develop a hot, red, painful area or feel flu-like",
+        "She's premature or has known allergies — ask before starting"
+      ]
+    },
+    "quick": "Replace one feed at a time and wait several days before the next. Two to three weeks is comfortable for her and for you."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "choosing-a-formula",
+    "weaning-off-pumping",
+    "formula-side-effects"
+  ],
+  "seo": {
+    "description": "A gradual move from breast milk to formula can be easier on your baby’s tummy and kinder to your own milk supply."
+  },
+  "longform": [
+    {
+      "h": "Slow for her, slow for you",
+      "t": "For her, it's a new taste, a new consistency and a different way of digesting. Nappies change — firmer, darker, often less frequent — and that's expected rather than a problem.\n\nFor whoever is breastfeeding or pumping, dropping feeds suddenly leaves the breasts overfull, which is uncomfortable and carries a real risk of blocked ducts and mastitis. Supply comes down gradually if you let it, and painfully if you don't.\n\nThe main reason we introduced formula was simple: Mama was not producing enough milk. The days were long and the nights were even longer. Milk supply rises and falls with how often milk is removed, but exhaustion does not care about a pumping schedule. Miss a session because you desperately need sleep, or have a baby who is not sucking effectively, and supply can drop. It can come back, but that takes work. Stilltee tea, breast massage and hot or cold compresses helped Mama feel more comfortable, but regular milk removal was the part that mattered most for supply.\n\nSo the pace serves both of them. Replace one feed, hold there for several days, then replace another. Two to three weeks is comfortable. Faster is possible but you'll feel it."
+    },
+    {
+      "h": "Which feed to start with",
+      "t": "A mid-morning or early afternoon one, where nobody is desperate and there's time for it to go badly.\n\nNot the night feed, and not the one she's most attached to. Those go last.\n\nWe kept breast milk and formula in separate bottles. It made it easier to see how much of each she had taken, and it meant precious breast milk was not wasted if she stopped early.\n\nIt also often works better when someone other than the breastfeeding parent offers the first bottles. Being held by the person who normally breastfeeds you and being offered something else is a hard sell. Papa offered more of the early formula bottles because Ari did not smell him and immediately think, ooh, breast milk."
+    },
+    {
+      "h": "Watch for two things",
+      "t": "The nappies, because they will change and you need to know that's normal rather than assume something has gone wrong. There's a whole separate guide on the constipation that often follows.\n\nAnd genuine allergy signs, which are different from a bit of unsettledness — a rash, swelling, breathing changes, forceful vomiting, or blood in the nappy. Those are a call rather than a wait.\n\nIf she was premature, or there's a family history of allergy, have the conversation with your doctor before you start rather than after."
+    }
+  ],
+  "order": 69,
+  "batch": "5"
+},
+{
+  "id": "how-long-does-breast-milk-matter",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "Does breastfeeding for three months still count?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Three months of breastfeeding does not disappear simply because it was not six.",
+  "keywords": [
+    "how long to breastfeed",
+    "stopping at 3 months",
+    "breast milk benefits",
+    "combination feeding"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You're stopping because of pain or difficulty that could be fixed",
+      "You feel guilty or low about it — that's worth saying out loud",
+      "You're unsure which formula suits her",
+      "Feeding decisions are causing conflict at home"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Benefits build over time rather than switching on",
+        "The earliest weeks still matter",
+        "Any amount counts — it isn't all or nothing",
+        "Combination feeding is a legitimate answer"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Stopping the countdown and looking at what she'd already had",
+        "Treating combination feeding as a plan, not a compromise",
+        "Being honest about what was sustainable",
+        "Not asking the question again once we'd answered it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You're stopping because of pain or difficulty that could be fixed",
+        "You feel guilty or low about it — that's worth saying out loud",
+        "You're unsure which formula suits her",
+        "Feeding decisions are causing conflict at home"
+      ]
+    },
+    "quick": "Breastfeeding for three months still counts. Every week adds something, and stopping before six months does not erase what you have already done."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "breast-milk-to-formula",
+    "weaning-off-pumping",
+    "milk-supply-dropped"
+  ],
+  "seo": {
+    "description": "Breastfeeding for three months still matters; there is no cliff edge where the time and effort suddenly stop counting."
+  },
+  "longform": [
+    {
+      "h": "The negotiation",
+      "t": "This one is in the archive as a conversation with himself, and it's worth quoting because a lot of people have it.\n\nShe'll probably have breast milk for three months, maybe four, but that's it. What if it's only three? We can't make it to six months — how about three to four? Four to five? And then, at the end: so we need to do it all to make it to three months.\n\nThat's someone trying to work out whether what he can manage is enough."
+    },
+    {
+      "h": "It isn't a threshold",
+      "t": "The six-month figure is a public health recommendation, not a pass mark. Nothing switches on at six months and nothing is forfeited at five.\n\nThe benefits accumulate. They start on day one, they're weighted towards the early period, and every week adds something. Three months of breast milk is a real and substantial contribution — not a failed attempt at six.\n\nCombination feeding counts too. Milk from both sources isn't a compromise position; it's what a great many families actually do, and it's often what makes continuing possible at all.\n\nPapa was fed entirely on formula, so we wondered what would have been different. Then came the guilt question: were his food allergies caused by that?\n\nHonestly, no — not in the way that question implies. Allergy risk is complicated, involves genetics and environment, and you cannot trace one adult's allergies back to one infant feeding decision. Nobody can.\n\nIt's worth saying because that particular guilt spiral — working backwards from yourself to your parents' choices, and forwards to your own — doesn't lead anywhere useful."
+    },
+    {
+      "h": "What actually matters more",
+      "t": "That she's fed, and gaining, and that the people feeding her are able to keep going.\n\nA parent running on empty, in pain, or drowning in guilt is a worse outcome than a formula bottle. That trade-off is real and it's allowed to be part of the decision.\n\nAnd if you're stopping because of pain, difficulty or supply problems that might be fixable, that's worth one conversation with a midwife or lactation consultant first. Not to talk you out of it — to make sure it is a choice rather than a defeat. Mama felt that Stilltee tea and breast massage helped, but the biggest things were rest and removing milk regularly enough to protect her supply."
+    }
+  ],
+  "order": 70,
+  "batch": "5"
+},
+{
+  "id": "weaning-off-pumping",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How do I stop pumping without it hurting?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Stopping pumping works best as a slow goodbye, not an overnight disappearance.",
+  "keywords": [
+    "stop pumping",
+    "weaning off pump",
+    "reducing pumping",
+    "drop a pump session"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A hot, red or painful area, or a hard lump",
+      "Fever, shivering or feeling flu-like",
+      "Pain that's getting worse rather than easing",
+      "Any lump that doesn't shift after a day or so"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Drop a single session and hold for several days",
+        "Shorten sessions rather than skipping them outright",
+        "Supply falls as demand falls — gradually",
+        "A few weeks is a comfortable timeline"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing the plan out with actual clock times",
+        "Dropping the session with the smallest yield first",
+        "Expressing just enough for comfort when it hurt",
+        "Adjusting the plan when it turned out to be too fast"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A hot, red or painful area, or a hard lump",
+        "Fever, shivering or feeling flu-like",
+        "Pain that's getting worse rather than easing",
+        "Any lump that doesn't shift after a day or so"
+      ]
+    },
+    "quick": "Drop one session at a time, hold for several days, and express just enough for comfort in between. Stopping abruptly is what causes blocked ducts."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "pumping-schedule",
+    "blocked-duct-or-mastitis",
+    "breast-milk-to-formula"
+  ],
+  "seo": {
+    "description": "Reduce pumping gradually, dropping one session at a time, so your body can adjust without painful fullness or blocked ducts."
+  },
+  "longform": [
+    {
+      "h": "How the reduction actually works",
+      "t": "Supply follows demand, so removing demand reduces supply — but it needs a few days to catch up at each step.\n\nDrop one session. Hold there for three to five days while your body adjusts. Then drop the next.\n\nThe alternative is shortening each session by a few minutes at a time, which some people find gentler. Both work. What doesn't work is stopping several at once, which leaves you overfull, in pain, and at real risk of a blocked duct turning into mastitis."
+    },
+    {
+      "h": "Which one to drop first",
+      "t": "The session with the smallest yield, usually. For most people that's mid-afternoon or late evening.\n\nThe first morning session tends to be the biggest and is usually the last to go.\n\nWe went through several versions of the timetable — moving sessions, worrying that one gap was too long, then rearranging everything again. That back-and-forth is normal. Write the times down, try the plan for a few days and change it if it is not working.\n\nIn the end, exhaustion made the decision for us. The first session Mama dropped was the 4am one. It may not be the usual place to start, but getting one stretch of four or five hours' sleep made all the difference at the beginning."
+    },
+    {
+      "h": "Managing the in-between",
+      "t": "When you're uncomfortable between sessions, express just enough for comfort rather than emptying fully. Emptying signals your body to make more, which restarts the whole thing.\n\nCool compresses help. So does a well-fitting, non-compressing bra.\n\nDon't bind or wrap the breasts to suppress supply — it's an old piece of advice and it causes blocked ducts.\n\nAnd if a hard lump appears with heat, redness or a fever, that's a same-day call rather than something to push through."
+    }
+  ],
+  "order": 71,
+  "batch": "5"
+},
+{
+  "id": "making-up-formula",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "How do I make up a formula bottle safely?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Formula preparation rules feel fussy until you understand that the powder itself is not sterile.",
+  "keywords": [
+    "making formula",
+    "formula water temperature",
+    "storing made up formula",
+    "boiled water formula"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Your baby was premature, or has a weakened immune system",
+      "You're unsure what temperature your machine uses",
+      "You need to make bottles in advance and transport them",
+      "You're unsure about your water supply"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Formula powder is not sterile",
+        "Freshly boiled water must still be at least 70°C when it meets the powder",
+        "Fresh for each feed is the safest option",
+        "Machines vary — check what yours actually does"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Making it fresh rather than storing bottles",
+        "Checking what temperature our heating machine really reached",
+        "Cooling under a running tap rather than waiting",
+        "Asking our baby’s doctor about our specific setup"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Your baby was premature, or has a weakened immune system",
+        "You're unsure what temperature your machine uses",
+        "You need to make bottles in advance and transport them",
+        "You're unsure about your water supply"
+      ]
+    },
+    "quick": "Powder isn't sterile, which is why water temperature matters. Fresh for each feed is safest — and check what your machine actually does rather than assuming."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "sterilising-baby-bottles",
+    "storing-expressed-milk",
+    "warming-milk-out-and-about"
+  ],
+  "seo": {
+    "description": "Use freshly boiled water and let it cool to reduce bacteria in formula powder, follow the tin exactly and make feeds fresh whenever possible."
+  },
+  "longform": [
+    {
+      "h": "Why the rules seem fussy",
+      "t": "Because formula powder is not a sterile product. It can contain bacteria, in very small numbers, and the reason official guidance specifies hot water is to deal with that rather than to be difficult.\n\nOnce we understood that, the rest of it made sense — and so did the fact that different countries and different formula heating machines take slightly different approaches to the same problem."
+    },
+    {
+      "h": "The temperature question",
+      "t": "We asked this repeatedly, from several angles. Whether to make it with room-temperature water and heat it afterwards, or use water at 37 degrees. Whether 40 degrees was enough. What our machine actually heated to.\n\nThat last one is the useful question. Formula preparation machines vary in what they do, and some do not heat water to the temperature that official guidance specifies. Check the manual for yours, and if it doesn't say clearly, ask.\n\nAnd don't reboil water that's already been boiled once — reboiling concentrates minerals.\n\nFresh for each feed is the safest option, and it's what most guidance recommends.\n\nIf you do need to make bottles ahead — and we did, for going out — that changes the rules. It needs cooling quickly, going into the back of the fridge promptly, and being used within a limited window. Ask your own midwife or baby’s doctor what they'd advise for your situation rather than assuming, because this is one where local guidance genuinely differs.\n\nWhat's consistent everywhere: don't leave a made-up bottle standing warm, don't rewarm one twice, and throw away what's left after a feed rather than keeping it."
+    },
+    {
+      "h": "Getting the mix right",
+      "t": "Follow the scoop and water instructions on the tin exactly. Level scoops, not heaped, and the water first.\n\nAdding extra powder to make it richer, or extra water to make it go further, are both genuinely dangerous. That isn't a cautious warning — the concentration matters to her kidneys and her hydration.\n\nAnd if she was premature or has any medical follow-up, check with her doctor before changing anything about how it is made.\n\nFor warming an already-prepared refrigerated bottle, we tried several warmers before settling on the Baby Brezza bottle warmer. The others ran too hot or too cool, and judging the water level felt like another small test nobody had warned us about. Once Ari was drinking fairly regular amounts, we marked the outside of the warmer with different colours for different bottle sizes. It took a few attempts to get the water displacement right, but once the marks were there, warming a bottle became one less thing to calculate while half asleep."
+    }
+  ],
+  "order": 72,
+  "batch": "5"
+},
+{
+  "id": "formula-and-constipation",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is it normal for my baby not to poo after switching to formula?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "The formula switch can turn every missed poo into a countdown, even when the baby is perfectly comfortable.",
+  "keywords": [
+    "formula constipation",
+    "not pooping after formula",
+    "switching formula poop",
+    "constipated baby formula"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Hard, dry or pellet-like poo when it comes",
+      "Blood in the nappy, or on the outside of the poo",
+      "A firm, swollen tummy, or vomiting",
+      "She's in obvious pain, or feeding poorly",
+      "Your own doctor's limit has been reached — ask what it is"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Formula poo is firmer, darker and less frequent",
+        "Gaps often stretch during the switch",
+        "Still weeing and passing gas is reassuring",
+        "A soft tummy matters more than the number of days"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Checking her tummy was soft rather than counting days",
+        "Noticing she was weeing a lot and passing gas",
+        "Ringing the baby’s doctor rather than guessing the limit",
+        "Gentle tummy massage and asking her doctor before using any gas-relief aid",
+        "Slowing the transition down"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Hard, dry or pellet-like poo when it comes",
+        "Blood in the nappy, or on the outside of the poo",
+        "A firm, swollen tummy, or vomiting",
+        "She's in obvious pain, or feeding poorly",
+        "Your own doctor's limit has been reached — ask what it is"
+      ]
+    },
+    "quick": "Longer gaps are expected when switching. Soft when it arrives, a soft tummy, and plenty of wet nappies means waiting is reasonable — but get your limit from your own doctor."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "baby-not-pooping",
+    "newborn-poo-colours",
+    "formula-side-effects"
+  ],
+  "seo": {
+    "description": "Longer gaps and firmer poo can happen after switching to formula; a soft tummy and a comfortable baby are reassuring signs."
+  },
+  "longform": [
+    {
+      "h": "Day two, then three, then four",
+      "t": "We asked this several times over several days, and the question kept getting more precise. Is it normal on day two with formula. What if she's on day three. What about day four. Do I wait until the end of day four or ring on day five.\n\nWe also asked, quite pointedly, what a five-day figure was even based on. Which was a fair challenge, and the honest answer is that these thresholds are rules of thumb rather than hard science.\n\nWe rang our baby's doctor. She told us that, during the move from breast milk to formula, five or six days without a poo could be okay for Ari as long as she was otherwise well.\n\nThat's her advice for our baby, and it's the version we followed. Which is rather the point — the number that matters is the one your own doctor gives you, not the one you find online.\n\nWhat we'd say to anyone in the same spot: ring and ask what your limit is, before you're at it. Then you're waiting with a plan instead of waiting with a countdown."
+    },
+    {
+      "h": "Why it happens",
+      "t": "Breast milk is very efficiently absorbed and leaves little behind. Formula leaves more, and it's digested differently, so poo becomes firmer, darker and usually less frequent.\n\nDuring the change, her tummy is adjusting to both kinds of milk. Poo gaps can stretch before a new pattern settles. Ours was more complicated because Ari kept bringing different formulas back up. Just as she started getting used to one, we had to change it again. Her doctor eventually advised an anti-reflux formula. It was a stressful little loop: new milk, new tummy, new poo pattern, then start again.\n\nThat's a transition effect rather than constipation, and constipation is about what arrives rather than how long it took. Soft is fine, however many days it's been. Hard, dry or pellet-like is not."
+    },
+    {
+      "h": "What told us she was fine",
+      "t": "She was weeing a lot. She was passing gas. Her belly was soft. She was eating very well.\n\nAll four of those together made waiting reasonable. Any one of them going the other way — particularly a firm or swollen tummy, or vomiting, or obvious pain — would have changed it.\n\nShe was also very fussy through it, which we assumed was the constipation and was probably just her age. Both things were happening at once, which is usually the case."
+    }
+  ],
+  "order": 73,
+  "batch": "5"
+},
+{
+  "id": "formula-side-effects",
+  "topic": "feeding",
+  "icon": "bottle",
+  "featured": false,
+  "title": "What changes when my baby starts formula?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "New nappies, more gas and different feeding gaps can all arrive with formula before things settle down.",
+  "keywords": [
+    "formula side effects",
+    "formula gassy",
+    "formula fed baby changes",
+    "does formula fill baby longer"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A rash, swelling, or any breathing change after feeds",
+      "Forceful vomiting, or blood or mucus in the nappy",
+      "Diarrhoea that keeps going, or she seems unwell",
+      "She's refusing feeds, or not gaining weight",
+      "She was premature, or there's a family history of allergy"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Feeding • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Firmer, darker, less frequent nappies",
+        "More gas for the first week or two",
+        "Often longer between feeds",
+        "Some spitting up while she settles into it"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Giving it a fortnight before judging it",
+        "Burping her more thoroughly than we had been",
+        "Changing one thing at a time",
+        "Watching her over days rather than after one feed"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A rash, swelling, or any breathing change after feeds",
+        "Forceful vomiting, or blood or mucus in the nappy",
+        "Diarrhoea that keeps going, or she seems unwell",
+        "She's refusing feeds, or not gaining weight",
+        "She was premature, or there's a family history of allergy"
+      ]
+    },
+    "quick": "Firmer nappies, more gas and longer gaps between feeds are common while she adjusts. Rash, swelling or blood is a different matter."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "formula-and-constipation",
+    "choosing-a-formula",
+    "breast-milk-to-formula"
+  ],
+  "seo": {
+    "description": "Formula can change nappies, gas and feeding gaps while your baby adjusts; allergy signs and repeated vomiting need separate advice."
+  },
+  "longform": [
+    {
+      "h": "How do I know if she's accepted it?",
+      "t": "That was the question after the first Kendamil feed, and then again, more insistently: is there really no way to know after one feed?\n\nNo. And that's genuinely the answer rather than an evasion.\n\nAn immediate allergic reaction would show within minutes to an hour — a rash, swelling, breathing changes, forceful vomiting. That you would see. But tolerance, in the ordinary sense of whether it suits her, shows over days rather than at the first bottle."
+    },
+    {
+      "h": "What usually changes",
+      "t": "Nappies, most obviously. Firmer, darker, often less frequent. That's the biggest visible difference and it has its own guide, because the gaps can get long enough to be alarming.\n\nMore gas for a week or two while her gut adjusts. It generally settles.\n\nOften longer between feeds — we asked whether formula keeps a baby full for longer, and it does tend to, because it's digested more slowly.\n\nAnd some spitting up while she gets used to it, which usually calms down.\n\nShe spat up milk with foam in it and we wanted to know what that meant.\n\nUsually it's air mixed into the milk — from a fast feed, from shaking the bottle vigorously, or from swallowing air while feeding. Letting a made-up bottle stand for a minute so the bubbles settle helps, and so does slowing the feed down.\n\nOn its own, with a comfortable baby who's gaining, it isn't something to act on."
+    },
+    {
+      "h": "Give it a fortnight",
+      "t": "The instinct when a formula seems not to suit is to try another one. We felt it strongly.\n\nBut each switch resets the adjustment period, so a run of changes produces a permanently unsettled baby and no information at all. Two weeks on one formula tells you far more than four days each on three.\n\nThe exceptions are the allergy signs — rash, swelling, breathing changes, blood in the nappy, forceful vomiting. Those don't get a fortnight. Those get a phone call."
+    }
+  ],
+  "order": 74,
+  "batch": "5"
+},
+{
+  "id": "yellow-vomit",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why was my baby’s vomit yellow?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "‘Yellow’ covers several very different colours, and this is one time when the exact shade genuinely matters.",
+  "keywords": [
+    "yellow vomit baby",
+    "curdled milk vomit",
+    "green vomit baby",
+    "baby sick after feed"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "True yellow, yellow-green or green vomit",
+      "Blood or anything like coffee grounds",
+      "Forceful or repeated projectile vomiting",
+      "A firm or swollen tummy",
+      "Floppy, unusually sleepy or refusing feeds — call your local emergency number now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Creamy or vanilla-coloured curdled milk",
+        "Small amounts that simply roll back out",
+        "Thicker spit-up after moving to formula",
+        "A comfortable baby who is feeding and growing"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Describing the exact shade rather than saying 'yellow'",
+        "Photographing it instead of trying to remember",
+        "Noting whether it was forceful or just came back up",
+        "Asking about medication doses rather than guessing"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "True yellow, yellow-green or green vomit",
+        "Blood or anything like coffee grounds",
+        "Forceful or repeated projectile vomiting",
+        "A firm or swollen tummy",
+        "Floppy, unusually sleepy or refusing feeds — call your local emergency number now"
+      ]
+    },
+    "quick": "Creamy curdled milk can look pale yellow. True yellow, yellow-green or green vomit, blood or repeated forceful vomiting needs urgent medical advice."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "reflux-or-spit-up",
+    "feeding-too-fast",
+    "is-my-baby-in-pain"
+  ],
+  "seo": {
+    "description": "Curdled milk can look creamy or pale yellow, but true yellow, yellow-green or green vomit in a baby needs urgent medical advice."
+  },
+  "longform": [
+    {
+      "h": "Yellow is not one colour",
+      "t": "We reported yellow vomit twice, weeks apart, and both times the useful part was the follow-up description.\n\nThe first time: it wasn't forceful, it just all came back out of her mouth like it didn't go down. The second: it was darker curdled milk, not actually yellow — vanilla colour yellow.\n\nThose descriptions changed the answer entirely, and neither of them was the thing we'd been afraid of."
+    },
+    {
+      "h": "Curdled milk",
+      "t": "Milk that's been sitting in the stomach meets acid and curdles. When it comes back up it looks creamy, sometimes lumpy, often described as vanilla or cream coloured.\n\nThat can be ordinary when your baby is comfortable, feeding and growing. If you are unsure whether the colour is cream or genuinely yellow, take a photo and ask rather than guessing. Formula spit-up tends to look thicker and more solid than breast milk spit-up, which catches people out after a switch.\n\nWhat matters alongside it is whether she's comfortable, gaining, and otherwise herself."
+    },
+    {
+      "h": "The colour that doesn't wait",
+      "t": "True yellow, yellow-green or green vomit is different. That suggests bile, which means something further down, and it needs seeing the same day rather than the next morning.\n\nSo does blood, or anything that looks like coffee grounds. So does forceful, repeated, projectile vomiting — particularly with a firm or swollen tummy, or if she's stopped passing anything.\n\nThat's not a long list, and it's worth knowing it precisely so the rest of it doesn't frighten you.\n\nWe asked about specific doses of things she'd been prescribed — how much, how often, whether an amount was safe.\n\nThat one goes to your doctor or pharmacist, every time, with her current weight. Doses for infants are weight-based and they change as she grows, so a figure that was right a month ago may not be right now.\n\nWe won't put numbers here for that reason. Ring and ask — it takes two minutes and it's the right two minutes."
+    }
+  ],
+  "order": 75,
+  "batch": "5"
 }
 ];
 
