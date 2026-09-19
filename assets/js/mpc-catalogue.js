@@ -129,11 +129,18 @@
   }
 
   /* ---- ranking ----------------------------------------------------------
-     Unchanged from the version that shipped in guides.js, except that `body`
-     is now the generated excerpt rather than the full article. Whole-word
-     title hits still beat partial ones, and a guide matching more of the typed
-     words still ranks higher, so results sharpen as you keep typing rather
-     than just shrinking. */
+     Whole-word title hits beat partial ones, and a guide matching more of the
+     typed words ranks higher, so results sharpen as you keep typing rather
+     than just shrinking. `body` is the generated excerpt, not the full
+     article.
+
+     Ranking well was never the problem. The problem was what still counted as
+     a result at all: this is a site where every guide is about a baby, so
+     scoring a query word by word meant the common words — my, baby, should,
+     have — matched everything, and a parent typing a whole question got most
+     of the catalogue back under "Closest matches". Three rules fix that, and
+     each is about what does NOT belong in the results rather than about the
+     order of the ones that do. */
   function escRe(t) { return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 
   /* "naps" should still find "nap"; "feeding" should still find "feed" */
@@ -146,21 +153,44 @@
     return out;
   }
 
+  /* Words that are in nearly every guide, so matching one says nothing about
+     which guide you wanted. "my baby" is in half the titles on this site and
+     "should" is in a good part of the rest, so a query like "how much milk
+     should my baby have" was matching 75 of 76 guides on its function words
+     alone. They still count toward ranking — an exact phrasing should beat a
+     partial one — but they can no longer, by themselves, make a guide a
+     result. */
+  var STOP = {};
+  ("a an and any are as at be been but by can could did do does for from get got had has have how i if in is it " +
+   "its just me much my not of on or our should so that the their them then there they this to too us very was " +
+   "we well what when which who why will with would you your " +
+   "baby babies she her hers he him his").split(" ").forEach(function (w) { STOP[w] = true; });
+
+  /* "baby's" is the same word as "baby" for this purpose. */
+  function isStop(term) { return STOP[term.replace(/['\u2019]s$/, "")] === true; }
+
+  /* A term matches as a whole word, or as the start of one while it is still
+     being typed. Matching it in the MIDDLE of a word is kept for long terms,
+     where it usually means a near miss worth catching; at four letters or
+     fewer it is almost always an accident — a mistyped "ow" sits inside how,
+     know, down, slow and growth, which is most of the site. */
   function termScore(term, title, summary, topic, body) {
     var word = new RegExp("\\b" + escRe(term) + "\\b");
     var pre = new RegExp("\\b" + escRe(term));
+    var loose = term.length >= 5;
     var s = 0;
     if (word.test(title)) s += 20;
     else if (pre.test(title)) s += 10;
-    else if (title.indexOf(term) !== -1) s += 4;
+    else if (loose && title.indexOf(term) !== -1) s += 4;
 
     if (word.test(summary)) s += 7;
-    else if (summary.indexOf(term) !== -1) s += 3;
+    else if (pre.test(summary)) s += 4;
+    else if (loose && summary.indexOf(term) !== -1) s += 3;
 
-    if (topic.indexOf(term) !== -1) s += 4;
+    if (pre.test(topic)) s += 4;
 
     if (word.test(body)) s += 2;
-    else if (body.indexOf(term) !== -1) s += 1;
+    else if (pre.test(body)) s += 1;
     return s;
   }
 
@@ -183,17 +213,30 @@
     var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
     if (!terms.length) return 1;
     var h = haystack(g);
-    var total = 0, matched = 0;
+    var total = 0, matched = 0, carrying = 0, carryingMatched = 0;
     for (var i = 0; i < terms.length; i++) {
+      var weak = isStop(terms[i]);
+      if (!weak) carrying++;
       var best = 0, variants = stems(terms[i]);
       for (var j = 0; j < variants.length; j++) {
         best = Math.max(best, termScore(variants[j], h.title, h.summary, h.topic, h.body));
       }
-      if (best > 0) { matched++; total += best; }
+      if (best > 0) {
+        matched++;
+        if (weak) { total += best / 5; } else { carryingMatched++; total += best; }
+      }
     }
-    if (!matched) return 0;
-    return total * Math.pow(matched / terms.length, 2);
+    /* A query made only of common words — "my baby", "how much" — still has to
+       return something, so it is scored the way everything used to be. */
+    if (!carrying) return matched ? total * Math.pow(matched / terms.length, 2) : 0;
+    /* Otherwise: a guide that matched none of the words carrying the question
+       is not an answer to it, however many "my"s it happens to contain. */
+    if (!carryingMatched) return 0;
+    return total * Math.pow(carryingMatched / carrying, 2);
   }
+
+  /* How far below the best result a guide may score and still be listed. */
+  var TAIL = 0.15;
 
   /* Synchronous. Returns whatever is in memory right now — which is the whole
      point: the caller never awaits a fetch mid-keystroke. */
@@ -210,6 +253,14 @@
       if (s > 0) out.push({ g: g, s: s });
     }
     out.sort(function (a, b) { return b.s - a.s || a.g.title.localeCompare(b.g.title); });
+    /* Drop the tail. Everything here is about babies, so a guide scoring a
+       fraction of the best one is not a near miss — it is a different question
+       that happens to share a word, and listing it under "Closest matches"
+       reads as though the site did not understand what was asked. */
+    if (query && out.length) {
+      var floor = out[0].s * TAIL;
+      out = out.filter(function (x) { return x.s >= floor; });
+    }
     return out.map(function (x) { return x.g; });
   }
 
