@@ -90,13 +90,21 @@
       ? C.all().filter(function (g) { return g.featured; })
       : null;
 
+    /* Four cards fit here, and a topic can have twenty-six guides behind it.
+       The count and the "See all" link say so, but both sit under the grid,
+       so the heading is read first and "Matching guides" over four of
+       twenty-six reads as though those four were all of them. Say "Top" when
+       the list is cut, and only then: over three matches showing all three it
+       would be just as wrong the other way. */
+    var capped = !!(list && list.length > CAP);
     title.textContent = q ? t("results.search", "Closest matches")
-      : (active ? t("results.filtered", "Matching guides")
+      : (active ? (capped ? t("results.filteredMore", "Top matching guides")
+                          : t("results.filtered", "Matching guides"))
                 : t("results.default", "Popular guides"));
     reset.hidden = !active;
     hint.textContent = active ? describe(list.length) : "";
 
-    if (list && list.length > CAP) {
+    if (capped) {
       var pr = new URLSearchParams();
       if (q) pr.set("q", q);
       if (topic) pr.set("topic", topic);
