@@ -963,7 +963,10 @@
       ).join("") + `</div>`;
     }
     out += moreHTML(slide.truncatedItems);
-    if (slide.band) out += bandHTML(slide.band, "bluePale", "is-foot");
+    /* The "+N more" chip sits in the same corner as a foot band. When both are
+       on the slide the band lifts clear of it rather than printing over it. */
+    if (slide.band) out += bandHTML(slide.band, "bluePale",
+      slide.truncatedItems ? "is-foot is-above-more" : "is-foot");
     return out;
   }
 
@@ -1178,6 +1181,7 @@
   font-size:46px; letter-spacing:0; text-align:center; padding:18px 26px 20px;
 }
 .mpc-slide .s-band.is-foot{ bottom:4.5%; }
+.mpc-slide .s-band.is-foot.is-above-more{ bottom:9%; }
 .mpc-slide.is-story .s-band.is-foot{ bottom:15%; }
 
 /* labels */

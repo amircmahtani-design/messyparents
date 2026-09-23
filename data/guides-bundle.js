@@ -57,10 +57,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Fewer wet nappies than usual, or dark urine",
       "Refusing most feeds",
-      "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
+      "Floppy, unusually sleepy or hard to wake",
       "Vomiting with fever or obvious illness"
     ]
   },
@@ -86,10 +87,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Fewer wet nappies than usual, or dark urine",
         "Refusing most feeds",
-        "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
+        "Floppy, unusually sleepy or hard to wake",
         "Vomiting with fever or obvious illness"
       ]
     },
@@ -290,9 +292,10 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A struggle to breathe — call your local emergency number now.",
     "items": [
       "Hives, swelling or vomiting after a new food",
-      "Breathing difficulty after food — call your local emergency number now",
+      "Breathing difficulty after food",
       "Feeding or swallowing is not progressing",
       "You need an allergy plan before starting"
     ]
@@ -319,9 +322,10 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A struggle to breathe — call your local emergency number now.",
       "items": [
         "Hives, swelling or vomiting after a new food",
-        "Breathing difficulty after food — call your local emergency number now",
+        "Breathing difficulty after food",
         "Feeding or swallowing is not progressing",
         "You need an allergy plan before starting"
       ]
@@ -596,8 +600,9 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Your baby is very difficult to wake for feeds — call your local emergency number now",
+      "Your baby is very difficult to wake for feeds",
       "Fewer wet nappies than expected, or weight loss beyond the first week",
       "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
     ]
@@ -623,8 +628,9 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Your baby is very difficult to wake for feeds — call your local emergency number now",
+        "Your baby is very difficult to wake for feeds",
         "Fewer wet nappies than expected, or weight loss beyond the first week",
         "You feel unable to cope, low, or frightened — this is common, treatable, and worth saying out loud"
       ]
@@ -911,11 +917,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Under three months with 38°C or more",
       "Three to six months with 39°C or more",
       "A rash that does not fade under a glass",
-      "Hard to wake, floppy or struggling to breathe — call your local emergency number now",
+      "Hard to wake, floppy or struggling to breathe",
       "A seizure, very few wet nappies or your instinct says something is wrong"
     ]
   },
@@ -941,11 +948,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Under three months with 38°C or more",
         "Three to six months with 39°C or more",
         "A rash that does not fade under a glass",
-        "Hard to wake, floppy or struggling to breathe — call your local emergency number now",
+        "Hard to wake, floppy or struggling to breathe",
         "A seizure, very few wet nappies or your instinct says something is wrong"
       ]
     },
@@ -1225,10 +1233,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A struggle to breathe — call your local emergency number now.",
     "items": [
       "Your newborn has a temperature of 38°C or more",
       "Your baby feeds much less or is hard to wake",
-      "Breathing looks difficult or your baby seems very unwell — call your local emergency number now"
+      "Breathing looks difficult or your baby seems very unwell"
     ]
   },
   "panel": {
@@ -1252,10 +1261,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A struggle to breathe — call your local emergency number now.",
       "items": [
         "Your newborn has a temperature of 38°C or more",
         "Your baby feeds much less or is hard to wake",
-        "Breathing looks difficult or your baby seems very unwell — call your local emergency number now"
+        "Breathing looks difficult or your baby seems very unwell"
       ]
     },
     "dont": null,
@@ -1309,11 +1319,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Blue, grey or unusually pale colour — call your local emergency number now",
-      "Pauses in breathing, or breathing that looks like hard work — call your local emergency number now",
-      "Grunting with every breath, nostrils flaring, or the chest pulling in — call your local emergency number now",
-      "A baby who is floppy, very hard to wake, or not feeding — call your local emergency number now",
+      "Blue, grey or unusually pale colour",
+      "Pauses in breathing, or breathing that looks like hard work",
+      "Grunting with every breath, nostrils flaring, or the chest pulling in",
+      "A baby who is floppy, very hard to wake, or not feeding",
       "Any instinct that something is wrong — you don't need to justify it"
     ]
   },
@@ -1340,11 +1351,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Blue, grey or unusually pale colour — call your local emergency number now",
-        "Any pause in breathing — call your local emergency number now",
-        "Breathing that looks like hard work — chest pulling in, nostrils flaring — call your local emergency number now",
-        "Floppy, very hard to wake, or not feeding — call your local emergency number now",
+        "Blue, grey or unusually pale colour",
+        "Any pause in breathing",
+        "Breathing that looks like hard work — chest pulling in, nostrils flaring",
+        "Floppy, very hard to wake, or not feeding",
         "Any instinct that something is wrong"
       ]
     },
@@ -1513,9 +1525,10 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, or a pause or struggle to breathe — call your local emergency number now.",
     "items": [
-      "Breathing looks like hard work — chest pulling in, nostrils flaring, grunting — call your local emergency number now",
-      "Any pause in breathing, or blue or grey colour — call your local emergency number now",
+      "Breathing looks like hard work — chest pulling in, nostrils flaring, grunting",
+      "Any pause in breathing, or blue or grey colour",
       "She's not feeding properly because of it",
       "She has a fever, or she is unusually sleepy or hard to wake",
       "She's under three months and has any fever at all"
@@ -1542,9 +1555,10 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, or a pause in breathing — call your local emergency number now.",
       "items": [
         "Chest pulling in, flaring nostrils, grunting",
-        "Pauses, or blue or grey colour — call your local emergency number now",
+        "Pauses, or blue or grey colour",
         "She can't feed properly",
         "Fever, especially under three months"
       ]
@@ -1613,12 +1627,13 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Grunting with every breath, or breathing that looks like hard work — call your local emergency number now",
+      "Grunting with every breath, or breathing that looks like hard work",
       "The chest pulling in under the ribs, or nostrils flaring",
-      "Any pause in breathing — call your local emergency number now",
-      "Blue, grey or unusually pale colour — call your local emergency number now",
-      "A baby who is floppy, very hard to wake, or won’t feed — call your local emergency number now"
+      "Any pause in breathing",
+      "Blue, grey or unusually pale colour",
+      "A baby who is floppy, very hard to wake, or won’t feed"
     ]
   },
   "panel": {
@@ -1644,12 +1659,13 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Grunting with every single breath — call your local emergency number now",
+        "Grunting with every single breath",
         "Chest pulling in, or nostrils flaring",
-        "Any pause in breathing — call your local emergency number now",
-        "Blue, grey or unusually pale colour — call your local emergency number now",
-        "Floppy, very hard to wake, or won’t feed — call your local emergency number now"
+        "Any pause in breathing",
+        "Blue, grey or unusually pale colour",
+        "Floppy, very hard to wake, or won’t feed"
       ]
     },
     "dont": null,
@@ -1720,10 +1736,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Difficulty breathing, or persistent choking or coughing — call your local emergency number now",
-      "Blue or grey colour — call your local emergency number now",
-      "A baby who doesn't recover quickly, or is floppy or unresponsive — call your local emergency number now"
+      "Difficulty breathing, or persistent choking or coughing",
+      "Blue or grey colour",
+      "A baby who doesn't recover quickly, or is floppy or unresponsive"
     ]
   },
   "panel": {
@@ -1748,11 +1765,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Breathing difficulty or persistent choking — call your local emergency number now",
-        "Blue or grey colour — call your local emergency number now",
+        "Breathing difficulty or persistent choking",
+        "Blue or grey colour",
         "Doesn’t recover quickly",
-        "Floppy or unresponsive — call your local emergency number now"
+        "Floppy or unresponsive"
       ]
     },
     "dont": null,
@@ -1922,12 +1940,13 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Blue or grey colour, especially around the lips — call your local emergency number now",
-      "A pause in breathing with colour change or floppiness — call your local emergency number now",
-      "Chest pulling in hard, nostrils flaring, grunting on every breath — call your local emergency number now",
+      "Blue or grey colour, especially around the lips",
+      "A pause in breathing with colour change or floppiness",
+      "Chest pulling in hard, nostrils flaring, grunting on every breath",
       "Persistent fast breathing at rest, in a calm baby",
-      "A baby who has stopped feeding, or is very hard to wake — call your local emergency number now"
+      "A baby who has stopped feeding, or is very hard to wake"
     ]
   },
   "panel": {
@@ -1952,10 +1971,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, or a pause or struggle to breathe — call your local emergency number now.",
       "items": [
-        "Blue or grey, especially the lips — call your local emergency number now",
-        "A pause with colour change or floppiness — call your local emergency number now",
-        "Chest pulling in, flaring, grunting every breath — call your local emergency number now",
+        "Blue or grey, especially the lips",
+        "A pause with colour change or floppiness",
+        "Chest pulling in, flaring, grunting every breath",
         "Fast at rest in a calm baby",
         "Stopped feeding"
       ]
@@ -2430,10 +2450,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Feeds are taking much longer than expected",
       "She isn't finishing the volumes she's meant to",
-      "She's very hard to wake for feeds — call your local emergency number now",
+      "She's very hard to wake for feeds",
       "She's vomiting, or refusing feeds",
       "You're consistently unable to keep to the interval"
     ]
@@ -2461,10 +2482,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Feeds taking much longer",
         "Not finishing volumes",
-        "Very hard to wake — call your local emergency number now",
+        "Very hard to wake",
         "Vomiting or refusing"
       ]
     },
@@ -3643,11 +3665,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "The abdomen is firm, swollen, or shiny",
       "Vomiting, especially green or bloody",
       "Blood in the stool, or she stops passing anything",
-      "She's unusually sleepy, floppy, or her colour changes — call your local emergency number now",
+      "She's unusually sleepy, floppy, or her colour changes",
       "You're at home and any of this appears — same day, not tomorrow"
     ]
   },
@@ -3673,11 +3696,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "The abdomen is firm, swollen, or shiny",
         "Vomiting, especially green or bloody",
         "Blood in the stool, or she stops passing anything",
-        "She's unusually sleepy, floppy, or her colour changes — call your local emergency number now",
+        "She's unusually sleepy, floppy, or her colour changes",
         "You're at home and any of this appears — same day, not tomorrow"
       ]
     },
@@ -4245,10 +4269,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "A weak, high-pitched or unusual cry",
       "Fever, vomiting or blood in the nappy",
-      "Refusing feeds or being unusually floppy — call your local emergency number now",
+      "Refusing feeds or being unusually floppy",
       "Crying that is constant rather than patterned",
       "You feel close to losing control"
     ]
@@ -4275,10 +4300,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "A weak, high-pitched or unusual cry",
         "Fever, vomiting or blood in the nappy",
-        "Refusing feeds or being unusually floppy — call your local emergency number now",
+        "Refusing feeds or being unusually floppy",
         "Crying that is constant rather than patterned",
         "You feel close to losing control"
       ]
@@ -4605,12 +4631,13 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "A weak, high-pitched or unusual cry",
-      "Pale, blue or grey colour — call your local emergency number now",
-      "Choking or struggling to breathe — call your local emergency number now",
+      "Pale, blue or grey colour",
+      "Choking or struggling to breathe",
       "Crying that cannot be settled",
-      "Floppy, hard to wake or refusing feeds — call your local emergency number now"
+      "Floppy, hard to wake or refusing feeds"
     ]
   },
   "panel": {
@@ -4635,12 +4662,13 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "A weak, high-pitched or unusual cry",
-        "Pale, blue or grey colour — call your local emergency number now",
-        "Choking or struggling to breathe — call your local emergency number now",
+        "Pale, blue or grey colour",
+        "Choking or struggling to breathe",
         "Crying that cannot be settled",
-        "Floppy, hard to wake or refusing feeds — call your local emergency number now"
+        "Floppy, hard to wake or refusing feeds"
       ]
     },
     "quick": "Groaning, fidgeting and throat clearing can all happen in normal newborn sleep. Watch colour, breathing and whether the sound is truly different."
@@ -4787,9 +4815,10 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "A fever, especially under three months",
-      "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
+      "Floppy, unusually sleepy or hard to wake",
       "Poor feeding or fewer wet nappies",
       "Fast breathing with flushed skin",
       "Unwell after being somewhere very hot"
@@ -4817,9 +4846,10 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "A fever, especially under three months",
-        "Floppy, unusually sleepy or hard to wake — call your local emergency number now",
+        "Floppy, unusually sleepy or hard to wake",
         "Poor feeding or fewer wet nappies",
         "Fast breathing with flushed skin",
         "Unwell after being somewhere very hot"
@@ -5152,11 +5182,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Vomiting repeatedly or unable to keep feeds down",
       "Fewer wet nappies",
       "A non-fading rash",
-      "Very hard to wake or unusually unresponsive — call your local emergency number now",
+      "Very hard to wake or unusually unresponsive",
       "A swollen painful tummy or blood in poo after rotavirus vaccine"
     ]
   },
@@ -5183,11 +5214,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Vomiting repeatedly or unable to keep feeds down",
         "Fewer wet nappies",
         "A non-fading rash",
-        "Very hard to wake or unusually unresponsive — call your local emergency number now",
+        "Very hard to wake or unusually unresponsive",
         "A swollen painful tummy or blood in poo after rotavirus vaccine"
       ]
     },
@@ -5692,8 +5724,9 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She goes pale, blue or limp during feeds — call your local emergency number now",
+      "She goes pale, blue or limp during feeds",
       "She coughs, splutters or chokes at most feeds",
       "Vomiting is forceful, or green, or has blood in it",
       "She's not gaining weight despite feeding well",
@@ -5722,8 +5755,9 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She goes pale, blue or limp during feeds — call your local emergency number now",
+        "She goes pale, blue or limp during feeds",
         "She coughs, splutters or chokes at most feeds",
         "Vomiting is forceful, or green, or has blood in it",
         "She's not gaining weight despite feeding well",
@@ -5872,8 +5906,9 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's hard to wake, or floppy when awake — call your local emergency number now",
+      "She's hard to wake, or floppy when awake",
       "She's feeding poorly as well as sleeping more",
       "Fewer wet nappies",
       "She has a fever, or seems unwell",
@@ -5902,8 +5937,9 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's hard to wake, or floppy when awake — call your local emergency number now",
+        "She's hard to wake, or floppy when awake",
         "She's feeding poorly as well as sleeping more",
         "Fewer wet nappies",
         "She has a fever, or seems unwell",
@@ -6676,12 +6712,13 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "True yellow, yellow-green or green vomit",
       "Blood or anything like coffee grounds",
       "Forceful or repeated projectile vomiting",
       "A firm or swollen tummy",
-      "Floppy, unusually sleepy or refusing feeds — call your local emergency number now"
+      "Floppy, unusually sleepy or refusing feeds"
     ]
   },
   "panel": {
@@ -6706,12 +6743,13 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "True yellow, yellow-green or green vomit",
         "Blood or anything like coffee grounds",
         "Forceful or repeated projectile vomiting",
         "A firm or swollen tummy",
-        "Floppy, unusually sleepy or refusing feeds — call your local emergency number now"
+        "Floppy, unusually sleepy or refusing feeds"
       ]
     },
     "quick": "Creamy curdled milk can look pale yellow. True yellow, yellow-green or green vomit, blood or repeated forceful vomiting needs urgent medical advice."
@@ -6767,10 +6805,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's floppy, or you can't wake her properly — call your local emergency number now",
-      "She's pale, grey or blue, even briefly — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's floppy, or you can't wake her properly",
+      "She's pale, grey or blue, even briefly",
+      "Breathing is fast, laboured, or has pauses",
       "A fever, if she's under three months old"
     ]
   },
@@ -6797,10 +6836,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's floppy, or you can't wake her properly — call your local emergency number now",
-        "She's pale, grey or blue, even briefly — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's floppy, or you can't wake her properly",
+        "She's pale, grey or blue, even briefly",
+        "Breathing is fast, laboured, or has pauses",
         "A fever, if she's under three months old"
       ]
     },
@@ -6857,11 +6897,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "A floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "The cry is high-pitched, weak, or unlike her usual cry",
       "She's unable to stop crying for hours and nothing reaches her",
       "A fever, if she's under three months old",
-      "She's floppy, or refusing feeds entirely — call your local emergency number now",
+      "She's floppy, or refusing feeds entirely",
       "You feel close to your limit — put her down safely and ring someone now"
     ]
   },
@@ -6889,11 +6930,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "A floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "The cry is high-pitched, weak, or unlike her usual cry",
         "She's unable to stop crying for hours and nothing reaches her",
         "A fever, if she's under three months old",
-        "She's floppy, or refusing feeds entirely — call your local emergency number now",
+        "She's floppy, or refusing feeds entirely",
         "You feel close to your limit — put her down safely and ring someone now"
       ]
     },
@@ -7040,10 +7082,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause in breathing, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Her breathing changes or pauses when you lay her down — call your local emergency number now",
-      "She goes pale, grey or blue — call your local emergency number now",
-      "She's floppy, or very hard to wake — call your local emergency number now",
+      "Her breathing changes or pauses when you lay her down",
+      "She goes pale, grey or blue",
+      "She's floppy, or very hard to wake",
       "She's unable to stop crying for hours in a way that isn't her usual"
     ]
   },
@@ -7069,10 +7112,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause in breathing, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Her breathing changes or pauses when you lay her down — call your local emergency number now",
-        "She goes pale, grey or blue — call your local emergency number now",
-        "She's floppy, or very hard to wake — call your local emergency number now",
+        "Her breathing changes or pauses when you lay her down",
+        "She goes pale, grey or blue",
+        "She's floppy, or very hard to wake",
         "She's unable to stop crying for hours in a way that isn't her usual"
       ]
     },
@@ -7129,12 +7173,13 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Rhythmic movement that doesn't stop when you hold the limb",
-      "She goes pale, grey or blue, even briefly — call your local emergency number now",
-      "She's very hard to wake afterwards — call your local emergency number now",
-      "Breathing pauses, or breathing that looks like hard work — call your local emergency number now",
-      "She's floppy, or unusually unresponsive — call your local emergency number now"
+      "She goes pale, grey or blue, even briefly",
+      "She's very hard to wake afterwards",
+      "Breathing pauses, or breathing that looks like hard work",
+      "She's floppy, or unusually unresponsive"
     ]
   },
   "panel": {
@@ -7160,12 +7205,13 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Rhythmic movement that doesn't stop when you hold the limb",
-        "She goes pale, grey or blue, even briefly — call your local emergency number now",
-        "She's very hard to wake afterwards — call your local emergency number now",
-        "Breathing pauses, or breathing that looks like hard work — call your local emergency number now",
-        "She's floppy, or unusually unresponsive — call your local emergency number now"
+        "She goes pale, grey or blue, even briefly",
+        "She's very hard to wake afterwards",
+        "Breathing pauses, or breathing that looks like hard work",
+        "She's floppy, or unusually unresponsive"
       ]
     },
     "quick": "This is usually the startle reflex or a normal change between sleep cycles. A safe swaddle in the early months and waiting a moment can help."
@@ -7220,10 +7266,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "You can't wake her for a feed at all — call your local emergency number now",
-      "She's floppy, pale or grey — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "You can't wake her for a feed at all",
+      "She's floppy, pale or grey",
+      "Breathing is fast, laboured, or has pauses",
       "A fever, if she's under three months old"
     ]
   },
@@ -7250,10 +7297,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "You can't wake her for a feed at all — call your local emergency number now",
-        "She's floppy, pale or grey — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "You can't wake her for a feed at all",
+        "She's floppy, pale or grey",
+        "Breathing is fast, laboured, or has pauses",
         "A fever, if she's under three months old"
       ]
     },
@@ -7310,10 +7358,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's floppy, or very hard to wake — call your local emergency number now",
-      "She's pale, grey or blue — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's floppy, or very hard to wake",
+      "She's pale, grey or blue",
+      "Breathing is fast, laboured, or has pauses",
       "A fever, if she's under three months old"
     ]
   },
@@ -7340,10 +7389,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's floppy, or very hard to wake — call your local emergency number now",
-        "She's pale, grey or blue — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's floppy, or very hard to wake",
+        "She's pale, grey or blue",
+        "Breathing is fast, laboured, or has pauses",
         "A fever, if she's under three months old"
       ]
     },
@@ -7399,10 +7449,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She goes floppy or unresponsive — call your local emergency number now",
-      "She's pale, grey or blue — call your local emergency number now",
-      "Breathing pauses, or looks like hard work — call your local emergency number now",
+      "She goes floppy or unresponsive",
+      "She's pale, grey or blue",
+      "Breathing pauses, or looks like hard work",
       "A fever, if she's under three months old"
     ]
   },
@@ -7428,10 +7479,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She goes floppy or unresponsive — call your local emergency number now",
-        "She's pale, grey or blue — call your local emergency number now",
-        "Breathing pauses, or looks like hard work — call your local emergency number now",
+        "She goes floppy or unresponsive",
+        "She's pale, grey or blue",
+        "Breathing pauses, or looks like hard work",
         "A fever, if she's under three months old"
       ]
     },
@@ -7487,10 +7539,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's floppy, or doesn't wake fully when you try — call your local emergency number now",
-      "She's pale, mottled, blue or grey — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's floppy, or doesn't wake fully when you try",
+      "She's pale, mottled, blue or grey",
+      "Breathing is fast, laboured, or has pauses",
       "She's unusually cool or hot to touch",
       "A fever, if she's under three months old"
     ]
@@ -7517,10 +7570,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's floppy, or doesn't wake fully when you try — call your local emergency number now",
-        "She's pale, mottled, blue or grey — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's floppy, or doesn't wake fully when you try",
+        "She's pale, mottled, blue or grey",
+        "Breathing is fast, laboured, or has pauses",
         "She's unusually cool or hot to touch",
         "A fever, if she's under three months old"
       ]
@@ -7578,10 +7632,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Gasping, choking, or pauses in her breathing at night",
-      "She goes pale, grey or blue — call your local emergency number now",
-      "She's floppy, or very hard to wake — call your local emergency number now",
+      "She goes pale, grey or blue",
+      "She's floppy, or very hard to wake",
       "Any thoughts of harming yourself or her — ring your doctor or a crisis line now"
     ]
   },
@@ -7608,10 +7663,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Gasping, choking, or pauses in her breathing at night",
-        "She goes pale, grey or blue — call your local emergency number now",
-        "She's floppy, or very hard to wake — call your local emergency number now",
+        "She goes pale, grey or blue",
+        "She's floppy, or very hard to wake",
         "Any thoughts of harming yourself or her — ring your doctor or a crisis line now"
       ]
     },
@@ -7666,11 +7722,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "You can't wake her for a feed at all — call your local emergency number now",
-      "Her breathing pauses, or looks like hard work — call your local emergency number now",
-      "She's pale, grey or blue — call your local emergency number now",
-      "She's floppy, or unusually unresponsive — call your local emergency number now",
+      "You can't wake her for a feed at all",
+      "Her breathing pauses, or looks like hard work",
+      "She's pale, grey or blue",
+      "She's floppy, or unusually unresponsive",
       "A fever, at any point in the first three months"
     ]
   },
@@ -7696,11 +7753,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "You can't wake her for a feed at all — call your local emergency number now",
-        "Her breathing pauses, or looks like hard work — call your local emergency number now",
-        "She's pale, grey or blue — call your local emergency number now",
-        "She's floppy, or unusually unresponsive — call your local emergency number now",
+        "You can't wake her for a feed at all",
+        "Her breathing pauses, or looks like hard work",
+        "She's pale, grey or blue",
+        "She's floppy, or unusually unresponsive",
         "A fever, at any point in the first three months"
       ]
     },
@@ -7757,10 +7815,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's floppy, or very hard to wake — call your local emergency number now",
-      "She's pale, grey or blue — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's floppy, or very hard to wake",
+      "She's pale, grey or blue",
+      "Breathing is fast, laboured, or has pauses",
       "A fever, if she's under three months old"
     ]
   },
@@ -7787,10 +7846,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's floppy, or very hard to wake — call your local emergency number now",
-        "She's pale, grey or blue — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's floppy, or very hard to wake",
+        "She's pale, grey or blue",
+        "Breathing is fast, laboured, or has pauses",
         "A fever, if she's under three months old"
       ]
     },
@@ -7846,11 +7906,12 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "Her breathing changes or pauses when she's reclined — call your local emergency number now",
-      "She goes pale, grey or blue — call your local emergency number now",
-      "She's choking or struggling to breathe — call your local emergency number now",
-      "She's floppy, or very hard to wake — call your local emergency number now"
+      "Her breathing changes or pauses when she's reclined",
+      "She goes pale, grey or blue",
+      "She's choking or struggling to breathe",
+      "She's floppy, or very hard to wake"
     ]
   },
   "panel": {
@@ -7876,11 +7937,12 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "Her breathing changes or pauses when she's reclined — call your local emergency number now",
-        "She goes pale, grey or blue — call your local emergency number now",
-        "She's choking or struggling to breathe — call your local emergency number now",
-        "She's floppy, or very hard to wake — call your local emergency number now"
+        "Her breathing changes or pauses when she's reclined",
+        "She goes pale, grey or blue",
+        "She's choking or struggling to breathe",
+        "She's floppy, or very hard to wake"
       ]
     },
     "quick": "A night walk is usually fine and can help her settle. Keep the pram uncovered, dress her for the weather and move her to a flat sleep surface when you get home."
@@ -8024,10 +8086,11 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
-      "She's floppy, or you can't wake her properly — call your local emergency number now",
-      "She's pale, grey or blue — call your local emergency number now",
-      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's floppy, or you can't wake her properly",
+      "She's pale, grey or blue",
+      "Breathing is fast, laboured, or has pauses",
       "A fever, if she's under three months old"
     ]
   },
@@ -8054,10 +8117,11 @@ var GUIDES = [
     },
     "warn": {
       "title": "Call your doctor immediately if",
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
-        "She's floppy, or you can't wake her properly — call your local emergency number now",
-        "She's pale, grey or blue — call your local emergency number now",
-        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's floppy, or you can't wake her properly",
+        "She's pale, grey or blue",
+        "Breathing is fast, laboured, or has pauses",
         "A fever, if she's under three months old"
       ]
     },

@@ -69,7 +69,8 @@
     var p = (g && g.panel) || {};
     function blk(b) {
       if (!b) return "";
-      return (b.title || "") + "|" + ((b.items || []).join("~")) + "|" + (b.text || "");
+      return (b.title || "") + "|" + (b.lead || "") + "|" +
+        ((b.items || []).join("~")) + "|" + (b.text || "");
     }
     return hash([
       g && g.id, g && g.title, g && g.summary, p.eyebrow, p.hero, p.quick, p.layout,
@@ -109,13 +110,22 @@
 
   /* ---- one of the three columns ---------------------------------------- */
 
+  /* A column may carry one line between its heading and its bullets. Only the
+     warning column uses it, and only to say once what to do about the signs
+     that are an emergency — before the signs, so it is read rather than found
+     at the end of a bullet. */
+  function leadHTML(block) {
+    return (block && block.lead) ? '<p class="g-lead">' + block.lead + "</p>" : "";
+  }
+
   function col(kind, block) {
     if (!block) return "";
     var body = (block.items && block.items.length)
       ? "<ul>" + block.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul>"
       : "<p>" + (block.text || "") + "</p>";
     return '<div class="g-col"><div class="g-colhead"><span class="g-badge" aria-hidden="true">' +
-      BADGE[kind] + '</span>\n      <h2>' + (block.title || "") + "</h2></div>" + body + "</div>";
+      BADGE[kind] + '</span>\n      <h2>' + (block.title || "") + "</h2></div>" +
+      leadHTML(block) + body + "</div>";
   }
 
   /* ---- the guide panel -------------------------------------------------
@@ -262,7 +272,8 @@
     if (!prose.trim()) return "";
     var callout = "";
     if (g.callout && g.callout.items && g.callout.items.length) {
-      callout = '<div class="callout"><h3>' + (g.callout.title || "Call your doctor immediately if") + "</h3><ul>" +
+      callout = '<div class="callout"><h3>' + (g.callout.title || "Call your doctor immediately if") + "</h3>" +
+        leadHTML(g.callout) + "<ul>" +
         g.callout.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul></div>";
     }
     /* The guide's prose has its own <h2>s. Left alone they would sit at the

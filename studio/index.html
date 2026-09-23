@@ -402,6 +402,8 @@
         <div class="col-card">
           <span class="tag warn">⚠ Amber column</span>
           <div class="field"><label>Heading</label><input id="f_w_title" type="text"></div>
+          <div class="field"><label>Emergency line <span class="hint">&mdash; one line, shown between the heading and the bullets. Use it to say once what to do about the signs that are an emergency, so no bullet has to carry it. Leave empty to show none.</span></label>
+            <textarea id="f_w_lead" rows="2"></textarea></div>
           <div class="field"><label>Bullets <span class="hint">— one per line</span></label><textarea id="f_w_items" rows="5"></textarea></div>
         </div>
 
@@ -439,6 +441,8 @@
         <span class="tag warn">⚠ Call your doctor immediately if</span>
         <div class="field"><label>Heading</label>
           <input id="f_c_title" type="text" placeholder="Call your doctor immediately if"></div>
+        <div class="field"><label>Emergency line <span class="hint">&mdash; one line, shown between the heading and the bullets. Use it to say once what to do about the signs that are an emergency, so no bullet has to carry it. Leave empty to show none.</span></label>
+          <textarea id="f_c_lead" rows="2"></textarea></div>
         <div class="field"><label>Bullets <span class="hint">&mdash; one per line. Leave empty to hide this box on the guide.</span></label>
           <textarea id="f_c_items" rows="5"></textarea></div>
       </div>
@@ -1298,6 +1302,7 @@ function fillForm(g){
   $("#f_n_title").value = (p.normal&&p.normal.title) || "";
   $("#f_n_items").value = itemsToLines(p.normal&&p.normal.items);
   $("#f_w_title").value = (p.warn&&p.warn.title) || "";
+  $("#f_w_lead").value  = (p.warn&&p.warn.lead) || "";
   $("#f_w_items").value = itemsToLines(p.warn&&p.warn.items);
   $("#f_h_title").value = (p.helped&&p.helped.title) || "";
   $("#f_h_items").value = itemsToLines(p.helped&&p.helped.items);
@@ -1324,6 +1329,7 @@ function fillForm(g){
   /* The red box. Always present, never added — every guide should be able to
      say when to stop reading and call someone. */
   $("#f_c_title").value = (g.callout && g.callout.title) || "";
+  $("#f_c_lead").value  = (g.callout && g.callout.lead) || "";
   $("#f_c_items").value = itemsToLines(g.callout && g.callout.items);
 
 
@@ -1387,6 +1393,8 @@ function draftGuide(){
   if(hero) g.panel.hero = hero; else delete g.panel.hero;
   g.panel.normal = { title:$("#f_n_title").value, items:linesToItems($("#f_n_items").value) };
   g.panel.warn   = { title:$("#f_w_title").value, items:linesToItems($("#f_w_items").value) };
+  var _wl = $("#f_w_lead").value.trim();
+  if(_wl) g.panel.warn.lead = _wl;
   g.panel.helped = { title:$("#f_h_title").value, items:linesToItems($("#f_h_items").value) };
   var _di = linesToItems($("#f_d_items").value);
   if($("#f_d_on").checked && _di.length){
@@ -1408,6 +1416,8 @@ function draftGuide(){
   const _ci = linesToItems($("#f_c_items").value);
   if(_ci.length){
     g.callout = { title: ($("#f_c_title").value.trim() || "Call your doctor immediately if"), items:_ci };
+    var _cl = $("#f_c_lead").value.trim();
+    if(_cl) g.callout.lead = _cl;
   } else { delete g.callout; }
 
   /* --- Search metadata -------------------------------------------------
@@ -1489,7 +1499,7 @@ function classifyTopic(title, rest){
 function guideText(){
   return [$("#f_summary").value, $("#f_eyebrow").value,
     $("#f_n_title").value, $("#f_n_items").value,
-    $("#f_w_title").value, $("#f_w_items").value,
+    $("#f_w_title").value, $("#f_w_lead").value, $("#f_w_items").value,
     $("#f_h_title").value, $("#f_h_items").value,
     String($("#f_d_on").checked), $("#f_d_title").value, $("#f_d_items").value,
     $("#f_quick").value].join(" ");

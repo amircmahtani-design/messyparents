@@ -271,6 +271,9 @@ h3{font-size:1.3rem}
    which read as a mistake rather than as space. */
 .callout h3{font-family:var(--display);color:var(--orange);font-size:1.35rem;margin:0 0 9px}
 .callout p:last-child,.callout ul:last-child{margin-bottom:0}
+/* The emergency line, same idea as in the panel's warning column: said once,
+   above the signs, with a rule rather than a box of its own. */
+.callout .g-lead{margin:0 0 10px;padding-left:14px;border-left:3px solid var(--orange)}
 
 .quiet{border-left:4px solid var(--yellow);padding:3px 0 3px 16px;margin:24px 0;
   font-family:var(--hand);font-size:1.18rem;color:var(--ink-70)}

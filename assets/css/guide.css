@@ -74,6 +74,13 @@
      stranded on its own. Nothing else about the heading changes. */
   .gpanel .g-colhead h2{font-size:24px;font-weight:400;margin:0;line-height:1.05;text-wrap:balance}
   .gpanel .g-badge{flex:none;margin-top:1px}
+  /* The one line that carries the emergency instruction, between the warning
+     heading and its bullets. A rule down its left edge rather than a box: it
+     is part of the column, not another thing to read. */
+  .gpanel .g-col .g-lead{
+    font-size:19px;line-height:1.4;color:var(--g-ink-soft);
+    margin:0 0 13px;padding-left:16px;border-left:3px solid #c9761f;
+  }
   .gpanel .g-col ul{list-style:none;margin:0;padding:0;font-size:20px;line-height:1.45}
   .gpanel .g-col li{color:var(--g-ink-soft);margin-bottom:9px;padding-left:22px;position:relative}
   .gpanel .g-col li::before{content:"•";position:absolute;left:3px;top:-1px;color:#a08a5f;font-size:22px;line-height:1.4}

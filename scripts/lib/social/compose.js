@@ -510,9 +510,14 @@ function buildSlides(guide, opts) {
       lines: headline(heading, family, 1),
       items: shown.map(t => ({ label: condense(t, labelWords), icon: objectFor(t), source: t })),
       truncatedItems: Math.max(0, items.length - shown.length),
+      /* The warning column says once, above its bullets, what to do about the
+         signs that are an emergency. The bullets no longer carry it, so
+         without this the slide would show the signs and not the instruction —
+         the one thing a warning slide must not drop. */
+      band: clean((p[key] && p[key].lead) || "") || undefined,
       artNote,
       sourceField: "panel." + key + ".items",
-      sourceText: items.concat([heading, guide.title]).filter(Boolean),
+      sourceText: items.concat([heading, guide.title, clean((p[key] && p[key].lead) || "")]).filter(Boolean),
       optional,
       movable: true
     }));
@@ -620,10 +625,11 @@ function buildStory(guide, opts) {
       items: warn.slice(0, BUDGET.warnItems)
         .map(t => ({ label: condense(t, BUDGET.warnLabelWords), icon: objectFor(t), source: t })),
       truncatedItems: Math.max(0, warn.length - BUDGET.warnItems),
+      band: clean(p.warn.lead || "") || undefined,
       cta: CHROME.storyTap,
       artNote: "the parents attentive and calm, holding the baby gently",
       sourceField: "panel.warn.items",
-      sourceText: warn.concat([clean(p.warn.title)]),
+      sourceText: warn.concat([clean(p.warn.title), clean(p.warn.lead || "")]).filter(Boolean),
       optional: false, movable: true
     }));
   }

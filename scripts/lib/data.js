@@ -268,6 +268,7 @@ function normaliseGuide(raw, ctx) {
         [panel.quick, summary,
          (panel.normal && panel.normal.items || []).join(" "),
          (panel.helped && panel.helped.items || []).join(" "),
+         (panel.warn   && panel.warn.lead    || ""),
          (panel.warn   && panel.warn.items   || []).join(" "),
          (panel.dont   && panel.dont.items   || []).join(" ")
         ].join(" ")
