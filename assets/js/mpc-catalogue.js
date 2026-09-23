@@ -174,23 +174,39 @@
      where it usually means a near miss worth catching; at four letters or
      fewer it is almost always an accident — a mistyped "ow" sits inside how,
      know, down, slow and growth, which is most of the site. */
-  function termScore(term, title, summary, topic, body) {
+  /* A term in a short title is a stronger signal than the same term in a long
+     one. "Why won't my baby nap?" is more about naps than "Why does my baby
+     nap briefly but sleep for hours at night?", though both say the word, so
+     the title's share of the match counts. Scaled so a title of the site's
+     usual length scores what it always did, and by a square root so a long
+     title is discounted rather than dismissed.
+
+     This also evens out an accident of history: the guides in the first
+     batches carry no keywords, and without it they lose to newer guides on
+     their own subject purely for having less metadata. */
+  var TYPICAL_TITLE = 6;
+  function titleWeight(title) {
+    var n = title.split(/\s+/).filter(Boolean).length;
+    return n ? Math.sqrt(TYPICAL_TITLE / n) : 1;
+  }
+
+  function termScore(term, h) {
     var word = new RegExp("\\b" + escRe(term) + "\\b");
     var pre = new RegExp("\\b" + escRe(term));
     var loose = term.length >= 5;
     var s = 0;
-    if (word.test(title)) s += 20;
-    else if (pre.test(title)) s += 10;
-    else if (loose && title.indexOf(term) !== -1) s += 4;
+    if (word.test(h.title)) s += 20 * h.tw;
+    else if (pre.test(h.title)) s += 10 * h.tw;
+    else if (loose && h.title.indexOf(term) !== -1) s += 4 * h.tw;
 
-    if (word.test(summary)) s += 7;
-    else if (pre.test(summary)) s += 4;
-    else if (loose && summary.indexOf(term) !== -1) s += 3;
+    if (word.test(h.summary)) s += 7;
+    else if (pre.test(h.summary)) s += 4;
+    else if (loose && h.summary.indexOf(term) !== -1) s += 3;
 
-    if (pre.test(topic)) s += 4;
+    if (pre.test(h.topic)) s += 4;
 
-    if (word.test(body)) s += 2;
-    else if (pre.test(body)) s += 1;
+    if (word.test(h.body)) s += 2;
+    else if (pre.test(h.body)) s += 1;
     return s;
   }
 
@@ -200,8 +216,10 @@
   function haystack(g) {
     if (g.__h && g.__hv === (g.text || "")) return g.__h;
     g.__hv = g.text || "";
+    var lowerTitle = String(g.title || "").toLowerCase();
     g.__h = {
-      title: String(g.title || "").toLowerCase(),
+      title: lowerTitle,
+      tw: titleWeight(lowerTitle),
       summary: String(g.summary || "").toLowerCase(),
       topic: String(topicById(g.topic).label || "").toLowerCase(),
       body: (String(g.keywords || "") + " " + String(g.text || "")).toLowerCase()
@@ -219,7 +237,7 @@
       if (!weak) carrying++;
       var best = 0, variants = stems(terms[i]);
       for (var j = 0; j < variants.length; j++) {
-        best = Math.max(best, termScore(variants[j], h.title, h.summary, h.topic, h.body));
+        best = Math.max(best, termScore(variants[j], h));
       }
       if (best > 0) {
         matched++;

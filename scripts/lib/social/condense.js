@@ -103,7 +103,11 @@ const tidy = (s) => String(s || "").replace(/\s+/g, " ").replace(/^[\s,;:.]+|[\s
    Returns the shortest faithful span it can find, or the best it managed.
    ------------------------------------------------------------------------ */
 function condense(text, maxWords = 7) {
-  const source = tidy(text);
+  /* An aside in brackets is the author talking to the reader — "(this one is
+     key)" — and it is never the thing the label is for. Dropping it is a
+     deletion like any other here, and it is done before anything else so the
+     rest of the line is what gets measured. */
+  const source = tidy(String(text == null ? "" : text).replace(/\s*\([^()]*\)\s*/g, " "));
   if (!source) return "";
   if (words(source).length <= maxWords) return capitalise(source);
 

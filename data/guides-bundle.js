@@ -4248,7 +4248,7 @@ var GUIDES = [
     "items": [
       "A weak, high-pitched or unusual cry",
       "Fever, vomiting or blood in the nappy",
-      "Refusing feeds or being unusually floppy",
+      "Refusing feeds or being unusually floppy — call your local emergency number now",
       "Crying that is constant rather than patterned",
       "You feel close to losing control"
     ]
@@ -4278,7 +4278,7 @@ var GUIDES = [
       "items": [
         "A weak, high-pitched or unusual cry",
         "Fever, vomiting or blood in the nappy",
-        "Refusing feeds or being unusually floppy",
+        "Refusing feeds or being unusually floppy — call your local emergency number now",
         "Crying that is constant rather than patterned",
         "You feel close to losing control"
       ]
@@ -6743,6 +6743,1353 @@ var GUIDES = [
   ],
   "order": 75,
   "batch": "5"
+},
+{
+  "id": "how-much-sleep-newborn",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "How much should my baby be sleeping?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Somewhere around fourteen to seventeen hours across the day, in pieces. Adding it up is harder than anyone admits.",
+  "keywords": [
+    "newborn sleep hours",
+    "how much sleep baby",
+    "14 to 17 hours",
+    "baby sleep total",
+    "sleep needs newborn"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or you can't wake her properly — call your local emergency number now",
+      "She's pale, grey or blue, even briefly — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Roughly fourteen to seventeen hours across the day",
+        "Broken into stretches, not one long block",
+        "Big variation between babies at the same age",
+        "Short wakings in the middle still count as sleep"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Counting across the whole day, not the night alone",
+        "Remembering that short wakings inside a stretch still count",
+        "Accepting a range instead of chasing a number",
+        "Logging roughly, not to the minute",
+        "Leaving a well baby asleep instead of checking on her"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or you can't wake her properly — call your local emergency number now",
+        "She's pale, grey or blue, even briefly — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "Most newborns sleep for about fourteen to seventeen hours across the whole day. Count naps too, and look at feeding, wet nappies and alertness rather than chasing one exact number."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-do-they-sleep-through",
+    "short-naps-long-nights",
+    "sleeping-more-than-usual"
+  ],
+  "seo": {
+    "description": "Newborns often sleep for fourteen to seventeen hours in short stretches; feeding, wet nappies and alertness matter more than one exact total."
+  },
+  "longform": [
+    {
+      "h": "The counting problem",
+      "t": "We asked how to calculate how much she was sleeping, and then immediately hit the complication: she wakes up with discomfort partway through, settles, and goes back to sleep. Does that stretch count as one sleep or two?\n\nIt counts. Brief wakings inside a longer stretch are normal and they don't reset the clock. If you only count unbroken blocks you'll end up with a total that looks alarming and isn't.\n\nAri at the beginning was only sleeping between 11 and 13 hours a day. We asked her doctor, and whilst it was on the lower side, she had wet diapers, was alert, and was eating and gaining well, she told us its ok. More hours awake so more work for us, but it was ok."
+    },
+    {
+      "h": "The range is wide on purpose",
+      "t": "Fourteen to seventeen hours in twenty-four is the usual figure for a newborn, and the range is that broad because babies genuinely differ.\n\nWe asked whether around fourteen to sixteen hours was all right, and it was. We also asked whether that changed because she was premature and weighed three kilos, and the honest answer is that a premature baby often sleeps more, and that her feeding pattern matters more than her sleep total.\n\nThe number is a guide, not a target. You can't make her hit it and you shouldn't try."
+    },
+    {
+      "h": "What we watched instead",
+      "t": "Whether she was alert and responsive when awake. Whether she was feeding well. Whether the nappies were keeping up.\n\nA baby sleeping at the lower end who is bright, feeding and gaining is fine. A baby at the higher end who is hard to wake and missing feeds is not — and that's a different conversation, particularly if she was born early.\n\nThe total matters less than those other signs and it's the one everyone counts."
+    }
+  ],
+  "order": 76,
+  "batch": "6"
+},
+{
+  "id": "she-wont-sleep-at-all",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Why won't my baby sleep? Is she just not tired?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 4,
+  "summary": "Almost never. A baby who won't go down is usually past the point where she could, not short of the point where she'd need to.",
+  "keywords": [
+    "baby won't sleep",
+    "overtired baby",
+    "not sleepy",
+    "baby fighting sleep",
+    "can't settle baby"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "The cry is high-pitched, weak, or unlike her usual cry",
+      "She's unable to stop crying for hours and nothing reaches her",
+      "A fever, if she's under three months old",
+      "She's floppy, or refusing feeds entirely — call your local emergency number now",
+      "You feel close to your limit — put her down safely and ring someone now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Overtiredness looks exactly like not being tired",
+        "Newborns can't stay awake long before it turns",
+        "Evenings are harder than the rest of the day",
+        "Some days simply go badly"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Going earlier than felt right, before the window shut",
+        "Dark room and continuous white noise",
+        "Go through the list: is she hungry, has she pooped, simply overtired (check when she last slept if you keeping a journal), useful when both parents are hands on. You know whats happening without asking the other parent.",
+        "Movement — carrying, rocking, the pram",
+        "Sticking with one approach instead of trying six in ten minutes",
+        "Handing over before either of us reached the end"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "The cry is high-pitched, weak, or unlike her usual cry",
+        "She's unable to stop crying for hours and nothing reaches her",
+        "A fever, if she's under three months old",
+        "She's floppy, or refusing feeds entirely — call your local emergency number now",
+        "You feel close to your limit — put her down safely and ring someone now"
+      ]
+    },
+    "quick": "A baby who will not settle is often overtired, not wide awake. Try starting earlier, keeping the room dark and handing over before you reach your limit."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "wont-nap",
+    "it-was-the-nappy",
+    "building-a-sleep-schedule"
+  ],
+  "seo": {
+    "description": "A baby who fights sleep may be overtired rather than wide awake; learn the early signs and what can make settling easier."
+  },
+  "longform": [
+    {
+      "h": "Is it possible she's simply not sleepy?",
+      "t": "That was our question, on a day she'd barely slept since nine in the morning. She was feeding well and completely awake, and it seemed reasonable to conclude she just didn't need it.\n\nShe did need sleep. We had simply missed the easy settling window, and by then her whole body was on high alert."
+    },
+    {
+      "h": "Overtired looks like wide awake",
+      "t": "This is the strange bit and it catches everyone. Past a certain point, a tired baby doesn't get sleepier — she gets wired. Alert, jerky, hard to settle, and furious about all of it.\n\nSo the evidence you're reading as \"not tired\" is often the evidence that she's badly overtired.\n\nThe fix isn't more awake time. It's going earlier next time, at the first yawn or glazed stare rather than at the point where she's arching and crying."
+    },
+    {
+      "h": "What happens if she doesn't sleep",
+      "t": "We asked this directly, and the answer was less frightening than the question felt.\n\nA baby who has a bad day catches up. Sleep debt gets repaid, usually that night or the following day. One bad sleep day does not mean you have harmed her.\n\nWhat it does mean is that the following few hours will be harder, and that an earlier bedtime is the correct response rather than a later one.\n\nAn hour in a dark room with white noise. Picking her up made her cry harder. A breastfeed lasted two minutes and changed nothing.\n\nAt that point we asked whether we should just let her cry until she passed out. The honest answer for a baby that young is no — leaving a newborn to cry it out isn't appropriate, and it doesn't work anyway. We obviously didn’t want to do this but we were at nerves end, and had no idea what else to do.\n\nWhat we should have done, and eventually did, was swap over. One person at the end of their patience with an unable to stop crying baby is a much worse combination than a fresh person with the same baby. Handing over isn't giving up.\n\nGo through a list, have it printed if necessary. You are tired, you probably have checked the diapers 16 times that day, and then the moment you haven’t is the time you should have. It always happens. We had a mental list, check when she last ate, her diaper, when she last woke up and when she last played. Once we got that we had a clear idea of what to do next.\n\nPapa always did the exact same thing. The NICU nurses and doctors taught him so many ways to carry the baby, and yet, he was always comfortable holding Ari only one way. It became the way to put Ari to sleep. Feed her always the same way, rock her always the same way, put her to sleep always the same way. Sometimes, rather than adapting and learning all possible ways, if there is one you are really comfortable with mastering that is much better than knowing 5 different ways to hold her. Mama learnt all the others. As a team it worked.\n\nAnd there's a guide next to this one about what we found when we finally checked the nappy."
+    }
+  ],
+  "order": 77,
+  "batch": "6"
+},
+{
+  "id": "it-was-the-nappy",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Could my baby's nappy be stopping her from settling?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Before the dark room and white noise, run the simple checklist. Very often, something physical is bothering her.",
+  "keywords": [
+    "baby crying nappy",
+    "nappy too small",
+    "why is baby crying",
+    "checklist crying baby",
+    "uncomfortable baby"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A hair or thread is wrapped tightly around a finger or toe",
+      "Swelling, or a tender spot she reacts sharply to",
+      "She's unable to stop crying for hours and nothing reaches her",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Physical discomfort is the commonest cause",
+        "A nappy a size too small presses and rubs",
+        "Labels, seams and a twisted sleeve all count",
+        "Too warm is more common than too cold"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Running the physical checks before the settling routine",
+        "Taking the nappy off entirely to test it",
+        "Checking the size each time she moved up a weight band",
+        "Feeling for a damp vest, not just looking",
+        "Undressing her completely when nothing else worked"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A hair or thread is wrapped tightly around a finger or toe",
+        "Swelling, or a tender spot she reacts sharply to",
+        "She's unable to stop crying for hours and nothing reaches her",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "Check the simple physical things first: the nappy, seams, labels, temperature and even a hair around a toe. Sometimes the smallest thing is the whole problem."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nappy-changes-at-night",
+    "she-wont-sleep-at-all",
+    "nappy-rash"
+  ],
+  "seo": {
+    "description": "A wet, tight or uncomfortable nappy can keep a tired baby awake; this simple checklist helps you rule out the physical things first."
+  },
+  "longform": [
+    {
+      "h": "What actually happened",
+      "t": "She was crying because she was tired and wouldn't sleep. We'd fed her fifteen minutes earlier. We tried everything suggested and none of it worked.\n\nThen: her crying stopped as soon as I took off her nappy.\n\nAnd the follow-up question, which was the right one — is it possible the nappies are too small?\n\nThey were."
+    },
+    {
+      "h": "Why this is worth its own guide",
+      "t": "Because the entire internet sends you towards technique. Dark room, white noise, swaddle, rocking, wake windows.\n\nAll of that is useful and none of it will work on a baby who is physically uncomfortable. We spent an hour applying sleep advice to a problem that was solved by a different sized nappy.\n\nSo the order is wrong in most of what you'll read. Physical first, technique second."
+    },
+    {
+      "h": "The checklist we now run first",
+      "t": "Nappy — not just wet or dirty, but the fit. Too tight at the waist or legs, red marks, or a size she's outgrown. Babies move up sizes faster than you'd think and the packet weight ranges are generous.\n\nTemperature — feel her chest or the back of her neck, not her hands. Too warm is more common than too cold.\n\nClothing — a label scratching, a seam under her back, a sleeve twisted, a popper done up wrong.\n\nA hair or thread wrapped around a finger or toe. It sounds far-fetched and it genuinely happens, and it's painful.\n\nAnd trapped air, which is worth checking by burping her before trying another sleep trick.\n\nIf none of those, undress her completely and look at all of her. It takes two minutes and it has ended more evenings than any technique we know.\n\nA baby who can't tell you what's wrong will use the same cry for all of it.\n\nThe cry cannot tell you exactly what is wrong, but the order of your checks can help. Start with what you can see and feel, then try the settling routine.\n\nWe've lost whole evenings to this. It is the single most practical thing in this batch."
+    }
+  ],
+  "order": 78,
+  "batch": "6"
+},
+{
+  "id": "putting-her-down-awake",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "How can I put my sleeping baby down without waking her?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "The transfer is where it usually falls apart. Slow, feet first, and hands on for a few seconds afterwards.",
+  "keywords": [
+    "putting baby down",
+    "transfer to cot",
+    "baby wakes when put down",
+    "drowsy but awake",
+    "settling baby"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Her breathing changes or pauses when you lay her down — call your local emergency number now",
+      "She goes pale, grey or blue — call your local emergency number now",
+      "She's floppy, or very hard to wake — call your local emergency number now",
+      "She's unable to stop crying for hours in a way that isn't her usual"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Waking on the way down is extremely common, moro reflex",
+        "Deep sleep takes a while to arrive",
+        "Being put down is a change she can feel",
+        "Drowsy but awake works better over time than asleep in arms"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Waiting for limp arms rather than closed eyes, usually pacifier out of mouth followed.",
+        "Going down bottom and feet first, head last",
+        "Keeping a hand on her chest for a few seconds after (this one is key)",
+        "Warming the sheet with a hand beforehand"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Her breathing changes or pauses when you lay her down — call your local emergency number now",
+        "She goes pale, grey or blue — call your local emergency number now",
+        "She's floppy, or very hard to wake — call your local emergency number now",
+        "She's unable to stop crying for hours in a way that isn't her usual"
+      ]
+    },
+    "quick": "Wait until her arms feel heavy, lower her bottom and feet first, then keep a hand on her chest for a moment. The transfer is often the hardest part."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "she-wakes-herself-up",
+    "safe-sleep-newborn",
+    "swaddling"
+  ],
+  "seo": {
+    "description": "Waiting for deeper sleep and lowering your baby gently can make cot transfers easier without starting the whole settling routine again."
+  },
+  "longform": [
+    {
+      "h": "Asleep in your arms, awake in the cot",
+      "t": "We asked about skills for putting a baby to sleep, and most of the answer turned out to be about the last twenty seconds rather than the previous twenty minutes.\n\nGetting her to sleep was rarely the problem. Getting her from us to the mattress without her noticing was."
+    },
+    {
+      "h": "Wait longer than you think",
+      "t": "Eyes closing isn't asleep. Early sleep is light and easily interrupted, and moving her at that point almost guarantees starting over.\n\nThe test we used: shuffle a bit, if she barely moved she was deeply asleep. If her head moved side to side even with eyes closed, wait.\n\nUsually it's another five to ten minutes beyond the point where she looks asleep. Those minutes feel unbearable and they save you the next half hour."
+    },
+    {
+      "h": "How to go down",
+      "t": "Bottom and feet first, head last. Lowering head first triggers the startle/moro reflex — she feels like she's falling backwards, and everything in her responds.\n\nKeep her close as you go down, then hold a hand on her chest for a few seconds once she's on the mattress. That pause is doing real work; letting go immediately is what often wakes her.\n\nWarm the sheet with your hand first. A cold surface against a warm baby is a very effective alarm clock.\n\nPutting her down sleepy rather than fully asleep is the thing that eventually makes all of this easier, because she learns the last bit herself. This however, is for later, after the first month.\n\nIt doesn't need to be every time. Once a day is enough to build it, and there's no obligation to do it at three in the morning when you just want the night back.\n\nAnd the sleep rules don't move for any of this. Flat, on her back, firm mattress, nothing in the cot."
+    }
+  ],
+  "order": 79,
+  "batch": "6"
+},
+{
+  "id": "she-wakes-herself-up",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Why does my baby suddenly open her eyes while sleeping?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Usually the startle reflex or the end of a sleep cycle. Both settle with time, and both have something you can do meanwhile.",
+  "keywords": [
+    "baby wakes herself",
+    "startle reflex sleep",
+    "eyes open sleeping",
+    "short sleep cycles",
+    "baby jolts awake"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Rhythmic movement that doesn't stop when you hold the limb",
+      "She goes pale, grey or blue, even briefly — call your local emergency number now",
+      "She's very hard to wake afterwards — call your local emergency number now",
+      "Breathing pauses, or breathing that looks like hard work — call your local emergency number now",
+      "She's floppy, or unusually unresponsive — call your local emergency number now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "The startle reflex jolting her awake",
+        "Surfacing at the end of a sleep cycle",
+        "Eyes opening briefly during light sleep",
+        "Fades over the first few months"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "The love to dream swaddle was very useful",
+        "Stopping the swaddle at the first sign of rolling",
+        "Being in the room before she surfaced",
+        "Waiting rather than reacting to the first flutter. Many times she would open eyes, look like she was awake and then close the eyes.",
+        "A sleeping bag once the swaddle stopped"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Rhythmic movement that doesn't stop when you hold the limb",
+        "She goes pale, grey or blue, even briefly — call your local emergency number now",
+        "She's very hard to wake afterwards — call your local emergency number now",
+        "Breathing pauses, or breathing that looks like hard work — call your local emergency number now",
+        "She's floppy, or unusually unresponsive — call your local emergency number now"
+      ]
+    },
+    "quick": "This is usually the startle reflex or a normal change between sleep cycles. A safe swaddle in the early months and waiting a moment can help."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-noises-at-night",
+    "putting-her-down-awake",
+    "newborn-trembles-and-jerks"
+  ],
+  "seo": {
+    "description": "The startle reflex and normal sleep cycles can make a baby suddenly open her eyes; learn what usually helps and when to ask for advice."
+  },
+  "longform": [
+    {
+      "h": "She seems to wake herself up",
+      "t": "That was our description and it was a good one. Not stirring, not fussing — asleep, and then suddenly eyes wide open and properly awake.\n\nTwo things cause most of it, and they're worth telling apart because they need different responses."
+    },
+    {
+      "h": "The startle/moro reflex",
+      "t": "Arms fling out, then back in. It's a newborn reflex, it happens at the slightest change, and it is extremely good at waking a baby who was almost asleep.\n\nA snug swaddle around the arms helps a great deal while she still needs it. Hips loose, arms firm — the hips part matters, and there's a whole guide on getting that right.\n\nIt fades over the first months on its own. Until then it's the commonest reason a perfectly settled baby is suddenly awake and cross."
+    },
+    {
+      "h": "Surfacing between cycles",
+      "t": "Sleep comes in cycles, and at the end of each one she comes up close to waking. Adults do this too and roll over without noticing.\n\nA young baby often opens her eyes, looks around, and then either goes back down or decides she's up. That's why naps so often end at around forty minutes — it's one cycle.\n\nPapa kept getting this wrong at the beginning. He was always in alert mode, so the moment he would see Ari eyes open, he would be like, ok shes awake time to go. More often than not, Ari was actually moving to another sleep cycle, and when Papa intervened would infact wake her up and then she would start to cry. Most of the times, don’t be impulsive. Wait. Shes probably transitioning.\n\nIf you can be in the room just before she surfaces, a hand on her chest at the first stir often carries her through into the next cycle. That only works if you're there before she's fully awake, which means knowing roughly how long her cycles run.\n\nOrdinary jolts stop if you gently hold the limb. Rhythmic, repetitive movement that carries on regardless, especially with a blank stare or a change in colour, is different and needs urgent assessment.\n\nWe've written that check up properly in its own guide. It takes a few seconds and it's worth knowing before you need it."
+    }
+  ],
+  "order": 80,
+  "batch": "6"
+},
+{
+  "id": "six-hour-stretch",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "My baby slept for six hours. Should I have woken her?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Once she's gaining steadily and past the early weeks, usually not. Before that, and for a premature baby, the answer changes.",
+  "keywords": [
+    "long stretch at night",
+    "should I wake baby to feed",
+    "6 hours sleep newborn",
+    "sleeping through feeds"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You can't wake her for a feed at all — call your local emergency number now",
+      "She's floppy, pale or grey — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Longer stretches appear as she grows",
+        "Gaining weight steadily is the key condition",
+        "Night stretches lengthen before daytime naps do",
+        "Waking to feed is for a reason, not a rule"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking her paediatrician where our limit was",
+        "Watching the weekly weight rather than each night",
+        "Counting the day's total feeds, not the size of the gap",
+        "Keeping to her feeding plan while she was still on one",
+        "Letting her sleep once we'd been told it was fine"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You can't wake her for a feed at all — call your local emergency number now",
+        "She's floppy, pale or grey — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "If she is feeding and growing well and is past the early weeks, a long sleep is usually a gift. If she has a feeding plan, follow that instead."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-do-they-sleep-through",
+    "sleeping-more-than-usual",
+    "how-much-sleep-newborn"
+  ],
+  "seo": {
+    "description": "A six-hour sleep can be fine once a baby is feeding and growing well, but babies on a feeding plan may still need to be woken."
+  },
+  "longform": [
+    {
+      "h": "The question nobody answers cleanly",
+      "t": "Is it all right for a newborn to sleep a six-hour stretch at night if she's gaining weight regularly.\n\nWe gave her doctor the full picture: she was around 4kg, about three weeks corrected and born at 33 weeks. Those details changed the answer, which is why one general rule did not work."
+    },
+    {
+      "h": "What the answer hangs on",
+      "t": "Weight gain, first. A baby who is gaining steadily is getting enough across the day, and where those calories arrive in the twenty-four hours matters less.\n\nHow far past the early weeks she is. In the first fortnight, and while regaining birth weight, regular feeding is the priority and waking is often advised.\n\nAnd whether she's under a feeding plan. Ours had been, and a plan overrides everything in this guide. If you've been told to feed every three hours, that instruction stands until the person who gave it changes it.\n\nFor us, with steady gain and a paediatrician who was following her, the long stretch was fine."
+    },
+    {
+      "h": "Night before day",
+      "t": "One thing surprised us: longer night sleep often comes before longer daytime naps.\n\nSo a baby who sleeps six hours at night and then refuses to nap for more than an hour in the day isn't confused — she's doing it in the order it normally happens.\n\nWe asked whether it was too soon for her to have figured out nights, and whether it meant something. It doesn't mean anything beyond her body clock starting to sort itself out, which is exactly what you want.\n\nTotal feeds across the day, rather than the size of the gap. If the day's intake holds up, a long night is just a long night.\n\nWet nappies.\n\nAnd whether she woke herself when hungry, which ours usually did. That was another useful sign that her appetite was doing its job.\n\nIf you're unsure, ring and ask where your own limit is — before you're lying awake at four in the morning doing arithmetic. Papa did this very often."
+    }
+  ],
+  "order": 81,
+  "batch": "6"
+},
+{
+  "id": "short-naps-long-nights",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Why does my baby nap briefly but sleep for hours at night?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "It is not backwards. Longer night sleep often comes first, while daytime naps stay short for a while.",
+  "keywords": [
+    "short naps",
+    "forty minute nap",
+    "day sleep vs night sleep",
+    "baby naps badly",
+    "sleep cycles"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or very hard to wake — call your local emergency number now",
+      "She's pale, grey or blue — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Night sleep often lengthens before daytime naps",
+        "Forty-minute naps are one full sleep cycle",
+        "Daytime is brighter, noisier and more interesting",
+        "Naps lengthen gradually over months"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Treating short naps as normal rather than a fault",
+        "Darkening the room for day sleeps too",
+        "Going earlier when the wake window had clearly stretched",
+        "Leaving night sleep alone rather than capping it",
+        "Judging her by how she was awake, not by nap length"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or very hard to wake — call your local emergency number now",
+        "She's pale, grey or blue — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "Night sleep often lengthens before daytime naps do. A forty-minute nap can be one complete sleep cycle, even when it feels far too short."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "wont-nap",
+    "how-much-sleep-newborn",
+    "building-a-sleep-schedule"
+  ],
+  "seo": {
+    "description": "Short daytime naps and longer night stretches can be normal because night sleep often settles before daytime sleep does."
+  },
+  "longform": [
+    {
+      "h": "It looked the wrong way round",
+      "t": "One month and a week corrected, sleeping no more than an hour at a time during the day but going six hours straight at night.\n\nWe assumed we'd got something backwards. She was alert during the day, not cranky, and gaining weight — and still it felt like a problem that needed solving."
+    },
+    {
+      "h": "That's the usual order",
+      "t": "Night sleep often stretches out first. Daytime naps may take much longer.\n\nSo a baby with long nights and short days isn't confused. She's ahead on the harder half of it.\n\nThe daytime is also working against her. Light, noise, people, things to look at, and a body clock that is designed to keep her more alert when it's bright. A forty-minute nap is one complete sleep cycle, and surfacing at the end of it into a bright interesting room is a perfectly reasonable decision on her part."
+    },
+    {
+      "h": "What we tried, and what was worth it",
+      "t": "Darkening the room for daytime naps helped a little. So did noticing when the wake window had clearly stretched too long — short naps often follow a baby who went down overtired.\n\nWhat didn't help, and made things worse, was keeping her up longer hoping she'd sleep more deeply.\n\nWe never shortened her night sleep to try to force more daytime naps. That usually makes a tired baby even more tired.\n\nWhen we lined up the actual evidence rather than the feeling. Alert when awake. Not cranky. Feeding well. Gaining.\n\nThat combination means the sleep is working, whatever shape it's in.\n\nNaps do lengthen — slowly, unevenly, and usually around the time you've stopped expecting them to."
+    }
+  ],
+  "order": 82,
+  "batch": "6"
+},
+{
+  "id": "sleeping-through-noise",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Why does my baby sleep through every noise?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Probably not, and that's development rather than a habit you broke. Consistent background noise is more useful than silence.",
+  "keywords": [
+    "baby sleeps through noise",
+    "white noise",
+    "tiptoeing around baby",
+    "noisy house baby sleep"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She goes floppy or unresponsive — call your local emergency number now",
+      "She's pale, grey or blue — call your local emergency number now",
+      "Breathing pauses, or looks like hard work — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Newborns can sleep through a lot of noise",
+        "Sensitivity to noise increases over the first months",
+        "Deeper newborn sleep gives way to more cycling",
+        "Consistent background noise beats silence"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Carrying on normally rather than tiptoeing",
+        "Continuous white noise instead of a track that times out",
+        "Keeping it across the room and at a sensible volume",
+        "Using the same sound at home and away"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She goes floppy or unresponsive — call your local emergency number now",
+        "She's pale, grey or blue — call your local emergency number now",
+        "Breathing pauses, or looks like hard work — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "Newborns can sleep through an impressive amount of noise, but that often changes. Steady background sound is easier to live with than trying to keep the whole house silent."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "she-wakes-herself-up",
+    "how-much-sleep-newborn",
+    "newborn-noises-at-night"
+  ],
+  "seo": {
+    "description": "Many newborns sleep through noise at first; learn why that changes and how steady background sound may help later."
+  },
+  "longform": [
+    {
+      "h": "A doctor told us it changes after the first month",
+      "t": "She slept through everything — conversation, television, doors, the lot. And we were told it wouldn't last past the first month or so. It was lovely.\n\nThat's broadly right, and the reason is development rather than anything you do."
+    },
+    {
+      "h": "Why it changes",
+      "t": "Newborn sleep is deep and less organised, so a young baby can ignore a surprising amount of noise. As she grows, she spends more time in lighter sleep and notices more around her.\n\nSo a baby who becomes noise-sensitive at two months hasn't been spoiled by quiet, and one who stays unbothered hasn't been toughened up. Both are ordinary.\n\nIt also means the window where you can hoover next to a sleeping baby is finite, and worth enjoying."
+    },
+    {
+      "h": "What we'd do from the start",
+      "t": "Carry on normally. Don't build a silent house you'll then have to maintain, because you won't be able to.\n\nUse consistent background noise rather than silence. White noise, a fan, or just the ordinary sound of a household. It masks the sudden noises — a door, a dog, a delivery — which are what actually wake babies, rather than steady sound.\n\nIf you use a machine, one that runs continuously rather than stopping after fifteen minutes. A track that cuts out mid-nap is worse than no track at all. Papa was putting Ari to bed, she was about to sleep, he had everything ready, it had taken him 30 minutes to put her to sleep this time, and the moment she was just about to nod off the white nosie machine stopped. Ari woke up. Papa had forgotten to change the setting to continuous and he had to start all over again.\n\nAnd keep it at a sensible volume, across the room rather than beside her head.\n\nA baby who sleeps through everything is almost always just a good sleeper.\n\nBut if she never startles at a sudden loud sound, or doesn't turn towards your voice as she gets older, that's worth mentioning — particularly if she was premature or spent time in neonatal care and you're not certain her hearing has been formally checked.\n\nIt's a two-minute question and it's better asked than assumed."
+    }
+  ],
+  "order": 83,
+  "batch": "6"
+},
+{
+  "id": "when-to-worry-she-wont-wake",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "My baby won't wake up. When should I worry?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 2,
+  "summary": "A long sleep in a well baby is fine. Difficult to wake is a different thing entirely, and it's the distinction that matters.",
+  "keywords": [
+    "baby won't wake",
+    "hard to rouse",
+    "sleepy baby concern",
+    "unresponsive baby",
+    "when to worry sleepy"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or doesn't wake fully when you try — call your local emergency number now",
+      "She's pale, mottled, blue or grey — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "She's unusually cool or hot to touch",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Long sleeps after a busy day, or a growth spurt",
+        "Sleepy after vaccinations for a day or so",
+        "Waking slowly but fully when you try",
+        "Alert and feeding normally once awake"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Trying properly to wake her before deciding anything",
+        "Checking colour, breathing and temperature together",
+        "Noting when she last fed and last had a wet nappy",
+        "Looking at the whole baby rather than the thermometer"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or doesn't wake fully when you try — call your local emergency number now",
+        "She's pale, mottled, blue or grey — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "She's unusually cool or hot to touch",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "A long sleep can be fine if she wakes fully and feeds well. If she is hard to wake, floppy, pale or missing feeds, get medical help now."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "sleeping-more-than-usual",
+    "six-hour-stretch",
+    "how-much-sleep-newborn"
+  ],
+  "seo": {
+    "description": "Long sleep can be normal, but a baby who is hard to wake, floppy, pale or missing feeds needs urgent medical advice."
+  },
+  "longform": [
+    {
+      "h": "The question worth asking properly",
+      "t": "When should I be worried that she isn't waking up.\n\nIt's a good question and it has a clean answer, which is unusual. The answer isn't about how long she's slept. It's about what happens when you try to wake her."
+    },
+    {
+      "h": "Sleepy versus difficult to wake",
+      "t": "A sleepy baby takes some getting going. Unwrap her, change her nappy, talk to her, a hand on her chest — and she comes round, opens her eyes, and is properly there. She might be cross about it. That's fine.\n\nA baby who is difficult to wake doesn't come round properly. She stays limp, doesn't focus, doesn't respond, or drifts straight back regardless of what you do.\n\nThose two look similar for the first ten seconds and they are not the same thing at all. The second one is a call, whatever time it is."
+    },
+    {
+      "h": "What to check while you're trying",
+      "t": "Colour — around the lips especially. Pale, mottled, blue or grey is urgent.\n\nBreathing — fast, laboured, or pausing.\n\nTemperature, and whether she feels unusually cool or hot.\n\nWhen she last fed, and when the last wet nappy was.\n\nMuscle tone. A floppy baby feels different in your hands and you'll know it if you feel it.\n\nIf she wakes fully, feeds, and is herself — a long sleep is a long sleep, and you're allowed to enjoy it.\n\nIf anything in the list above feels wrong, call. Out-of-hours services are there for the parent standing over a cot at 2am, unsure whether this is normal.\n\nAnd if she was premature, the threshold is lower. A sleepy preemie who quietly misses feeds is a real situation rather than a theoretical one."
+    }
+  ],
+  "order": 84,
+  "batch": "6"
+},
+{
+  "id": "when-do-they-sleep-through",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "When will my baby sleep through the night?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Later than you've been told, and less neatly. The definition most people are using isn't the one they mean.",
+  "keywords": [
+    "sleeping through the night",
+    "when do babies sleep through",
+    "10 hours straight",
+    "night waking age"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Gasping, choking, or pauses in her breathing at night",
+      "She goes pale, grey or blue — call your local emergency number now",
+      "She's floppy, or very hard to wake — call your local emergency number now",
+      "Any thoughts of harming yourself or her — ring your doctor or a crisis line now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Longer stretches build gradually over months",
+        "Many babies still wake at a year and that's normal",
+        "It isn't linear — it goes backwards regularly",
+        "'Sleeping through' often means five or six hours, not twelve"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Dropping the expectation of a date",
+        "Measuring progress in months rather than nights",
+        "Expecting illness and teeth to reset it",
+        "Protecting one adult's sleep rather than both",
+        "Ignoring other people's accounts of their own babies"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Gasping, choking, or pauses in her breathing at night",
+        "She goes pale, grey or blue — call your local emergency number now",
+        "She's floppy, or very hard to wake — call your local emergency number now",
+        "Any thoughts of harming yourself or her — ring your doctor or a crisis line now"
+      ]
+    },
+    "quick": "Longer stretches arrive slowly, not on one magic date. When people say a baby sleeps through, they often mean five or six hours, not the whole night."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "sleep-regression",
+    "early-waking",
+    "how-much-sleep-newborn"
+  ],
+  "seo": {
+    "description": "Sleeping through the night usually develops slowly, and often means five or six hours rather than a full ten-hour night."
+  },
+  "longform": [
+    {
+      "h": "How long before ten hours straight?",
+      "t": "That was the question, followed by: so nine months to sleep twelve hours straight?\n\nThe honest answer is that there isn't a date, and that the question contains an assumption worth unpicking first.\n\nPapa had heard of the 4 months sleep regression. He was prepared for it, little did he know that there was a 6 months sleep regression and an 8 months sleep regression too. Noone told him that. It seemed for the little we had moved forward, it was all crashing back. All normal."
+    },
+    {
+      "h": "What 'sleeping through' actually means",
+      "t": "In most of the research it means around five or six consecutive hours. Not twelve. Not from seven in the evening to seven in the morning.\n\nSo when somebody tells you their baby slept through at eight weeks, they may well mean six hours, which is a very different claim from the one you heard.\n\nThat mismatch causes an enormous amount of unnecessary despair, and it's worth knowing before you compare yourself to anybody."
+    },
+    {
+      "h": "The rough shape",
+      "t": "Stretches lengthen over the first year. Some babies reach long unbroken nights in the middle of the first year, and a substantial proportion still wake at twelve months and beyond.\n\nAri at 14 months still wakes up middle of the night to feed.\n\nBoth of those are normal. Night waking at a year isn't a failure of method.\n\nIt also does not improve in a straight line. Illness, teething, a new skill (a lot of these happen in the first two years, rolling, learning how to sit, learning how to crawl, b ababing, learning how to eat, walk, talk), travel or a house move can interrupt a good run. Sleep often settles again afterwards.\n\nProtecting one adult's sleep rather than both of ours being wrecked. Splitting the night into shifts so somebody got four unbroken hours.\n\nAnd giving up on the date. Once we stopped asking when and started assuming it would take months, it became something to manage rather than something to be failing at.\n\nIf her sleep changes suddenly and stays that way, or there is snoring, gasping or breathing pauses, speak to her doctor. Ordinary night waking is different."
+    }
+  ],
+  "order": 85,
+  "batch": "6"
+},
+{
+  "id": "sleep-and-the-premature-baby",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "For a premature baby, does sleep or feeding matter more?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 3,
+  "summary": "Early on, feeding wins, and that's not a close call. Later it flips — and knowing when is a question for her baby's doctor or NICU nurse.",
+  "keywords": [
+    "premature baby sleep",
+    "wake preemie to feed",
+    "preterm sleep needs",
+    "corrected age sleep"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You can't wake her for a feed at all — call your local emergency number now",
+      "Her breathing pauses, or looks like hard work — call your local emergency number now",
+      "She's pale, grey or blue — call your local emergency number now",
+      "She's floppy, or unusually unresponsive — call your local emergency number now",
+      "A fever, at any point in the first three months"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Premature babies sleep more than term babies",
+        "They also tire quickly during feeds",
+        "Early on, feeding takes priority over uninterrupted sleep",
+        "Corrected age is what sleep expectations follow"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Following the feeding plan over any sleep advice",
+        "Using corrected age for everything we read",
+        "Waking her when the plan said to, without guilt",
+        "Asking her baby's doctor or NICU nurse when we could stop waking her"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You can't wake her for a feed at all — call your local emergency number now",
+        "Her breathing pauses, or looks like hard work — call your local emergency number now",
+        "She's pale, grey or blue — call your local emergency number now",
+        "She's floppy, or unusually unresponsive — call your local emergency number now",
+        "A fever, at any point in the first three months"
+      ]
+    },
+    "quick": "In the early weeks, feeding comes first and you may need to wake her. Use corrected age and follow the plan from your baby's doctor or NICU nurse."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "corrected-age",
+    "preemie-feeding-stamina",
+    "how-much-sleep-newborn"
+  ],
+  "seo": {
+    "description": "Premature babies may tire quickly while feeding, so early feeding plans and corrected age matter more than general sleep advice."
+  },
+  "longform": [
+    {
+      "h": "The simple answer",
+      "t": "For a premature baby, what's more important — food or sleep?\n\nEarly on it's food, and it isn't close. A preemie who sleeps through feeds can quietly fall behind, because she hasn't got reserves and she doesn't reliably wake when hungry the way a term baby does.\n\nThat's why units set feeding schedules, and why those schedules involve waking a peacefully sleeping baby, which feels wrong every single time."
+    },
+    {
+      "h": "Why she sleeps more and feeds worse",
+      "t": "Both come from the same place. She's using energy on things a term baby has already sorted out — temperature, breathing, digestion — and there's less left over.\n\nSo she slept more and got tired half way through a feed. Sometimes she managed only a small part of it by mouth. The problem was not appetite. It was stamina.\n\nThat combination is why the schedule matters. Left to her own rhythm she'd have slept and under-fed, and both would have looked peaceful."
+    },
+    {
+      "h": "Corrected age, for everything you read",
+      "t": "Sleep charts, wake windows, nap guidance — all of it assumes a term baby, and all of it should be read against her due date rather than her birthday.\n\nOurs was born at 33 weeks with a due date seven weeks later, which meant that at ten weeks old she was around three weeks corrected. Every sleep article we read described a different baby until we made that adjustment.\n\nIt does flip. Once she's gaining steadily, feeding effectively, and past the point her baby's doctor or NICU nurse is watching for, the waking stops and sleep becomes the priority it is for any baby.\n\nAsk when. Specifically: at what point can we stop waking her, and what would tell you she's ready?\n\nWe asked, the clear answer was she was gaining weight consistently and had passed the 3.5kg mark (this was the figure our doctor gave for Ari specifically, it is not this number for everyone). Once we could stop waking her up it felt like a massive achievement and a gift, we could let our little one sleep."
+    }
+  ],
+  "order": 86,
+  "batch": "6"
+},
+{
+  "id": "building-a-sleep-schedule",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Does my baby need a sleep schedule?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Not one you impose. What you can do is watch for the shape she's already making and support it.",
+  "keywords": [
+    "baby sleep schedule",
+    "newborn routine",
+    "wake windows",
+    "baby timings",
+    "sleep routine"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or very hard to wake — call your local emergency number now",
+      "She's pale, grey or blue — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Newborns don't follow a clock",
+        "Patterns emerge before schedules do",
+        "Wake windows are a better tool than set times",
+        "It shifts every few weeks as she grows"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing down what she actually did for a week",
+        "Building the routine around her pattern, not a template",
+        "Keeping the order of events fixed and letting times move",
+        "Rewriting it whenever it stopped matching",
+        "Giving any change five nights before judging it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or very hard to wake — call your local emergency number now",
+        "She's pale, grey or blue — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "Do not force a strict clock. Notice the pattern she is already making, keep the order familiar and let the times move as she grows."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "day-night-confusion",
+    "short-naps-long-nights",
+    "when-do-they-sleep-through"
+  ],
+  "seo": {
+    "description": "A flexible routine can help without forcing a strict clock; keep the order familiar and let the times change as your baby grows."
+  },
+  "longform": [
+    {
+      "h": "We wrote hers down and it helped",
+      "t": "At one point her pattern was roughly: nine in the evening until three, then four until half past seven. Naps around eleven to twelve, three to half four, and six to half six.\n\nWriting it out like that changed how it felt. It had looked like chaos and it turned out to be a pattern — not a tidy one, but a real one. Once we could see it, we could work with it.\n\nPapa learnt the hard way though that the patterns don’t stay for long. The moment you have figured out the patterns and feel you are on top of things, it changes. It was Ari afternoon nap. Papa offered to take over and proceeded to do everything exactly as he had done the last two weeks. After 40 minutes trying he failed to put her to sleep, gave her to mama and in 5 seconds she was asleep. Patterns change, habits changed. Mama adapted, Papa mastered his way of putting her to sleep."
+    },
+    {
+      "h": "Wake windows beat clock times",
+      "t": "The useful tool early on isn't what time she goes down. It's how long she's been awake.\n\nRoughly forty-five to ninety minutes for a newborn, stretching as she grows. Go beyond it and you get an overtired baby who looks wide awake and won't settle.\n\nWhich means the schedule moves every day, because a nap that ended late pushes everything after it. Fixing the times instead of the windows is how people end up fighting their own routine."
+    },
+    {
+      "h": "Fix the order, not the hours",
+      "t": "What we kept constant was the sequence rather than the clock. Feed, a bit of awake time, nappy, sleeping bag, dark room, white noise, down.\n\nThe same order every time is what she was learning. The times could move by an hour and it still worked, because the pattern of events was the signal.\n\nThe bedtime version is worth being especially consistent about, because that's the one doing the most work for the night ahead.\n\nWhatever you land on will stop fitting within a few weeks. Wake windows lengthen, naps drop, and the schedule that was perfect in September is wrong by October.\n\nThat isn't the routine failing. It's her growing.\n\nWrite down what she's actually doing again, find the new shape, rebuild around it. We did that several times and it was quicker every round."
+    }
+  ],
+  "order": 87,
+  "batch": "6"
+},
+{
+  "id": "night-walks-with-the-pram",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "Is it okay to take my baby for a walk at night?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Fine, and often the thing that works. Two small cautions about the pram itself rather than the outing.",
+  "keywords": [
+    "night walk baby",
+    "pram to sleep",
+    "evening walk newborn",
+    "vibration reflux pram"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Her breathing changes or pauses when she's reclined — call your local emergency number now",
+      "She goes pale, grey or blue — call your local emergency number now",
+      "She's choking or struggling to breathe — call your local emergency number now",
+      "She's floppy, or very hard to wake — call your local emergency number now"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Movement and fresh air settle many babies",
+        "A change of scene helps the adults too",
+        "Evening walks are a legitimate strategy",
+        "Rough ground is uncomfortable rather than harmful"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Walking when nothing indoors was working",
+        "Dressing her for standing still, not for walking",
+        "A proper pram cover rather than a blanket over the top",
+        "Smoother routes, and twenty minutes upright after a feed",
+        "Moving her to a flat firm surface once we were home"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Her breathing changes or pauses when she's reclined — call your local emergency number now",
+        "She goes pale, grey or blue — call your local emergency number now",
+        "She's choking or struggling to breathe — call your local emergency number now",
+        "She's floppy, or very hard to wake — call your local emergency number now"
+      ]
+    },
+    "quick": "A night walk is usually fine and can help her settle. Keep the pram uncovered, dress her for the weather and move her to a flat sleep surface when you get home."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "safe-sleep-newborn",
+    "putting-her-down-awake",
+    "is-baby-too-hot"
+  ],
+  "seo": {
+    "description": "A night walk can help a baby settle when the pram stays uncovered, she is dressed safely and she moves to a flat sleep surface at home."
+  },
+  "longform": [
+    {
+      "h": "Is it all right to go out at night?",
+      "t": "Yes, and on the evenings when nothing indoors is working it's often the thing that does.\n\nMovement, fresh air, a change of scene. It also gets you out of a room you've been failing in for an hour, which is worth something on its own."
+    },
+    {
+      "h": "The vibration question",
+      "t": "We asked whether a bumpy road could cause reflux, which is a more sensible question than it sounds.\n\nJostling straight after a full feed can make posseting more likely — the same reason you'd avoid vigorous bouncing after a bottle. It isn't causing reflux as a condition; it's making an existing tendency more visible.\n\nIf you're going out after a feed, a smoother route and twenty minutes upright first makes a noticeable difference."
+    },
+    {
+      "h": "Dressing her for it",
+      "t": "The mistake we made repeatedly: dressing her based on how hot we felt while walking.\n\nShe's sitting still. You're moving. She needs more than you and you'll be too warm to judge it.\n\nBut don't cover the pram with a blanket to her warm — it traps heat badly, and overheating is the thing worth avoiding. A proper pram cover designed for it, or a footmuff, rather than something draped over the top.\n\nThe awkward bit. She's finally asleep, and a pram seat isn't a safe place for unsupervised sleep.\n\nMove her to a flat firm surface, on her back. There's a guide next to this one on doing that transfer without starting the whole evening again.\n\nAnd if she'll only sleep in a pram or car seat and hates lying flat, that's worth mentioning — it sometimes points at reflux rather than preference. We used to tilt the cot a bit to control the reflux, something we learnt at a later stage we shouldn’t do but it worked wonders for her reflux."
+    }
+  ],
+  "order": 88,
+  "batch": "6"
+},
+{
+  "id": "parent-sleep-deprivation",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "What does months of broken sleep do to parents?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Worse judgement, shorter temper, and a flatter mood — none of which is a character flaw. Protecting one block of sleep is the whole strategy.",
+  "keywords": [
+    "sleep deprivation parents",
+    "new parent exhaustion",
+    "broken sleep effects",
+    "surviving newborn nights"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thoughts of harming yourself or the baby — ring your doctor or a crisis line now",
+      "You feel unable to keep yourself or her safe",
+      "You're hearing or seeing things others don't",
+      "You can't function at all, or feel you're losing touch with reality"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Broken sleep hits harder than short sleep",
+        "Judgement, mood and patience all get worse",
+        "Recovery takes longer than one good night",
+        "Everyone underestimates how impaired they are"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Four unbroken hours each, in shifts",
+        "Sleeping in separate rooms without guilt",
+        "No serious conversations after ten at night",
+        "Saying yes when someone offered to hold her",
+        "Not driving when we knew we were too tired"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thoughts of harming yourself or the baby — ring your doctor or a crisis line now",
+        "You feel unable to keep yourself or her safe",
+        "You're hearing or seeing things others don't",
+        "You can't function at all, or feel you're losing touch with reality"
+      ]
+    },
+    "quick": "Broken sleep can affect your mood and judgement before you notice it. Protected blocks of sleep, taking turns and asking for help matter."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "splitting-nights",
+    "touched-out",
+    "overwhelmed-new-parent"
+  ],
+  "seo": {
+    "description": "Broken sleep can affect mood, patience and judgement; protected blocks of sleep and asking for help can make a real difference."
+  },
+  "longform": [
+    {
+      "h": "The question we asked about ourselves",
+      "t": "What happens when you're awake for days and then finally sleep — does it take long to drop off, and how do you feel when you wake up?\n\nIt's a small question and it was really about whether any of this was recoverable."
+    },
+    {
+      "h": "Broken is worse than short",
+      "t": "This is the part that surprised us. Six hours broken into four pieces is considerably worse than four hours in one go.\n\nSleep does its repair work in cycles, and being interrupted partway through means you keep restarting rather than completing. Which is why you can be in bed for eight hours and feel like you haven't slept at all.\n\nThat is why one unbroken stretch can feel so much better. It is not only the number of hours. It is getting them without being woken."
+    },
+    {
+      "h": "What it actually does",
+      "t": "Reaction time and judgement can slip before you notice. That is why driving when you are this tired can be dangerous, not just unpleasant.\n\nMood flattens. Patience shortens. Small things become enormous. Arguments at three in the morning are not real arguments and shouldn't be treated as if they were.\n\nOne good night may not fix months of broken sleep. Your body may need several better nights before you feel more like yourself. It happened to Papa, mama took over one full night because Papa was also working. He slept 8 hours straight and woke up even more exhausted. He was given a gift and he felt he had wasted it, since he was going to do that night all night. We learnt later, splitting the night vs one night mama one night papa was a much better solution.\n\nShifts helped most. One person covered until about 4am, then the other took over until morning. The person off duty slept in another room and was truly off duty. Even the living room sofa was better than bedroom if it’s a one bedroom flat.\n\nFour unbroken hours each beats seven broken ones between you, comfortably.\n\nSeparate rooms for a stretch doesn’t mean anything is wrong. Accepting when people ask if they can help isn’t weakness either or that you are doing something wrong. We turned a lot of those down early on out of some idea that we ought to be managing, which achieved nothing except making us worse at managing.\n\nAnd if the low mood doesn't lift once the sleep improves, it isn’t immediate, it takes a little bit of time but if it doesn’t improve at all — that's worth a conversation with a doctor rather than waiting it out."
+    }
+  ],
+  "order": 89,
+  "batch": "6"
+},
+{
+  "id": "sleeping-more-than-usual",
+  "topic": "sleeping",
+  "icon": "moon",
+  "featured": false,
+  "title": "My baby has slept most of today. Is that okay?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "One sleepy day in a baby who feeds well and is bright when awake is usually growth. The company it keeps is what matters.",
+  "keywords": [
+    "baby sleeping a lot",
+    "extra sleepy day",
+    "slept all afternoon",
+    "growth spurt sleep"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or you can't wake her properly — call your local emergency number now",
+      "She's pale, grey or blue — call your local emergency number now",
+      "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+      "A fever, if she's under three months old"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Sleeping • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A sleepier day or two, then back to normal",
+        "Often around a growth spurt",
+        "Alert and hungry when she does wake",
+        "Common after vaccinations, or a busy day out"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Checking she woke herself when hungry",
+        "Watching how she was awake, not how long she slept",
+        "Counting wet nappies through the day",
+        "Giving it two days before reading anything into it",
+        "Keeping to her feeding plan while she was still on one"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or you can't wake her properly — call your local emergency number now",
+        "She's pale, grey or blue — call your local emergency number now",
+        "Breathing is fast, laboured, or has pauses — call your local emergency number now",
+        "A fever, if she's under three months old"
+      ]
+    },
+    "quick": "One sleepy day can be normal if she still feeds well and is bright when awake. Sleepiness with poor feeding or difficulty waking needs medical advice."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-to-worry-she-wont-wake",
+    "growth-spurt-signs",
+    "six-hour-stretch"
+  ],
+  "seo": {
+    "description": "A sleepy day can be normal during a growth spurt, but sleepiness with poor feeding or difficulty waking needs medical advice."
+  },
+  "longform": [
+    {
+      "h": "Since three thirty, and it's now eight",
+      "t": "That was the situation. She had fed normally, then slept for most of the afternoon. She was still very young, and we wondered whether it was a growth spurt.\n\nThe detail that answered it wasn't the length of the sleep. It was that when she woke she was hungry and ate well, and she'd been waking herself when she needed to."
+    },
+    {
+      "h": "What makes a sleepy day ordinary",
+      "t": "She wakes properly and is alert when awake. She feeds well when she does. Wet nappies are keeping up. And it lasts a day or two rather than settling in.\n\nGrowth spurts can do this. Some babies feed constantly and others sleep more. The weight gain may show up afterwards.\n\nA busy day out, a round of vaccinations, or simply a badly-slept night before will all produce the same thing."
+    },
+    {
+      "h": "What makes it not ordinary",
+      "t": "Sleepiness on its own is rarely the problem. It's what comes with it.\n\nHard to wake rather than just sleepy. Floppy when awake. Feeding poorly, or missing feeds entirely. Fewer wet nappies. A fever, or generally seeming unwell.\n\nAny of those alongside the sleep changes the picture completely, and they're worth checking deliberately rather than assuming the sleep explains itself.\n\nIf she was born early, the threshold is lower and it's worth being stricter with yourself.\n\nA preemie who sleeps through feeds can fall behind quietly, and she may not reliably wake when hungry the way a term baby does. If there's a feeding plan, the plan wins over a peaceful afternoon.\n\nWe stopped waking ours only once her paediatrician said we could — which is the right way round."
+    }
+  ],
+  "order": 90,
+  "batch": "6"
 }
 ];
 
