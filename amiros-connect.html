@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connect to Amir OS</title>
+<style>
+:root{--ink:#14213d;--muted:#5b6475;--line:#e3e7ee;--bg:#f4f6fa;--ok:#15803d;--bad:#b42318}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;background:var(--bg);color:var(--ink);display:grid;place-items:center;min-height:100vh;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(20,33,61,.08);max-width:440px;width:100%;padding:28px}
+h1{font-size:22px;margin:0 0 6px}p{margin:8px 0;color:var(--muted)}ul{margin:10px 0 0;padding-left:20px;font-size:14.5px}li{margin:4px 0}
+.btn{display:flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer;width:100%;margin-top:12px}
+.pri{background:var(--ink);color:#fff}.ghost{background:none;color:var(--muted)}.ok{color:var(--ok)}.bad{color:var(--bad)}.small{font-size:13.5px}
+input{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+</style></head>
+<body><main class="card" id="root"><h1>Connect to Amir OS</h1><p>Loading…</p></main>
+<script type="module">
+// Amir OS connect page (one design for all of Amir's apps). It only ever hands the app's sign-in to Amir OS at the
+// address below, and only after Amir presses Approve while signed in to this app. Nothing else leaves this page.
+const CONFIG = /*CONFIG*/{"appName":"Messy Parents Collection","appId":"messy-parents","projects":[{"config":{"apiKey":"AIzaSyAGHZgw1Thl82LTJTUcpceQXa-Fjwzdn_E","authDomain":"messy-parents.firebaseapp.com","projectId":"messy-parents","appId":"1:678138643116:web:ff1fb9b63e207893715509"},"auth":"password","label":"the Studio (your Messy Parents login)"}],"can":["Your AI team can read your guides, pages, topics and the social queue.","Changes to guides, publishing the site and drafting social posts come to you in Amir OS to approve first (unless you choose otherwise for a specific action)."],"cannot":["It can't read your book manuscript, can't post to social media, can't delete guides, and never sees your password."]}/*END*/;
+const HUBS = ["https://amir-os.netlify.app"];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const root = document.getElementById("root"), esc = s => String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const q = new URLSearchParams(location.hash.slice(1)); history.replaceState(null, "", location.pathname);
+const hub = q.get("hub"), code = q.get("code");
+const view = h => { root.innerHTML = h; };
+if (!hub || !code) view(`<h1>Amir OS connection</h1><p>To connect ${esc(CONFIG.appName)}, press <b>Connect</b> on its card in Amir OS (Connections). It brings you back here to approve.</p>`);
+else if (!HUBS.includes(hub)) view(`<h1 class="bad">Not connected</h1><p>This link asks to connect ${esc(CONFIG.appName)} to <b>${esc(hub)}</b>, which isn't your Amir OS. Nothing was shared.</p>`);
+else start();
+function start() {
+  // The same Firebase app names as the app itself, so an existing sign-in on this site is reused.
+  const auths = CONFIG.projects.map(p => ({ p, auth: getAuth(initializeApp(p.config, p.appName || "[DEFAULT]")) }));
+  let pending = auths.length; const users = {};
+  if (!auths.length) return render(users);
+  auths.forEach(({ p, auth }) => onAuthStateChanged(auth, u => { users[p.config.projectId] = u; if (--pending <= 0) render(users); }));
+  window.__signin = async pid => { const a = auths.find(x => x.p.config.projectId === pid); const p = a.p;
+    try { if (p.auth === "anonymous") await signInAnonymously(a.auth);
+      else if (p.auth === "password") await signInWithEmailAndPassword(a.auth, document.getElementById("em-" + pid).value.trim(), document.getElementById("pw-" + pid).value);
+      else { const g = new GoogleAuthProvider(); g.setCustomParameters({ prompt: "select_account" }); await signInWithPopup(a.auth, g); } }
+    catch (e) { alert(e.message); } };
+  function render(u) {
+    const need = CONFIG.projects.filter(p => !p.optional && !u[p.config.projectId]);
+    const who = CONFIG.projects.filter(p => u[p.config.projectId]).map(p => u[p.config.projectId].isAnonymous ? "this device" : u[p.config.projectId].email);
+    view(`<h1>Connect ${esc(CONFIG.appName)} to Amir OS?</h1><p>Your Amir OS at <b>${esc(hub.replace("https://", ""))}</b> wants to work with ${esc(CONFIG.appName)}.</p>
+      <ul>${CONFIG.can.map(x => `<li>${esc(x)}</li>`).join("")}${CONFIG.cannot.map(x => `<li>${esc(x)}</li>`).join("")}<li>You can disconnect in Amir OS any time.</li></ul>
+      ${need.map(p => `<div style="margin-top:14px"><p class="small"><b>Sign in to ${esc(p.label || CONFIG.appName)} first</b></p>${p.auth === "password" ? `<input id="em-${p.config.projectId}" type="email" placeholder="Email" autocomplete="username"><input id="pw-${p.config.projectId}" type="password" placeholder="Password" autocomplete="current-password">` : ""}<button class="btn pri" onclick="__signin('${p.config.projectId}')">${p.auth === "google" ? "Sign in with Google" : p.auth === "anonymous" ? "Continue" : "Sign in"}</button></div>`).join("")}
+      ${who.length ? `<p class="small">Signed in as <b>${esc([...new Set(who)].join(", "))}</b></p>` : ""}
+      ${!need.length ? `<button class="btn pri" id="ok">Approve and connect</button>` : ""}<button class="btn ghost" id="no">Not now</button><p class="small" id="msg"></p>`);
+    document.getElementById("no").onclick = () => view(`<h1>Not connected</h1><p>Nothing was shared. You can close this tab.</p>`);
+    const ok = document.getElementById("ok"); if (ok) ok.onclick = () => approve(u, ok);
+  }
+  async function approve(u, btn) {
+    btn.disabled = true; btn.textContent = "Connecting…";
+    try {
+      const projects = CONFIG.projects.filter(p => u[p.config.projectId]).map(p => ({ projectId: p.config.projectId, refreshToken: u[p.config.projectId].refreshToken, syncId: p.syncId ? readSyncId(p.syncId) : undefined }));
+      const r = await fetch(hub + "/.netlify/functions/app-connect", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ op: "claim", code, projects, origin: location.origin + location.pathname.replace(/\/[^/]*$/, "") }) });
+      const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || "Amir OS didn't accept it (" + r.status + ")");
+      if (j.deviceKey) localStorage.setItem("amiros.link", JSON.stringify({ hub, key: j.deviceKey, at: Date.now() }));
+      view(`<h1 class="ok">Connected ✓</h1><p>${esc(CONFIG.appName)} is connected to Amir OS. Back in Amir OS, approve the team access Alex suggests (one tap), and the team can start. You can close this tab.</p>`);
+    } catch (e) { document.getElementById("msg").innerHTML = `<span class="bad">${esc(e.message)}</span>`; btn.disabled = false; btn.textContent = "Try again"; }
+  }
+}
+function readSyncId(spec) { try { const d = JSON.parse(localStorage.getItem(spec.key) || "{}"); return spec.path.split(".").reduce((o, k) => o && o[k], d) || spec.fallback || ""; } catch { return spec.fallback || ""; } }
+</script></body></html>
