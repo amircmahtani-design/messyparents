@@ -8154,6 +8154,1358 @@ var GUIDES = [
   ],
   "order": 90,
   "batch": "6"
+},
+{
+  "id": "hands-to-mouth",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why does my baby keep putting her hands in her mouth?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Hands to mouth and fingers interlaced is real progress, even though it looks like fidgeting. She's working out where she ends.",
+  "keywords": [
+    "baby hands to mouth",
+    "interlacing fingers",
+    "hand awareness",
+    "midline baby",
+    "body awareness"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She goes floppy, or won't wake properly",
+      "One side of her body isn't moving at all",
+      "She's pale, grey or blue",
+      "A fever, if she's under three months old"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Hands to mouth from the first weeks",
+        "Fingers interlaced at the middle of her body",
+        "At first accidental, then increasingly deliberate",
+        "Sucking hands isn't always hunger"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Leaving her hands free instead of covering them",
+        "Letting her suck on them without treating it as a feeding cue",
+        "Holding her upright so she could see them",
+        "Giving her something light to grip once she reached"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She goes floppy, or won't wake properly",
+        "One side of her body isn't moving at all",
+        "She's pale, grey or blue",
+        "A fever, if she's under three months old"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Hands to mouth and interlaced fingers is her mapping her own body, and it's a real step. Sucking hands isn't always hunger. Persistent one-sided movement or a hand that stays fisted past a few months is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "eyes-dont-coordinate",
+    "flash-photos-and-her-eyes",
+    "tummy-time-after-eating"
+  ],
+  "seo": {
+    "description": "Hands in the mouth and fingers meeting in the middle are early signs that your baby is discovering her body, not always signs of hunger."
+  },
+  "longform": [
+    {
+      "h": "Does she know she's doing it?",
+      "t": "That was our question, because she'd started interlacing her fingers and it looked far too deliberate for someone who'd been alive a few weeks.\n\nThe honest answer is partly. Early on it's more reflex than plan. But the sensation of one hand touching the other is information, and she's using it."
+    },
+    {
+      "h": "What's actually happening",
+      "t": "She's building a map of her own body, and it starts at the middle. Bringing both hands together at the centre of her chest is called working at the midline, and it's a genuine developmental step rather than fidgeting.\n\nHands to mouth comes early too, and it does two jobs. It's exploration — her mouth is the most sensitive part of her, so it's the best tool she has for finding out what a hand is. And it's self-soothing, which is why she does more of it when she's unsettled.\n\nThat second part caught us out. We kept reading hands in the mouth as hunger and offering a feed. Sometimes it was. Often she was just comforting herself. Papa kept thinking we were underfeeding her for a while. He relaxed when he asked the pediatrician and she said Ari is just exploring the world now."
+    },
+    {
+      "h": "How it progresses",
+      "t": "Accidental contact first. Then bringing them together on purpose. Then looking at them — which is a lovely thing to watch, because she'll stare at her own hand like it's arrived from somewhere else.\n\nThen reaching, then grabbing, then getting it to her mouth reliably. Each of those builds on the last.\n\nCorrected age applies. Ours was born at 33 weeks, so all of this ran later than the charts suggested and was exactly on time for her.\n\nLeft her hands out rather than covered by sleeves or a swaddle during awake time. She can't explore what she can't reach.\n\nHeld her upright some of the time so her hands were in her field of view, rather than always flat on her back.\n\nAnd once she was reaching, gave her something light and easy to hold — a soft ring or a muslin. Nothing complicated.\n\nWhat's worth mentioning at a check, rather than in a panic: a hand that stays tightly fisted well past a few months, or consistently only using one side."
+    }
+  ],
+  "order": 91,
+  "batch": "7"
+},
+{
+  "id": "eyes-dont-coordinate",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why don't my baby's eyes move together yet?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Very common in the early months and usually sorts itself out. There's an age past which it should be looked at, and one situation that shouldn't wait.",
+  "keywords": [
+    "baby eyes not coordinated",
+    "cross eyed baby",
+    "squint",
+    "eye crossing",
+    "when do eyes align"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "One eye suddenly turns and stays turned",
+      "A white or cloudy appearance in the pupil",
+      "She's floppy, or won't wake properly"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Eye muscles are still developing in the early months",
+        "Occasional crossing or drifting, especially when tired",
+        "More noticeable when she's focusing up close",
+        "Usually settles by around four months corrected"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Noticing when it happened — tired, close up, or all the time",
+        "Using corrected age rather than her birthday",
+        "Taking a photo when it was obvious",
+        "Raising it at a scheduled check rather than worrying between them"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "One eye suddenly turns and stays turned",
+        "A white or cloudy appearance in the pupil",
+        "She's floppy, or won't wake properly"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Eyes drifting or crossing in the early months is common and usually settles by around four months corrected. A turn that's constant, or a white reflex in the pupil, needs seeing rather than waiting."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "flash-photos-and-her-eyes",
+    "tummy-time-after-eating",
+    "head-tilt-in-tummy-time"
+  ],
+  "seo": {
+    "description": "Occasional eye crossing can be common in young babies, but a constant turn or white reflection in the pupil needs medical advice."
+  },
+  "longform": [
+    {
+      "h": "Two questions, months apart",
+      "t": "First, at a few days corrected: why don't her eyes coordinate yet, and is that all right for a preemie.\n\nThen again at three months: she's crossing her eyes a lot today, why.\n\nBoth ordinary questions, and the answers differ mainly because of her age."
+    },
+    {
+      "h": "Why it happens early on",
+      "t": "The muscles that move the eyes and the coordination between them are still developing. Early on she can't reliably aim both at the same point, so they drift, cross, or occasionally do different things.\n\nIt's most noticeable when she's tired, when something is close to her face, or when she's trying hard to focus.\n\nNewborn vision is also short range — roughly the distance from your arms to your face, which is not a coincidence. She isn't trying to track something across the room, so the misalignment matters less than it looks."
+    },
+    {
+      "h": "When it should have settled",
+      "t": "Broadly by around four months, and for a baby born early that means four months corrected rather than four months old.\n\nThat distinction matters. Ours was born seven weeks early, so measuring from her birthday would have had us worrying two months before there was anything to worry about.\n\nPast that point, persistent crossing or drifting is worth having looked at properly. Not urgently — but it's one of the things where early assessment genuinely helps, so it shouldn't drift on for months.\n\nAn eye that turns and stays turned, rather than drifting now and then is something that should be checked.\n\nAnd a white or cloudy appearance in the pupil — including in a photograph, where one eye shows white instead of the usual red-eye reflex. That one gets checked quickly, and it's worth knowing about because a photo is often how it's first noticed.\n\nAlso worth mentioning: a sudden turn in a baby whose eyes had been straight."
+    }
+  ],
+  "order": 92,
+  "batch": "7"
+},
+{
+  "id": "flash-photos-and-her-eyes",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Is camera flash safe for my baby's eyes?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "A few flashes from a normal distance won't have damaged her eyes. It's unpleasant rather than harmful.",
+  "keywords": [
+    "flash photography baby",
+    "camera flash newborn eyes",
+    "passport photo baby",
+    "is flash bad for babies"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A white or cloudy appearance in her pupil, in life or in a photo",
+      "One eye turns and stays turned",
+      "She stops responding to faces or light",
+      "She's floppy, or won't wake properly"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A camera flash is brief and diffuse",
+        "Ordinary flashes at normal distance aren't considered harmful",
+        "She'll blink, startle or cry — that's discomfort, not damage",
+        "Passport and clinic photos happen to everyone"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Keeping the camera at arm's length rather than close up",
+        "Turning the flash off where the light allowed",
+        "Using a bright window instead for ordinary photos",
+        "Not repeating flash shots over and over"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A white or cloudy appearance in her pupil, in life or in a photo",
+        "One eye turns and stays turned",
+        "She stops responding to faces or light",
+        "She's floppy, or won't wake properly"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "A few flashes at normal distance are not thought to cause harm — she'll dislike it rather than be damaged by it. Keep the camera back, and use daylight where you can."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "tummy-time-after-eating",
+    "head-tilt-in-tummy-time",
+    "choosing-toys"
+  ],
+  "seo": {
+    "description": "An ordinary camera flash is unlikely to harm a baby's eyes; learn what to avoid and why a white reflection in photos should be checked."
+  },
+  "longform": [
+    {
+      "h": "The question after the fact",
+      "t": "We'd had to take flash photographs for a passport, and afterwards wondered how bad that was for a one-month-corrected baby's eyes.\n\nThe follow-up detail was the useful one: it was about a metre away."
+    },
+    {
+      "h": "What a flash actually does",
+      "t": "It's very brief and it spreads out quickly with distance. At a normal photographing distance it isn't considered a risk to a baby's eyes.\n\nWhat it does do is startle her. Bright, sudden, unexpected — she'll blink hard, flinch, and quite possibly object loudly. That reaction is discomfort rather than evidence of harm, though it certainly feels like harm when you're the one who caused it.\n\nA laser pointer or a direct beam is a completely different thing and genuinely dangerous. A camera flash isn't in that category."
+    },
+    {
+      "h": "What we'd do differently",
+      "t": "Keep the camera back rather than close to her face. Distance does most of the work.\n\nUse available light for ordinary photos — a bright window gives better pictures of a baby anyway, and no flash.\n\nAnd don't repeat it. Passport photos often take several attempts, and the sensible approach is to get the framing right first with the flash off, then take the one that needs it.\n\nOfficial photos are compulsory and everyone has to do them. It isn't something to feel guilty about.\n\nWorth knowing: the red-eye effect in a flash photograph is the light reflecting off the back of the eye, and it's normal.\n\nWhat isn't normal is one eye showing white instead. That's a reason to get her eyes checked quickly, and photographs are quite often how it's first spotted.\n\nSo the flash has a genuine use, even if it isn't a pleasant one for her."
+    }
+  ],
+  "order": 93,
+  "batch": "7"
+},
+{
+  "id": "when-to-start-playing",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "When should I start playing with my newborn?",
+  "ages": [
+    "0–1 month",
+    "2–3 months"
+  ],
+  "read": 3,
+  "summary": "Straight away, and it looks nothing like play. Your face at close range is the whole activity.",
+  "keywords": [
+    "playing with newborn",
+    "when to start playing",
+    "newborn stimulation",
+    "tummy time",
+    "baby activities"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She stops responding to your voice or face altogether",
+      "She's pale, grey or blue",
+      "A fever, if she's under three months old"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–3 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Newborn play is faces, voices and movement",
+        "Short bursts of a few minutes are plenty",
+        "She'll look away when she's had enough",
+        "Corrected age sets the pace, not her birthday"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Holding her at about the distance from our arms to our face",
+        "Talking constantly, narrating whatever we were doing",
+        "Stopping when she looked away instead of pushing on",
+        "Tummy time in short bursts, several times a day"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She stops responding to your voice or face altogether",
+        "She's pale, grey or blue",
+        "A fever, if she's under three months old"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Play starts immediately and it's mostly your face and voice at close range. Short bursts, stop when she looks away, and count from her due date if she was early."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "tummy-time-after-eating",
+    "head-tilt-in-tummy-time",
+    "choosing-toys"
+  ],
+  "seo": {
+    "description": "Newborn play is simple and brief: faces, talking, cuddles and short tummy-time sessions are already enough stimulation."
+  },
+  "longform": [
+    {
+      "h": "When she was nearly one month corrected",
+      "t": "That was the point we asked, and the question had a second half: how do we keep her more awake and engaged during the day.\n\nBoth reasonable. And the answer to the first is earlier than we expected, while the answer to the second turned out to matter less than we thought."
+    },
+    {
+      "h": "Newborn play doesn't look like play",
+      "t": "There are no toys involved and nothing to buy.\n\nIt's your face, held at roughly the distance from your arms to your eyes, which is about as far as she can focus. It's your voice. It's slow movement she can follow. It's being held and carried and talked to.\n\nHigh contrast helps early — black and white patterns, strong edges — because colour vision is still developing. But a face beats any card you can buy, and it's free.\n\nThat's the entire curriculum for the first weeks."
+    },
+    {
+      "h": "Short, and stopped early",
+      "t": "A few minutes is a session. Newborns tire fast, and an overstimulated baby is much harder to settle afterwards.\n\nThe signal is easy once you know it: she looks away. Turning her head, glazing over, going fussy, hiccupping. That's her asking for a break, and the right response is to stop rather than to work harder at engaging her.\n\nPapa got this wrong at first and tried to hold her attention. He kept trying to bond with Ari and was trying to make her laugh, play with her, show her images…Mama worked it out before papa did and said plainly not to overstimulate her, which was the single most useful piece of advice we got that month.\n\nShort and often — a minute or two, several times a day, building up.\n\nOn your chest while you're reclined counts, and it's the version most newborns tolerate first. Across your lap works too.\n\nAlways while she's awake and watched, and not straight after a feed.\n\nAnd all of this runs on corrected age. Ours was born at 33 weeks, so at two months old she was around two weeks corrected, and every activity chart we read described a different baby until we adjusted."
+    }
+  ],
+  "order": 94,
+  "batch": "7"
+},
+{
+  "id": "tummy-time-after-eating",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "How long should I wait after a feed before tummy time?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Twenty to thirty minutes is a reasonable gap. And the order of the day matters more than the gap does.",
+  "keywords": [
+    "tummy time after feeding",
+    "how long after eating",
+    "feed play sleep",
+    "tummy time timing"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She chokes, or struggles to breathe during tummy time",
+      "She goes pale, grey or blue",
+      "Forceful vomiting, or vomit that's green or bloody",
+      "She's floppy, or won't wake properly"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Waiting until the milk has settled after a feed",
+        "Some spit-up even so, especially early on",
+        "Feed, then play, then sleep is the usual order",
+        "Short sessions suit a full baby better than long ones"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Waiting about half an hour rather than watching the clock",
+        "Keeping her upright in between",
+        "Doing it when she woke, before she got hungry",
+        "Cutting it short if she was clearly uncomfortable"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She chokes, or struggles to breathe during tummy time",
+        "She goes pale, grey or blue",
+        "Forceful vomiting, or vomit that's green or bloody",
+        "She's floppy, or won't wake properly"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "There is no exact timer. Wait until she seems comfortable after a feed. If she spits up easily, give her longer or try before the next feed."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "choosing-toys",
+    "when-to-start-playing",
+    "first-laugh"
+  ],
+  "seo": {
+    "description": "Tummy time is usually more comfortable before a feed or after allowing time for milk to settle, especially for babies who spit up."
+  },
+  "longform": [
+    {
+      "h": "Twenty-five minutes — is that enough?",
+      "t": "That was the actual question, and the answer is yes, roughly.\n\nTwenty to thirty minutes after a feed gives her stomach a chance to settle. Less than that and you'll get more spit-up than you wanted, particularly in the early months when posseting is at its peak anyway."
+    },
+    {
+      "h": "The order matters more than the gap",
+      "t": "The follow-up was the better question: should I wake her, let her play, feed her, then settle her to sleep?\n\nSo we not sure what the correct order is, but we used to wake her up, do tummy time, then feed, then play a bit then downtime and then sleep. Sometimes if the gap was big enough a little top up of food before sleep would work as well."
+    },
+    {
+      "h": "When she's just woken and hasn't eaten for hours",
+      "t": "Then feed her first. A hungry baby is a bad tummy-time participant and you'll get thirty seconds of protest rather than anything useful.\n\nThe gap is a guideline, not a rule that overrides an actual hungry baby at five in the morning.\n\nShe will sometimes, and it doesn't mean you got the timing wrong.\n\nShorter sessions work better on a fullish stomach. So does keeping her upright in the gap rather than laying her flat and then flipping her over.\n\nAnd if she's genuinely uncomfortable, stop and try again later. There's no quota to hit which papa learnt. He kept trying to beat Ari record of tummy time each time. There were some days she could hold for 30 seconds and then other days where she was struggling with 10."
+    }
+  ],
+  "order": 95,
+  "batch": "7"
+},
+{
+  "id": "head-tilt-in-tummy-time",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why does my baby's head control seem worse?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Usually a heavier head and a bad day rather than going backwards. Consistently tilting the same way is the bit worth raising.",
+  "keywords": [
+    "head tilt tummy time",
+    "head control gone backwards",
+    "torticollis",
+    "baby leans one side"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She's lost a skill entirely and isn't using one side at all",
+      "She's pale, grey or blue",
+      "A fever, if she's under three months old"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Progress is uneven rather than steady",
+        "Her head gets heavier faster than the neck strengthens",
+        "Tired, hungry or fed-up all look like weakness",
+        "Tilting varies day to day"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Trying again when she was alert rather than tired",
+        "Alternating which side we approached her from",
+        "Moving the interesting thing to her less-favoured side",
+        "Raising the one-sided pattern at her next check"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She's lost a skill entirely and isn't using one side at all",
+        "She's pale, grey or blue",
+        "A fever, if she's under three months old"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Uneven progress is normal and a heavier head makes it look like going backwards. Always tilting to the same side, or a neck that resists turning, is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "when-to-start-playing",
+    "first-laugh",
+    "when-do-babies-talk"
+  ],
+  "seo": {
+    "description": "Head control can look uneven while a baby is learning, but a lasting tilt, stiffness or reduced movement should be checked."
+  },
+  "longform": [
+    {
+      "h": "It looked like going backwards",
+      "t": "She used to hold her head up better, and now she tilted more during tummy time. That's genuinely unsettling to watch — everything is supposed to be improving.\n\nWe were told it wasn't a red flag unless it was persistent and always to one side, and then asked for that to be expanded, which was the right instinct because that sentence is doing a lot of work."
+    },
+    {
+      "h": "Why it can look worse before it gets better",
+      "t": "Her head is getting heavier faster than her neck is getting stronger. So a baby who managed a decent lift at six weeks can look worse at ten, having gained a considerable amount of head to lift.\n\nAnd motor development isn't a smooth line. It stalls, dips, and jumps. A bad week often comes right before something new.\n\nOn top of that, tired, hungry, recently fed, or simply fed up with the whole exercise all look exactly like weakness. Trying again at a different point in the day frequently produces a different baby."
+    },
+    {
+      "h": "The pattern worth noticing",
+      "t": "Not how well she lifts. Which way she goes.\n\nIf she consistently turns or tilts to the same side, and resists turning the other way, that's the thing to mention. It can be tightness in the neck muscles, which is common, treatable, and responds much better to early physiotherapy than to waiting.\n\nIt also links to head shape — a baby who always looks one way puts pressure on the same spot.\n\nWhat we watched for: does she turn both ways when something interesting is there, or does one side clearly cost her more?\n\nApproaching her from alternate sides rather than always the same one, which sounds trivial and isn't — we were both right-handed and had unconsciously standardised.\n\nMoving whatever she wanted to look at to her less-favoured side.\n\nAlternating which end of the cot her head went., the window was to her left, and we saw she always lay that way, so the moment we changed the cribs direction in the room to have the window to the right it actually helped. It made the room an obstacle course but it helped.\n\nAnd trying tummy time when she was alert and content, rather than fitting it in whenever we remembered. We started tummy time late. We thought a month or so had to pass before you could start. You can start pretty much the same day your baby comes home, unless the doctor mentions otherwise."
+    }
+  ],
+  "order": 96,
+  "batch": "7"
+},
+{
+  "id": "first-laugh",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "When do babies start laughing?",
+  "ages": [
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "Usually somewhere around three to four months, and often at something ridiculous rather than at you.",
+  "keywords": [
+    "first laugh baby",
+    "when do babies laugh",
+    "baby giggle",
+    "social development"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She stops responding to faces or voices altogether",
+      "She's pale, grey or blue",
+      "A fever, if she's under three months old"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 2–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Somewhere around three to four months, corrected",
+        "Often preceded by weeks of chuckles and squeaks",
+        "Frequently at an object rather than a person",
+        "Some babies laugh earlier, some later"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Repeating whatever caused it, immediately and often",
+        "Noticing what she was actually looking at",
+        "Writing down the date, because we nearly didn't",
+        "Not competing to be the one who got it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She stops responding to faces or voices altogether",
+        "She's pale, grey or blue",
+        "A fever, if she's under three months old"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Usually around three to four months corrected, often at an object rather than a person. No laugh by around six months corrected, alongside little eye contact or response to your voice, is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "rolling-back-to-tummy",
+    "hand-preference",
+    "playing-with-a-three-month-old"
+  ],
+  "seo": {
+    "description": "Most babies begin laughing in the early months, often at an unexpected sound, face or toy rather than anything carefully planned."
+  },
+  "longform": [
+    {
+      "h": "It was the giraffe",
+      "t": "Her first real laugh wasn't at either of us. It was at Gina the giraffe. She was simply holding it and bounced up and down and the giraffe wobbled her head and Ari proceeded to laugh. The very first time either Mama and Papa heard her laugh. It was one of the cutest things and yet we didn’t quite get why she was laughing. The giraffe was the same as always, and yet she just began to laugh.\n\nWhich is the correct and traditional outcome, and every parent should be warned about it in advance."
+    },
+    {
+      "h": "When it usually turns up",
+      "t": "Somewhere around three to four months, counted from her due date if she was born early.\n\nBefore that there's usually a run-up — chuckles, squeaks, breathy sounds that are almost a laugh and then aren't. Those count as the same thing arriving in pieces.\n\nSome babies laugh at two months. Some are closer to five. Both are ordinary, and it doesn't predict anything about temperament, however much you'd like it to."
+    },
+    {
+      "h": "Why an object and not a person",
+      "t": "Early laughter is often triggered by something surprising and repeatable rather than by social connection — a sudden movement, an odd noise, a face doing something unexpected.\n\nA toy that moves or makes a sound hits that mark reliably. A parent trying very hard to be entertaining often doesn't, papa makes adults laugh and was adement in making his daughter laugh, partly because trying hard makes you less surprising, humor and understanding comes later.\n\nSo it isn't a verdict on you. It's a verdict on the giraffe, who has excellent comic timing and no idea.\n\nDo the exact thing again. Immediately, and then repeatedly, for far longer than is dignified.\n\nRepetition is how she learns the connection between what happened and the feeling, and it's the fastest way to get the second laugh.\n\nAlso write down the date. We nearly didn't, and it's one of the few milestones you'll genuinely want to remember precisely.\n\nWhat's worth raising at a check rather than worrying about: no laughing at all by around six months corrected, especially alongside limited eye contact or little response to your voice. Those get looked at together."
+    }
+  ],
+  "order": 97,
+  "batch": "7"
+},
+{
+  "id": "when-do-babies-talk",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "When do babies start talking?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Long before words. Cooing, babbling and taking turns are the real milestones, and they start in the first few months.",
+  "keywords": [
+    "when do babies talk",
+    "first words",
+    "babbling",
+    "baby sounds",
+    "speech milestones"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She stops responding to your voice altogether",
+      "She's lost sounds or babbling she previously had",
+      "She's floppy, or won't wake properly",
+      "She's pale, grey or blue"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Cooing and vowel sounds from around two months corrected",
+        "Babbling with consonants from around six months",
+        "First words often somewhere around a year",
+        "Understanding runs well ahead of speaking"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Narrating everything out loud, constantly",
+        "Leaving five long seconds after asking her something",
+        "Naming what she was already looking at",
+        "Reading daily, pointing rather than reading the text"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She stops responding to your voice altogether",
+        "She's lost sounds or babbling she previously had",
+        "She's floppy, or won't wake properly",
+        "She's pale, grey or blue"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Cooing from around two months, babbling from around six, words often near a year — all corrected if she was early. No babbling by nine months corrected, or little response to your voice, is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "tummy-time-after-eating",
+    "head-tilt-in-tummy-time",
+    "first-laugh"
+  ],
+  "seo": {
+    "description": "Talking develops through coos, babbling, gestures and understanding before first words arrive; corrected age matters for premature babies."
+  },
+  "longform": [
+    {
+      "h": "The question skips most of the milestones",
+      "t": "When do babies usually start speaking. It's the natural question and it points at the wrong target, because by the time words arrive most of the work has already happened.\n\nThe things worth watching for come much earlier and look nothing like talking."
+    },
+    {
+      "h": "The actual sequence",
+      "t": "Cooing and vowel sounds from around two months corrected — the long aaah and ooh noises that turn up when she's content.\n\nTaking turns not long after. You speak, she makes a sound, you respond. That back-and-forth is conversation before either of you is saying anything.\n\nBabbling with consonants from around six months — bababa, dadada. Repetitive, and it doesn't mean anything yet.\n\nGestures from around nine to twelve months. Pointing, waving, holding things out to show you. This is the big one, and it predicts language better than any word count.\n\nAnd then words, often somewhere around a year, with an enormous range either side."
+    },
+    {
+      "h": "Understanding comes first",
+      "t": "She'll understand a great deal before she says anything, and that gap is normal rather than a delay.\n\nSo the useful question isn't how many words she has. It's whether she's communicating — trying to get your attention, responding to her name, following your gaze, and reacting when you talk to her. Ari learnt her name quite early in the game, and would turn whenever she heard her name. There were 2 languages happening at the time, we still don’t know if that matters or not. We are waiting until she is 2 to add the third language in to not slow down her speech. This is old wives tale and probably not scientifically proven but as parents we want our daughter to be able to communicate with us fster rather than slower so we doing this anyways.\n\nNarrating out loud, constantly, in a way that feels faintly ridiculous. It's the single strongest thing you can do and it costs nothing.\n\nLeaving gaps. Ask, then wait five seconds. Far longer than feels natural, and most of us fill the silence long before she's had a chance to answer.\n\nFollowing her attention rather than directing it — naming what she's already looking at.\n\nAnd books daily, pointing at pictures rather than reading the words.\n\nIf you're raising her with more than one language, that does not cause delay. It's a persistent myth and people will repeat it confidently. Count her words across all her languages."
+    }
+  ],
+  "order": 98,
+  "batch": "7"
+},
+{
+  "id": "rolling-back-to-tummy",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why does my baby roll one way but not the other?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Back to tummy usually comes first and it's the harder one. Getting back again takes weeks longer, and it changes your sleep setup immediately.",
+  "keywords": [
+    "baby rolling",
+    "back to tummy",
+    "tummy to back",
+    "rolling milestone",
+    "when do babies roll"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She isn't moving one side of her body at all",
+      "She's pale, grey or blue",
+      "She rolls into a position she can't breathe well in and stays there"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 2–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Back to tummy often comes first, though not always",
+        "Tummy back to back can take several more weeks",
+        "One side is usually easier than the other",
+        "Wide range — anywhere from three to seven months corrected"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Plenty of floor time, out of seats and bouncers",
+        "Toys just out of reach to the side she rolled towards",
+        "Practising the return roll during the day",
+        "Stopping the swaddle the moment she first rolled"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She isn't moving one side of her body at all",
+        "She's pale, grey or blue",
+        "She rolls into a position she can't breathe well in and stays there"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Back to tummy usually comes first and the return roll can take weeks more. Once she rolls at all, the swaddle stops and the cot stays empty — she'll roll in her sleep before she can roll back."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "first-laugh",
+    "learning-to-sit",
+    "playing-with-a-three-month-old"
+  ],
+  "seo": {
+    "description": "Babies often learn to roll in one direction before the other; once rolling begins, sleep and changing safety need to change too."
+  },
+  "longform": [
+    {
+      "h": "Rolling at four months, one direction only",
+      "t": "She was rolling from back to tummy easily, both sides, and couldn't get back again.\n\nWe asked how long that usually takes, and the honest answer is that it's normal and it can be several weeks. Sometimes longer."
+    },
+    {
+      "h": "The harder one comes first",
+      "t": "That seems backwards and it isn't. Back to tummy uses a push and a twist that babies develop earlier. Tummy to back needs a different set of muscles and a bit of weight-shifting that takes longer to work out.\n\nSo the common pattern is: she learns to roll onto her front, immediately does it in her cot at two in the morning, and then lies there furious because she can't undo it.\n\nThat phase is genuinely annoying and it passes."
+    },
+    {
+      "h": "What changes the moment she rolls at all",
+      "t": "Swaddling stops. Not when she rolls reliably — at the first sign. A swaddled baby who ends up on her front can't use her arms, and that's the situation to avoid entirely.\n\nThe cot stays completely empty. No positioners, no rolled towels, nothing to stop her turning.\n\nAnd you still put her down on her back every time. Once she can roll herself, you don't need to keep turning her back over through the night — but she goes down on her back.\n\nA sleeping bag rather than a blanket makes all of this simpler.\n\nPractise it in daylight. Lay her on her front, put something interesting off to one side, and let her work at it. Guide her hip gently if she's stuck, rather than doing it for her.\n\nFloor time, more of it than feels necessary. Babies parked in seats and bouncers simply don't get the reps.\n\nAnd expect one side to come before the other. Ours rolled beautifully to one side and hopeless to the other for a while, which is entirely usual."
+    }
+  ],
+  "order": 99,
+  "batch": "7"
+},
+{
+  "id": "learning-to-sit",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Do I need to teach my baby to sit?",
+  "ages": [
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 2,
+  "summary": "She works it out. What you provide is floor time and opportunity — propping her upright early does more harm than good.",
+  "keywords": [
+    "baby sitting",
+    "how to teach baby to sit",
+    "sitting milestone",
+    "propping baby up",
+    "when do babies sit"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She isn't using one side of her body at all",
+      "She's pale, grey or blue",
+      "She's lost a skill she previously had"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 4–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Unsupported sitting around five to eight months corrected",
+        "Tripod sitting on hands comes first",
+        "Lots of toppling, which is part of the learning",
+        "Straight legs and poor balance early on"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Floor time instead of propping her in seats",
+        "Sitting her between our legs so she could wobble safely",
+        "Cushions around her rather than behind her",
+        "Letting her topple rather than catching every time"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She isn't using one side of her body at all",
+        "She's pale, grey or blue",
+        "She's lost a skill she previously had"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "She works it out herself — floor time and opportunity are what you provide. Not sitting unsupported by around nine months corrected is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "head-tilt-in-tummy-time",
+    "first-laugh",
+    "playing-with-a-three-month-old"
+  ],
+  "seo": {
+    "description": "Babies usually learn to sit through floor play and practice rather than formal training; steady support and time do most of the work."
+  },
+  "longform": [
+    {
+      "h": "The question, asked plainly",
+      "t": "Do you train a baby to sit, or does she figure it out herself?\n\nShe figures it out. What you can do is give her the conditions, and the most useful of those is time on the floor."
+    },
+    {
+      "h": "How it actually arrives",
+      "t": "It builds out of tummy time. Pushing up on her arms develops the back and neck strength that sitting needs, so the two aren't separate projects.\n\nThen comes tripod sitting — propped forward on her own hands, wobbling, lasting a few seconds. Then longer. Then hands free. Then being able to get into sitting on her own, which is a later and separate skill.\n\nRoughly five to eight months corrected for unsupported sitting, with a wide range either side.\n\nWe watched ours rolling well and not moving towards sitting at all, and asked why. The answer is that rolling and sitting develop in parallel rather than in sequence, and one doesn't lead to the other."
+    },
+    {
+      "h": "The thing not to do",
+      "t": "Propping her upright in seats and supports for long stretches.\n\nIt looks like practice and it isn't — she's being held in position by the chair rather than by her own muscles, so she gets the appearance of sitting without building any of the strength. It also takes away floor time, which is where the actual work happens.\n\nStraight legs, poor balance, and toppling sideways are all normal parts of learning. Toppling is how she learns to correct.\n\nCushions around her rather than behind her, so a fall is soft in any direction. And let her fall. Catching her every time removes the lesson.\n\nNot sitting unsupported by around nine months corrected, check with a doctor.\n\nA strong and consistent preference for one side, or one side not being used.\n\nLegs that are very stiff or very floppy compared to the other.\n\nAnd a skill that's been lost rather than not yet gained. That one always gets mentioned, whatever it is."
+    }
+  ],
+  "order": 100,
+  "batch": "7"
+},
+{
+  "id": "hand-preference",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Why does my baby favour one hand?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "A mild preference can happen. A strong, consistent preference before eighteen months is worth raising.",
+  "keywords": [
+    "hand preference baby",
+    "left or right handed baby",
+    "favouring one side",
+    "baby stronger side"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She isn't using one arm or one side at all",
+      "She's floppy, or won't wake properly",
+      "One arm or leg is held stiffly or oddly",
+      "She's lost the use of a hand she was using before"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 2–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Mild swapping preference through the first year",
+        "True handedness usually settles much later",
+        "Reaching more with the nearer hand",
+        "Using both hands in most activities"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Offering things at her midline rather than to one side",
+        "Noticing whether she could use the other hand, not just whether she chose to",
+        "Alternating how we carried and held her",
+        "Raising it at a scheduled check rather than between them"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She isn't using one arm or one side at all",
+        "She's floppy, or won't wake properly",
+        "One arm or leg is held stiffly or oddly",
+        "She's lost the use of a hand she was using before"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "A mild preference can happen, but she should still use both hands. A strong, consistent preference before eighteen months is worth raising at her next check."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "playing-with-a-three-month-old",
+    "independent-play",
+    "when-to-start-playing"
+  ],
+  "seo": {
+    "description": "A small preference can happen, but consistently avoiding one hand or one side before eighteen months is worth discussing with a professional."
+  },
+  "longform": [
+    {
+      "h": "She grabs with both, but there's a favourite",
+      "t": "That was the observation, and the question underneath it — asked outright — was whether it could be scoliosis.\n\nIt's worth taking that question seriously rather than dismissing it, because the reasoning is sound: a consistently stronger side does sometimes mean something. It's just that at this age it usually doesn't."
+    },
+    {
+      "h": "What's ordinary",
+      "t": "Babies use both hands and swap which one they favour, often from week to week and depending on what they're doing.\n\nTrue handedness generally settles much later than people expect — often well into the second or third year.\n\nSo a baby who reaches more often with one hand, or seems more confident with it, is ordinary. She's also more likely to use whichever hand is nearer to the thing she wants, which makes a preference look stronger than it is depending on where you sit."
+    },
+    {
+      "h": "The distinction that matters",
+      "t": "Not which hand she chooses. Whether she can use the other one.\n\nA baby with a mild preference still uses both — bringing both to the midline, transferring objects between them, bearing weight on both arms in tummy time.\n\nA strong, consistent preference before eighteen months, or an arm she genuinely doesn't use, is different and worth raising. Early assessment is much more useful than waiting to see.\n\nSo the test we used: offer something at her midline, where neither hand is closer, and see what happens. And watch whether the less-favoured hand does anything at all.\n\nThere was a second one tucked in alongside it: when we hold her in one position she cries, and stops the moment we change it — is she in pain? She wasn’t. She simply had a preference. After all she is a little human being that has wants and likes too.\n\nThat's worth asking about directly, particularly alongside a one-sided preference, because a position that reliably causes distress can point at neck or hip discomfort rather than preference.\n\nIt isn't an emergency. It is something to mention rather than work around."
+    }
+  ],
+  "order": 101,
+  "batch": "7"
+},
+{
+  "id": "playing-with-a-three-month-old",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "What can I do with my three-month-old?",
+  "ages": [
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Less than you think, and more repetitively. She's learning that things happen, and that you respond.",
+  "keywords": [
+    "playing with 3 month old",
+    "baby activities 3 months",
+    "what to do with baby",
+    "baby play ideas"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She stops responding to faces or voices altogether",
+      "She's pale, grey or blue",
+      "She's lost a skill she previously had"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 2–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Short bursts, several times a day",
+        "Enormous repetition of the same simple thing",
+        "Looking away when she's had enough",
+        "Some days she isn't interested at all"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Repeating one thing rather than rotating through five",
+        "Narrating whatever we were doing, out loud, constantly",
+        "Leaving pauses so she could answer",
+        "Following what she was already looking at"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She stops responding to faces or voices altogether",
+        "She's pale, grey or blue",
+        "She's lost a skill she previously had"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Short bursts, heavy repetition, and following what she's already interested in. Stop when she looks away — pushing through it makes the next hour harder."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "learning-to-sit",
+    "independent-play",
+    "head-control"
+  ],
+  "seo": {
+    "description": "Simple, repeated play is enough for a three-month-old: talking, faces, floor time, reaching and stopping when she has had enough."
+  },
+  "longform": [
+    {
+      "h": "The dos are shorter than you'd expect",
+      "t": "We asked for the dos and don'ts of playing with a three-month-old, half expecting a curriculum.\n\nIt's mostly four things: your face, your voice, something to look at, and time on the floor. Everything else is variation."
+    },
+    {
+      "h": "Repetition is the point",
+      "t": "This is the counterintuitive bit. The instinct is to keep things varied so she doesn't get bored.\n\nShe doesn't get bored the way you do. Doing the same small thing over and over is how she learns that an action has a result — and the twentieth repetition is doing more than the first.\n\nSo: the same silly noise. The same rattle in the same spot. The same peekaboo. Long past the point where you're tired of it.\n\nLeave gaps too. Say something, then wait five long seconds. It feels like an eternity and it's how conversation gets built — she needs far more processing time than feels natural, and most of us fill the silence before she's had a chance. Papa once talked like he does normally, and Ari simply started to cry. It was too quick and too much to process all in one go. Their mind is still developing. He was overexcited and ti backfired."
+    },
+    {
+      "h": "Follow rather than direct",
+      "t": "Name what she's already looking at instead of redirecting her to what you'd prefer.\n\nIt sounds like a small thing and it's one of the more consistent findings in early language development. Her attention is already somewhere; putting words on that is worth more than moving it.\n\nDon't push past the point where she looks away. Turning her head, glazing, fussing, hiccupping — that's a break request, and overriding it produces an overstimulated baby you'll then spend an hour settling.\n\nDon't fill the room with noise and lights at once. Several things competing means none of them land.\n\nDon't prop her in seats for long stretches instead of floor time.\n\nAnd don't measure a day by how much you did. Some days she isn't interested, and that's a day, not a failure."
+    }
+  ],
+  "order": 102,
+  "batch": "7"
+},
+{
+  "id": "choosing-toys",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "Which baby toys are actually worth buying?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 2,
+  "summary": "Very few. Simple, open-ended and slightly ahead of where she is beats anything with batteries.",
+  "keywords": [
+    "baby toys",
+    "montessori toys",
+    "best toys for babies",
+    "toys by month",
+    "what toys to buy"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She chokes, or struggles to breathe",
+      "Anything small enough to swallow has gone missing",
+      "She's floppy, or won't wake properly",
+      "She's pale, grey or blue"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Babies need remarkably few toys",
+        "Household objects often beat bought ones",
+        "One or two things out at a time works better",
+        "Interest in a toy comes and goes"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Rotating a small set rather than having everything out",
+        "Choosing things she could do something to",
+        "Play gym and kicking toys before anything complicated",
+        "Keeping the ones she actually returned to"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She chokes, or struggles to breathe",
+        "Anything small enough to swallow has gone missing",
+        "She's floppy, or won't wake properly",
+        "She's pale, grey or blue"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Simple, open-ended and a little ahead of where she is. Rotate a small set rather than filling the floor, and check everything for parts small enough to swallow."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "independent-play",
+    "head-control",
+    "growth-spurt-signs"
+  ],
+  "seo": {
+    "description": "The most useful baby toys are simple, safe and suited to the stage; you do not need a room full of expensive equipment."
+  },
+  "longform": [
+    {
+      "h": "We asked for a list and got a philosophy",
+      "t": "The question was which toys to buy, Montessori style, and then a list for the whole year rather than just for sitting.\n\nWhat came back was less about brands than about a principle, and the principle turned out to be the useful part: the toy should do less so she does more."
+    },
+    {
+      "h": "Roughly what suits when",
+      "t": "Early on — high contrast cards, something to look at overhead, and your face, which remains unbeaten.\n\nAround two to four months, a play gym. Things hanging where she can bat at them, which is how batting becomes reaching. Anything she can kick is excellent value, because feet get going before hands are reliable.\n\nAround four to six months, things she can grip and get to her mouth. Rings, rattles, soft blocks, a wooden spoon. Texture matters more than complexity.\n\nFrom around six months, containers and objects — things to put in, take out, bang together, and drop repeatedly while watching you pick them up.\n\nAll of that runs on corrected age if she was born early."
+    },
+    {
+      "h": "What we found didn't earn its place",
+      "t": "Anything that does the playing for her. A toy that lights up and sings when touched gets attention for a week and teaches very little, because the toy is the active one.\n\nToo many things out at once. Two or three available, the rest put away, rotated every so often — she engages far more with a small set.\n\nAnd anything bought for a stage she's nowhere near. It sits there, you feel guilty, and she reaches it three months later having forgotten it exists.\n\nNothing small enough to pass through a toilet roll tube. Nothing with cords or ribbons long enough to wrap. Nothing with parts that could come loose.\n\nCheck seams and joins periodically, particularly on soft toys, because everything ends up in her mouth.\n\nAnd nothing in the cot. Whatever she plays with during the day, the sleep surface stays empty."
+    }
+  ],
+  "order": 103,
+  "batch": "7"
+},
+{
+  "id": "independent-play",
+  "topic": "development",
+  "icon": "blocks",
+  "featured": false,
+  "title": "When will my baby play independently?",
+  "ages": [
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "Sooner than you'd think, if you resist interrupting. Watching without joining in is a skill worth building — for both of you.",
+  "keywords": [
+    "independent play",
+    "baby entertain herself",
+    "playing alone",
+    "when can baby play alone"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, or won't wake properly",
+      "She stops responding to faces or voices altogether",
+      "She's pale, grey or blue",
+      "She's lost a skill she previously had"
+    ],
+    "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Development • 4–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A few minutes at a time from around four to six months",
+        "Stretches lengthen through the first year",
+        "She'll check you're still there and carry on",
+        "Interest comes in bursts, not steadily"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Staying nearby without joining in",
+        "Not interrupting her when she was absorbed",
+        "Fewer toys out rather than more",
+        "Starting when she was fed, changed and not tired"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, or won't wake properly",
+        "She stops responding to faces or voices altogether",
+        "She's pale, grey or blue",
+        "She's lost a skill she previously had"
+      ],
+      "lead": "Blue or grey, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "A few minutes from around four to six months, lengthening through the year. Stay nearby, don't interrupt when she's absorbed, and put fewer toys out rather than more."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "rolling-sitting-crawling",
+    "first-words",
+    "head-control"
+  ],
+  "seo": {
+    "description": "Independent play starts in very short bursts and grows slowly; staying nearby and making the space safe can help it develop."
+  },
+  "longform": [
+    {
+      "h": "Two questions in the same conversation",
+      "t": "When do babies learn to entertain themselves for a long time. And then, separately: is it all right to watch your baby without interacting with her the whole time?\n\nThose belong together, because the second one is how you get the first."
+    },
+    {
+      "h": "Yes, and it's necessary",
+      "t": "Constant interaction isn't required and isn't ideal. A baby who is always being engaged never gets to find out what happens when she's the one doing the deciding.\n\nWhat she needs is you nearby and available — she'll look over, check you're there, and carry on. That glance is the whole mechanism. Presence rather than performance.\n\nSo watching her without joining in isn't neglect. It's giving her room."
+    },
+    {
+      "h": "Roughly when",
+      "t": "A few minutes at a time from around four to six months corrected. Longer stretches build through the first year and beyond.\n\nIt comes in bursts rather than steadily, and it collapses entirely when she's tired, hungry, teething or working on a new skill.\n\nThe biggest single thing you can do is not interrupt. When she's absorbed in something, the urge to comment, praise or improve it is strong — and it ends the stretch. Concentration is the thing being built, and every interruption resets it.\n\nFewer toys out. A floor covered in options produces two seconds on each.\n\nStarting when she was fed, changed and reasonably rested, rather than using it to buy time when she was already getting upset.\n\nSitting where she could see us and doing something else — not on a phone right next to her, which she notices and finds far more interesting than any toy.\n\nAnd accepting that some days there's no independent play at all, and that's a day rather than a regression."
+    }
+  ],
+  "order": 104,
+  "batch": "7"
+},
+{
+  "id": "checklist-mode",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Why am I caring for my baby but not enjoying it?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Being on duty is not the same as being present, and months of the first makes the second very hard. It's a workload problem more often than a feelings problem.",
+  "keywords": [
+    "not enjoying parenthood",
+    "checklist mode",
+    "parental burnout",
+    "going through the motions",
+    "new parent exhaustion"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thoughts of harming yourself or the baby — ring your doctor or a crisis line now",
+      "You feel unable to keep yourself or her safe",
+      "You're losing touch with what's real",
+      "You can't function at all"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 2–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Long stretches of being on duty flatten enjoyment",
+        "Very common and rarely admitted out loud",
+        "Often worse when the load is unevenly split",
+        "It usually shifts when the workload does, not when you try harder"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Naming the specific thing that was hardest that week",
+        "Splitting nights properly rather than both being wrecked",
+        "Taking help when it was offered, without earning it first",
+        "One short stretch with her where nothing had to be achieved"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thoughts of harming yourself or the baby — ring your doctor or a crisis line now",
+        "You feel unable to keep yourself or her safe",
+        "You're losing touch with what's real",
+        "You can't function at all"
+      ]
+    },
+    "quick": "Being on duty for months flattens enjoyment, and it's usually a workload problem rather than a feelings one. Persistent low mood, numbness or hopelessness is worth a doctor's appointment — don't leave it."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "overwhelmed-new-parent",
+    "parent-sleep-deprivation",
+    "visitors"
+  ],
+  "seo": {
+    "description": "Going through the motions can be a sign of exhaustion rather than a lack of love; practical help and honest support matter."
+  },
+  "longform": [
+    {
+      "h": "The sentence that describes it best",
+      "t": "The funny thing is I'm with her but not enjoying her, because I'm on checklist mode.\n\nThat's a precise description of something a lot of parents live in and very few say out loud. You're present. You're doing everything. And you're not really there."
+    },
+    {
+      "h": "What checklist mode actually is",
+      "t": "When you're the one holding the schedule — feeds, naps, nappies, bottles, laundry, the next appointment — your attention is permanently ahead of the moment.\n\nYou can't enjoy the thing you're managing. Those two states use the same part of you, and the managing wins because it has deadlines.\n\nIt gets worse when the load is uneven, when there's no help, and when the parts of the day that aren't baby are chores rather than rest. If your time off consists of the house rather than yourself, there's no off."
+    },
+    {
+      "h": "It's usually a workload problem",
+      "t": "That's the most useful reframe we found. The instinct is to treat it as a feelings problem — something wrong with how you feel about your child — and to try to feel differently.\n\nThat doesn't work, and it adds guilt on top.\n\nWhat shifts it is changing the load. Splitting nights properly. Taking the help that's offered instead of declining it out of some idea that you should be coping. Getting one stretch of time where nothing has to be achieved.\n\nWe turned down a great deal of help early on and it achieved nothing except making us worse at managing.\n\nA short period each day with her where there was no task attached. Not a feed, not a change, not tummy time with a purpose. Ten minutes on the floor with no objective.\n\nIt sounds like nothing. But checklist mode is a habit of attention, and the only way out is occasionally putting the checklist down.\n\nIf the flatness doesn't lift when the load eases — if it's persistent low mood, numbness, or no enjoyment in anything — that's worth taking to a doctor. Postnatal depression can affect either parent. It can be missed in fathers because fewer people ask how they are doing."
+    }
+  ],
+  "order": 105,
+  "batch": "7"
 }
 ];
 
