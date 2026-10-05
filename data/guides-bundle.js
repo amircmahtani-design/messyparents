@@ -9506,6 +9506,1425 @@ var GUIDES = [
   ],
   "order": 105,
   "batch": "7"
+},
+{
+  "id": "her-first-cold",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What should I do when my baby has her first cold?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "The first one is a shock. Most of it is nursing her through it rather than treating it — and you will probably never work out where it came from.",
+  "keywords": [
+    "cold",
+    "snot",
+    "mucus",
+    "congestion",
+    "saline",
+    "suction",
+    "cough",
+    "runny nose",
+    "first illness"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Her breathing is laboured — ribs pulling in, nostrils flaring, grunting with each breath",
+      "She pauses in her breathing, or goes pale, grey or blue",
+      "She's floppy, hard to wake, or her cry is nothing like her usual one",
+      "She's under three months with a temperature of 38°C or above"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A blocked or runny nose, sneezing and a mild cough",
+        "Symptoms often feel worse before they start improving",
+        "Shorter feeds, because she can't breathe through her nose and suck at the same time",
+        "A cough that comes along with it and outstays the rest"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Saline just before feeds rather than on a schedule, so feeding became the easier part of the day",
+        "Gentle suction only when her blocked nose was stopping a feed",
+        "Smaller feeds more often, and counting wet nappies instead of millilitres",
+        "Writing down the day it started, so we weren't guessing by day five whether it was improving"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Her breathing is laboured — ribs pulling in, nostrils flaring, grunting with each breath",
+        "She pauses in her breathing, or goes pale, grey or blue",
+        "She's floppy, hard to wake, or her cry is nothing like her usual one",
+        "She's under three months with a temperature of 38°C or above"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Most baby colds need comfort, saline and time. Watch her breathing, feeding and wet nappies more closely than the amount of mucus."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "blocked-nose-newborn",
+    "a-slightly-raised-temperature",
+    "newborn-immune-and-going-out"
+  ],
+  "seo": {
+    "description": "Simple ways to help a baby through her first cold, plus the breathing, feeding and fever signs that need medical help."
+  },
+  "longform": [
+    {
+      "h": "Where did the cold come from?",
+      "t": "This was the question we kept coming back to, and it is almost always unanswerable. Cold viruses spread on hands and surfaces as much as through the air, the incubation period is a couple of days, and a baby who has been nowhere can still catch one from an adult who felt perfectly fine when they held her.\n\nWe spent a day working backwards through who had visited and what we had touched. It changed nothing. The useful version of that question is forward-looking — hands washed before she's picked up, nobody unwell holding her — not backwards into an investigation.\n\nKnowing the arc made it much less frightening. Sneezing and a clear runny nose first. By the second or third day the mucus thickens and she sounds much worse, which is the part that makes you panic.\n\nSo the worst day is usually not the first day, and getting worse on day three is not the same as getting ill. We found it far easier once we stopped reassessing the whole situation every two hours and instead looked at where we were against that curve."
+    },
+    {
+      "h": "What helped her breathe and feed",
+      "t": "A small baby breathes through her nose, so a blocked one shows up most at feeds. Saline drops soften things so she can clear them herself, and the timing that worked for us was just before a feed rather than at set intervals through the day.\n\nWe didn’t use suction that much, we were mostly using saline solution. Once or twice when it is genuinely blocking a feed is reasonable. Repeatedly, through the day, irritates the lining and leaves her more congested than she started.\n\nFeeds get shorter and more frequent, because she has to stop and breathe. That is not a feeding problem to be solved, it is a nose problem showing up at the bottle.\n\nWe stopped tracking volumes and tracked wet nappies instead, which is the number that actually tells you whether she is getting enough. Smaller amounts more often, upright, with patience for the pauses, got us through it."
+    },
+    {
+      "h": "What we watched",
+      "t": "The thermometer felt like the thing to reach for and it was the least useful piece of information we had. What mattered was her breathing and how she looked between the bad moments.\n\nBreathing is the one to learn properly. Fast is common with a cold. Working hard is different — the skin pulling in under the ribs or at the base of the throat, nostrils flaring, a grunt at the end of each breath.\n\nIf she was born early"
+    }
+  ],
+  "order": 106,
+  "batch": "8"
+},
+{
+  "id": "a-slightly-raised-temperature",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is 37.2°C or 37.7°C a fever in a baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Temperatures in the 37s are often normal variation. A reading of 38°C or higher is a fever, and under three months it needs urgent advice.",
+  "keywords": [
+    "temperature",
+    "37.2",
+    "37.4",
+    "low grade",
+    "febricola",
+    "thermometer",
+    "fever",
+    "bath"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's under three months with any temperature of 38°C or above",
+      "She's floppy, very hard to wake, or her cry has changed",
+      "A rash that doesn't fade when pressed under a glass",
+      "Laboured breathing, grunting, or pauses in her breathing"
+    ],
+    "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A normal temperature can move slightly through the day",
+        "Crying, feeding, a warm room or extra layers can raise a reading",
+        "A fever is 38°C or higher",
+        "How she looks and behaves matters too"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "One thermometer, under the arm, used the same way every time — so readings were comparable",
+        "Taking the layers off and waiting twenty minutes before deciding anything",
+        "Reporting the number and the method, without adding a correction to it ourselves",
+        "Looking at her between readings — feeding, alert, playing — rather than at the screen"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's under three months with any temperature of 38°C or above",
+        "She's floppy, very hard to wake, or her cry has changed",
+        "A rash that doesn't fade when pressed under a glass",
+        "Laboured breathing, grunting, or pauses in her breathing"
+      ],
+      "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "A fever is 38°C or higher. If she is under three months, that needs urgent medical advice even if she otherwise seems well."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "first-fever",
+    "her-first-cold",
+    "baby-vaccine-side-effects"
+  ],
+  "seo": {
+    "description": "Learn what temperatures in the 37s usually mean, how to check them properly and when a baby's fever needs urgent advice."
+  },
+  "longform": [
+    {
+      "h": "What do the numbers mean?",
+      "t": "Everyone tells you 38°C. Nobody tells you what to do with 37.4. We got readings in the 37s constantly, and the first few times we treated each one as the beginning of something.\n\nA baby's temperature is not a fixed number. It drifts through the day, rises after a feed or a long cry, and goes up with an extra layer or a warm room. Most of what we recorded in that band resolved by taking a blanket off.\n\nWe used a Philips baby thermometer. At first we used an ear thermometer. As she got older, we moved to a forehead thermometer made for babies. For useful comparisons, we used the same thermometer in the same way each time."
+    },
+    {
+      "h": "How we took her temperature",
+      "t": "This is the part worth knowing before you need it. In the first three months a fever is taken much more seriously, because a small baby can be unwell without looking dramatically unwell, and the usual reassurance from a happy, feeding baby does not apply in the same way.\n\nSo 38°C under three months is a call now, not in the morning, even if she seems fine. If she was born early, ask her doctor which age they want you to count from for this — we asked, and were told plainly.\n\nWe asked whether to bath her with a reading of 37.4, and the honest answer is that a bath is neither the treatment nor the danger.\n\nA normal warm bath is fine if she seems comfortable and will enjoy it. A cool bath or a cold sponge-down to bring a temperature down is not something to do — it makes a baby shiver, which is uncomfortable and counterproductive. And if she's miserable, the bath can simply wait a day. We used a cool compress on her forehead because it seemed gentler and made her more comfortable. We did not treat it as a replacement for medical advice."
+    },
+    {
+      "h": "When we stopped guessing",
+      "t": "Between readings, is she feeding? Is she alert when she's awake? Does she look at you and respond?\n\nThat set of answers was more informative than every number we wrote down. A baby at 38.2 who is drinking and smiling between spikes was a different situation from a baby at 37.6 who had gone quiet and floppy — and it is the second one that gets a phone call.\n\nBefore you need it"
+    }
+  ],
+  "order": 107,
+  "batch": "8"
+},
+{
+  "id": "anti-reflux-milk",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Does anti-reflux milk help with reflux?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Anti-reflux milk is thicker, not medicine. It may reduce spit-up, but the preparation and teat still matter.",
+  "keywords": [
+    "anti-reflux",
+    "AR milk",
+    "thickener",
+    "spit up",
+    "formula",
+    "changing milk",
+    "reflux"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Forceful vomiting, or vomit that is green or has blood in it",
+      "A swollen, hard tummy, or she's unable to stop crying and unlike herself",
+      "She refuses feeds altogether, or wet nappies drop away",
+      "She's floppy, very hard to wake, or her breathing has changed"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Some spit-up can continue even with thicker milk",
+        "Less comes back up, which is a laundry improvement more than a medical one",
+        "It won't fix a baby who is distressed, in pain or not gaining",
+        "It can make stools firmer or change their pattern"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing down the date we changed the milk",
+        "Changing one thing at a time, and giving it a week before judging",
+        "Checking the teat flow, because a thicker milk through the same teat is a harder feed"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Forceful vomiting, or vomit that is green or has blood in it",
+        "A swollen, hard tummy, or she's unable to stop crying and unlike herself",
+        "She refuses feeds altogether, or wet nappies drop away",
+        "She's floppy, very hard to wake, or her breathing has changed"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Anti-reflux milk is thicker milk, not medicine. It may reduce spit-up, but use it only as directed and check that the teat still flows comfortably."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "reflux-medicine",
+    "reflux-or-spit-up",
+    "could-it-be-the-milk"
+  ],
+  "seo": {
+    "description": "Anti-reflux milk may reduce spit-up, but it needs the right teat, careful preparation and guidance from your baby's doctor or nurse."
+  },
+  "longform": [
+    {
+      "h": "What is anti-reflux milk?",
+      "t": "Anti-reflux formula is standard infant formula with a thickening agent in it — usually a starch or a gum. The milk is heavier, so less of it comes straight back up. That is the whole mechanism.\n\nIt is sold on a shelf, not prescribed, and it is not treating anything. We found that framing useful, because once we stopped thinking of it as medicine we also stopped expecting it to tell us whether something was wrong with her.\n\nIt reduced the volume of what came back up noticeably. Fewer full changes of clothes, fewer soaked muslins, and less of that feeling that an entire feed had gone onto the sofa. More of the feed also seemed to stay down.\n\nIt did not stop spit-up, and it did not change her mood or her weight curve. She still spat up on AR milk. On the days when we had hoped it was the answer to everything, that was deflating — which is exactly why it is worth knowing in advance that it is a laundry intervention."
+    },
+    {
+      "h": "What changed for us",
+      "t": "Thicker milk through the same teat is a harder feed. We spent a stretch convinced she had gone off her milk when the real problem was that she was working too hard to get it out.\n\nIf a baby starts fighting the bottle shortly after you change to a thicker milk, look at the teat before you look at the milk again. A slightly faster flow, or a teat rated for the thicker formulas, is often the whole fix.\n\nWe went through several milks in a fortnight at one point, chasing an improvement, and by the end we genuinely could not say what she was reacting to. That is the trap.\n\nOne change at a time. Give it about a week unless something is clearly wrong. Write down the date and what changed."
+    },
+    {
+      "h": "Change one thing at a time",
+      "t": "We did ask about giving part of a feed as ordinary milk and part as AR, to get some of the effect without all of it. The right answer was to ask her doctor rather than work out a ratio ourselves, and that is what we did.\n\nThe same goes for mixing in a thickener of your own, adding cereal to a bottle, or making an AR milk up more concentrated than the tin says. Formula is made to a specific dilution for a reason."
+    }
+  ],
+  "order": 108,
+  "batch": "8"
+},
+{
+  "id": "reflux-medicine",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What should I ask about my baby's reflux medicine?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 4,
+  "summary": "A prescription is not the end of the conversation. These are the questions we wish we'd asked in the room rather than in the car park afterwards.",
+  "keywords": [
+    "reflux medicine",
+    "antacid",
+    "prescription",
+    "acid suppression",
+    "dose",
+    "review",
+    "questions for the doctor"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Forceful vomiting, or vomit that is green or has blood in it",
+      "Blood in her stools, or a swollen, hard tummy",
+      "She's refusing all feeds, or wet nappies have dropped away",
+      "She's floppy, very hard to wake, or her breathing has changed"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Reflux medicine is usually offered for pain and distress, not for the amount of spit-up",
+        "Most prescriptions come with a dose that changes as she grows",
+        "A trial period and a review date are a normal part of it",
+        "Improvement is often gradual, over a week or two, not overnight"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking what the medicine is for — the spitting, or the pain — so we knew what success looked like",
+        "Asking how long the trial runs and when it gets reviewed, before we left the room",
+        "Writing the dose down in the room, including how much and how often, rather than trusting we'd remember",
+        "Asking whether the dose changes as she gains weight, and who recalculates it"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Forceful vomiting, or vomit that is green or has blood in it",
+        "Blood in her stools, or a swollen, hard tummy",
+        "She's refusing all feeds, or wet nappies have dropped away",
+        "She's floppy, very hard to wake, or her breathing has changed"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Ask what the medicine is treating, how long the trial lasts, when it will be reviewed and whether the dose changes as she grows."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "anti-reflux-milk",
+    "reflux-or-spit-up",
+    "yellow-vomit"
+  ],
+  "seo": {
+    "description": "Useful questions to ask about reflux medicine, including what it treats, how the dose is checked and when the trial is reviewed."
+  },
+  "longform": [
+    {
+      "h": "Why we asked questions",
+      "t": "We were handed a prescription for Ari's reflux and left the appointment without really understanding what it was meant to achieve. Then we sat in the car reading about it on a phone, which is the worst possible order to do these things in.\n\nAsking is not doubting the doctor. We found that the questions were welcomed, and that the answers made us much calmer about giving it to her. We are not doctors and we were not trying to second-guess one.\n\nWhat is this for — the spitting, or the pain?\n\nThat one question reorganised everything for us. If the answer is pain and distress, then the measure of whether it is working is her comfort, not the number of muslins. We had been watching the laundry, which meant we were measuring the wrong thing and would have called it a failure."
+    },
+    {
+      "h": "What we wrote down",
+      "t": "Doses for babies are usually tied to weight, and a baby's weight changes faster than anything else about her. A dose that was right at 3kg may not be right at 6kg.\n\nSo: how much, how often, for how long, and who adjusts it as she grows? We wrote the answers down in the room on a phone note. We also asked whether it goes before or after a feed, because that detail was easy to get wrong at home and nobody had volunteered it.\n\nThe thing that made us most comfortable was treating it as a trial rather than a new permanent fact. We asked how long before we should expect to see a difference, what we should be looking for, and when it would be reviewed.\n\nA review date matters because babies get better on their own. Reflux tends to improve as they spend more time upright and start solids. Without a review, a medicine started at six weeks for a problem that resolved at four months can carry on for a long time simply because nobody revisited it."
+    },
+    {
+      "h": "How we judged the trial",
+      "t": "We kept something very simple: feed times, roughly how much, and a word about how she was. Not a spreadsheet. Enough that at the review we could say what the fortnight had actually looked like instead of recalling the last bad night.\n\nThat turned the follow-up appointment into a real conversation. It also, more than once, showed us that a week we had experienced as a disaster had in fact contained two difficult days and five normal ones.\n\nWrite these down in the room. We kept a pen and paper ready because leaving the room and trying to remember later did not work. Something always needed us, we got distracted, and the answer was gone."
+    }
+  ],
+  "order": 109,
+  "batch": "8"
+},
+{
+  "id": "could-it-be-the-milk",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Could my baby's milk be causing bloating or discomfort?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 4,
+  "summary": "Milk is easy to blame, but bloating and discomfort can have other causes. Change one thing at a time and ask what is being tested.",
+  "keywords": [
+    "allergy",
+    "intolerance",
+    "cow's milk protein",
+    "hypoallergenic",
+    "bloating",
+    "elimination diet",
+    "breast milk"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Swelling of the lips, face or tongue, hives spreading quickly, or any difficulty breathing after a feed",
+      "Blood or mucus in her stools",
+      "Forceful vomiting, or vomit that is green or has blood in it",
+      "A hard, swollen, painful tummy, or crying that is completely unlike her"
+    ],
+    "lead": "A struggle to breathe — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A bloated, gassy tummy is extremely common and usually not an allergy",
+        "A baby who gains weight, feeds and settles is reassuring whatever her tummy looks like, unless its hard.",
+        "Swallowed air from a fast feed can look exactly like a reaction to milk",
+        "An immature gut — particularly after an early birth — handles volume less smoothly for a while"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking for the plan before accepting the explanation — what is being tested, and how will anyone know",
+        "Slowing the feed down and burping partway through, which solved more than any change of milk did",
+        "Not cutting foods out of a diet on a hunch, and asking before removing anything",
+        "Writing down symptoms with times, so a pattern could be seen rather than argued about"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Swelling of the lips, face or tongue, hives spreading quickly, or any difficulty breathing after a feed",
+        "Blood or mucus in her stools",
+        "Forceful vomiting, or vomit that is green or has blood in it",
+        "A hard, swollen, painful tummy, or crying that is completely unlike her"
+      ],
+      "lead": "A struggle to breathe — call your local emergency number now."
+    },
+    "quick": "Bloating is often swallowed air or an immature gut. Before changing milk, ask what is being tested and how you will know whether it helped."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "anti-reflux-milk",
+    "formula-and-constipation",
+    "wind-and-gas"
+  ],
+  "seo": {
+    "description": "Bloating and discomfort do not always mean milk allergy; learn what to notice before changing formula or removing foods."
+  },
+  "longform": [
+    {
+      "h": "Why milk gets blamed",
+      "t": "Milk is the only variable, so milk is the suspect. It's the one thing a baby takes in, it changes in brand and type, and if a mother is breastfeeding then her entire diet becomes a suspect list too.\n\nWe had a stretch where Ari was bloated and the explanation offered was the milk. It had not been the milk the week before, when she was fine on the same milk. That inconsistency is what made us start asking for the reasoning rather than the conclusion.\n\nAir, mostly, and a gut still learning its job.\n\nA baby who drinks fast swallows air. A baby born early has a digestive system that is doing the work of a term baby's before it is quite ready — and ours was pushed on volume faster than she was comfortable with at one point. The result looked dramatic and was not an allergy."
+    },
+    {
+      "h": "Bloating, allergy and intolerance",
+      "t": "Worth knowing, because the words get used interchangeably and they point to very different situations.\n\nA true allergic reaction to cow's milk protein is an immune response. The urgent version is fast and obvious — swelling, hives, breathing trouble — and belongs in the red column above. The slower version shows up over days and weeks, often with eczema, blood or mucus in the stools, poor weight gain, and persistent distress."
+    },
+    {
+      "h": "Change one thing at a time",
+      "t": "Ari spent a period on a hypoallergenic milk, in small amounts, with breast milk reintroduced gradually afterwards. That was done by a hospital with a plan, and the plan was the important part.\n\nThese milks are not simply a gentler formula to try at random. Ari's hospital used one as part of a clear plan, including how breast milk would be reintroduced and how they would judge the result.\n\nThere was a point where the explanation did not match what we could see. Ari was gaining weight, feeding well and passing stool, but her tummy was hard and bloated. The NICU doctors explained that they were checking for a blockage and watching how it settled. We were told she had been fed too much too soon and her tummy had become inflamed. A few days later, it softened again.\n\nWhat worked was writing the questions down in advance and asking them calmly. Why are you keeping her. What specifically are you checking.\n\nIt was scary because she had been one step from coming home, then we arrived and found her back in intensive care. NICU progress is not always a straight line. We learned that through stress and panic, while the NICU nurses and doctors knew how to handle the setback."
+    }
+  ],
+  "order": 110,
+  "batch": "8"
+},
+{
+  "id": "bumps-on-her-body",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why are small bumps spreading across my baby's body?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Face bumps in the first weeks are one thing. Small bumps appearing on her thighs and creeping towards her tummy are a different question — and the one thing worth doing is a photograph.",
+  "keywords": [
+    "rash",
+    "bumps",
+    "thighs",
+    "spreading",
+    "heat rash",
+    "eczema",
+    "photograph",
+    "glass test"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A rash that does not fade when pressed under a clear glass",
+      "She's floppy, very hard to wake, or her cry has changed",
+      "A rash with a temperature of 38°C or above, or any fever under three months",
+      "Rapidly spreading swelling, hives, or any difficulty breathing"
+    ],
+    "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Small bumps in warm, covered areas — thighs, back, neck creases — are often heat and friction",
+        "Baby skin reacts to almost everything and settles again without treatment",
+        "A rash can spread over a day or two and then simply go",
+        "Dry patches on cheeks, knees and elbows are common from a few months"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Taking one daylight photo each day so we could compare it properly",
+        "Learning the glass test properly before we needed it: press a clear glass on the rash and see whether the marks fade",
+        "Fewer layers and a cooler room, which cleared more than any cream did",
+        "Plain water and patting dry, with nothing new introduced while we were trying to work it out"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A rash that does not fade when pressed under a clear glass",
+        "She's floppy, very hard to wake, or her cry has changed",
+        "A rash with a temperature of 38°C or above, or any fever under three months",
+        "Rapidly spreading swelling, hives, or any difficulty breathing"
+      ],
+      "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Take one clear photo each day and notice how she is behaving. A rash that does not fade under pressure needs urgent medical help."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-skin-bumps",
+    "nappy-rash",
+    "a-slightly-raised-temperature"
+  ],
+  "seo": {
+    "description": "Small spreading bumps are often harmless, but photographs, the glass test and your baby's behaviour help show when to seek help."
+  },
+  "longform": [
+    {
+      "h": "Why spreading looks frightening",
+      "t": "A rash that stays put is easy to live with. One that was on her thighs yesterday and is creeping towards her stomach today feels like it is going somewhere, and that is the thing that gets you looking at your phone at two in the morning.\n\nMost of the time the spread is the rash doing its normal thing. Heat rash appears where skin is warm and covered and then shows up in the next warm covered place. A mild irritation follows wherever the thing irritating it has been."
+    },
+    {
+      "h": "Photographs and the glass test",
+      "t": "This was the single most practical habit we picked up. Once a day, same light, same bit of skin, in a photo.\n\nIt does two things. It tells you whether the rash is genuinely spreading or whether you have simply been looking at it more closely each time. And it gives a doctor something real to look at, which matters because rashes have a habit of fading on the way to an appointment and reappearing in the car home.\n\nPress a clear glass or tumbler firmly onto the rash and look through it. Most rashes blanch — the colour fades under pressure and comes back when you lift the glass. A rash that stays visible does not blanch, and that needs urgent medical help.\n\nIt is worth doing this once on an ordinary harmless rash, just so you know what blanching looks like when you're calm. Learning it for the first time at 3am on a baby with a temperature is not when you want to be squinting at a glass and wondering what you're looking for."
+    },
+    {
+      "h": "Change one thing at a time",
+      "t": "Our instinct when a rash appeared was to change everything at once — new detergent, different soap, a cream, fewer clothes. Then it got better and we had no idea why, and when something similar appeared a month later we were back to nothing.\n\nSo: cool her down first, because heat is the most common cause and costs nothing to remove. Plain water and pat dry. And then genuinely change nothing else for a few days."
+    }
+  ],
+  "order": 111,
+  "batch": "8"
+},
+{
+  "id": "marks-from-the-nicu",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Will the marks from the NICU fade?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 2,
+  "summary": "Cannula marks on her hands, heel pricks on her feet, a patch where the tape was. We wanted them gone. Mostly they go on their own, and slowly.",
+  "keywords": [
+    "NICU",
+    "cannula",
+    "IV marks",
+    "heel prick",
+    "tape marks",
+    "scars",
+    "premature"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "A mark becomes hot, swollen, spreading or weeping",
+      "Pus, a crust spreading outwards, or a red line running away from the site",
+      "She has a temperature of 38°C or above, or any fever under three months",
+      "She's floppy, very hard to wake, or unusually unlike herself"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Small bruise-coloured marks where a cannula or drip sat, on hands, feet or scalp",
+        "Tiny dots on heels from repeated blood tests",
+        "Red or slightly shiny patches where tape and dressings were",
+        "Most of this fades over weeks to months, gradually enough that you notice by photograph rather than by looking"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Doing nothing to them, which is the advice and the hard part",
+        "Keeping the skin plainly moisturised with something unscented, if anything at all",
+        "Keeping fresh marks out of direct sun, and covered rather than creamed",
+        "Photographing them monthly instead of inspecting them daily — the change only shows over weeks"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "A mark becomes hot, swollen, spreading or weeping",
+        "Pus, a crust spreading outwards, or a red line running away from the site",
+        "She has a temperature of 38°C or above, or any fever under three months",
+        "She's floppy, very hard to wake, or unusually unlike herself"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Most NICU marks fade slowly over weeks or months. Keep the skin comfortable, protect it from strong sun and compare monthly rather than daily."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "nicu-stages",
+    "nicu-discharge",
+    "newborn-skin-bumps"
+  ],
+  "seo": {
+    "description": "NICU cannula, tape and heel-prick marks usually fade slowly; learn what may help and which changes are worth showing a doctor."
+  },
+  "longform": [
+    {
+      "h": "Why the marks upset us",
+      "t": "She came home with small marks on her hands and feet from everything that had kept her alive, and we wanted them gone quickly. Looking back, that urge was not really about her skin.\n\nIt is worth saying, because the honest version is useful: the marks were a visible record of a month we had found very hard, and making them disappear felt like it would close something. They faded on their own schedule and the closing happened separately."
+    },
+    {
+      "h": "What actually helps",
+      "t": "Very little, and that was our experience rather than a shrug.\n\nTime does most of it. Keeping the skin moisturised with something plain and unscented is reasonable. Keeping fresh marks out of direct sunlight matters, because new skin pigments unevenly in sun and a mark that would have faded can be set darker.\n\nWe looked at them constantly, which meant we never saw them change. A monthly photograph in the same light was what finally showed us they were fading.\n\nThat shift — from daily inspection to monthly comparison — applies to most things about her skin, and it took the heat out of it. The marks were going. They were just going at the speed skin goes at."
+    },
+    {
+      "h": "Look monthly, not daily",
+      "t": "A few left a faint paler patch that is still faintly there. For a while that bothered us more than it should have.\n\nShe doesn't know about them. Nobody who meets her notices. And they are from a hospital that looked after her when she needed it."
+    }
+  ],
+  "order": 112,
+  "batch": "8"
+},
+{
+  "id": "itchy-eyes",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Why does my baby have sticky or itchy eyes?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "A sticky eye in the first months is usually a blocked tear duct, not an infection. And the drops in your bathroom cupboard are not for a baby.",
+  "keywords": [
+    "eyes",
+    "eye drops",
+    "sticky eye",
+    "blocked tear duct",
+    "conjunctivitis",
+    "rubbing eyes",
+    "itchy"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "The white of the eye is red, or the eyelid is swollen, hot or puffy",
+      "Redness or swelling spreading onto the skin around the eye or towards the cheek",
+      "She won't open the eye, or seems in real pain",
+      "A temperature of 38°C or above with it, or any fever under three months"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A watery or sticky eye in the first months is commonly a blocked tear duct",
+        "It is often one eye, worst on waking, with the white of the eye still white",
+        "Most blocked ducts clear on their own during the first year",
+        "Eye rubbing is often tiredness rather than irritation"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Cooled boiled water on clean cotton, a fresh piece for each eye, wiping from the inner corner outwards",
+        "Noting whether the white of the eye was white, because that was the question we were always asked",
+        "Photographing it, since a sticky eye in the morning is clean by the time of an appointment"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "The white of the eye is red, or the eyelid is swollen, hot or puffy",
+        "Redness or swelling spreading onto the skin around the eye or towards the cheek",
+        "She won't open the eye, or seems in real pain",
+        "A temperature of 38°C or above with it, or any fever under three months"
+      ]
+    },
+    "quick": "A sticky, watery eye with no redness is often a blocked tear duct. A red eye, swollen lid or redness spreading onto the face needs medical advice."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "her-first-cold",
+    "bumps-on-her-body",
+    "newborn-skin-bumps"
+  ],
+  "seo": {
+    "description": "Sticky eyes are often caused by a blocked tear duct, while redness, swelling or pain can mean your baby needs medical advice."
+  },
+  "longform": [
+    {
+      "h": "Why we looked for drops",
+      "t": "Her eyes looked a little itchy. Nothing dramatic — no redness, no swelling, she was perfectly happy. There are allergies in the family, so our assumption was allergic and our instinct was to find something gentle at the pharmacy.\n\nA baby's eye is not the place to try something mild and see. Many pharmacy eye drops are not made for infants. We were told we could use sterile saline or cooled boiled water for gentle cleaning, but we asked before putting anything in her eye."
+    },
+    {
+      "h": "The blocked tear duct clue",
+      "t": "This is the common one and it is reassuring once you know the picture. The tear duct that drains into the nose is very narrow in a baby and often not fully open. Tears pool, the eye waters, and overnight the discharge dries into a sticky lid.\n\nThe giveaway is that the white of the eye stays white. One eye, worse in the morning, clean and happy baby, white eye — that is usually a duct, and most clear up on their own somewhere in the first year.\n\nEverything in this guide comes down to one distinction: is the white of the eye white?\n\nA white eye with sticky discharge is the common, dull, self-resolving situation. A red eye, a swollen or hot lid, redness creeping onto the skin around the eye or towards the cheek, an eye she won't open, or real pain — that is a different thing entirely and it goes in the red column above. Infection around the eye in a small baby is taken seriously and quickly, and rightly so."
+    },
+    {
+      "h": "When the eye needs checking",
+      "t": "Ari rubbed her face constantly for a stretch and we read it as irritation. Mostly it was tiredness, sometimes it was hunger, and quite a lot of it was simply having discovered that her hands reached her face.\n\nWhat separated them was timing. Rubbing at the end of a wake window, with yawning, was sleep. Rubbing with a blocked nose during a cold was congestion."
+    }
+  ],
+  "order": 113,
+  "batch": "8"
+},
+{
+  "id": "vitamin-d-and-iron-drops",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What if I forget my baby's vitamin D or iron drops?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Missing a few days is not the disaster it feels like at 11pm. Doubling up to catch up is the actual mistake.",
+  "keywords": [
+    "vitamin D",
+    "iron drops",
+    "supplements",
+    "missed dose",
+    "premature",
+    "too much iron",
+    "probiotic"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She may have had more than the prescribed dose — call straight away with the bottle nearby",
+      "Repeated vomiting, severe tummy pain, or blood in her vomit or stool",
+      "She's very hard to wake, very pale, or completely unlike herself",
+      "You are unsure how much iron or vitamin D she has swallowed"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A short gap does not usually need a catch-up dose",
+        "Iron is often prescribed specifically for babies born early, who build smaller stores before birth",
+        "Missing days happens in every household and is not an emergency",
+        "Most of the dose ending up on her chin and your sleeve is the normal experience"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Giving them at the same point in the same feed every day, so it became part of a routine rather than a decision",
+        "Keeping them visibly next to the bottles instead of in a cupboard",
+        "Restarting at the normal dose after a gap, and never doubling up to make up for missed days",
+        "Asking whether vitamin D and iron needed separating, instead of guessing at the order"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She may have had more than the prescribed dose — call straight away with the bottle nearby",
+        "Repeated vomiting, severe tummy pain, or blood in her vomit or stool",
+        "She's very hard to wake, very pale, or completely unlike herself",
+        "You are unsure how much iron or vitamin D she has swallowed"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "After missed drops, restart the usual dose unless your baby's doctor or nurse says otherwise. Never double up to catch up."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "giving-her-medicine",
+    "preemie-growth-charts",
+    "corrected-age"
+  ],
+  "seo": {
+    "description": "Missing a few vitamin or iron doses is usually not fixed by doubling up; learn how to restart safely and avoid two people dosing."
+  },
+  "longform": [
+    {
+      "h": "Missing a dose",
+      "t": "There was a period where we were in survival mode, and we simply forgot the vitamin D drops for a stretch. By the time we noticed, the question in our heads was how much damage we had done.\n\nThe honest answer: very little. Vitamin D works on stores built over weeks and months, not day to day. A gap of days, or even a couple of weeks, is made up by starting again — not by making up the arithmetic.\n\nThis is the one real mistake available here. Missing five days and then giving a larger dose to catch up is worse than missing five days.\n\nVitamin D and iron are both things where too much matters. With iron in particular, an excess is taken seriously — it is one of the more common causes of accidental overdose in small children, which is why prescriptions are weight-based and the bottle comes with its own syringe."
+    },
+    {
+      "h": "Never double up",
+      "t": "We had an episode where we thought Ari might have had more iron than she should, and she was sick afterwards. What we got right was ringing straight away rather than watching to see what happened.\n\nThat is the correct instinct and worth stating plainly: a possible overdose of iron is a call now, with the bottle in your hand so you can read out the strength and the dose. Not a search, not a wait-and-see, not a morning call. Vomiting after too much iron is a reason to be on the phone, not a reason to assume it has sorted itself out.\n\nWe asked whether vitamin D and iron needed to be given separately or whether one interfered with the other, because we were guessing at it daily.\n\nThis depends on what your baby has been prescribed, so ask rather than guessing. We gave vitamin D before her milk. We were told to wait about 40 minutes after the feed before giving iron because milk could affect how it was absorbed. That was Ari's plan; follow the instructions for your own baby. Giving each one at the same point every day also turned it into a habit rather than another decision."
+    },
+    {
+      "h": "One simple system",
+      "t": "With a night nurse, a grandparent or two parents on shifts, the real risk is not the missed dose. It is the dose given twice because nobody wrote it down.\n\nWe ended up with a note where the bottles lived, with the date ticked off. Unglamorous, and it removed an entire category of argument at 7am."
+    }
+  ],
+  "order": 114,
+  "batch": "8"
+},
+{
+  "id": "giving-her-medicine",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "How do I give medicine to my baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "The dose is the easy part. Getting it in, knowing whether it went in, and not putting it in a bottle she doesn't finish — that's the part nobody explains.",
+  "keywords": [
+    "medicine",
+    "syringe",
+    "dose",
+    "half tablet",
+    "dissolve",
+    "spat out",
+    "before or after feed"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She may have had significantly more than her dose — ring immediately with the bottle in your hand",
+      "Swelling of the lips, face or tongue, hives, or any difficulty breathing after a dose",
+      "She coughs, chokes or goes blue during a dose",
+      "Repeated vomiting after doses, or she can't keep anything down"
+    ],
+    "lead": "Blue or grey, or a struggle to breathe — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Doses for babies are worked out by weight, so they change as she grows",
+        "Liquid medicines come with their own syringe or dropper, calibrated to that bottle",
+        "Some go before a feed, some after — and it genuinely matters for a few of them",
+        "A good share of the first few doses ends up on her chin"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking for the dose in millilitres for her weight, written down, rather than a description",
+        "Keeping the syringe that came with the bottle, and asking the pharmacy for a spare of the same kind",
+        "Small amounts into the side of her mouth, towards the inside of her cheek — not the back of her throat",
+        "Upright, supported, never lying flat, and never while she was crying hard"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She may have had significantly more than her dose — ring immediately with the bottle in your hand",
+        "Swelling of the lips, face or tongue, hives, or any difficulty breathing after a dose",
+        "She coughs, chokes or goes blue during a dose",
+        "Repeated vomiting after doses, or she can't keep anything down"
+      ],
+      "lead": "Blue or grey, or a struggle to breathe — call your local emergency number now."
+    },
+    "quick": "Use the correct syringe, keep her upright and give small amounts into the side of her cheek. Ask before mixing medicine into milk."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "vitamin-d-and-iron-drops",
+    "a-slightly-raised-temperature",
+    "reflux-medicine"
+  ],
+  "seo": {
+    "description": "Practical tips for giving baby medicine safely, using the correct syringe and avoiding missed, repeated or incomplete doses."
+  },
+  "longform": [
+    {
+      "h": "Get the instructions in writing",
+      "t": "Not \"a bit twice a day\". The number of millilitres, how many times a day, for how many days, and whether it is before or after a feed. Written down, in the room, while the person who prescribed it is still in front of you.\n\nBaby doses are calculated from weight, and a baby's weight moves quickly. A dose that was right two months ago may not be right now. So the other question is who recalculates it, and when.\n\nThe dropper or syringe that comes in the box is calibrated for that medicine at that concentration. A kitchen spoon isn't a measure, and another bottle's syringe may be marked differently.\n\nIf you lose it, ask the pharmacy for the right one rather than improvising. We asked for a spare one and were simply given one, which was easier than we expected."
+    },
+    {
+      "h": "How we gave it",
+      "t": "What worked: upright and supported, never flat on her back. Small amounts at a time rather than the whole dose in one go. Aimed at the inside of her cheek, not the back of her throat, which triggers a gag and sends the lot back out.\n\nWhat did not work was trying while she was crying hard. That was often when she seemed to need it most, but it was also when she was most likely to cough and least likely to swallow. Waiting for a calmer moment, when the medicine allowed it, got more of the dose in.\n\nPutting it in a bottle looks like the elegant solution (if the medicine permitted it) and it creates a specific problem: if she drinks 90ml of a 120ml bottle, how much of the dose did she have?\n\nFor some medicines mixing is fine and for others it isn't — a few interact with milk, and for others it is simply the accounting that fails. So the question to ask is whether this one can go in milk, and if so, into how much."
+    },
+    {
+      "h": "Stop two people dosing",
+      "t": "The genuine risk in a house with help, or two parents on shifts, is a double dose rather than a missed one.\n\nA note next to where the medicines live, with the date and a tick, solved it. Written down beats remembered, especially at four in the morning when nobody is sure who did what.\n\nWhen changing shifts, we gave the next person a quick rundown and checked the medicine notebook. It took a minute and prevented missed or repeated doses."
+    }
+  ],
+  "order": 115,
+  "batch": "8"
+},
+{
+  "id": "vaccines-and-a-premature-baby",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Do premature babies follow the normal vaccine schedule?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Almost everything about a premature baby gets counted from the due date. Vaccines are the exception, and that catches parents out.",
+  "keywords": [
+    "vaccines",
+    "premature",
+    "corrected age",
+    "actual age",
+    "RSV",
+    "Synagis",
+    "schedule",
+    "side effects"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's under three months with a temperature of 38°C or above, unless her doctor has given you specific post-vaccine advice",
+      "She's floppy, very hard to wake, or unusually unresponsive",
+      "Laboured breathing, grunting, or pauses in her breathing",
+      "Swelling of the face or lips, or hives spreading quickly"
+    ],
+    "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Routine vaccines usually follow actual age, not corrected age",
+        "That means she may be vaccinated at a smaller size than a term baby of the same stage",
+        "Several can be given at the same appointment, including an oral one",
+        "A rough evening, a mild temperature and a small lump at the site are the usual pattern"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking explicitly which age the schedule follows, instead of assuming corrected age like everything else",
+        "Writing the names of what she was given into a note, so later questions had something to refer to",
+        "Asking about side effects before the appointment rather than at 10pm afterwards",
+        "Clearing the next day entirely, and expecting a difficult evening rather than being surprised by it",
+        "If you live in two countries, comparing both vaccine schedules with your baby's doctor or nurse"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's under three months with a temperature of 38°C or above, unless her doctor has given you specific post-vaccine advice",
+        "She's floppy, very hard to wake, or unusually unresponsive",
+        "Laboured breathing, grunting, or pauses in her breathing",
+        "Swelling of the face or lips, or hives spreading quickly"
+      ],
+      "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Routine vaccines usually follow actual age, not corrected age. Ask your baby's doctor about the schedule, side effects and RSV protection."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "baby-vaccine-side-effects",
+    "corrected-age",
+    "nicu-discharge"
+  ],
+  "seo": {
+    "description": "Premature babies usually receive routine vaccines by actual age, while RSV protection and side effects need individual advice."
+  },
+  "longform": [
+    {
+      "h": "Actual age, not corrected age",
+      "t": "By the time we reached vaccines we had thoroughly learned to count from the due date. Feeding, milestones, sleep expectations, how much she should weigh — all corrected age.\n\nSo it was genuinely surprising to find that routine vaccines generally go by actual age, from her birthday. They don't adjust the schedule for prematurity in the way everything else is adjusted.\n\nHers came as a set at one appointment, including one given by mouth rather than by injection. That sounds like a lot and it is standard.\n\nWe found it worth knowing which were injections and which was oral, because the oral one can loosen nappies for a few days afterwards and we would otherwise have been counting that as a separate problem."
+    },
+    {
+      "h": "The day afterwards",
+      "t": "Ours was crying constantly within hours, had a raised temperature, and was miserable for a day. That is the usual shape and it was much easier because we had asked what to expect.\n\nWhat helped: clearing the following day completely, offering smaller feeds more often, and having already asked whether pain relief was appropriate and what the dose was for her weight. Looking that up at 10pm with a crying baby is the version to avoid.\n\nThis was the question we got most tangled in. If a mother has an RSV vaccine during pregnancy, does the baby still need protection directly?\n\nThey are not the same intervention. A vaccine given in pregnancy works by passing antibodies across to the baby before birth, and a baby born early has had less time to receive them. Protection given directly to a baby afterwards is a different product, with its own eligibility criteria that usually depend on gestational age, birth weight, lung problems and the season."
+    },
+    {
+      "h": "Ask about RSV early",
+      "t": "One genuinely practical thing. If you are collecting a vaccine from a pharmacy yourself and taking it to the doctor, it has a temperature range and a time limit.\n\nAsk the pharmacy for the specific window and how to transport it — a cool bag, how long it can be out, whether a car with air conditioning counts. Don't estimate. A vaccine that has been warm for too long may be no good, and nobody can tell by looking at it."
+    }
+  ],
+  "order": 116,
+  "batch": "8"
+},
+{
+  "id": "is-she-choking",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "Is my baby choking or just gagging?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Gagging and coughing are usually noisy because air is still moving. Choking may be silent and needs immediate action.",
+  "keywords": [
+    "choking",
+    "gagging",
+    "milk",
+    "coughing",
+    "fast flow",
+    "paced feeding",
+    "first aid",
+    "silent"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She cannot breathe, cry or cough",
+      "She goes pale, grey or blue, even briefly",
+      "She stops breathing, or pauses in her breathing",
+      "She's floppy, limp, or very hard to wake"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Gagging, coughing and spluttering are noisy",
+        "A gag reflex sits far forward in a baby's mouth, so it triggers easily",
+        "Choking on milk is usually flow, not capability — too much arriving too fast",
+        "Pulling off the bottle, spluttering and then carrying on is a baby managing it"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Doing an infant first aid course, in person, and then doing a refresher — this is the one thing we'd tell everyone to do",
+        "Pacing the feed: holding her more upright, bottle more horizontal, and taking breaks before she needed them",
+        "Going down a teat size when she was gulping and spluttering, which fixed it almost entirely",
+        "Watching for the pull-off and the splutter as her signal, and stopping then instead of pushing on"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She cannot breathe, cry or cough",
+        "She goes pale, grey or blue, even briefly",
+        "She stops breathing, or pauses in her breathing",
+        "She's floppy, limp, or very hard to wake"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Gagging and coughing are noisy. Choking may be silent. If she cannot breathe, cry or cough, treat it as an emergency and call for help."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "fast-breathing-newborn",
+    "milk-from-the-nose",
+    "going-to-hospital"
+  ],
+  "seo": {
+    "description": "Gagging is noisy and protective, while silent choking is an emergency; learn the difference and why infant first aid matters."
+  },
+  "longform": [
+    {
+      "h": "Noisy and silent are different",
+      "t": "This is the one that kept us up. Ari made throat-clearing sounds constantly and both of us were braced for her to choke.\n\nGagging and coughing are noisy, and noise means air is moving past the vocal cords. It is unpleasant to watch and it is the airway doing exactly what it is built to do. A baby who coughs, splutters, goes red, and then carries on is a baby who has handled it."
+    },
+    {
+      "h": "When milk flow is the problem",
+      "t": "A baby's gag reflex sits much further forward in the mouth than an adult's. It moves back over the first year.\n\nThat is why she gags on things that seem to be nowhere near her throat, and why the gag is so dramatic and so frequent. It is a protective reflex working early and often — which is the opposite of a warning sign.\n\nThis was ours. She would gulp, splutter, pull off the bottle and cough, and we read it as something wrong with her.\n\nIt was the bottle. Milk arriving faster than she could coordinate swallowing and breathing, so she had to choose, and chose air. Three things fixed it:"
+    },
+    {
+      "h": "Do the first aid course",
+      "t": "We did an infant first aid course and it is the single recommendation in this guide we would press hardest.\n\nNot a video, not a page like this one. An in-person course with a doll, where somebody watches you do it and corrects your hands. The back blows and the chest thrusts for a baby are not the same as for an adult, the positions are specific, and a page of text does not transfer into your hands under pressure.\n\nDo this before you need it"
+    }
+  ],
+  "order": 117,
+  "batch": "8"
+},
+{
+  "id": "coming-home-from-a-flight",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "How long should I wait after a flight before seeing my baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months"
+  ],
+  "read": 3,
+  "summary": "There is no clean number of days. What we worked out was how to ask relatives to wait without it becoming an argument.",
+  "keywords": [
+    "airport",
+    "flight",
+    "visitors",
+    "infection",
+    "mask",
+    "exposure",
+    "premature",
+    "forty days"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's under three months with a temperature of 38°C or above",
+      "Laboured breathing — ribs pulling in, nostrils flaring, grunting",
+      "Pauses in her breathing, or she goes pale, grey or blue",
+      "She's floppy, very hard to wake, or her cry has changed"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–6 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Airports and planes put a lot of people in recycled air together — exposure is genuinely higher",
+        "Most respiratory infections show themselves within a few days of being caught",
+        "Someone who feels completely fine can still be carrying something",
+        "Hands and surfaces carry as much as air does"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking her doctor what they wanted, rather than settling it between ourselves",
+        "Giving relatives a date rather than a rule — \"come over on Thursday\" lands better than a policy",
+        "Saying it warmly and in advance, by message, so nobody was turned away at a door",
+        "Washing hands properly on arrival rather than relying on sanitiser, and doing it before picking her up every time"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's under three months with a temperature of 38°C or above",
+        "Laboured breathing — ribs pulling in, nostrils flaring, grunting",
+        "Pauses in her breathing, or she goes pale, grey or blue",
+        "She's floppy, very hard to wake, or her cry has changed"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "There is no single safe waiting period after a flight. Ask your baby's doctor, then focus on illness, handwashing and sensible distance."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "newborn-immune-and-going-out",
+    "her-first-cold",
+    "a-slightly-raised-temperature"
+  ],
+  "seo": {
+    "description": "There is no perfect waiting period after a flight; careful hygiene and advice for your own baby matter more than a fixed number."
+  },
+  "longform": [
+    {
+      "h": "There is no magic number",
+      "t": "We spent real effort trying to pin down when the forty days started — from her birthday, or from her due date, since she arrived early. We did the arithmetic several times.\n\nThe forty days is custom rather than medicine. It's a reasonable instinct dressed up as a deadline, and the arithmetic doesn't produce an answer because there wasn't one to find. What it points at is true — a newborn's immune system is still developing, and a baby born early is more vulnerable for longer. Plus once her 40 days were up we entered flu season which again messed up our calculations."
+    },
+    {
+      "h": "How we said it",
+      "t": "A flight is not the same as a walk outside. Hundreds of people, shared air for hours, and every surface touched by everyone.\n\nMost respiratory infections declare themselves within a few days of being caught, which is why a few days of distance between a flight and a newborn is the common-sense version of the advice. The honest position is that this is reasonable rather than precisely calibrated — nobody is going to hand you the correct number.\n\nThis was the hard part. Telling someone who has flown to meet your baby to wait a few days is a difficult message, and the way we found to do it was to give a date rather than a rule. Papa had to fly for work and come back, and whilst the help was really needed, he wore a mask, and for the first two days didn’t get close to little Ari.\n\n\"Let's not do it now — come over on Thursday and stay a while\" works. \"We're not having visitors until forty days after her due date\" invites a negotiation about the number. A date is warm and specific."
+    },
+    {
+      "h": "What mattered in the house",
+      "t": "Once someone is in the house, the mechanics are more important than the waiting period.\n\nHands washed with soap and water before picking her up — every time, not once on arrival. We had an argument about sanitiser versus washing at one point, and the honest answer is that washing properly is better and that doing either reliably beats doing the better one occasionally. Nobody unwell holds her, and \"just a cold\" is not a small thing for a newborn."
+    }
+  ],
+  "order": 118,
+  "batch": "8"
+},
+{
+  "id": "a-small-fall-or-bump",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What should I do after my baby bumps her head?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "What to watch for after a small knock, and what to do with the guilt afterwards — because that part lasts much longer.",
+  "keywords": [
+    "head bump",
+    "fall",
+    "dropped",
+    "bruise",
+    "guilt",
+    "concussion",
+    "frustration"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She was knocked out, has a seizure, or is hard to wake",
+      "She vomits repeatedly or behaves very differently",
+      "She has weakness, trouble balancing, or problems with her vision",
+      "Clear fluid or blood comes from her ears or nose"
+    ],
+    "lead": "A floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A cry straight away, then settling with comfort, is reassuring",
+        "A short bump from a low height onto something soft very rarely causes harm",
+        "A bruise can appear hours later and look worse the next day",
+        "Babies bump themselves constantly once they start moving"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Noting the time, the height, and what she landed on — those are the questions you get asked",
+        "Watching her over the following hours rather than examining the spot repeatedly",
+        "Asking rather than deciding ourselves, because a reassuring phone call cost nothing",
+        "Saying out loud what had happened instead of hiding it, including the part where frustration was involved"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She was knocked out, has a seizure, or is hard to wake",
+        "She vomits repeatedly or behaves very differently",
+        "She has weakness, trouble balancing, or problems with her vision",
+        "Clear fluid or blood comes from her ears or nose"
+      ],
+      "lead": "A floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "After a head bump, note the height, surface and time. Watch how she behaves, and get urgent help for serious warning signs."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "going-to-hospital",
+    "flat-head",
+    "is-my-baby-in-pain"
+  ],
+  "seo": {
+    "description": "What to watch after a baby bumps her head, when to seek urgent help and how to handle the guilt that often follows."
+  },
+  "longform": [
+    {
+      "h": "What matters after a bump",
+      "t": "Three facts, and they are the ones you'll be asked for: how far, onto what, and what she did immediately afterwards.\n\nA short drop onto something soft, followed by an immediate cry that settles with comfort, is the reassuring picture. A baby who cries straight away is a baby who is responding normally."
+    },
+    {
+      "h": "Watch her, not the bruise",
+      "t": "Our instinct was to keep looking at the place where she'd hit, pressing it, comparing it to ten minutes ago. That tells you almost nothing.\n\nWhat matters is her. Is she feeding? Is she alert when she's awake and settling when she should be?\n\nOne of ours happened because of frustration. She would not stay still during a nappy change, it had been a long night, and she was pushed down into the mattress harder than intended. She cried, she was fine, and Papa was not fine for days.\n\nAnother was a slip while putting her down. Barely a drop at all. Same aftermath — the conviction that something had been broken that wouldn't show up for years."
+    },
+    {
+      "h": "The guilt and the setup",
+      "t": "The frequency goes up enormously and the stakes mostly go down. A baby learning to sit topples over. A baby learning to crawl bumps her head on everything at her height.\n\nThat shift is normal and doesn't need the same reaction every time. What stays the same is the list in the red column, and the rule about height — a fall from a bed, a sofa, a changing table, or a lap in a chair, is a different category from toppling over on a carpet, and worth a call.\n\nIf frustration was part of it"
+    }
+  ],
+  "order": 119,
+  "batch": "8"
+},
+{
+  "id": "going-to-hospital",
+  "topic": "health",
+  "icon": "cross",
+  "featured": false,
+  "title": "What should I take when my baby needs to go to hospital?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "What to take, what to say, and the questions that turn being kept in for observation from a mystery into a conversation.",
+  "keywords": [
+    "hospital",
+    "emergency",
+    "observation",
+    "second opinion",
+    "questions",
+    "discharge",
+    "paediatrician"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Laboured breathing, grunting, pauses in her breathing, or she goes pale, grey or blue",
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "A rash that doesn't fade when pressed under a glass",
+      "A temperature of 38°C or above under three months"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Health • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Being kept for observation is common and is often precaution rather than bad news",
+        "You will be asked the same questions several times by different people",
+        "Tests get ordered to rule things out, not because someone expects to find them",
+        "A doctor who won't give a timeframe often genuinely doesn't have one yet"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "A note on a phone with her weight, her medicines and doses, her birth details and her corrected age — asked for every single time",
+        "Writing the symptoms with times before going in, because the story is what they work from",
+        "Taking photographs of anything that might have faded by the time we arrived",
+        "Writing our questions down in advance and asking them calmly, rather than in the corridor as someone walked away"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Laboured breathing, grunting, pauses in her breathing, or she goes pale, grey or blue",
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "A rash that doesn't fade when pressed under a glass",
+        "A temperature of 38°C or above under three months"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Take one phone note with her weight, medicines and symptoms. At hospital, ask what is being checked, what would reassure them and when it will be reviewed."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "a-slightly-raised-temperature",
+    "is-she-choking",
+    "a-small-fall-or-bump"
+  ],
+  "seo": {
+    "description": "A simple hospital checklist covering symptoms, medicines, questions, observation, second opinions and discharge planning."
+  },
+  "longform": [
+    {
+      "h": "The note on our phone",
+      "t": "Kept on a phone, updated when anything changed. Her current weight. Every medicine with the dose and how often.\n\nWe were asked for all of it, by several different people, every time we went anywhere. Having it written down meant we weren't doing arithmetic about gestational age while a nurse waited, and it meant both of us gave the same answer.\n\nThis was our hardest stretch. Ari was gaining weight, feeding well and passing stool, and was being kept on the basis of a bloated tummy with an explanation that kept changing. We found ourselves asking why they were keeping her at all, which is where frustration takes you and is the wrong question.\n\nThe right questions, which we eventually wrote down and asked calmly, were these. Why specifically are you keeping her. Is this precaution or is there something you've seen."
+    },
+    {
+      "h": "Questions when they keep her in",
+      "t": "There was a point where the explanation we were given did not match the baby in front of us, and we asked a baby's doctor from outside the hospital to come and look at her.\n\nNobody objected. It is a normal thing to do and it is not an accusation. What made it work was doing it in writing and doing it politely — a short message explaining the situation, what we had been told, and asking for an assessment.\n\nAsk the discharge questions before discharge day. We asked what we should be watching for, what would bring us back, what the follow-up was and who was arranging it, who to ring out of hours, and what the medicines were and for how long.\n\nAsked on the day, in the rush of leaving, you get half answers and a feeling of being pushed out of a door. Asked two days earlier, you get real ones and time to think of the next question."
+    },
+    {
+      "h": "Before you go home",
+      "t": "A small thing that helped more than it should have: deciding in advance which of us would ask the questions.\n\nTwo frightened parents both talking at a doctor produces a worse conversation than one asking and one holding the baby and listening. We swapped depending on who was holding it together better that day. The one listening often caught what the one asking missed."
+    }
+  ],
+  "order": 120,
+  "batch": "8"
 }
 ];
 
