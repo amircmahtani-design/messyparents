@@ -9536,7 +9536,7 @@ var GUIDES = [
   "callout": {
     "title": "Call your doctor immediately if",
     "items": [
-      "Her breathing is laboured — ribs pulling in, nostrils flaring, grunting with each breath",
+      "She's working hard to breathe — ribs pulling in, nostrils flaring, grunting with each breath",
       "She pauses in her breathing, or goes pale, grey or blue",
       "She's floppy, hard to wake, or her cry is nothing like her usual one",
       "She's under three months with a temperature of 38°C or above"
@@ -9557,7 +9557,7 @@ var GUIDES = [
     "helped": {
       "title": "What helped us",
       "items": [
-        "Saline just before feeds rather than on a schedule, so feeding became the easier part of the day",
+        "Saline just before feeds rather than on a schedule — feeding got easier",
         "Gentle suction only when her blocked nose was stopping a feed",
         "Smaller feeds more often, and counting wet nappies instead of millilitres",
         "Writing down the day it started, so we weren't guessing by day five whether it was improving"
@@ -9566,7 +9566,7 @@ var GUIDES = [
     "warn": {
       "title": "Call your doctor immediately if",
       "items": [
-        "Her breathing is laboured — ribs pulling in, nostrils flaring, grunting with each breath",
+        "She's working hard to breathe — ribs pulling in, nostrils flaring, grunting with each breath",
         "She pauses in her breathing, or goes pale, grey or blue",
         "She's floppy, hard to wake, or her cry is nothing like her usual one",
         "She's under three months with a temperature of 38°C or above"
@@ -9635,7 +9635,7 @@ var GUIDES = [
       "She's under three months with any temperature of 38°C or above",
       "She's floppy, very hard to wake, or her cry has changed",
       "A rash that doesn't fade when pressed under a glass",
-      "Laboured breathing, grunting, or pauses in her breathing"
+      "Working hard to breathe, grunting, or pauses in her breathing"
     ],
     "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
   },
@@ -9665,7 +9665,7 @@ var GUIDES = [
         "She's under three months with any temperature of 38°C or above",
         "She's floppy, very hard to wake, or her cry has changed",
         "A rash that doesn't fade when pressed under a glass",
-        "Laboured breathing, grunting, or pauses in her breathing"
+        "Working hard to breathe, grunting, or pauses in her breathing"
       ],
       "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
     },
@@ -9841,8 +9841,8 @@ var GUIDES = [
       "title": "What helped us",
       "items": [
         "Asking what the medicine is for — the spitting, or the pain — so we knew what success looked like",
-        "Asking how long the trial runs and when it gets reviewed, before we left the room",
-        "Writing the dose down in the room, including how much and how often, rather than trusting we'd remember",
+        "Asking how long the trial runs and when it's reviewed, before leaving the room",
+        "Writing the dose down in the room — how much, how often",
         "Asking whether the dose changes as she gains weight, and who recalculates it"
       ]
     },
@@ -9926,7 +9926,7 @@ var GUIDES = [
       "title": "Usually normal",
       "items": [
         "A bloated, gassy tummy is extremely common and usually not an allergy",
-        "A baby who gains weight, feeds and settles is reassuring whatever her tummy looks like, unless its hard.",
+        "Gaining weight, feeding and settling is reassuring — unless her tummy is hard",
         "Swallowed air from a fast feed can look exactly like a reaction to milk",
         "An immature gut — particularly after an early birth — handles volume less smoothly for a while"
       ]
@@ -10116,7 +10116,7 @@ var GUIDES = [
         "Small bruise-coloured marks where a cannula or drip sat, on hands, feet or scalp",
         "Tiny dots on heels from repeated blood tests",
         "Red or slightly shiny patches where tape and dressings were",
-        "Most of this fades over weeks to months, gradually enough that you notice by photograph rather than by looking"
+        "Most fades over weeks to months — slowly enough that photographs show it"
       ]
     },
     "helped": {
@@ -10208,7 +10208,7 @@ var GUIDES = [
       "title": "Usually normal",
       "items": [
         "A watery or sticky eye in the first months is commonly a blocked tear duct",
-        "It is often one eye, worst on waking, with the white of the eye still white",
+        "Often one eye, worst on waking, with the white of the eye still white",
         "Most blocked ducts clear on their own during the first year",
         "Eye rubbing is often tiredness rather than irritation"
       ]
@@ -10216,9 +10216,9 @@ var GUIDES = [
     "helped": {
       "title": "What helped us",
       "items": [
-        "Cooled boiled water on clean cotton, a fresh piece for each eye, wiping from the inner corner outwards",
-        "Noting whether the white of the eye was white, because that was the question we were always asked",
-        "Photographing it, since a sticky eye in the morning is clean by the time of an appointment"
+        "Cooled boiled water on clean cotton, a fresh piece per eye, inner corner outwards",
+        "Noting whether the white of the eye was white — always the first question",
+        "Photographing it — a sticky morning eye is clean by the appointment"
       ]
     },
     "warn": {
@@ -10301,17 +10301,17 @@ var GUIDES = [
       "title": "Usually normal",
       "items": [
         "A short gap does not usually need a catch-up dose",
-        "Iron is often prescribed specifically for babies born early, who build smaller stores before birth",
+        "Iron is often prescribed for babies born early, who build smaller stores",
         "Missing days happens in every household and is not an emergency",
-        "Most of the dose ending up on her chin and your sleeve is the normal experience"
+        "Most of the dose on her chin and your sleeve is normal"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Giving them at the same point in the same feed every day, so it became part of a routine rather than a decision",
+        "Same point in the same feed every day — routine rather than a decision",
         "Keeping them visibly next to the bottles instead of in a cupboard",
-        "Restarting at the normal dose after a gap, and never doubling up to make up for missed days",
+        "Restarting at the normal dose after a gap, never doubling up for missed days",
         "Asking whether vitamin D and iron needed separating, instead of guessing at the order"
       ]
     },
@@ -10397,16 +10397,16 @@ var GUIDES = [
       "items": [
         "Doses for babies are worked out by weight, so they change as she grows",
         "Liquid medicines come with their own syringe or dropper, calibrated to that bottle",
-        "Some go before a feed, some after — and it genuinely matters for a few of them",
+        "Some go before a feed, some after — and for a few it matters",
         "A good share of the first few doses ends up on her chin"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
-        "Asking for the dose in millilitres for her weight, written down, rather than a description",
-        "Keeping the syringe that came with the bottle, and asking the pharmacy for a spare of the same kind",
-        "Small amounts into the side of her mouth, towards the inside of her cheek — not the back of her throat",
+        "Asking for the dose in millilitres for her weight, written down",
+        "Keeping the syringe from the bottle, and asking the pharmacy for a spare",
+        "Small amounts into the side of her mouth, not the back of her throat",
         "Upright, supported, never lying flat, and never while she was crying hard"
       ]
     },
@@ -10480,7 +10480,7 @@ var GUIDES = [
     "items": [
       "She's under three months with a temperature of 38°C or above, unless her doctor has given you specific post-vaccine advice",
       "She's floppy, very hard to wake, or unusually unresponsive",
-      "Laboured breathing, grunting, or pauses in her breathing",
+      "Working hard to breathe, grunting, or pauses in her breathing",
       "Swelling of the face or lips, or hives spreading quickly"
     ],
     "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
@@ -10491,16 +10491,16 @@ var GUIDES = [
       "title": "Usually normal",
       "items": [
         "Routine vaccines usually follow actual age, not corrected age",
-        "That means she may be vaccinated at a smaller size than a term baby of the same stage",
+        "She may be vaccinated at a smaller size than a term baby",
         "Several can be given at the same appointment, including an oral one",
-        "A rough evening, a mild temperature and a small lump at the site are the usual pattern"
+        "A rough evening, a mild temperature and a small lump are the usual pattern"
       ]
     },
     "helped": {
       "title": "What helped us",
       "items": [
         "Asking explicitly which age the schedule follows, instead of assuming corrected age like everything else",
-        "Writing the names of what she was given into a note, so later questions had something to refer to",
+        "Writing down the names of what she was given, for later questions",
         "Asking about side effects before the appointment rather than at 10pm afterwards",
         "Clearing the next day entirely, and expecting a difficult evening rather than being surprised by it",
         "If you live in two countries, comparing both vaccine schedules with your baby's doctor or nurse"
@@ -10511,7 +10511,7 @@ var GUIDES = [
       "items": [
         "She's under three months with a temperature of 38°C or above, unless her doctor has given you specific post-vaccine advice",
         "She's floppy, very hard to wake, or unusually unresponsive",
-        "Laboured breathing, grunting, or pauses in her breathing",
+        "Working hard to breathe, grunting, or pauses in her breathing",
         "Swelling of the face or lips, or hives spreading quickly"
       ],
       "lead": "A pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
@@ -10670,7 +10670,7 @@ var GUIDES = [
     "title": "Call your doctor immediately if",
     "items": [
       "She's under three months with a temperature of 38°C or above",
-      "Laboured breathing — ribs pulling in, nostrils flaring, grunting",
+      "Working hard to breathe — ribs pulling in, nostrils flaring, grunting",
       "Pauses in her breathing, or she goes pale, grey or blue",
       "She's floppy, very hard to wake, or her cry has changed"
     ],
@@ -10691,7 +10691,7 @@ var GUIDES = [
       "title": "What helped us",
       "items": [
         "Asking her doctor what they wanted, rather than settling it between ourselves",
-        "Giving relatives a date rather than a rule — \"come over on Thursday\" lands better than a policy",
+        "Giving relatives a date rather than a rule — \"come over on Thursday\"",
         "Saying it warmly and in advance, by message, so nobody was turned away at a door",
         "Washing hands properly on arrival rather than relying on sanitiser, and doing it before picking her up every time"
       ]
@@ -10700,7 +10700,7 @@ var GUIDES = [
       "title": "Call your doctor immediately if",
       "items": [
         "She's under three months with a temperature of 38°C or above",
-        "Laboured breathing — ribs pulling in, nostrils flaring, grunting",
+        "Working hard to breathe — ribs pulling in, nostrils flaring, grunting",
         "Pauses in her breathing, or she goes pale, grey or blue",
         "She's floppy, very hard to wake, or her cry has changed"
       ],
@@ -10859,7 +10859,7 @@ var GUIDES = [
   "callout": {
     "title": "Call your doctor immediately if",
     "items": [
-      "Laboured breathing, grunting, pauses in her breathing, or she goes pale, grey or blue",
+      "Working hard to breathe, grunting, pauses in her breathing, or she goes pale, grey or blue",
       "She's floppy, very hard to wake, or her cry is nothing like her usual one",
       "A rash that doesn't fade when pressed under a glass",
       "A temperature of 38°C or above under three months"
@@ -10881,7 +10881,7 @@ var GUIDES = [
       "title": "What helped us",
       "items": [
         "A note on a phone with her weight, her medicines and doses, her birth details and her corrected age — asked for every single time",
-        "Writing the symptoms with times before going in, because the story is what they work from",
+        "Writing symptoms with times before going in — the story is what they use",
         "Taking photographs of anything that might have faded by the time we arrived",
         "Writing our questions down in advance and asking them calmly, rather than in the corridor as someone walked away"
       ]
@@ -10889,7 +10889,7 @@ var GUIDES = [
     "warn": {
       "title": "Call your doctor immediately if",
       "items": [
-        "Laboured breathing, grunting, pauses in her breathing, or she goes pale, grey or blue",
+        "Working hard to breathe, grunting, pauses in her breathing, or she goes pale, grey or blue",
         "She's floppy, very hard to wake, or her cry is nothing like her usual one",
         "A rash that doesn't fade when pressed under a glass",
         "A temperature of 38°C or above under three months"
@@ -10925,6 +10925,1404 @@ var GUIDES = [
   ],
   "order": 120,
   "batch": "8"
+},
+{
+  "id": "tired-even-with-help",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Why am I exhausted even though I have help?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Having help and still being wrecked feels hard to justify, so most people don't say it. The tiredness isn't only about hours of sleep.",
+  "keywords": [
+    "exhausted",
+    "help",
+    "night nurse",
+    "guilt",
+    "irritable",
+    "burnout",
+    "constant alertness"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Being on call is tiring even when you're not the one getting up",
+        "Broken sleep over months accumulates in a way one good night doesn't undo",
+        "Managing other people's work is its own load, on top of the baby",
+        "Irritability is usually the first thing to show, before you notice the tiredness itself"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Naming it as load, not sleep — that stopped the arithmetic about hours",
+        "One block of genuinely off-duty time, out of earshot, nobody asking us anything",
+        "Handing over a whole decision, not a task — not being the one consulted",
+        "Saying it out loud to one person instead of carrying the guilt about having help at all"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "Having help does not switch off the mental load. What often helps most is a block of time when you are truly off duty."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "parent-sleep-deprivation",
+    "awake-when-you-could-be-sleeping",
+    "i-need-a-proper-break"
+  ],
+  "seo": {
+    "description": "Why having help does not always remove new-parent exhaustion, and how real off-duty time can make a difference."
+  },
+  "longform": [
+    {
+      "h": "Why help does not always fix the tiredness",
+      "t": "There is a version of this that goes: I have help, grandma has moved in with us, I don't do the full night alone, I work and I handle her for a few hours a day, and I am exhausted. Most parents don't have any of that. So what exactly is my complaint?\n\nThat comparison is the reason nobody says it, and it is also why it doesn't get dealt with. Being more fortunate than someone else doesn't make you less tired. It just makes you quieter about it, which is worse."
+    },
+    {
+      "h": "What made a real difference",
+      "t": "Because the thing that exhausts you isn't only the hours.\n\nBeing on call is tiring in itself. Some part of your attention stays with her whether or not you're the one holding her — you hear the monitor, you register the pause, you half-wake. A night where you slept through is still a night you were available.\n\nOff-duty time that was genuinely off. Not in the house, available if needed. Out of earshot, with nobody able to ask us anything, for a defined block.\n\nThe word that mattered was \"genuinely\". Lying down in the next room while still being the person who would be woken is not rest. This was hard at first, so we started with twenty minutes nearby, even just sitting on the balcony. Then we slowly increased the time and distance. When someone you trust offers to help and feels comfortable with the baby, take the help. Grandparents and other people who have cared for babies can be wonderful for this."
+    },
+    {
+      "h": "Irritability was our warning sign",
+      "t": "Ours showed up as being short with people rather than as feeling tired. Snapping at small things, impatience with the people helping, finding ordinary requests unreasonable.\n\nThat is worth knowing because it misdirects you. It feels like a problem with the people around you, so you start adjusting them, when the actual variable is how depleted you are."
+    }
+  ],
+  "order": 121,
+  "batch": "9"
+},
+{
+  "id": "awake-when-you-could-be-sleeping",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Why can't I sleep when someone else has the baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Someone else has the baby, the house is quiet, and you're staring at the ceiling at two in the morning. The constant alertness doesn't switch off on command.",
+  "keywords": [
+    "can't sleep",
+    "insomnia",
+    "night nurse",
+    "constant alertness",
+    "feeling stuck on alert",
+    "two in the morning"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Months of being woken trains you to stay alert — it fades slowly",
+        "Being woken once and then unable to get back to sleep is extremely common",
+        "The quiet can itself be alerting, because you're listening into it",
+        "Knowing it's your one chance to sleep is the least restful thought available"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Getting up and doing something dull, rather than lying there fighting the night",
+        "Monitor out of the room on an off-duty night — nothing to listen to",
+        "Sleeping somewhere else in the house on the nights someone else was covering",
+        "Earplugs, which felt irresponsible and were the single biggest change"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "Your body may be resting while your mind stays on watch. Regular off-duty nights and a calmer sleep routine can help it relearn how to switch off."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "tired-even-with-help",
+    "parent-sleep-deprivation",
+    "splitting-nights"
+  ],
+  "seo": {
+    "description": "Why you may stay wide awake when someone else has the baby, plus gentle ways to help your mind switch off."
+  },
+  "longform": [
+    {
+      "h": "The night we were meant to sleep",
+      "t": "We had night cover. The baby was being looked after. The house was quiet.\n\nThere is something particularly demoralising about that, because the thing you have been desperate for has been handed to you and you can't use it. It's easy to read it as ingratitude, or as evidence that you're broken in some way."
+    },
+    {
+      "h": "Why the mind stays switched on",
+      "t": "You have spent months being woken repeatedly, and your body has sensibly adapted by never going all the way down. That adaptation was useful. It doesn't know the arrangement has changed.\n\nIt takes longer to unlearn than it took to learn, and it unlearns over weeks of consistent opportunity rather than in the first night someone covers for you. Which means the first few off-duty nights being wasted is the normal shape of this, not a sign it isn't going to work.\n\nRemoving the thing to listen to. On a night someone else was covering, the monitor went out of the room entirely. Earplugs as well — which felt like an abdication and was the single biggest change either of us made.\n\nSleeping somewhere else in the house, where the usual sounds did not reach, worked better than staying in the room where we normally got woken. Even sleeping on the living-room sofa helped. The point was to be properly out of earshot, not only out of arm's reach."
+    },
+    {
+      "h": "What helped us switch off",
+      "t": "\"This is my one chance, I have to sleep now.\" It is the least restful sentence in the language and it guarantees the outcome it fears.\n\nWhat helped was lowering the stakes out loud. The night is already partly lost. Resting without sleeping is still worth something."
+    }
+  ],
+  "order": 122,
+  "batch": "9"
+},
+{
+  "id": "loving-her-and-resenting-it",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Can I love my baby and still resent how hard this is?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 4,
+  "summary": "Regret, anger and love are not alternatives. They turn up together under enough load, and holding all three doesn't mean the love is the false one.",
+  "keywords": [
+    "resentment",
+    "regret",
+    "anger",
+    "ambivalence",
+    "overload",
+    "guilt",
+    "honesty"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Love and resentment coexist — neither cancels the other out",
+        "Relentless load produces anger, and the anger attaches to whatever is in front of you",
+        "Thinking life was easier before her is about the load, not a verdict",
+        "Extremely common, almost never said out loud, which is what makes it feel rare"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Saying the whole sentence to one person, including the part that sounded unforgivable",
+        "Treating it as a load problem — what was relentless, and could it move",
+        "Separating thought from verdict — having it once is not a position you hold",
+        "Noticing that the resentment attached to whoever was nearest, which usually meant it wasn't about them"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "You can love your baby and still resent how relentless parenting feels. The thought does not cancel the love or make you a bad parent."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "still-feels-like-meh",
+    "overwhelmed-new-parent",
+    "checklist-mode"
+  ],
+  "seo": {
+    "description": "Love and resentment can exist together when parenting feels relentless; learn what may help and when to ask for support."
+  },
+  "longform": [
+    {
+      "h": "The sentence nobody wants to say",
+      "t": "Here is roughly how it came out, at the worst of it: I signed up to be a hands-on father and this is insane. She is getting on my nerves. How do you know I love her deeply.\n\nAnd separately, a few weeks earlier: why do I sometimes think life was easier without her? Was I happy before her? Sure, but Ari filled my world in a completely different way. I was simply exhausted. Some fathers take longer to feel that connection. It is not always an instant overflow of love. Sometimes the bond comes through time, repetition and showing up every day.\n\nBecause they're answers to different questions.\n\nLove is about her. Resentment is about the load — the relentlessness, the loss of your own time, the fact that it does not stop and cannot be put down. Those are separate inputs, so they can both be full volume at once."
+    },
+    {
+      "h": "A thought is not a verdict",
+      "t": "This was the most useful thing anyone told us, so it goes here plainly.\n\nHaving the thought \"life was easier without her\" does not mean you believe it, want it, or will act on it. Intrusive thoughts of exactly this kind are extremely common in new parents and the research on them is reassuring. The thought arriving says something about how depleted you are.\n\nNot a softened version. Not \"it's been a bit tough\". The actual sentence, including the part that sounds unforgivable.\n\nOne person. A partner if that's safe, a friend, a sibling, a doctor. The relief is not in being told you're a good parent — it's in discovering that saying it out loud doesn't cause the catastrophe you expected, and often gets a \"yes, me too\" you weren't anticipating."
+    },
+    {
+      "h": "Look at the load, not your character",
+      "t": "Once it's said, the question that produces change is not \"what's wrong with me\" but \"what specifically was relentless this week, and can any of it move\".\n\nFor us the answers were usually unglamorous and solvable. A stretch with no gap at all. Nights not properly split.\n\nWe are not doctors, and this is the one place in the guide where we want to be direct rather than reassuring.\n\nIf the low mood, the numbness or the hopelessness doesn't lift when the load lifts — if it's there on the good days too, or has been constant for weeks — that's worth a doctor's appointment. The same goes for anger you can't bring down, feeling disconnected from her over weeks rather than hours, drinking more, or not being able to sleep even when you can."
+    }
+  ],
+  "order": 123,
+  "batch": "9"
+},
+{
+  "id": "i-need-a-proper-break",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Is it wrong to need a proper break from my baby?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "There's a point where small rests stop touching it and what you need is a real gap. Asking for that out loud is better than reaching it by accident.",
+  "keywords": [
+    "break",
+    "reset",
+    "resentment",
+    "time off",
+    "handover",
+    "guilt"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Twenty minutes helps early on and stops being enough after months",
+        "Needing a real gap is a load signal, not a failure of devotion",
+        "Resentment building towards whoever is nearest usually means the gap is overdue",
+        "Both parents can hit this, including the one who looks like they're coping"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking for it as a plan with a date, not after a bad day",
+        "Being specific: how long, where, and what either of us would not be contacted about",
+        "Leaving the house, because being in it means being available",
+        "Taking the whole handover off — not being the person consulted while away"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "Needing a proper break is not a failure. Ask for a clear block of time before you reach the point where everything feels unbearable."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "touched-out",
+    "tired-even-with-help",
+    "parent-sleep-deprivation"
+  ],
+  "seo": {
+    "description": "Why short rests sometimes stop being enough, and how to ask for a proper break without guilt or scorekeeping."
+  },
+  "longform": [
+    {
+      "h": "How we knew a short rest was not enough",
+      "t": "The signal for us wasn't tiredness. It was resentment arriving at things that didn't deserve it — an ordinary request, a small noise, someone asking a reasonable question.\n\nThe other signal was that the small fixes had stopped working. Twenty minutes with the door shut genuinely helps in the early months. There's a point where you take the twenty minutes, come back, and nothing has changed."
+    },
+    {
+      "h": "Ask for a real break as a plan",
+      "t": "The worst time to ask is the moment you most need it, because by then it comes out as an announcement at the end of a terrible day and lands as an accusation.\n\nWhat worked was asking in daylight, in advance, as a specific proposal. A date. A length.\n\nThree things made the difference between a break and a longer version of being on duty.\n\nLeave the house. Being in it means being findable, and being findable means you're still working. Hand over the decisions, not just the tasks — being rung to approve something is not time off."
+    },
+    {
+      "h": "Make it fair for both parents",
+      "t": "A break one parent takes and the other doesn't becomes a grievance within about a fortnight, however generously it was given.\n\nSo the version that held for us was both people getting it, scheduled, not traded. Not \"I covered for you so you owe me\" — just the same thing for each of us, on the calendar, swapped around."
+    }
+  ],
+  "order": 124,
+  "batch": "9"
+},
+{
+  "id": "still-feels-like-meh",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "What if bonding with my baby still hasn't clicked?",
+  "ages": [
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Everyone said it would click. She reaches for you every morning and you still feel oddly flat about it. That's more common than the silence suggests.",
+  "keywords": [
+    "bonding",
+    "clicked",
+    "flat",
+    "father",
+    "comparison",
+    "guilt",
+    "slow"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 4–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Bonding often builds over many months, not in a moment",
+        "Comparing yourself to a visibly besotted partner makes it look worse than it is",
+        "Saying \"I love her\" partly to convince yourself — a lot of parents do",
+        "It tends to arrive through doing rather than through trying to feel it"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Carrying on with the caring without waiting to feel it first",
+        "Noticing the small specific moments rather than auditing the overall feeling",
+        "Saying it out loud to one person, which was far less dramatic than expected",
+        "Stopping the comparison with the parent who fell in love instantly — different wiring, not a scoreboard"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "Bonding can grow slowly through feeding, holding and showing up each day. It does not have to arrive as one huge feeling."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "loving-her-and-resenting-it",
+    "father-not-feeling-it",
+    "are-we-bonding-if-shes-asleep"
+  ],
+  "seo": {
+    "description": "Bonding does not always happen instantly; it can grow slowly through everyday care, time and small moments together."
+  },
+  "longform": [
+    {
+      "h": "The honest version",
+      "t": "She's nearly six months. Her mother is head over heels. I definitely love her, and I'm fairly relaxed about not seeing her — and I don't understand that, because she reaches for me every morning.\n\nAnd a blunter one from earlier: when does it click that I have a daughter? I love her, but half the time I say it to trick my own mind. I know I do love her."
+    },
+    {
+      "h": "Bonding can take time",
+      "t": "The feeling often follows the doing rather than preceding it, and the doing accumulates at different rates for different people.\n\nThe parent who carried her and feeds her has had a head start measured in months and hormones. That isn't a moral difference and it isn't a sign of how either of you will be as a parent in five years. But it does mean that standing next to someone who was besotted from the first hour is a terrible place to assess yourself from.\n\nFor us it wasn't gradual and then complete. It was a specific moment — kissing the top of her head — after which things started connecting that hadn't before. Before that, honestly, not much.\n\nWhich is worth saying for two reasons. It can arrive suddenly and late, so a flat six months is not a forecast. And it arrived during ordinary contact rather than during an attempt to feel something."
+    },
+    {
+      "h": "What slowly helped it move",
+      "t": "It came from her mother, and it reframed the whole thing: you can do less, but be present and actually want to be there, rather than treating it as a chore.\n\nThat landed because the instinct when you do not feel it is to compensate with volume — more hours, more tasks, trying harder. But hours done only as a duty do not build much. One hour where you are genuinely present can do more than three spent working through a list. That change in perspective helped enormously. I started seeing Ari as a little person, rather than another task to finish before someone took over and I could rest."
+    }
+  ],
+  "order": 125,
+  "batch": "9"
+},
+{
+  "id": "are-we-bonding-if-shes-asleep",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Does holding my sleeping baby count as bonding?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "Hours of her asleep on your chest can feel like nothing is happening. It is the most bonding thing in the day and it looks like doing nothing.",
+  "keywords": [
+    "contact sleep",
+    "bonding",
+    "chest",
+    "holding",
+    "asleep",
+    "connection"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She goes pale, grey or blue",
+      "She is struggling to breathe or has pauses in her breathing",
+      "She is floppy, very hard to wake or completely unlike herself",
+      "You think you may fall asleep while holding her"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Babies settle best on a person — it's not a bad habit she's learned",
+        "Contact while she's asleep does the same work as contact while she's awake",
+        "She's taking in your smell, heartbeat and voice the whole time",
+        "Feeling like nothing is happening is about you, not a measure of her"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Taking it as the bonding rather than as the waiting room before the bonding",
+        "Awake and upright while holding her — never on a sofa or in bed",
+        "Putting her down for the long stretch and keeping contact naps for when one of us was properly awake",
+        "Using the time for something quiet rather than scrolling, which made it feel like time rather than limbo"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She goes pale, grey or blue",
+        "She is struggling to breathe or has pauses in her breathing",
+        "She is floppy, very hard to wake or completely unlike herself",
+        "You think you may fall asleep while holding her"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Yes. Holding her while she sleeps can be warm, familiar bonding time, as long as you stay awake and keep her sleep space safe."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "still-feels-like-meh",
+    "father-not-feeling-it",
+    "safe-sleep-newborn"
+  ],
+  "seo": {
+    "description": "Quiet contact still counts as bonding, with simple reminders for holding a sleeping baby as safely as possible."
+  },
+  "longform": [
+    {
+      "h": "Quiet contact still counts",
+      "t": "She's comfortable, she's asleep on your chest, and it's lovely — and there's still a nagging sense that no bonding is occurring, because bonding feels like it should involve something happening.\n\nIt is the opposite. She is taking in your smell, heartbeat, breathing and voice, and she does not need to be awake for that closeness to matter. Papa realised quite early that Ari being comfortable enough to sleep on him meant a bond was already growing. She felt safe with her father. The protectiveness and pride he felt became the beginning of their father-daughter relationship: she feels safe with me, she loves me, this is good."
+    },
+    {
+      "h": "Stay awake while she sleeps on you",
+      "t": "This is the part to get right, and it's narrow.\n\nHolding her while you are awake and upright is fine, and is one of the better things in the day. The danger is falling asleep with her — on a sofa or armchair especially, where she can slip into a gap or against your body, and in a bed with soft bedding."
+    },
+    {
+      "h": "The free-time problem",
+      "t": "There is an honest complication here. For a stretch, the only real free time Papa had was while she slept on him. That made the contact nap both the nicest part of the day and his only gap, and those two things pulled against each other.\n\nWhat helped was not pretending that was fine. It isn't a substitute for actual time off, and treating it as one means you never ask for the real thing. We ended up protecting both separately: contact naps because they were worth having, and a genuine break because a nap with a baby on you is not rest."
+    }
+  ],
+  "order": 126,
+  "batch": "9"
+},
+{
+  "id": "does-it-get-easier",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Does having a baby ever get easier?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "It changes more than it eases, and the hardest phase is whichever one you're in. But some specific things genuinely do get better, and knowing which helps.",
+  "keywords": [
+    "easier",
+    "hardest phase",
+    "stages",
+    "phase",
+    "frustrating",
+    "when does it end"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "There's no single hardest phase that everyone agrees on",
+        "The work changes shape rather than simply reducing",
+        "Sleep becoming more settled is the change most parents feel most",
+        "Being able to read her, and her being able to tell you things, makes it feel easier even when it isn't lighter"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Asking what was hard this month, rather than whether it was hard generally",
+        "Writing it down occasionally, because looking back a month was the only reliable way to see change",
+        "Expecting travel, illness and teeth to interrupt progress rather than reverse it",
+        "Not taking anyone's \"it gets easier at X\" as a date to hold out for"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You cannot keep yourself safe, manage daily tasks, or care safely for her"
+      ]
+    },
+    "quick": "It changes more than it simply gets easier. Sleep, communication and confidence often improve, even while new problems appear."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "parent-sleep-deprivation",
+    "overwhelmed-new-parent",
+    "tired-even-with-help"
+  ],
+  "seo": {
+    "description": "An honest look at what changes as babies grow, what may become easier and why every difficult stage feels permanent."
+  },
+  "longform": [
+    {
+      "h": "There is no single hardest stage",
+      "t": "There is no agreed hardest phase. Ask ten parents and you'll get the first six weeks, four months, teething, the point where she becomes mobile, and one person who found the newborn stage the easy bit.\n\nThat's not evasion — it's because what's hard depends on what you personally find hard. Broken sleep wrecks some people and not others. Relentless physical contact is the worst part for some and the best part for others."
+    },
+    {
+      "h": "What genuinely gets easier",
+      "t": "Sleep is the big one. Nights becoming more settled from fragments into longer stretches is the single change most parents report as transformative, and it happens somewhere in the first year for most babies, with wide variation and plenty of interruptions.\n\nLegibility is the underrated one. Early on she's a set of signals you're guessing at. Later you know what the different cries mean, you can predict the day roughly, and she starts communicating deliberately.\n\nWorth saying, because \"it gets easier\" sets people up.\n\nMobility is more work, not less. Once she moves you can't put her down and expect her to be where you left her, and the supervision becomes continuous in a way it wasn't. Solids add a whole category of work."
+    },
+    {
+      "h": "The phase that feels permanent",
+      "t": "We had a stretch in Greece where everything was hard and she seemed to be going through something, and the question we kept asking was how long a phase like this can last.\n\nWhat we learned is that a bad phase feels like the new normal while you are in it, but usually is not. Travel, illness, teething and developmental jumps can all interrupt progress without undoing it. Papa also realised that Ari was almost always in one phase or another. During the first year, babies learn to feed, communicate, sit, crawl and walk, all while growing, teething and having sleep disrupted. So when someone says, ‘It is a phase,’ do not pin all your hopes on one magical age when everything becomes easy. It becomes easier in some ways and harder in others. Mostly, it keeps changing.The lovely part is that your confidence grows too. At first, Papa struggled to hold Ari and keep the bottle at the right angle. Now he does it without thinking while already preparing what she will need for sleep. Repetition does not make parenting perfect, but it does make you much better at handling the next change."
+    }
+  ],
+  "order": 127,
+  "batch": "9"
+},
+{
+  "id": "hiring-night-help",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "What should I agree before hiring overnight help?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months"
+  ],
+  "read": 3,
+  "summary": "What the job actually is, what to specify before anyone starts, and the cheaper arrangements people use when a night nurse isn't on the table.",
+  "keywords": [
+    "night nurse",
+    "night nanny",
+    "overnight",
+    "hiring",
+    "cost",
+    "duties",
+    "handover"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Working hard to breathe, grunting, or pauses in her breathing, or she goes pale, grey or blue",
+      "A temperature of 38°C or above under three months",
+      "You're told about an injury, a fall, or a dose given twice — ring rather than wait"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–9 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Rates vary enormously by city, by hours, and by whether the person is live-in",
+        "A night shift is usually a fixed block — commonly around twelve hours",
+        "The job is normally feeds, changes and settling, not housework",
+        "Agencies cost more and do the vetting; direct hire is cheaper and the vetting is yours"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing the shift down first — hours, each waking, what not to do",
+        "Specifying how we wanted her settled, not just that she should be settled",
+        "Being explicit about no overstimulation at night, however awake she seems",
+        "Naming who gives medicines and supplements, and keeping that with one person"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Working hard to breathe, grunting, or pauses in her breathing, or she goes pale, grey or blue",
+        "A temperature of 38°C or above under three months",
+        "You're told about an injury, a fall, or a dose given twice — ring rather than wait"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Agree the hours, duties, settling, medicines and morning handover in writing before the first overnight shift."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "briefing-whoever-helps",
+    "finding-help-without-an-agency",
+    "letting-help-go"
+  ],
+  "seo": {
+    "description": "What to agree before overnight help starts, including duties, medicines, settling, handovers and a clear trial period."
+  },
+  "longform": [
+    {
+      "h": "Write down what the job includes",
+      "t": "A night shift is usually a defined block — ours was essentially twelve hours — where the person is responsible for her through the night: feeding her when she wakes, changing her, and settling her back down without the household being involved.\n\nThe things worth being explicit about, because they aren't obvious:\n\nThis is the one we'd insist on. Vitamins, iron, anything prescribed: one named person is responsible, and it is written down with a tick.\n\nWith overnight help, a grandparent and two parents, the risk is not only a missed dose. It is also a dose being given twice because everyone assumes nobody else has done it. After that happened to us, we made one person responsible for every medicine and supplement. That simple change was worth the awkward conversation."
+    },
+    {
+      "h": "Keep medicines with one person",
+      "t": "A short written handover each morning — waking times, how much she took, anything unusual — changed how much we could rely on the arrangement.\n\nIt does three things. It gives you a record if a doctor asks. It makes patterns visible that nobody would remember verbally.\n\nThe paid overnight option is expensive and in many places it simply isn't available at a price that makes sense. The alternatives people actually use:\n\nSplitting the night properly between two parents, which is covered in `splitting-nights` and is the single highest-value thing available if there are two of you. One person sleeping properly beats both half-sleeping."
+    },
+    {
+      "h": "Agree the trial and handover",
+      "t": "Say at the start that the first couple of weeks are a trial for both sides, and that you'll talk at the end of it.\n\nIt costs nothing and it changes everything about how an ending goes. Without it, deciding it isn't working becomes a confrontation and people avoid having it, which is how unsatisfactory arrangements run for months. The guide on ending one is `letting-help-go`."
+    }
+  ],
+  "order": 128,
+  "batch": "9"
+},
+{
+  "id": "briefing-whoever-helps",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "How do I explain our baby-care rules to someone helping?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Most problems with help are briefing problems wearing a disguise. Written, specific and early beats correcting someone kindly for six weeks.",
+  "keywords": [
+    "instructions",
+    "nanny",
+    "night nurse",
+    "standards",
+    "hygiene",
+    "handover",
+    "feedback"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You're told about a fall, an injury, or a dose given twice — call rather than wait and see",
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Working hard to breathe, or she goes pale, grey or blue",
+      "A temperature of 38°C or above under three months"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Someone experienced will default to how they've always done it, not how you do",
+        "What feels obvious to you is genuinely not obvious to anyone else",
+        "Most friction is a missing instruction rather than a bad attitude",
+        "Standards slip over weeks unless they're written down somewhere"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Writing it down once as standards for everyone, rather than correcting people individually",
+        "Being specific about hygiene — hands washed before every pick-up, not sanitised once on arrival",
+        "Saying no perfume or strong scent, which mattered a great deal and would never have been guessed",
+        "Masks worn properly over the nose rather than resting on a chin, said once and kindly"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You're told about a fall, an injury, or a dose given twice — call rather than wait and see",
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Working hard to breathe, or she goes pale, grey or blue",
+        "A temperature of 38°C or above under three months"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Write the important rules down once, keep them specific and explain why they matter. Clear instructions are kinder than weeks of corrections."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "hiring-night-help",
+    "letting-help-go",
+    "safe-sleep-newborn"
+  ],
+  "seo": {
+    "description": "How to give baby-care instructions clearly and kindly so everyone follows the same hygiene, safety and medicine rules."
+  },
+  "longform": [
+    {
+      "h": "Written rules are easier to follow",
+      "t": "We started by correcting things as they came up, kindly, one at a time. Six weeks in we were still correcting the same things and had become the difficult household.\n\nWhat worked was writing it down once — a single message with the standards for anyone who looks after her, including us. Not a response to an incident. Just how this house does it.\n\nWe had a genuine disagreement about this and it's worth laying out, because the detail matters.\n\nWe asked for hands to be washed before picking her up. What we observed was sanitising when someone noticed we were watching, and we weren't convinced the hands had been done before that. Separately, the person's position was that she preferred washing to sanitiser — which is correct, and not the same as doing either reliably."
+    },
+    {
+      "h": "Be clear about hygiene and safety",
+      "t": "No perfume or strong scent. This mattered enormously for us because her breathing had needed help early on, and strong scents were a real irritant. It is also something no one would think to ask about — and we had a situation where a night person was certain she wasn't wearing any while the room said otherwise.\n\nMasks worn properly. If you've asked for a mask at all, it's worth saying once that over the nose is the point. On the chin is theatre.\n\nThis is the thing we'd most want to pass on. Every instruction that stuck had a reason attached; every instruction that quietly eroded didn't.\n\n\"One toy at a time\" sounds arbitrary and gets forgotten. \"One toy at a time, because she gets overstimulated and loses interest in toys quickly\" survives, because now the person can apply the principle to situations you didn't anticipate."
+    },
+    {
+      "h": "Give the reason once",
+      "t": "Two practical notes.\n\nMedicines and supplements belong to one named person, with every dose ticked off in writing. Do not spread this across Mama, Papa, Grandma and anyone else helping with the baby."
+    }
+  ],
+  "order": 129,
+  "batch": "9"
+},
+{
+  "id": "letting-help-go",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "How do I let a nanny or night nurse go?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Trust has gone but you can't prove anything, and she's in your house with your baby. You don't need proof to end an arrangement.",
+  "keywords": [
+    "dismissal",
+    "trust",
+    "night nurse",
+    "nanny",
+    "ending",
+    "notice",
+    "handover"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You believe she's been hurt, dropped, or given the wrong medicine — call your doctor now",
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Unexplained bruising or marks you can't account for",
+      "Working hard to breathe, or she goes pale, grey or blue"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A gut feeling about whoever cares for her is reason enough to end it",
+        "You do not need proof of wrongdoing to end an arrangement",
+        "Most endings are about fit rather than wrongdoing",
+        "Dreading the conversation more than the gap is very common"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Deciding on fit rather than building a case — we stopped waiting for proof",
+        "Writing down what we'd observed, with dates, before deciding anything",
+        "Keeping it short and non-accusatory — the arrangement isn't working, thank you, here's the notice",
+        "Not raising suspicions we couldn't support, which would have invited a dispute and changed nothing"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You believe she's been hurt, dropped, or given the wrong medicine — call your doctor now",
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Unexplained bruising or marks you can't account for",
+        "Working hard to breathe, or she goes pale, grey or blue"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "You do not need proof of wrongdoing to end an arrangement that no longer feels right. Keep the conversation calm, short and fair."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "hiring-night-help",
+    "briefing-whoever-helps",
+    "finding-help-without-an-agency"
+  ],
+  "seo": {
+    "description": "How to end a childcare arrangement calmly when trust or fit has gone, while keeping your baby's safety separate."
+  },
+  "longform": [
+    {
+      "h": "You do not need to build a case",
+      "t": "Trust had gone. There were things we'd noticed that didn't add up — small inconsistencies, a sense that standards were different depending on whether anyone was watching, one episode where something was handled badly. None of it was provable, and some of it we genuinely couldn't be certain about.\n\nSo we waited, because it felt as though ending it required proof. That's the trap, and it cost us weeks.\n\nThe reframing that got us out of it: this arrangement isn't working for our household. That's it. It's true, it's sufficient, and it's not an allegation.\n\nIt is also fairer to the other person. Saying the arrangement no longer works leaves their reputation intact. Making an accusation you cannot support risks harming them and starting a dispute that changes nothing."
+    },
+    {
+      "h": "Keep the conversation short",
+      "t": "Short. Specific about the practical facts, vague about nothing that matters.\n\nThe arrangement isn't working for us. Your last night will be X. We'll pay the notice in full.\n\nArrange the replacement, or work out how you'll manage the gap, before the conversation happens.\n\nWe nearly didn't, and the reason the arrangement had already run too long was precisely the fear of the gap. Having cover in place means you're choosing between two workable options rather than between a bad fit and a crisis — and that's what finally made the decision easy."
+    },
+    {
+      "h": "Keep safety as a separate question",
+      "t": "Keep two things apart.\n\nWhether to continue employing someone is a judgement call and gut feeling is enough. Whether your baby has been harmed is a medical question, and it goes to a doctor now, not into the employment conversation."
+    }
+  ],
+  "order": 130,
+  "batch": "9"
+},
+{
+  "id": "finding-help-without-an-agency",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "How do I find childcare help without an agency?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Agency lists run out fast. What to do next, how to check someone properly yourself, and the admin nobody warns you about.",
+  "keywords": [
+    "nanny",
+    "live-in",
+    "agency",
+    "recruiting",
+    "references",
+    "visa",
+    "flexible hours"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "You believe she's been hurt, dropped, or given the wrong medicine — call your doctor now",
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Unexplained bruising or marks you can't account for",
+      "Working hard to breathe, or she goes pale, grey or blue"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "A single agency's list is usually smaller than it sounds, and you'll exhaust it quickly",
+        "Most good arrangements come through word of mouth rather than a database",
+        "Direct hire means the checking is yours to do, not that it's worse",
+        "Flexible patterns — a few nights plus a few daytime hours — are often easier to fill than a fixed full-time post"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Using several agencies at once rather than waiting on one to come up with someone",
+        "Asking other parents locally, which produced better candidates than any list",
+        "Writing the role out before advertising — hours, nights, days off, what's included",
+        "Being honest in the advert about the flexible pattern instead of describing a tidier job than it was"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "You believe she's been hurt, dropped, or given the wrong medicine — call your doctor now",
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Unexplained bruising or marks you can't account for",
+        "Working hard to breathe, or she goes pale, grey or blue"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Try several agencies and local parent recommendations, then check references yourself and use a paid trial before making anything permanent."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "hiring-night-help",
+    "briefing-whoever-helps",
+    "letting-help-go"
+  ],
+  "seo": {
+    "description": "Practical ways to find and check childcare help beyond one agency, including references, paid trials and paperwork."
+  },
+  "longform": [
+    {
+      "h": "When one agency runs out of names",
+      "t": "We went to an agency, were given a database to look through, and got to the end of the plausible candidates in an afternoon. That's the normal experience rather than bad luck — a single agency's pool at any moment is smaller than the pitch suggests.\n\nWhat worked instead was running several routes at once. More than one agency, simultaneously, rather than politely waiting for one to produce someone. And asking other parents locally, which produced the best candidates we saw by a wide margin."
+    },
+    {
+      "h": "Check people properly yourself",
+      "t": "The temptation is to describe a neater job than the one you have. It wastes everyone's time, because the person takes it and then discovers the real shape of it.\n\nOurs was genuinely awkward at one point: a few nights a week, not the same nights, plus some hours in the morning on the days without nights. Flexible rather than regular. We put that in the advert as it was, and the people who replied were people for whom that pattern worked.\n\nIf you're hiring directly, the vetting is yours. It isn't difficult, it's just work.\n\nSpeak to references on the phone, not by message. The question that produced the most useful answers was not \"was she good\" but \"what did she find hard, and what would you tell the next family\". People will tell you something real in response to that."
+    },
+    {
+      "h": "Start the paperwork early",
+      "t": "Finding the person is often the quick part.\n\nIf they need a visa, a work permit, or permission to travel with you, start it long before you need them. We needed a Schengen visa for a live-in to come with us for a summer and the process was slower and more particular than expected. Whoever sponsors the person — you, or a company — matters to how it's done, and the paperwork depends on their nationality as much as yours."
+    }
+  ],
+  "order": 131,
+  "batch": "9"
+},
+{
+  "id": "travelling-with-her",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Why is travelling with a baby so stressful?",
+  "ages": [
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Yes, most parents find it stressful. Worth it and stressful are not alternatives, and expecting the second makes the first easier to reach.",
+  "keywords": [
+    "travel",
+    "flight",
+    "stress",
+    "bassinet",
+    "formula",
+    "jet lag",
+    "worth it"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Working hard to breathe, grunting, or pauses in her breathing, or she goes pale, grey or blue",
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "A temperature of 38°C or above under three months",
+      "She's refusing all feeds, or wet nappies have dropped away"
+    ],
+    "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 2–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Most parents find travelling with a baby stressful, including ones who do it often",
+        "The stress is logistics and lack of control, not a sign you've made a mistake",
+        "Sleep and feeding go off for a few days either side, then reset",
+        "Longer or more broken sleep after a hard journey is common catch-up"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Ringing the airline in advance with written questions, not finding out at the gate",
+        "Booking the bassinet specifically, and confirming it rather than assuming the booking held",
+        "Solving the feed before leaving — a thermos of hot water, a portable warmer, and bottled water low in minerals",
+        "Pre-measured formula in individual portions, so nothing had to be weighed on a tray table"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Working hard to breathe, grunting, or pauses in her breathing, or she goes pale, grey or blue",
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "A temperature of 38°C or above under three months",
+        "She's refusing all feeds, or wet nappies have dropped away"
+      ],
+      "lead": "Blue or grey, a pause or struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Most parents find baby travel stressful. Plan the feed, sleep and airport questions early, then expect the routine to wobble for a few days."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "an-hour-out-with-her",
+    "newborn-immune-and-going-out",
+    "visitors"
+  ],
+  "seo": {
+    "description": "Why baby travel feels so difficult, plus simple planning for flights, feeds, sleep and the unsettled days afterwards."
+  },
+  "longform": [
+    {
+      "h": "Yes, travelling with a baby is hard",
+      "t": "We asked outright whether parents generally hate travelling with babies, because we had just done it and wanted to know whether we were the problem.\n\nThe answer is that most find it stressful, including people who do it regularly and people whose babies travel well. What makes it hard isn't the baby — it's the combination of no control, no privacy, a schedule you can't move, and an audience.\n\nThe single highest-value thing we did was write out the questions for the airline before the first flight and ring them.\n\nWhat we needed to know: how the bassinet is booked and whether it's confirmed or requested, the weight and length limit for it, whether a doctor's letter is needed and from when, what can be carried beyond the normal allowance, how the pram is handled and where it's returned, what liquids are allowed for a baby through security control, and what the seating rules are."
+    },
+    {
+      "h": "Solve the awkward parts before leaving",
+      "t": "This was the thing that caused us most anxiety and had the most practical answer.\n\nThe problem with formula on a plane is water: you do not want to rely on whatever is available. Baby milk and food can be exempt from the usual 100ml liquid limit, but the exact security rules depend on the airport and journey, so check before flying. What worked for us was a thermos of hot boiled water, a portable warmer and bottled water chosen for its low mineral content rather than the brand.\n\nWe flew two days in a row at one point and she ate noticeably less than usual — several hundred millilitres below her normal — while being perfectly awake and cheerful. And after a difficult night flight where she didn't sleep at all, she then slept six hours straight once we landed.\n\nBoth of those are the normal shape of it. A dip in appetite for a day or two, and catch-up sleep that looks excessive. Neither needed anything done about it."
+    },
+    {
+      "h": "Expect a few unsettled days",
+      "t": "A smaller thing worth saying. One of us went away for work and video-called her, and the moment she saw his face on the screen she started crying.\n\nThat's not rejection and it isn't damage. A familiar face in an unfamiliar form, without the smell or the voice-in-the-room or the being-picked-up, is confusing rather than comforting at that age. It resolves the moment you're actually back."
+    }
+  ],
+  "order": 132,
+  "batch": "9"
+},
+{
+  "id": "your-phone-in-her-room",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Is it bad to use my phone while my baby sleeps on me?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Using your phone while she sleeps on you is fine. The guidance is about her screen time, not about yours — with one real caveat.",
+  "keywords": [
+    "phone",
+    "screen time",
+    "television",
+    "guilt",
+    "attention",
+    "while she sleeps"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Working hard to breathe, or she goes pale, grey or blue",
+      "She stops responding to your face or voice at all, having previously done so",
+      "She's stopped feeding, or wet nappies have dropped away"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Using your phone while she sleeps is not the same as putting a screen in front of her",
+        "A phone in her room while she sleeps is not doing her harm",
+        "A few minutes of television in the background has not damaged anything",
+        "Almost every parent does this and almost every parent feels bad about it"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "Separating the two questions — is this bad for her, or is it stopping me being present",
+        "Screen face-down for one short stretch a day where she had all the attention",
+        "Notifications off so the phone wasn't pulling us out of the room mentally",
+        "Using the phone deliberately rather than reflexively, which halved it without any rule"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Working hard to breathe, or she goes pale, grey or blue",
+        "She stops responding to your face or voice at all, having previously done so",
+        "She's stopped feeding, or wet nappies have dropped away"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "Using your phone while she sleeps is not the same as giving her screen time. The useful question is whether it keeps pulling you away when she is awake."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "are-we-bonding-if-shes-asleep",
+    "checklist-mode",
+    "safe-sleep-newborn"
+  ],
+  "seo": {
+    "description": "What baby screen guidance means for a parent's phone use, and how to protect regular face-to-face time without guilt."
+  },
+  "longform": [
+    {
+      "h": "There are two different questions",
+      "t": "We asked whether it was reasonable to use a phone in her room, and separately how bad it was to be on it while she slept on us. Both times what we actually wanted was permission.\n\nIt helps to split it. Is this harmful to her? Mostly no."
+    },
+    {
+      "h": "What screen advice is really about",
+      "t": "The screen-time guidance for babies concerns screens directed at her — content she watches, a device put in front of her to occupy her. The concern is about what it displaces: the back-and-forth of faces, voices and responses that's how she learns at this age.\n\nA screen you are looking at in the same room is different. A phone while she sleeps on your chest is not replacing interaction with her. One thing that helped Papa was using dark mode with the brightness turned right down. A few minutes of television in the background is not something to panic about — and we asked that question ourselves after it happened.\n\nThe thing worth taking seriously is displacement over a whole day.\n\nIf large parts of the time you're with her are also time you're on a phone, what she loses isn't a measured dose of screen exposure — it's the interaction. She looks at you and you don't look back. That's the mechanism, and it's about your attention, not her retina."
+    },
+    {
+      "h": "Protect some phone-free attention",
+      "t": "One practical exception: bright screens at night are worth avoiding because they can make settling harder for both of you. We found a soft red night-light worked best for us. We could see what we were doing without lighting the room enough to wake Ari fully.\n\nSo a dim room, no bright screen, and the phone face-down. That's about getting her back to sleep, not about her brain."
+    }
+  ],
+  "order": 133,
+  "batch": "9"
+},
+{
+  "id": "an-hour-out-with-her",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "What do I really need for a few hours out of the house with my baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 2,
+  "summary": "You're carrying a bag packed for a week because leaving the house became an operation. Most of it isn't needed, and the weight is part of why you stop going out.",
+  "keywords": [
+    "changing bag",
+    "short outing",
+    "essentials",
+    "overpacking",
+    "walk",
+    "going out"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+      "Working hard to breathe, or she goes pale, grey or blue",
+      "A temperature of 38°C or above under three months",
+      "She's refusing feeds, or wet nappies have dropped away"
+    ],
+    "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Overpacking is the universal first-year habit, and it comes from one bad experience",
+        "For an hour close to home you need very little",
+        "Most of what's in the bag has never been used on a short outing",
+        "The weight of it is one of the reasons short outings stop happening"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "A small permanently packed bag for short trips, separate from the full one",
+        "Two nappies, wipes, one change of clothes, a muslin, and whatever she feeds from",
+        "Keeping it restocked on the way back in, not on the way out",
+        "A spare set left in the car, which replaced about half the bag"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "She's floppy, very hard to wake, or her cry is nothing like her usual one",
+        "Working hard to breathe, or she goes pale, grey or blue",
+        "A temperature of 38°C or above under three months",
+        "She's refusing feeds, or wet nappies have dropped away"
+      ],
+      "lead": "Blue or grey, a struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    },
+    "quick": "For a short outing, pack for the likely problems rather than every possible disaster. A small bag makes leaving home much easier."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "travelling-with-her",
+    "newborn-immune-and-going-out",
+    "visitors"
+  ],
+  "seo": {
+    "description": "A simple packing list for a few hours out of the house with a baby, so leaving home does not feel like preparing for a week away."
+  },
+  "longform": [
+    {
+      "h": "Why the bag became so heavy",
+      "t": "Almost always one bad experience. A nappy situation with no spare clothes, or a feed you weren't ready for, and from then on the bag contains everything that might ever be needed.\n\nThe cost isn't the carrying. It's that leaving the house becomes a twenty-minute operation, and a twenty-minute operation for a forty-minute walk means the walk often doesn't happen. We noticed we were going out less and assumed it was tiredness."
+    },
+    {
+      "h": "The short-trip list",
+      "t": "What we settled on for an hour near home: two nappies, a travel pack of wipes, one full change of clothes, a muslin, and whatever she feeds from if a feed might land.\n\nThat's it. No changing mat — a muslin or a coat does the job. No spare for the spare."
+    },
+    {
+      "h": "Make the next outing easier",
+      "t": "A spare set in the car — nappies, wipes, clothes, a blanket — replaced about half of what we'd been carrying, because the bag no longer had to cover the worst case.\n\nAnd a reframe that helped: for a short trip close to home, most emergencies are solvable at the destination or by going home. The bag is insurance against a problem that usually has another solution. That's a different calculation from a day out or a flight, where the bag genuinely is the only option."
+    }
+  ],
+  "order": 134,
+  "batch": "9"
+},
+{
+  "id": "the-fights-about-her",
+  "topic": "sanity",
+  "icon": "heart",
+  "featured": false,
+  "title": "Why are we arguing so much since having a baby?",
+  "ages": [
+    "0–1 month",
+    "2–3 months",
+    "4–6 months",
+    "7–9 months",
+    "10–12 months"
+  ],
+  "read": 3,
+  "summary": "Almost none of them are about what they appear to be about. The useful move is interrupting the pattern, not winning the argument.",
+  "keywords": [
+    "arguing",
+    "partner",
+    "relationship",
+    "blame",
+    "defensive",
+    "resentment",
+    "repair"
+  ],
+  "body": "",
+  "callout": {
+    "title": "Call your doctor immediately if",
+    "items": [
+      "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+      "You are seeing or hearing things that are not there",
+      "You are very confused or losing touch with what is real",
+      "You are frightened of your partner or feel controlled — tell someone you trust and seek help"
+    ]
+  },
+  "panel": {
+    "eyebrow": "Parent Sanity • 0–12 months",
+    "normal": {
+      "title": "Usually normal",
+      "items": [
+        "Arguments go up sharply in the first year, in most relationships",
+        "The subject is usually really about exhaustion or an uneven load",
+        "Nothing decided at 3am is accurate or fair",
+        "Defensiveness is the normal response to feeling blamed, and it escalates reliably"
+      ]
+    },
+    "helped": {
+      "title": "What helped us",
+      "items": [
+        "\"Please don't be angry, let's talk\" instead of defending — hard, but it worked",
+        "Having the conversation in daylight, not at the moment it flares",
+        "Naming the load rather than the behaviour: what was relentless this week, and what could move",
+        "Agreeing not to keep score"
+      ]
+    },
+    "warn": {
+      "title": "Call your doctor immediately if",
+      "items": [
+        "Any thought of harming yourself or her — ring your doctor or a crisis line today",
+        "You are seeing or hearing things that are not there",
+        "You are very confused or losing touch with what is real",
+        "You are frightened of your partner or feel controlled — tell someone you trust and seek help"
+      ]
+    },
+    "quick": "More arguments after a baby are common because both parents are tired and stretched. Talk about the load in daylight, not during the 3am explosion."
+  },
+  "originalQuestions": [],
+  "sources": [],
+  "medical": false,
+  "related": [
+    "splitting-nights",
+    "touched-out",
+    "overwhelmed-new-parent"
+  ],
+  "seo": {
+    "description": "Why arguments often increase after a baby, how tiredness and an uneven load feed them, and when outside help matters."
+  },
+  "longform": [
+    {
+      "h": "What our arguments looked like",
+      "t": "A mistake, then anger about it, then defending the mistake, then a back-and-forth, then making up later and agreeing calmly on exactly what we'd have agreed in the first five minutes.\n\nThe thing one of us eventually wanted was to be able to say, in the moment: please don't be angry — let's talk about this. Rather than getting defensive and fighting back. Because the calm conversation always happened eventually, just two hours later and after considerable damage.\n\nOurs were about bottles, timings, who did what, whether something had been done properly. None of them were about those things.\n\nThey were about being depleted, and about the load not feeling even. That's what makes them unresolvable on their own terms — you can settle the bottle question and have the same argument about something else within three days, because the actual input hasn't changed."
+    },
+    {
+      "h": "The subject is often not the problem",
+      "t": "Worth looking at, because it was a live one for us.\n\nWhen one person feels they're always the one at fault, two things are usually happening at once. One is real — the mistakes may genuinely be concentrated, often because one person is doing more of a particular kind of task and more tasks means more errors. The other is that the pattern of blame has become the habit, and both people are now reading neutral events through it.\n\nNothing decided late at night, when both of you are wrecked, is accurate or fair. We stopped keeping score, and that helped far more than it should have.\n\nThe conversations that actually changed anything happened in daylight, not during a flare, and usually not about a specific incident. Reviewing how the week had gone, out loud, once, was better than addressing each thing as it arose."
+    },
+    {
+      "h": "Talk in daylight, not at 3am",
+      "t": "Everything above is about ordinary conflict between two exhausted people who are on the same side.\n\nIf you're being made to feel frightened, controlled, or unable to make decisions — if the arguments involve threats, or you're changing your behaviour to avoid someone's anger — that is a different situation and none of the advice here applies to it. Tell someone outside the relationship: a doctor, a midwife or health visitor, a friend. Those conversations are had more often than you'd think and you'll be taken seriously."
+    }
+  ],
+  "order": 135,
+  "batch": "9"
 }
 ];
 
