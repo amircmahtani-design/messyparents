@@ -461,17 +461,8 @@ function applyAbout(html, pageCfg, img) {
 /* --------------------------------------------------------------------------
    BOOKS — mirrors bookCardHTML()/applyBooks() in mpc-store.js.
    ------------------------------------------------------------------------ */
-const BOOK_DEFAULTS = [
-  { title: "Ari & Papa: The First Hundred Nights",
-    summary: "The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed.",
-    status: "Out now" },
-  { title: "Ari & Papa: Everyone Says It Gets Easier",
-    summary: "Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething.",
-    status: "Coming soon" },
-  { title: "The Messy Parents Handbook",
-    summary: "Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something.",
-    status: "In progress" }
-];
+const Books = require("../../assets/js/books-catalogue");
+const BOOK_DEFAULTS = Books.DEFAULTS;
 
 function bookCardHTML(b, img) {
   b = b || {};
@@ -490,8 +481,8 @@ function bookCardHTML(b, img) {
     "</div></article>";
 }
 
-function applyBooks(html, books, img) {
-  const items = (Array.isArray(books) && books.length) ? books : BOOK_DEFAULTS;
+function applyBooks(html, document, img) {
+  const items = Books.resolve(document);
   const markup = items.map((b) => bookCardHTML(b, img)).join("");
   return html.replace(
     /(<div class="book-grid" id="bookGrid"[^>]*>)(?:<!--MPC:BOOKS:START-->[\s\S]*?<!--MPC:BOOKS:END-->)?/,

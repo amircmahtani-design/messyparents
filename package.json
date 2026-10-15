@@ -5,7 +5,7 @@
   "description": "Seed/admin tooling for The Messy Parents Collection guides.",
   "scripts": {
     "build": "node scripts/build.js",
-    "verify": "npm run verify:social && node tests/verify.js && node tests/age-visibility.js && node tests/runtime-sim.js",
+    "verify": "node tests/books-catalogue.js && npm run verify:social && node tests/verify.js && node tests/age-visibility.js && node tests/runtime-sim.js",
     "verify:social": "node tests/social-publishing-lock.js && node tests/social-safety.js && node tests/social-approval.js && node tests/social-references.js && node tests/social-artwork.js && node tests/social-delete.js && node tests/social-output.js",
     "check": "node scripts/build.js && npm run verify",
     "seed": "node seed.js",

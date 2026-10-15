@@ -135,6 +135,7 @@
      of assets/js/ when the public site stopped shipping it to readers. -->
 <script src="../data/guides-bundle.js"></script>
 <script src="../assets/js/site-text.js?v=72039504fc"></script>
+<script src="../assets/js/books-catalogue.js"></script>
 <script>
 /* ------------------------------------------------------------------------
    SAFETY NET — the "How we write these" fields.
@@ -258,7 +259,7 @@
         <h2 style="margin:0 0 4px;font-size:19px">Our Books</h2>
         <p class="field hint" style="margin:0 0 16px">Each book shows its cover on top with a short summary underneath. Upload a cover, write the summary, set the status. Reorder with the arrows.</p>
         <datalist id="bookStatusList">
-          <option value="Out now"></option><option value="Coming soon"></option><option value="In progress"></option>
+          <option value="Out now"></option><option value="In production"></option><option value="Coming soon"></option><option value="In progress"></option>
         </datalist>
         <div id="bookRows"></div>
         <button id="addBook" class="btn" type="button" style="margin-top:6px">+ Add book</button>
@@ -577,7 +578,7 @@
 const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId ? window.FIREBASE_CONFIG : null;
 const MODE = CFG ? "firebase" : "local";
 const $ = s => document.querySelector(s);
-const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{} }, textDraft: {}, uploadKey: null, topics: [], booksList: [], footer: {}, topicUploadIndex: null, bookUploadIndex: null };
+const state = { guides: [], current: null, orig: null, fb: null, currentPage: null, currentSection: null, pagesData: {}, pageDraft: { slots:{} }, textDraft: {}, uploadKey: null, topics: [], booksList: [], booksReadFailed: false, footer: {}, topicUploadIndex: null, bookUploadIndex: null };
 
 /* small helpers for the Topics / Books managers */
 const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -601,14 +602,8 @@ const BUILTIN_TOPICS = [
   { id:"health",      label:"Health",        icon:"assets/img/icons/health.webp" },
   { id:"sanity",      label:"Parent Sanity", icon:"assets/img/icons/sanity.webp" }
 ];
-const BUILTIN_BOOKS = [
-  { title:"Ari & Papa: The First Hundred Nights", status:"Out now", cover:"",
-    summary:"The newborn stretch, told honestly. Feeding at 4am, the day-night confusion, the shift system that saves marriages, and the visitors who mean well. Short chapters, because you will be reading it one-handed." },
-  { title:"Ari & Papa: Everyone Says It Gets Easier", status:"Coming soon", cover:"",
-    summary:"Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething." },
-  { title:"The Messy Parents Handbook", status:"In progress", cover:"",
-    summary:"Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something." }
-];
+const BOOKS_CATALOGUE = typeof MPCBooks === "undefined" ? null : MPCBooks;
+const BUILTIN_BOOKS = BOOKS_CATALOGUE ? BOOKS_CATALOGUE.DEFAULTS : [];
 const TOPIC_ICON = { w:120, h:120, label:"Topic icon — a small square. A transparent PNG works best." };
 const BOOK_COVER  = { w:600, h:900, label:"Book cover — portrait (2:3). Fills the top of the card." };
 
@@ -1997,10 +1992,18 @@ async function loadMeta(){
     state.topics = (items && items.length) ? items.map(x=>({...x})) : BUILTIN_TOPICS.map(x=>({...x}));
   }catch(e){ state.topics = BUILTIN_TOPICS.map(x=>({...x})); }
   try{
+    if(!BOOKS_CATALOGUE) throw new Error("Books catalogue did not load");
     const b=await fs.getDoc(fs.doc(db,"meta","books"));
-    const items = b.exists() && Array.isArray(b.data().items) ? b.data().items : null;
-    state.booksList = items ? items.map(x=>({...x})) : BUILTIN_BOOKS.map(x=>({...x}));
-  }catch(e){ state.booksList = BUILTIN_BOOKS.map(x=>({...x})); }
+    state.booksList = MPCBooks.resolve(b.exists() ? b.data() : null);
+    state.booksReadFailed = false;
+    $("#booksMsg").textContent = "";
+  }catch(e){
+    state.booksList = [];
+    state.booksReadFailed = true;
+    $("#booksMsg").className = "msg err";
+    $("#booksMsg").textContent = "Could not load the saved books. Reload Studio before editing.";
+  }
+  $("#saveBooks").disabled = state.booksReadFailed;
   try{
     const f=await fs.getDoc(fs.doc(db,"meta","footer"));
     state.footer = f.exists() ? (f.data()||{}) : {};
@@ -2107,7 +2110,7 @@ function renderBookRows(){
         <div style="flex:1;min-width:0">
           <div class="field"><label>Title</label><input data-f="title" type="text" value="${escS(b.title||"")}"></div>
           <div class="field"><label>Summary</label><textarea data-f="summary" rows="3">${escS(b.summary||"")}</textarea></div>
-          <div class="field"><label>Status</label><input data-f="status" type="text" list="bookStatusList" placeholder="Out now / Coming soon / In progress" value="${escS(b.status||"")}"></div>
+          <div class="field"><label>Status</label><input data-f="status" type="text" list="bookStatusList" placeholder="In production / Coming soon / In progress / Out now" value="${escS(b.status||"")}"></div>
           <div style="display:flex;gap:4px;justify-content:flex-end">
             <button class="btn ghost" data-act="up" type="button" title="Move up">↑</button>
             <button class="btn ghost" data-act="down" type="button" title="Move down">↓</button>
@@ -2149,6 +2152,7 @@ $("#bookCoverUpload").addEventListener("change", async e=>{
 $("#saveBooks").addEventListener("click", async ()=>{
   const btn=$("#saveBooks"), msg=$("#booksMsg");
   if(MODE!=="firebase"){ msg.className="msg err"; msg.textContent="Editing books needs Firebase mode."; return; }
+  if(state.booksReadFailed || !BOOKS_CATALOGUE){ msg.className="msg err"; msg.textContent="Reload Studio to load the saved books before saving."; return; }
   const items=(state.booksList||[]).map(b=>({
     title:(b.title||"").trim(), summary:(b.summary||"").trim(),
     status:(b.status||"").trim(), cover:(b.cover||"").trim()
@@ -2156,9 +2160,9 @@ $("#saveBooks").addEventListener("click", async ()=>{
   btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
   try{
     const {fs,db}=state.fb;
-    await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now() });
+    await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now(), catalogueVersion:MPCBooks.VERSION });
     state.booksList=items.map(x=>({...x})); renderBookRows();
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    msg.className="msg ok"; msg.textContent="Saved. These take effect on the next rebuild.";
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });

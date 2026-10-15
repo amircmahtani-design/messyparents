@@ -834,7 +834,7 @@ async function main() {
     (html) => B.applyAbout(html, data.pages.about, R.img),
     { canonical: "/about.html" });
   bakePage("books.html",
-    (html) => B.applyBooks(html, meta.books && meta.books.items, R.img),
+    (html) => B.applyBooks(html, meta.books, R.img),
     { canonical: "/books.html" });
 
   if (fs.existsSync(path.join(ROOT, "editorial.html"))) {
