@@ -16,10 +16,10 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     page.on("pageerror", error => errors.push(error.message));
     await page.goto("/books.html");
     const cards = page.locator("#bookGrid .book-card");
-    await expect(cards).toHaveCount(4);
+    await expect(cards).toHaveCount(5);
     await expect(cards.locator("h2")).toHaveText(Books.DEFAULTS.map(book => book.title));
     await expect(cards.locator(".status")).toHaveText(Books.DEFAULTS.map(book => book.status));
-    for (let i=0; i<4; i++) {
+    for (let i=0; i<Books.DEFAULTS.length; i++) {
       await expect(cards.nth(i).locator(".book-summary")).toHaveText(Books.DEFAULTS[i].summary);
       const image=cards.nth(i).locator("img");
       await expect(image).toHaveAttribute("src", Render.img(Books.DEFAULTS[i].cover,600));
@@ -33,7 +33,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const positions = await cards.evaluateAll(items => items.map(item => { const r=item.getBoundingClientRect(); return {x:r.x,y:r.y}; }));
-    if (viewport.width===1440) expect(new Set(positions.map(p=>Math.round(p.y))).size).toBe(1);
+    if (viewport.width===1440) expect(new Set(positions.map(p=>Math.round(p.y))).size).toBeLessThanOrEqual(2);
     if (viewport.width<=390) expect(new Set(positions.map(p=>Math.round(p.x))).size).toBe(1);
     expect(errors).toEqual([]);
     await page.screenshot({ path:`test-results/books-${viewport.width}.png`, fullPage:true });

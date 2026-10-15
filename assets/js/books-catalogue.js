@@ -7,7 +7,7 @@
   else root.MPCBooks = factory();
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
-  const VERSION = "2026-10-15-four-book-collection";
+  const VERSION = "2026-10-15-monthly-book-collection";
   const BASELINE_UPDATED = 1785678550117;
   const BASELINE = [
   {
@@ -29,18 +29,31 @@
     "status": "In progress"
   }
 ];
-  const NEWBORN = {
-  "title": "We Brought Her Home. Now What?",
-  "summary": "Birth to four months. The feeds, the broken nights, the tiny noises and the questions that arrive the minute you get home. Honest, practical help for finding your feet when your baby is brand new and everything feels new to you, too.",
-  "status": "Coming soon",
-  "cover": "/assets/img/books/we-brought-her-home-now-what.webp"
-};
+  const MONTHLY = [
+  {
+    "title": "We Brought Her Home. Now What?",
+    "summary": "Month 1: birth to one month. The feeds, the broken nights, the tiny noises and the questions that arrive the minute you get home. Honest, practical help for finding your feet when your baby is brand new and everything feels new to you, too.",
+    "status": "Coming soon",
+    "cover": "/assets/img/books/we-brought-her-home-month-1.webp"
+  },
+  {
+    "title": "Nobody Mentioned This Bit.",
+    "summary": "Month 2: one to two months. The feeds change, the nights are still broken and the washing somehow multiplies. An honest companion to the wind, the nappies, the tiredness and the small moments that help you feel a little more like her parent.",
+    "status": "Coming soon",
+    "cover": "/assets/img/books/nobody-mentioned-this-bit-month-2.webp"
+  },
+  {
+    "title": "Just When We Thought We Had It.",
+    "summary": "Month 3: two to three months. More little responses, new questions and a routine that seems to change just as you get used to it. Feeding, sleep, time together and finding your confidence without expecting every day to look the same.",
+    "status": "Coming soon",
+    "cover": "/assets/img/books/just-when-we-thought-we-had-it-month-3.webp"
+  }
+];
   const clone = items => items.map(book => ({ ...book }));
   const DEFAULTS = [
-    { ...BASELINE[0], status: "In production" },
-    { ...NEWBORN },
-    { ...BASELINE[1], cover: "/assets/img/books/everyone-says-it-gets-easier.webp" },
-    { ...BASELINE[2], cover: "/assets/img/books/messy-parents-handbook.webp" }
+    { ...BASELINE[0], status: "In production", cover: "/assets/img/books/before-baby-arrives-colour-matched.webp" },
+    ...clone(MONTHLY),
+    { ...BASELINE[2], cover: "/assets/img/books/messy-parents-handbook-lived-in-sofa.webp" }
   ];
   // Property order differs between REST and the browser SDK. Values must match.
   function stable(value) {

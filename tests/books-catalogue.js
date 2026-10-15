@@ -7,26 +7,46 @@ const Books = require("../assets/js/books-catalogue");
 const Bake = require("../scripts/lib/bake");
 const Render = require("../assets/js/guide-render");
 const copy = value => JSON.parse(JSON.stringify(value));
+const originalCover = "https://firebasestorage.googleapis.com/v0/b/messy-parents.firebasestorage.app/o/books%2Fcover-0-1785678443050.png?alt=media&token=81f07eb0-b563-4674-ae0e-5810734072cc";
 const original = {
-  updated: 1785678550117,
-  items: [
-    { ...Books.DEFAULTS[0], status: "Out now" },
-    { ...Books.DEFAULTS[2], cover: "" },
-    { ...Books.DEFAULTS[3], cover: "" }
-  ]
+  "updated": 1785678550117,
+  "items": [
+    {
+      "status": "Out now",
+      "cover": "https://firebasestorage.googleapis.com/v0/b/messy-parents.firebasestorage.app/o/books%2Fcover-0-1785678443050.png?alt=media&token=81f07eb0-b563-4674-ae0e-5810734072cc",
+      "summary": "Before the baby arrives, everyone tells you to be prepared.\nWe learned that being ready enough is far more realistic.\nHere's everything we wish someone had told us before the adventure began.",
+      "title": "Before Baby Arrives"
+    },
+    {
+      "summary": "Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething.",
+      "title": "Ari & Papa: Everyone Says It Gets Easier",
+      "status": "Coming soon",
+      "cover": ""
+    },
+    {
+      "summary": "Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something.",
+      "cover": "",
+      "title": "The Messy Parents Handbook",
+      "status": "In progress"
+    }
+  ],
+  "__updateTime": "2026-08-02T13:49:11.284454Z"
 };
 const snapshot = copy(original);
 const resolved = Books.resolve(original);
 assert.deepEqual(resolved.map(b => b.title), [
   "Before Baby Arrives", "We Brought Her Home. Now What?",
-  "Ari & Papa: Everyone Says It Gets Easier", "The Messy Parents Handbook"
+  "Nobody Mentioned This Bit.", "Just When We Thought We Had It.", "The Messy Parents Handbook"
 ]);
-assert.deepEqual(resolved.map(b => b.status), ["In production", "Coming soon", "Coming soon", "In progress"]);
-assert.equal(resolved[0].cover, original.items[0].cover);
+assert.deepEqual(resolved.map(b => b.status), ["In production", "Coming soon", "Coming soon", "Coming soon", "In progress"]);
+assert.equal(resolved[0].cover, "/assets/img/books/before-baby-arrives-colour-matched.webp");
 assert.equal(resolved[0].summary, original.items[0].summary);
-assert.equal(resolved[2].summary, original.items[1].summary);
-assert.equal(resolved[3].summary, original.items[2].summary);
-assert.match(resolved[1].summary, /^Birth to four months\./);
+assert.equal(resolved[4].summary, original.items[2].summary);
+for (const month of [1,2,3]) assert.match(resolved[month].summary, new RegExp("^Month " + month + ":"));
+const archived = JSON.parse(fs.readFileSync(path.join(__dirname, "../content/archive/books-catalogue-2026-10-15-four-books.json")));
+assert.equal(archived[2].title, original.items[1].title);
+assert.equal(archived[2].summary, original.items[1].summary);
+assert.ok(fs.existsSync(path.join(__dirname, "..", archived[2].cover)));
 assert.deepEqual(original, snapshot, "Do not mutate the fetched document");
 assert.deepEqual(Books.resolve(null), resolved);
 assert.deepEqual(Books.resolve({}), resolved);
@@ -61,7 +81,7 @@ for (const doc of [null, original, saved, olderClientSave, { items: [] }]) {
 }
 const template = '<div class="book-grid" id="bookGrid"></div>';
 const baked = Bake.applyBooks(template, original, Render.img);
-assert.equal((baked.match(/class="book-card"/g) || []).length, 4);
+assert.equal((baked.match(/class="book-card"/g) || []).length, 5);
 assert.equal(Bake.applyBooks(baked, original, Render.img), baked, "Rebuild must be idempotent");
 assert.equal((Bake.applyBooks(baked, {items:[]}, Render.img).match(/class="book-card"/g) || []).length, 0);
 for (const book of resolved.slice(1)) {

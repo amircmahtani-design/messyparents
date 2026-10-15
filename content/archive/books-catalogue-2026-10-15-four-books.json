@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Before Baby Arrives",
+    "status": "In production",
+    "summary": "Before the baby arrives, everyone tells you to be prepared.\nWe learned that being ready enough is far more realistic.\nHere's everything we wish someone had told us before the adventure began.",
+    "cover": "https://firebasestorage.googleapis.com/v0/b/messy-parents.firebasestorage.app/o/books%2Fcover-0-1785678443050.png?alt=media&token=81f07eb0-b563-4674-ae0e-5810734072cc"
+  },
+  {
+    "title": "We Brought Her Home. Now What?",
+    "summary": "Birth to four months. The feeds, the broken nights, the tiny noises and the questions that arrive the minute you get home. Honest, practical help for finding your feet when your baby is brand new and everything feels new to you, too.",
+    "status": "Coming soon",
+    "cover": "/assets/img/books/we-brought-her-home-now-what.webp"
+  },
+  {
+    "cover": "/assets/img/books/everyone-says-it-gets-easier.webp",
+    "summary": "Four to twelve months. Solids, the sleep changes nobody warned you about, rolling and crawling and the arrival of opinions. Includes the complete list of things we blamed on teething.",
+    "status": "Coming soon",
+    "title": "Ari & Papa: Everyone Says It Gets Easier"
+  },
+  {
+    "title": "The Messy Parents Handbook",
+    "summary": "Every guide on this site, in order, with the red-flag lists on their own pages so you can find them fast. Designed to live next to the changing table and get covered in something.",
+    "cover": "/assets/img/books/messy-parents-handbook.webp",
+    "status": "In progress"
+  }
+]
