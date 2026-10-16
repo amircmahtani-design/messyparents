@@ -114,3 +114,27 @@ async function testStudioSave() {
   console.log("Books catalogue: migration, rendering, Node/browser parity and Studio save tests passed.");
 }
 testStudioSave().catch(error=>{ console.error(error); process.exitCode=1; });
+
+// Books callout upgrades exact legacy wording without overriding future edits.
+const legacyBand = {
+  "band.line": "Baby already here?",
+  "band.sub": "The book helps you prepare for the baby. Our free guides help with everything that comes afterwards — feeding, sleep, development and all the little questions nobody warns you about.",
+  "page.intro": "Keep this introduction"
+};
+const legacySnapshot = copy(legacyBand);
+const currentBand = Bake.booksText(legacyBand);
+assert.equal(currentBand["band.line"], "A little help between chapters");
+assert.match(currentBand["band.sub"], /^Our books guide you from getting ready/);
+assert.equal(currentBand["page.intro"], legacyBand["page.intro"]);
+assert.deepEqual(legacyBand, legacySnapshot);
+assert.deepEqual(Bake.booksText(currentBand), currentBand);
+const laterBand = { "band.line": "Your next chapter", "band.sub": "New wording saved in Studio." };
+assert.deepEqual(Bake.booksText(laterBand), laterBand);
+assert.deepEqual(Bake.booksText({}), {});
+assert.equal(Bake.booksText({ ...legacyBand, "band.line": "New heading" })["band.line"], "New heading");
+const bandTemplate = fs.readFileSync(path.join(__dirname, "../books.html"), "utf8");
+const bakedBand = Bake.applyText(bandTemplate, currentBand);
+assert.match(bakedBand, /<a href="guides.html">Browse all guides<\/a>/);
+assert.equal(Bake.applyText(bakedBand, currentBand), bakedBand);
+assert.match(fs.readFileSync(path.join(__dirname, "../scripts/build.js"), "utf8"), /pageId === "books" \? B.booksText/);
+console.log("Books callout: legacy migration, future edits, scope and idempotency passed.");

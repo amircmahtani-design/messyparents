@@ -454,7 +454,7 @@ async function main() {
      Studio and the Editor cannot receive it by accident: they are stamped for
      asset URLs further down and never pass through here. */
   function bakeCommon(html, pageId) {
-    html = B.applyText(html, textFor(pageId));
+    html = B.applyText(html, pageId === "books" ? B.booksText(textFor(pageId)) : textFor(pageId));
     html = B.applyFooter(html, settings.footer);
     html = B.applyFootLinks(html);
     html = injectAnalytics(html);

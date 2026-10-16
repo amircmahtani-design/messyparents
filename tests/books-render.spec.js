@@ -15,6 +15,9 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
     await page.goto("/books.html");
+    await expect(page.locator('[data-mpc-text="band.line"]')).toHaveText("A little help between chapters");
+    await expect(page.locator('[data-mpc-text="band.sub"]')).toContainText("Our books guide you from getting ready to finding your feet together.");
+    await expect(page.locator('.band a')).toHaveAttribute("href", "guides.html");
     const cards = page.locator("#bookGrid .book-card");
     await expect(cards).toHaveCount(5);
     await expect(cards.locator("h2")).toHaveText(Books.DEFAULTS.map(book => book.title));

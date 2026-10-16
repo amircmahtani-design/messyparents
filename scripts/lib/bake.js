@@ -150,6 +150,24 @@ function getAttr(attrs, name) {
 /* --------------------------------------------------------------------------
    TEXT — <p data-mpc-text="the.key">
    ------------------------------------------------------------------------ */
+/* Upgrade only the old pre-birth-only Books callout. New Studio copy remains
+   authoritative; no saved data or other page is changed. */
+function booksText(text) {
+  const out = { ...text };
+  const legacy = {
+    "band.line": "Baby already here?",
+    "band.sub": "The book helps you prepare for the baby. Our free guides help with everything that comes afterwards — feeding, sleep, development and all the little questions nobody warns you about."
+  };
+  const replacement = {
+    "band.line": "A little help between chapters",
+    "band.sub": "Our books guide you from getting ready to finding your feet together. Our free guides offer quick, practical answers for the everyday moments in between. [Browse all guides](guides.html)."
+  };
+  for (const key of Object.keys(legacy)) {
+    if (out[key] === legacy[key]) out[key] = replacement[key];
+  }
+  return out;
+}
+
 function applyText(html, text) {
   text = text || {};
 
@@ -547,7 +565,7 @@ function applyPills(html, topics, ages, selected) {
 }
 
 module.exports = {
-  applyText, applyFooter, applyFootLinks, applyHero, applyAbout, applyBooks, applyPills,
+  booksText, applyText, applyFooter, applyFootLinks, applyHero, applyAbout, applyBooks, applyPills,
   INSTAGRAM_URL,
   inlineHTML, proseHTML, esc,
   ABOUT_DEFAULTS, BOOK_DEFAULTS
