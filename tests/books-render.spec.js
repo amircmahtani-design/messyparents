@@ -18,6 +18,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     await expect(page.locator('[data-mpc-text="band.line"]')).toHaveText("A little help between chapters");
     await expect(page.locator('[data-mpc-text="band.sub"]')).toContainText("Our books guide you from getting ready to finding your feet together.");
     await expect(page.locator('.band a')).toHaveAttribute("href", "guides.html");
+    await expect(page.locator('[data-mpc-text="page.intro"]')).toHaveText("Honest, practical books for getting ready and finding your feet through the first months together. The things we wish someone had told us, one stage at a time.");
     const cards = page.locator("#bookGrid .book-card");
     await expect(cards).toHaveCount(5);
     await expect(cards.locator("h2")).toHaveText(Books.DEFAULTS.map(book => book.title));

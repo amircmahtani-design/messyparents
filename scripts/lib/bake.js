@@ -150,15 +150,17 @@ function getAttr(attrs, name) {
 /* --------------------------------------------------------------------------
    TEXT — <p data-mpc-text="the.key">
    ------------------------------------------------------------------------ */
-/* Upgrade only the old pre-birth-only Books callout. New Studio copy remains
+/* Upgrade only the old pre-birth-only Books introduction and callout. New Studio copy remains
    authoritative; no saved data or other page is changed. */
 function booksText(text) {
   const out = { ...text };
   const legacy = {
+    "page.intro": "Everything we wish we had known before our baby arrived — what to buy, what to skip, and how to prepare without losing your mind.",
     "band.line": "Baby already here?",
     "band.sub": "The book helps you prepare for the baby. Our free guides help with everything that comes afterwards — feeding, sleep, development and all the little questions nobody warns you about."
   };
   const replacement = {
+    "page.intro": "Honest, practical books for getting ready and finding your feet through the first months together. The things we wish someone had told us, one stage at a time.",
     "band.line": "A little help between chapters",
     "band.sub": "Our books guide you from getting ready to finding your feet together. Our free guides offer quick, practical answers for the everyday moments in between. [Browse all guides](guides.html)."
   };

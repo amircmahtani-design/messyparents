@@ -138,3 +138,10 @@ assert.match(bakedBand, /<a href="guides.html">Browse all guides<\/a>/);
 assert.equal(Bake.applyText(bakedBand, currentBand), bakedBand);
 assert.match(fs.readFileSync(path.join(__dirname, "../scripts/build.js"), "utf8"), /pageId === "books" \? B.booksText/);
 console.log("Books callout: legacy migration, future edits, scope and idempotency passed.");
+
+// Inclusive introduction also preserves later Studio copy.
+const oldIntro = "Everything we wish we had known before our baby arrived — what to buy, what to skip, and how to prepare without losing your mind.";
+const newIntro = "Honest, practical books for getting ready and finding your feet through the first months together. The things we wish someone had told us, one stage at a time.";
+assert.equal(Bake.booksText({ "page.intro": oldIntro })["page.intro"], newIntro);
+assert.equal(Bake.booksText({ "page.intro": "My newer introduction" })["page.intro"], "My newer introduction");
+assert.deepEqual(Bake.booksText(Bake.booksText({ "page.intro": oldIntro })), Bake.booksText({ "page.intro": oldIntro }));
