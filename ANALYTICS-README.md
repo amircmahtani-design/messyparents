@@ -238,3 +238,17 @@ Behaviour — the three consent states, withdrawal, reopening, cookie clearing,
 the soft-404 path and the off switch — was exercised in a stubbed DOM
 (`consent_test.js`, session workspace, 48 checks). Worth rebuilding as a repo
 test if this file grows.
+
+## Metricool visit counter (added November 2026)
+
+Amir connected the site to Metricool so its dashboard can show which Instagram
+and Facebook posts bring visits to the guides. `assets/js/mpc-runtime.js` injects
+`https://tracker.metricool.com/resources/be.js` after `load` (same pattern as
+GA, so guide pages still carry no extra `<script src>`) and calls
+`beTracker.t({hash})` with the brand's hash.
+
+It is cookieless and stores nothing on the device, so it sits outside the
+consent banner, but it does not run for a visitor whose `mpc.consent` is
+`denied`. It is independent of `GA_MEASUREMENT_ID`. The privacy page names it.
+`tests/runtime-sim.js` ignores third-party script URLs so the simulation does
+not try to read it from disk.

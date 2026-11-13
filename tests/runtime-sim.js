@@ -418,6 +418,9 @@ async function main() {
       if (tag === "script") {
         Object.defineProperty(el, "src", {
           set(v) {
+            /* Third-party scripts (the Metricool visit counter) are not ours
+               to simulate: ignore them, and don't count them as renderer loads. */
+            if (/^https?:/.test(v)) return;
             rendererLoads++;
             vm.runInContext(readJs(v.split("?")[0].replace(/^\//, "")), w);
             /* guide.js assigns s.onload rather than adding a listener. */

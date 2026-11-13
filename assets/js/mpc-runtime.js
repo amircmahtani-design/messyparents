@@ -247,4 +247,27 @@
     if (document.readyState === "complete") MPC.idle(loadAnalytics);
     else window.addEventListener("load", function () { MPC.idle(loadAnalytics); });
   }
+
+  /* ---- Metricool visit counter (added November 2026) -------------------
+     Counts page views so Metricool can show which social posts bring people
+     to the guides. Cookieless: it stores nothing on the device, so it does not
+     need the consent banner. It still respects a visitor who pressed Decline
+     there. Injected after load for the same reason as analytics above: no
+     extra <script src> on guide pages and nothing on the critical path. */
+  var mcHash = "191b5ba59b71c8205c2b7e6882837600";
+  var mcDenied = false;
+  try { mcDenied = localStorage.getItem("mpc.consent") === "denied"; } catch (e) {}
+  if (!mcDenied) {
+    var loadMetricool = function () {
+      var s = document.createElement("script");
+      s.src = "https://tracker.metricool.com/resources/be.js";
+      s.async = true;
+      s.onload = function () {
+        if (window.beTracker) window.beTracker.t({ hash: mcHash });
+      };
+      document.head.appendChild(s);
+    };
+    if (document.readyState === "complete") MPC.idle(loadMetricool);
+    else window.addEventListener("load", function () { MPC.idle(loadMetricool); });
+  }
 })();
