@@ -513,10 +513,24 @@ function bookCardHTML(b, img) {
   const cover = b.cover
     ? `<img src="${esc(img(b.cover, 600))}" alt="${title} cover" loading="lazy" decoding="async" width="600" height="900">`
     : `<div class="book-cover-empty" aria-hidden="true"><span>${title}</span></div>`;
+  /* The buy pill. Only drawn when a book actually has somewhere to buy it,
+     so a "Coming soon" card stays clean, and only for an http(s) link, so a
+     pasted javascript: URL cannot become a button on the page. The price is
+     free text — "£9.99", "€12" — because the currency belongs to whatever
+     checkout the link points at, not to this markup. Every pill says which
+     book it is for, since "Buy now" four times over tells a screen reader
+     nothing. */
+  const href = String(b.buy || "").trim();
+  const price = esc(String(b.price || "").trim());
+  const buy = /^https?:\/\//i.test(href)
+    ? `<a class="book-buy" href="${esc(href)}" rel="noopener"` +
+      ` aria-label="Buy now: ${title}">Buy now${price ? ` <span class="book-buy-price">${price}</span>` : ""}</a>`
+    : "";
   return '<article class="book-card">' +
     `<div class="book-cover">${cover}</div>` +
     `<div class="book-body">${status}<h2>${title}</h2>` +
     (summary ? `<p class="book-summary">${summary}</p>` : "") +
+    buy +
     "</div></article>";
 }
 

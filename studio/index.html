@@ -2160,6 +2160,12 @@ function renderBookRows(){
           <div class="field"><label>Title</label><input data-f="title" type="text" value="${escS(b.title||"")}"></div>
           <div class="field"><label>Summary</label><textarea data-f="summary" rows="3">${escS(b.summary||"")}</textarea></div>
           <div class="field"><label>Status</label><input data-f="status" type="text" list="bookStatusList" placeholder="In production / Coming soon / In progress / Out now" value="${escS(b.status||"")}"></div>
+          <div style="display:flex;gap:10px">
+            <div class="field" style="flex:0 0 120px"><label>Price <span class="hint">&mdash; as you want it shown</span></label>
+              <input data-f="price" type="text" placeholder="&pound;9.99" value="${escS(b.price||"")}"></div>
+            <div class="field" style="flex:1;min-width:0"><label>Buy link <span class="hint">&mdash; the checkout page. Leave empty and no Buy button shows.</span></label>
+              <input data-f="buy" type="url" placeholder="https://&hellip;" value="${escS(b.buy||"")}"></div>
+          </div>
           <div style="display:flex;gap:4px;justify-content:flex-end">
             <button class="btn ghost" data-act="up" type="button" title="Move up">↑</button>
             <button class="btn ghost" data-act="down" type="button" title="Move down">↓</button>
@@ -2184,7 +2190,7 @@ $("#bookRows").addEventListener("click", e=>{
   else if(act==="down" && i<B.length-1){ [B[i+1],B[i]]=[B[i],B[i+1]]; renderBookRows(); }
   else if(act==="cover"){ state.bookUploadIndex=i; $("#bookCoverUpload").click(); }
 });
-$("#addBook").addEventListener("click", ()=>{ state.booksList.push({title:"",summary:"",status:"",cover:""}); renderBookRows(); });
+$("#addBook").addEventListener("click", ()=>{ state.booksList.push({title:"",summary:"",status:"",cover:"",price:"",buy:""}); renderBookRows(); });
 $("#bookCoverUpload").addEventListener("change", async e=>{
   const file=e.target.files&&e.target.files[0]; e.target.value=""; const i=state.bookUploadIndex; if(!file||i==null) return;
   const row=$(`.brow[data-i="${i}"]`), msg=row&&row.querySelector("[data-bmsg]");
@@ -2204,7 +2210,8 @@ $("#saveBooks").addEventListener("click", async ()=>{
   if(state.booksReadFailed || !BOOKS_CATALOGUE){ msg.className="msg err"; msg.textContent="Reload Studio to load the saved books before saving."; return; }
   const items=(state.booksList||[]).map(b=>({
     title:(b.title||"").trim(), summary:(b.summary||"").trim(),
-    status:(b.status||"").trim(), cover:(b.cover||"").trim()
+    status:(b.status||"").trim(), cover:(b.cover||"").trim(),
+    price:(b.price||"").trim(), buy:(b.buy||"").trim()
   })).filter(b=>b.title || b.summary || b.cover);
   btn.disabled=true; msg.className="msg"; msg.textContent="Saving…";
   try{

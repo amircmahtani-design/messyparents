@@ -668,7 +668,21 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
 .book-cover-empty span{font-family:var(--display);font-weight:700;font-size:1.02rem;
   line-height:1.2;color:var(--blue-dark)}
 
-.book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px}
+.book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
+/* The buy pill sits on the bottom edge of the card. margin-top:auto inside a
+   flex column that fills the card puts it there whatever the summary's
+   length, so a row of cards has its buttons on one line instead of each one
+   floating wherever its own text happens to end. */
+.book-buy{align-self:flex-start;margin-top:auto;padding:11px 22px;border-radius:999px;
+  background:var(--blue);color:#fff;font-family:var(--body);font-weight:800;
+  font-size:.95rem;line-height:1;text-decoration:none;
+  display:inline-flex;align-items:baseline;gap:8px;
+  transition:background .18s ease,transform .18s ease}
+.book-buy:hover{background:var(--blue-dark);text-decoration:none}
+.book-buy:active{transform:scale(.97)}
+.book-buy:focus-visible{outline:3px solid var(--blue-dark);outline-offset:3px}
+.book-buy-price{font-weight:700;opacity:.85}
+@media (prefers-reduced-motion:reduce){.book-buy{transition:none}.book-buy:active{transform:none}}
 .book-card h2{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:0}
 /* Summary in the site's handwritten font — no box, so it reads like a warm
    note under the cover rather than a form field. */
