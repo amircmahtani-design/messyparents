@@ -6,6 +6,21 @@
 <title>Our books — The Messy Parents Collection</title>
 <meta name="description" content="The Ari &amp; Papa books: honest, short chapters on the first two years.">
 <link rel="icon" href="assets/img/navicon.webp" type="image/webp">
+<!-- Warm the connections the Buy now overlay needs before anyone clicks.
+     The checkout is an iframe served from the shop subdomain, so the click
+     otherwise pays for a DNS lookup and a TLS handshake to a host the
+     browser has never spoken to. Measured here the overlay already beats
+     the redirect it replaced (about 1.5s to a usable checkout against
+     about 2s), and most of that is Gumroad rendering its own page, which
+     we do not control. This only removes the handshake in front of it —
+     worth little on a warm desktop connection and a few hundred
+     milliseconds on mobile data. No crossorigin: the iframe is a
+     credentialed navigation, and an anonymous connection would not be
+     reused for it. -->
+<link rel="preconnect" href="https://themessyparents.gumroad.com">
+<link rel="preconnect" href="https://gumroad.com">
+<link rel="preconnect" href="https://assets.gumroad.com">
+<link rel="dns-prefetch" href="https://public-files.gumroad.com">
 <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <!-- Home-screen icon: a fully opaque, square PNG. Transparent or non-square
      icons get padded with white by iOS, which is what caused the white edges. -->
