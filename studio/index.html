@@ -2198,11 +2198,12 @@ function renderBookRows(){
           <div class="field"><label>Title</label><input data-f="title" type="text" value="${escS(b.title||"")}"></div>
           <div class="field"><label>Summary</label><textarea data-f="summary" rows="3">${escS(b.summary||"")}</textarea></div>
           <div class="field"><label>Status</label>${bookStatusSelect(b.status)}</div>
+          <p class="hint" style="margin:2px 0 6px">The <b>Buy now</b> button only appears on a book once its Buy link is filled in.</p>
           <div style="display:flex;gap:10px">
-            <div class="field" style="flex:0 0 120px"><label>Price <span class="hint">&mdash; as you want it shown</span></label>
-              <input data-f="price" type="text" placeholder="&pound;9.99" value="${escS(b.price||"")}"></div>
-            <div class="field" style="flex:1;min-width:0"><label>Buy link <span class="hint">&mdash; the checkout page. Leave empty and no Buy button shows.</span></label>
-              <input data-f="buy" type="url" placeholder="https://&hellip;" value="${escS(b.buy||"")}"></div>
+            <div class="field" style="flex:0 0 120px"><label>Price</label>
+              <input data-f="price" type="text" placeholder="$10.99" value="${escS(b.price||"")}"></div>
+            <div class="field" style="flex:1;min-width:0"><label>Buy link</label>
+              <input data-f="buy" type="url" placeholder="https://&hellip; &mdash; paste the checkout page" value="${escS(b.buy||"")}"></div>
           </div>
           <div style="display:flex;gap:4px;justify-content:flex-end">
             <button class="btn ghost" data-act="up" type="button" title="Move up">↑</button>
