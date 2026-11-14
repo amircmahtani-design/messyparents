@@ -244,6 +244,13 @@ h3{font-size:1.3rem}
    that span's innerHTML when a footer line is saved, and the credit would
    go with it. */
 .foot-note .built-by{order:1;flex-basis:100%;text-align:right;color:var(--ink-50)}
+/* The disclaimer keeps a line of its own, under the copyright and hard left.
+   It needs saying: the credit used to sit between the two and force the
+   break, so moving the credit to the end left the copyright and the
+   disclaimer sharing a row, where space-between threw the disclaimer to the
+   right margin. This asks for the break directly instead of relying on a
+   neighbour to cause it. */
+.foot-note [data-foot-note]{flex-basis:100%}
 
 /* --- Article ------------------------------------------------------------- */
 
