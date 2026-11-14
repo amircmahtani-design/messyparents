@@ -235,10 +235,15 @@ h3{font-size:1.3rem}
   padding:12px 0 16px}
 .foot-note{margin:0;font-size:.85rem;color:var(--ink-50);
   display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
-/* The credit sits on a line of its own under the copyright. It is outside
-   [data-foot-copy] on purpose: Studio replaces that span's innerHTML when a
-   footer line is saved, and the credit would go with it. */
-.foot-note .built-by{flex-basis:100%;color:var(--ink-50)}
+/* The credit is the last thing on the page, set right like a signature.
+   It is moved with order rather than in the markup because applyFootLinks()
+   in scripts/lib/bake.js anchors on .foot-links being the last child of
+   .foot-note, on every page, and would stop matching. Nothing in this span
+   is focusable, so the reading order the shuffle leaves behind costs
+   nothing. It is outside [data-foot-copy] on purpose too: Studio replaces
+   that span's innerHTML when a footer line is saved, and the credit would
+   go with it. */
+.foot-note .built-by{order:1;flex-basis:100%;text-align:right;color:var(--ink-50)}
 
 /* --- Article ------------------------------------------------------------- */
 
