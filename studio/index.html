@@ -1110,6 +1110,55 @@ function selectPage(id){
   renderPageList(); renderList($("#q").value);
 }
 
+/* ==========================================================================
+   PUBLISHING
+
+   Saving writes to Firestore, and Firestore is not what a reader sees: the
+   public pages are generated at deploy time and carry no code that reads
+   Firestore, so a save changes nothing on the site until a build runs. Studio
+   used to answer "Saved — live on the site", which was not true, and a
+   corrected typo sat in Firestore for the better part of an hour looking as
+   though the site had ignored it.
+
+   netlify/functions/publish.js already holds the build hook server-side and
+   starts a deploy for a signed-in Studio user, so every save now asks for one
+   and the message says where the words actually are. A deploy that cannot be
+   started never fails the save: the words are in Firestore either way, so it
+   says why not and points at the manual button.
+   ========================================================================== */
+async function requestDeploy(){
+  const user = state.fb && state.fb.a && state.fb.a.currentUser;
+  if(!user) return { ok:false, why:"nobody is signed in" };
+  try{
+    const token = await user.getIdToken();
+    const r = await fetch("/.netlify/functions/publish", {
+      method:"POST", headers:{ Authorization:"Bearer " + token }
+    });
+    let body = null;
+    try{ body = await r.json(); }catch(e){ body = null; }
+    if(r.ok && body && body.ok) return { ok:true };
+    return { ok:false,
+      why:(body && body.error) || ("the publish function answered HTTP " + r.status) };
+  }catch(e){
+    return { ok:false, why:(e && e.message) || String(e) };
+  }
+}
+
+/* Saved already; now get it onto the site and report honestly. */
+async function publishAfterSave(msg){
+  if(MODE !== "firebase") return;
+  msg.className = "msg"; msg.textContent = "Saved. Publishing\u2026";
+  const dep = await requestDeploy();
+  if(dep.ok){
+    msg.className = "msg ok";
+    msg.textContent = "Saved and publishing \u2014 live in a minute or two.";
+  }else{
+    msg.className = "msg err";
+    msg.textContent = "Saved, but NOT published: " + dep.why +
+      ". Use Site \u2192 Search & AI \u2192 Rebuild to put it live.";
+  }
+}
+
 async function savePage(){
   const id=state.currentPage; if(!id) return;
   const btn=$("#p_save"), msg=$("#p_savemsg");
@@ -1122,8 +1171,8 @@ async function savePage(){
     // clears the old value instead of leaving a stale image behind.
     await fs.setDoc(fs.doc(db,"pages",id), data);
     state.pagesData[id]=data;
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
     pushPagePreview();
+    await publishAfterSave(msg);
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 }
@@ -1183,7 +1232,7 @@ async function saveGuide(guide){
     const {fs, db} = state.fb;
     const clean = JSON.parse(JSON.stringify(guide));   // drops any undefined fields
     await fs.setDoc(fs.doc(db, "guides", guide.id), clean);
-    return "Saved to Firestore — live on the site.";
+    return "Saved to Firestore.";
   }
   // local preview mode: offer the updated data as a download
   const i = state.guides.findIndex(g => g.id === guide.id);
@@ -1793,6 +1842,7 @@ $("#save").addEventListener("click", async () => {
     }
     renderList($("#q").value);
     msg.className = "msg ok"; msg.textContent = note;
+    await publishAfterSave(msg);
   }catch(err){ msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message||err); }
   finally{ btn.disabled = false; }
 });
@@ -1856,8 +1906,7 @@ $("#saveSeo") && $("#saveSeo").addEventListener("click", async () => {
     const {fs, db} = state.fb;
     await fs.setDoc(fs.doc(db, "meta", "seo"), data);
     state.seo = data;
-    msg.className = "msg ok";
-    msg.textContent = "Saved. These take effect on the next rebuild.";
+    await publishAfterSave(msg);
   }catch(err){
     msg.className = "msg err"; msg.textContent = "Save failed: " + (err.message || err);
   }finally{ btn.disabled = false; }
@@ -2088,7 +2137,7 @@ $("#saveTopics").addEventListener("click", async ()=>{
     await fs.setDoc(fs.doc(db,"meta","topics"), { items, updated:Date.now() });
     state.topics=items.map(x=>({...x})); renderTopicRows();
     if(state.current) $("#f_topic").innerHTML=topicOptionsHTML(state.orig&&state.orig.topic);
-    msg.className="msg ok"; msg.textContent="Saved — live on the site.";
+    await publishAfterSave(msg);
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
@@ -2162,7 +2211,7 @@ $("#saveBooks").addEventListener("click", async ()=>{
     const {fs,db}=state.fb;
     await fs.setDoc(fs.doc(db,"meta","books"), { items, updated:Date.now(), catalogueVersion:MPCBooks.VERSION });
     state.booksList=items.map(x=>({...x})); renderBookRows();
-    msg.className="msg ok"; msg.textContent="Saved. These take effect on the next rebuild.";
+    await publishAfterSave(msg);
   }catch(e){ msg.className="msg err"; msg.textContent="Save failed: "+(e.message||e); }
   finally{ btn.disabled=false; }
 });
