@@ -117,6 +117,20 @@ const FORMATS = {
 /* Meta's limit. A carousel may not exceed this many items. */
 const MAX_SLIDES = 10;
 
+/* How long a slide label may run, in words. WARN is the comfortable length —
+   over it validate.js grumbles but still approves. ERROR is the ceiling: past
+   it the label has stopped being a label and the package is refused.
+
+   They live here rather than in validate.js because compose.js needs the
+   ceiling too. condense.js aims for the much shorter budget in compose's
+   BUDGET, and when no faithful span is that short it tries again against
+   this ceiling rather than giving up and handing back the whole sentence.
+   A warning is allowed more room than a clue: its condition is the part that
+   makes it mean anything, and dropping "floppy" from "floppy, hard to wake"
+   is not a shortening. */
+const LABEL_WARN = { warning: 12, "default": 8 };
+const LABEL_ERROR = { warning: 18, "default": 14 };
+
 /* The publishable image format. PNG is permitted as a local review export
    only — see scripts/social-render.js — and never enters a publish payload. */
 const PUBLISH_IMAGE_FORMAT = "jpeg";
@@ -128,6 +142,7 @@ const INSTAGRAM_HANDLE = "themessyparentscollection";
 const INSTAGRAM_URL = "https://www.instagram.com/themessyparentscollection/";
 
 module.exports = {
+  LABEL_WARN, LABEL_ERROR,
   publishingEnabled, metaConfigured, lockReasons, assertPublishingAllowed,
   STATES, CLIENT_REQUESTABLE_STATES,
   COLLECTION, STATE_DOC, STORAGE_PREFIX,

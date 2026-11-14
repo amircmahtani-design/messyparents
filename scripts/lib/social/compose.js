@@ -66,7 +66,8 @@
 
 const { guideUrl } = require("../site");
 const { taggedUrl } = require("./utm");
-const { MAX_SLIDES, STATES, FORMATS, INSTAGRAM_HANDLE } = require("./config");
+const { MAX_SLIDES, STATES, FORMATS, INSTAGRAM_HANDLE,
+        LABEL_ERROR } = require("./config");
 const { hasHelpedPanel } = require("./safety");
 const { condense } = require("./condense");
 const REFS = require("./refs");
@@ -491,9 +492,35 @@ function buildSlides(guide, opts) {
   /* ---- 3–6. THE PANELS, each only if the guide has one ---------------- */
   const clueSlide = (key, kind, family, max, optional, artNote) => {
     const labelWords = family === "warning" ? BUDGET.warnLabelWords : BUDGET.labelWords;
+    /* What validate.js will still accept, so condense.js can widen to it when
+       nothing fits the budget above rather than hand back a whole sentence.
+       Keyed the way validate keys it: a warning is budgeted as a warning
+       wherever it appears, not as whatever slide is carrying it. */
+    const labelCeiling = LABEL_ERROR[kind === "warn" ? "warning" : family] || LABEL_ERROR["default"];
     const items = listOf(p[key]);
     if (!items.length) return;
-    const shown = items.slice(0, max);
+
+    /* A panel usually holds more bullets than a slide shows — truncatedItems
+       below says how many were left behind — so WHICH ones it shows is free.
+       Spend that on the bullets that survive the trip to a label whole:
+       prefer the ones condense.js can fit without having to cut, in the
+       author's own order, and only fall back to a cut one if there are not
+       enough. "Restarting at the normal dose after a gap, and never doubling
+       up to make up for missed days" is a bullet that loses its safety half
+       when shortened, and a panel with a fourth bullet should never have been
+       asked to shorten it.
+
+       A warning is exempt. Its bullets are signs, and quietly preferring the
+       sign that fits is choosing which symptom a parent gets told about. */
+    const labelled = items.map(t => ({ t, label: condense(t, labelWords, labelCeiling) }));
+    const keep = new Set();
+    if (kind !== "warn") {
+      labelled.filter(x => wordCount(x.label) <= labelCeiling)
+        .slice(0, max).forEach(x => keep.add(x));
+    }
+    for (const x of labelled) { if (keep.size >= max) break; keep.add(x); }
+    const chosen = labelled.filter(x => keep.has(x)).slice(0, max);
+    const shown = chosen.map(x => x.t);
     const heading = clean(p[key].title) || "";
     slides.push(slide({
       kind,
@@ -508,7 +535,7 @@ function buildSlides(guide, opts) {
          if". Splitting it across two lines turned it into a stacked block,
          which is the shape this redesign is getting away from. */
       lines: headline(heading, family, 1),
-      items: shown.map(t => ({ label: condense(t, labelWords), icon: objectFor(t), source: t })),
+      items: chosen.map(x => ({ label: x.label, icon: objectFor(x.t), source: x.t })),
       truncatedItems: Math.max(0, items.length - shown.length),
       /* The warning column says once, above its bullets, what to do about the
          signs that are an emergency. The bullets no longer carry it, so
@@ -623,7 +650,7 @@ function buildStory(guide, opts) {
       cast: REFS.castFor("warning", guide),
       lines: headline(clean(p.warn.title), "warning", 1),
       items: warn.slice(0, BUDGET.warnItems)
-        .map(t => ({ label: condense(t, BUDGET.warnLabelWords), icon: objectFor(t), source: t })),
+        .map(t => ({ label: condense(t, BUDGET.warnLabelWords, LABEL_ERROR["warning"]), icon: objectFor(t), source: t })),
       truncatedItems: Math.max(0, warn.length - BUDGET.warnItems),
       band: clean(p.warn.lead || "") || undefined,
       cta: CHROME.storyTap,

@@ -102,7 +102,81 @@ const tidy = (s) => String(s || "").replace(/\s+/g, " ").replace(/^[\s,;:.]+|[\s
 
    Returns the shortest faithful span it can find, or the best it managed.
    ------------------------------------------------------------------------ */
-function condense(text, maxWords = 7) {
+/* The looser cuts, offered only on the widened pass. A bare comma joins a
+   list as often as it joins two thoughts, and "since" and "than" open a
+   subordinate clause that is sometimes the point of the sentence rather than
+   an aside. Splitting there can leave "Cooled boiled water on clean cotton"
+   standing for a line that went on to say how to use it — an acceptable
+   label, and a poor one to prefer. So these are the last cuts tried, when the
+   alternative is handing back the whole sentence and failing the package. */
+/* The joining word goes with the cut, comma and all: splitting "it, since a
+   sticky eye" at the comma alone would leave "since" heading the clause and
+   counting against its length. */
+const LOOSE = /\s*,?\s+(?:since|than)\s+|\s*,\s*/;
+
+/* The search itself: the three deletion strategies, against one word limit.
+   Returns null when nothing faithful fits, so the caller can widen and ask
+   again rather than be handed something that does not fit. */
+function within(source, maxWords, atCommas, dense, floor) {
+  let parts = clauses(source).map(tidy).filter(Boolean);
+  /* See LOOSE above: the last cuts tried, and the loosest. */
+  if (atCommas) {
+    /* Replacing, not adding to, the coarse split: the opening piece has to
+       BE the opening piece for the start-preserving step to find it. */
+    parts = parts.flatMap(p => p.split(LOOSE).map(tidy)).filter(Boolean);
+  }
+  /* Two content words is what stops a fragment — "Mouth", from "Mouth and nose
+     connect at the back of the throat" — being offered as a label. The widened
+     pass drops it to one, because by then the line is over the ceiling and the
+     choice is between a short true label and no post at all: "Photographing
+     it, since a sticky eye is clean by the time of an appointment" has exactly
+     one content word in the only part of it that is the actual advice. A line
+     short enough to produce a bare "Mouth" never reaches that pass. */
+  const ok = (p) => p && words(p).length <= maxWords && contentCount(p) >= (floor || 2);
+
+  /* 1 — the OPENING clause, which is where a guide sentence puts its answer.
+         Whole first, then with its lead-in removed. Preferring the first
+         clause rather than the densest is what stops "wet nappies, energy"
+         being chosen over "distraction, teething or a cold". */
+  const first = parts[0];
+  if (ok(first)) return capitalise(first);
+  const firstStripped = tidy(stripTail(stripLeadIn(first || ""), maxWords));
+  if (ok(firstStripped)) return capitalise(firstStripped);
+
+  /* 2 — failing that, the densest clause that fits, stripped or not.
+
+         Only when the caller allows it. This is the one strategy that can
+         take a span from the MIDDLE of a sentence, and a span from the middle
+         has no subject: "Mouth and nose connect at the back of the throat"
+         becomes "Nose connect at the back of the throat", "Wet — can wait for
+         the next feed" loses the only word saying which nappy, and "Drowsy but
+         awake works better than asleep in arms" becomes advice to put a wide
+         awake baby down. That is a fair trade against a budget the renderer
+         has to meet, and a terrible one against the ceiling, where the honest
+         alternative is simply a longer label. */
+  const candidates = dense ? []
+    .concat(parts.map(p => ({ p, order: 0 })))
+    .concat(parts.map(p => ({ p: tidy(stripTail(stripLeadIn(p), maxWords)), order: 1 })))
+    .filter(x => ok(x.p))
+    .map(x => Object.assign(x, { n: words(x.p).length, c: contentCount(x.p) }))
+    .sort((a, b) => b.c - a.c || a.n - b.n || a.order - b.order) : [];
+  if (candidates.length) return capitalise(candidates[0].p);
+
+  /* 3 — the whole sentence, lead-in removed, if that is now enough. */
+  const whole = tidy(stripTail(stripLeadIn(source), maxWords));
+  if (words(whole).length <= maxWords && contentCount(whole) >= 2) return capitalise(whole);
+
+  return null;
+}
+
+/* --------------------------------------------------------------------------
+   condense(text, maxWords, ceiling)
+
+   maxWords is what the slide would like. ceiling is what validate.js will
+   still accept — LABEL_ERROR in config.js. Returns the shortest faithful span
+   it can find, or the best it managed.
+   ------------------------------------------------------------------------ */
+function condense(text, maxWords = 7, ceiling = 0) {
   /* An aside in brackets is the author talking to the reader — "(this one is
      key)" — and it is never the thing the label is for. Dropping it is a
      deletion like any other here, and it is done before anything else so the
@@ -116,36 +190,41 @@ function condense(text, maxWords = 7) {
      whole line would leave the sign on the slide and drop the only sentence
      that says what to do about it, which is the one cut this file must never
      make. So the sign is condensed on its own and the instruction is put back
-     whole — still deletion only, and the label stays a label. */
+     whole — still deletion only, and the label stays a label.
+
+     The instruction counts against the ceiling, so the sign is only allowed
+     what is left after it. */
   const emg = EMERGENCY.exec(source);
-  if (emg) return capitalise(condense(emg[1], maxWords)) + " \u2014 " + emg[2];
+  if (emg) {
+    const room = Math.max(maxWords, ceiling - words(emg[2]).length);
+    return capitalise(condense(emg[1], maxWords, room)) + " \u2014 " + emg[2];
+  }
 
-  const parts = clauses(source).map(tidy).filter(Boolean);
-  const ok = (p) => p && words(p).length <= maxWords && contentCount(p) >= 2;
+  /* What the slide wants. */
+  const tight = within(source, maxWords, false, true, 2);
+  if (tight) return tight;
 
-  /* 1 — the OPENING clause, which is where a guide sentence puts its answer.
-         Whole first, then with its lead-in removed. Preferring the first
-         clause rather than the densest is what stops "wet nappies, energy"
-         being chosen over "distraction, teething or a cold". */
-  const first = parts[0];
-  if (ok(first)) return capitalise(first);
-  const firstStripped = tidy(stripTail(stripLeadIn(first || ""), maxWords));
-  if (ok(firstStripped)) return capitalise(firstStripped);
+  /* Nothing that short was faithful. If the whole line is still inside what
+     validate.js accepts, that is the answer: give it back untouched. Cutting
+     it further buys nothing — the package is already approvable — and every
+     cut costs something. "Being on call is tiring even when you're not the
+     one getting up" is a good label at thirteen words and nonsense at six.
 
-  /* 2 — failing that, the densest clause that fits, stripped or not. */
-  const candidates = []
-    .concat(parts.map(p => ({ p, order: 0 })))
-    .concat(parts.map(p => ({ p: tidy(stripTail(stripLeadIn(p), maxWords)), order: 1 })))
-    .filter(x => ok(x.p))
-    .map(x => Object.assign(x, { n: words(x.p).length, c: contentCount(x.p) }))
-    .sort((a, b) => b.c - a.c || a.n - b.n || a.order - b.order);
-  if (candidates.length) return capitalise(candidates[0].p);
+     This is the ONLY reason the widened pass exists, so it is gated here
+     rather than in within(): every label that was already acceptable comes
+     out of this function exactly as it always did. */
+  if (!ceiling || words(source).length <= ceiling) return capitalise(source);
 
-  /* 3 — the whole sentence, lead-in removed, if that is now enough. */
-  const whole = tidy(stripTail(stripLeadIn(source), maxWords));
-  if (words(whole).length <= maxWords && contentCount(whole) >= 2) return capitalise(whole);
+  /* Over the ceiling, so validate.js would refuse the whole package and the
+     guide would get no post at all. Now a shorter span is worth its cost.
+     Still deletion only, and start-preserving only: no dense fragment from
+     the middle, because a span with no subject is not a shortening. */
+  const roomy = within(source, ceiling, false, false, 2) ||
+                within(source, ceiling, true, false, 2) ||
+                within(source, ceiling, true, false, 1);
+  if (roomy) return roomy;
 
-  /* 4 — give up, and give back the original UNTOUCHED.
+  /* Give up, and give back the original UNTOUCHED.
 
      Not a truncation. A bullet ending in an ellipsis looks like a bug, and on
      a warning line it would drop the condition that makes the warning mean

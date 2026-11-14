@@ -13,7 +13,8 @@
    shown next to the package.
    ========================================================================== */
 
-const { MAX_SLIDES, PUBLISH_IMAGE_FORMAT, FORMATS } = require("./config");
+const { MAX_SLIDES, PUBLISH_IMAGE_FORMAT, FORMATS,
+        LABEL_WARN, LABEL_ERROR } = require("./config");
 const { readTags } = require("./utm");
 const { LOGO_FAMILIES, FAMILIES } = require("./refs");
 
@@ -40,8 +41,6 @@ const MAX_ITEMS = 4;
    gets room and the renderer sets it smaller across two or three short lines;
    the ordinary clue slides, where the words are describing rather than
    instructing, stay tight. */
-const LABEL_WARN = { warning: 12, "default": 8 };
-const LABEL_ERROR = { warning: 18, "default": 14 };
 const HEADLINE_WARN_WORDS = 16;
 
 const words = (v) => String(v == null ? "" : v).trim().split(/\s+/).filter(Boolean).length;
