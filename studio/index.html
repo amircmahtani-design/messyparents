@@ -68,6 +68,20 @@
   .field .hint{font-weight:600;color:var(--muted);font-size:11.5px}
   .field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14.5px;color:var(--ink);background:#fff}
   .field textarea{resize:vertical;line-height:1.5}
+  /* The book status: a pill you pick from, wearing the colour it will have on
+     the site, so the choice looks like its result. Same four colours as
+     .book-card .status in assets/css/style.css. */
+  .statuspill{appearance:none;-webkit-appearance:none;cursor:pointer;
+    min-height:44px;padding:0 34px 0 16px;border:1px solid rgba(0,0,0,.12);border-radius:999px;
+    font-family:inherit;font-size:13px;font-weight:800;letter-spacing:.04em;
+    text-transform:uppercase;background:#eef1f4;color:#45505c;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2345505c' stroke-width='2' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 13px center;background-size:11px}
+  .statuspill[data-status="out-now"]{background-color:#8fbc8f;color:#14320f}
+  .statuspill[data-status="coming-soon"]{background-color:#c9dced;color:#0b3d7a}
+  .statuspill[data-status="in-production"]{background-color:#ffcc33;color:#4a3a00}
+  .statuspill[data-status="in-progress"]{background-color:#f2e4c3;color:#6b4e0f}
+  .statuspill:focus-visible{outline:3px solid var(--brand-d);outline-offset:2px}
   .col-card{border:1px solid var(--line);border-radius:12px;padding:14px 14px 4px;margin-bottom:16px;background:#fbfcfd}
   .col-card .tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:10px}
   .tag.ok{background:#e8f5e3;color:#3f7a2f}
@@ -2148,6 +2162,24 @@ function bookCoverThumb(c){
     ? `<img src="${escS(c)}" alt="" style="width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`
     : `<div style="width:100%;aspect-ratio:2/3;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;text-align:center;padding:6px">No cover</div>`;
 }
+/* The status is one of four, so it is a list rather than a box to mistype,
+   and it carries the colour the pill will have on the site \u2014 the same four
+   colours, so the choice looks like its result. A status saved before this
+   list existed is kept as its own option rather than silently rewritten. */
+const BOOK_STATUSES = ["Out now", "Coming soon", "In production", "In progress"];
+function statusSlug(v){
+  return String(v||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function bookStatusSelect(value){
+  const v = String(value||"");
+  const list = BOOK_STATUSES.concat(v && !BOOK_STATUSES.includes(v) ? [v] : []);
+  const opts = ['<option value=""' + (v ? "" : " selected") + '>\u2014 not set \u2014</option>']
+    .concat(list.map(o =>
+      `<option value="${escS(o)}"${o === v ? " selected" : ""}>${escS(o)}</option>`));
+  return `<select class="statuspill" data-f="status" data-status="${escS(statusSlug(v))}">` +
+    opts.join("") + "</select>";
+}
+
 function renderBookRows(){
   const rows=(state.booksList||[]).map((b,i)=>`
     <div class="col-card brow" data-i="${i}">
@@ -2159,7 +2191,7 @@ function renderBookRows(){
         <div style="flex:1;min-width:0">
           <div class="field"><label>Title</label><input data-f="title" type="text" value="${escS(b.title||"")}"></div>
           <div class="field"><label>Summary</label><textarea data-f="summary" rows="3">${escS(b.summary||"")}</textarea></div>
-          <div class="field"><label>Status</label><input data-f="status" type="text" list="bookStatusList" placeholder="In production / Coming soon / In progress / Out now" value="${escS(b.status||"")}"></div>
+          <div class="field"><label>Status</label>${bookStatusSelect(b.status)}</div>
           <div style="display:flex;gap:10px">
             <div class="field" style="flex:0 0 120px"><label>Price <span class="hint">&mdash; as you want it shown</span></label>
               <input data-f="price" type="text" placeholder="&pound;9.99" value="${escS(b.price||"")}"></div>
@@ -2177,11 +2209,17 @@ function renderBookRows(){
     </div>`).join("");
   $("#bookRows").innerHTML = rows || `<p class="hint">No books yet — add one below.</p>`;
 }
-$("#bookRows").addEventListener("input", e=>{
+function bookRowInput(e){
   const row=e.target.closest(".brow"); if(!row) return;
   const i=+row.dataset.i, b=state.booksList[i]; if(!b) return;
-  const f=e.target.dataset.f; if(f) b[f]=e.target.value;
-});
+  const f=e.target.dataset.f; if(!f) return;
+  b[f]=e.target.value;
+  /* Recolour the pill in place rather than redrawing the row, which would
+     take the focus out of whatever is being typed in. */
+  if(f==="status") e.target.setAttribute("data-status", statusSlug(e.target.value));
+}
+$("#bookRows").addEventListener("input", bookRowInput);
+$("#bookRows").addEventListener("change", bookRowInput);
 $("#bookRows").addEventListener("click", e=>{
   const btn=e.target.closest("[data-act]"); if(!btn) return;
   const row=btn.closest(".brow"), i=+row.dataset.i, act=btn.dataset.act, B=state.booksList;

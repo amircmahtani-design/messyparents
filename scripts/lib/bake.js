@@ -507,8 +507,19 @@ function bookCardHTML(b, img) {
   b = b || {};
   const title = esc(b.title || "Untitled");
   const summary = esc(b.summary || "");
+  /* The status gets a class of its own so each one can carry its own colour:
+     out now green, coming soon blue, and so on. The slug is taken from
+     whatever is typed, so a status nobody anticipated still gets a class and
+     simply falls back to the default tint. status--out is kept alongside it
+     because the home page styles books by that name too. */
+  const statusSlug = String(b.status || "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const statusClass = ["status"]
+    .concat(/out/i.test(b.status || "") ? ["status--out"] : [])
+    .concat(statusSlug ? ["status--" + statusSlug] : [])
+    .join(" ");
   const status = b.status
-    ? `<span class="status ${/out/i.test(b.status) ? "status--out" : ""}">${esc(b.status)}</span>`
+    ? `<span class="${statusClass}">${esc(b.status)}</span>`
     : "";
   const cover = b.cover
     ? `<img src="${esc(img(b.cover, 600))}" alt="${title} cover" loading="lazy" decoding="async" width="600" height="900">`
