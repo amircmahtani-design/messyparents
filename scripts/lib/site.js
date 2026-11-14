@@ -49,7 +49,7 @@ const SOCIAL_PROFILES = [
   { id: "instagram", name: "Instagram", cls: "foot-ig",
     url: "https://www.instagram.com/themessyparentscollection/" },
   { id: "facebook", name: "Facebook", cls: "foot-fb",
-    url: "https://www.facebook.com/profile.php?id=61594125893530" }
+    url: "https://www.facebook.com/themessyparentscollection/" }
 ];
 
 /* --------------------------------------------------------------------------
