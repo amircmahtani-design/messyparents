@@ -704,7 +704,8 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:5px 13px;
   background:var(--yellow);color:#4a3a00}
 .book-card .status--out,
-.book-card .status--out-now{background:var(--sage);color:#14320f}
+.book-card .status--out-now,
+.book-card .status--available-now{background:var(--sage);color:#14320f}
 .book-card .status--coming-soon{background:var(--blue-band);color:#0b3d7a}
 .book-card .status--in-production{background:var(--yellow);color:#4a3a00}
 .book-card .status--in-progress{background:var(--tape-fill);color:#6b4e0f}

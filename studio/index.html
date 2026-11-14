@@ -77,7 +77,8 @@
     text-transform:uppercase;background:#eef1f4;color:#45505c;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2345505c' stroke-width='2' stroke-linecap='round'/></svg>");
     background-repeat:no-repeat;background-position:right 13px center;background-size:11px}
-  .statuspill[data-status="out-now"]{background-color:#8fbc8f;color:#14320f}
+  .statuspill[data-status="out-now"],
+  .statuspill[data-status="available-now"]{background-color:#8fbc8f;color:#14320f}
   .statuspill[data-status="coming-soon"]{background-color:#c9dced;color:#0b3d7a}
   .statuspill[data-status="in-production"]{background-color:#ffcc33;color:#4a3a00}
   .statuspill[data-status="in-progress"]{background-color:#f2e4c3;color:#6b4e0f}
@@ -2166,16 +2167,21 @@ function bookCoverThumb(c){
    and it carries the colour the pill will have on the site \u2014 the same four
    colours, so the choice looks like its result. A status saved before this
    list existed is kept as its own option rather than silently rewritten. */
-const BOOK_STATUSES = ["Out now", "Coming soon", "In production", "In progress"];
+const BOOK_STATUSES = ["Available now", "Coming soon", "In production", "In progress"];
 function statusSlug(v){
   return String(v||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
 function bookStatusSelect(value){
   const v = String(value||"");
-  const list = BOOK_STATUSES.concat(v && !BOOK_STATUSES.includes(v) ? [v] : []);
+  /* Matched by slug, so "Available Now" saved earlier picks the "Available
+     now" option rather than sitting beside it as a near-identical duplicate.
+     The card uppercases the status anyway, so the capitalisation it is stored
+     with makes no visible difference. */
+  const known = BOOK_STATUSES.some(o => statusSlug(o) === statusSlug(v));
+  const list = BOOK_STATUSES.concat(v && !known ? [v] : []);
   const opts = ['<option value=""' + (v ? "" : " selected") + '>\u2014 not set \u2014</option>']
     .concat(list.map(o =>
-      `<option value="${escS(o)}"${o === v ? " selected" : ""}>${escS(o)}</option>`));
+      `<option value="${escS(o)}"${statusSlug(o) === statusSlug(v) ? " selected" : ""}>${escS(o)}</option>`));
   return `<select class="statuspill" data-f="status" data-status="${escS(statusSlug(v))}">` +
     opts.join("") + "</select>";
 }
