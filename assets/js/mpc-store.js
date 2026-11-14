@@ -353,6 +353,18 @@ MPCStore.t = function (key, fallback) {
 MPCStore.esc = _escHtml;
 MPCStore.inline = _inlineHTML;
 
+var _INLINE_HOST = /^(P|H[1-6]|SPAN|A|EM|STRONG|SMALL|LABEL|FIGCAPTION|SUMMARY)$/;
+
+function _breaksHTML(text) {
+  return String(text || "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map(function (p) { return p.trim(); })
+    .filter(Boolean)
+    .map(function (p) { return _inlineHTML(p).replace(/\n/g, "<br>"); })
+    .join("<br><br>");
+}
+
 MPCStore.applyText = function (pages) {
   MPCStore.text = buildTextMap(pages || window.MPC_PAGES);
   var nodes = document.querySelectorAll("[data-mpc-text]");
@@ -362,9 +374,12 @@ MPCStore.applyText = function (pages) {
     var v = MPCStore.text[key];
     if (v == null || String(v).trim() === "") { el.innerHTML = el.__mpcOriginal; return; }
     // A multi-paragraph value becomes real paragraphs; a single line is
-    // dropped straight in, so a heading stays a heading.
+    // dropped straight in, so a heading stays a heading. An element that
+    // cannot contain a <p> — a <p> itself, a heading — gets breaks instead,
+    // or the browser closes it at the first inner tag and the rest of the
+    // copy falls out of the element. Kept in step with bake.js renderValue.
     el.innerHTML = /\n\s*\n/.test(v)
-      ? proseHTML(v)
+      ? (_INLINE_HOST.test(el.tagName) ? _breaksHTML(v) : proseHTML(v))
       : _inlineHTML(String(v).trim());
   });
 

@@ -225,6 +225,18 @@ function _inlineHTML(text) {
     .replace(/\*([^*\n]+)\*/g, '<span class="hl">$1</span>');
 }
 
+var _INLINE_HOST = /^(P|H[1-6]|SPAN|A|EM|STRONG|SMALL|LABEL|FIGCAPTION|SUMMARY)$/;
+
+function _breaksHTML(text) {
+  return String(text || "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map(function (p) { return p.trim(); })
+    .filter(Boolean)
+    .map(function (p) { return _inlineHTML(p).replace(/\n/g, "<br>"); })
+    .join("<br><br>");
+}
+
 function proseHTML(text) {
   return String(text || "")
     .replace(/\r\n?/g, "\n")
@@ -301,9 +313,11 @@ MPCStore.applyText = function (pages) {
     var v = MPCStore.text[key];
     if (v == null || String(v).trim() === "") { el.innerHTML = el.__mpcOriginal; return; }
     // A multi-paragraph value becomes real paragraphs; a single line is
-    // dropped straight in, so a heading stays a heading.
+    // dropped straight in, so a heading stays a heading. An element that
+    // cannot contain a <p> gets breaks instead, so the preview shows what the
+    // built page shows. Kept in step with bake.js renderValue.
     el.innerHTML = /\n\s*\n/.test(v)
-      ? proseHTML(v)
+      ? (_INLINE_HOST.test(el.tagName) ? _breaksHTML(v) : proseHTML(v))
       : _inlineHTML(String(v).trim());
   });
 

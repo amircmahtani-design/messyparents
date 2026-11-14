@@ -86,9 +86,28 @@ function proseHTML(text) {
 /* Matches MPCStore.applyText: a multi-paragraph value becomes real
    paragraphs, a single line is dropped straight in so a heading stays a
    heading. */
-function renderValue(v) {
+/* Elements that cannot legally contain a <p>. A browser closes the outer one
+   at the first inner open tag, so a two-paragraph value saved into a field
+   whose markup is a <p> ends that element early and the rest of the copy
+   falls outside it — losing the element's styling and the hook the runtime
+   needs to update it later. Inside one of these hosts a multi-paragraph value
+   keeps its break and loses its tags. */
+const INLINE_HOST = /^(p|h[1-6]|span|a|em|strong|small|label|figcaption|summary)$/i;
+
+function breaksHTML(text) {
+  return String(text || "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => inlineHTML(p).replace(/\n/g, "<br>"))
+    .join("<br><br>");
+}
+
+function renderValue(v, tag) {
   const s = String(v);
-  return /\n\s*\n/.test(s) ? proseHTML(s) : inlineHTML(s.trim());
+  if (!/\n\s*\n/.test(s)) return inlineHTML(s.trim());
+  return INLINE_HOST.test(String(tag || "")) ? breaksHTML(s) : proseHTML(s);
 }
 
 /* --------------------------------------------------------------------------
@@ -173,7 +192,7 @@ function booksText(text) {
 function applyText(html, text) {
   text = text || {};
 
-  html = eachElement(html, "data-mpc-text", ({ attrs, key, content }) => {
+  html = eachElement(html, "data-mpc-text", ({ tag, attrs, key, content }) => {
     /* Restore first, so clearing an override in Studio genuinely resets. */
     const saved = getAttr(attrs, "data-mpc-default");
     const original = saved != null ? saved : content;
@@ -188,7 +207,7 @@ function applyText(html, text) {
     }
     return {
       attrs: setAttr(attrs, "data-mpc-default", original),
-      content: renderValue(v)
+      content: renderValue(v, tag)
     };
   });
 
