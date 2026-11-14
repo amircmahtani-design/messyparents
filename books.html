@@ -639,6 +639,23 @@ body[data-longform] .article-inner{margin-inline:auto}
 
 <script src="assets/js/mpc-runtime.js?v=ddb2e640fa" defer></script>
 
+<!-- Gumroad overlay. Books are sold through Gumroad, which stays the merchant
+     of record: it takes the payment, charges the right VAT or sales tax for
+     the buyer's country and remits it. This script only changes where the
+     checkout is drawn. It scans every link on the page, keeps the ones whose
+     host ends in gumroad.com, and opens those in an iframe served from
+     Gumroad instead of navigating away. No card details ever reach this site.
+
+     The Buy now pills keep class="book-buy" and are styled by style.css.
+     Gumroad's own button styling is scoped to a.gumroad-button, which we do
+     not use, so the only thing it adds to our pills is an empty span that
+     renders at 0x0. Adding gumroad-button would replace the pill with
+     Gumroad's square pink one. Don't.
+
+     Without this script the pills still work: they fall back to a normal link
+     to the Gumroad product page. -->
+<script src="https://gumroad.com/js/gumroad.js" defer></script>
+
 
 </body>
 </html>

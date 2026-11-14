@@ -92,9 +92,16 @@ const studio = fs.readFileSync(path.join(__dirname, "../studio/index.html"), "ut
 assert.match(studio, /MPCBooks\.resolve\(b\.exists\(\) \? b\.data\(\) : null\)/);
 assert.match(studio, /catalogueVersion:MPCBooks\.VERSION/);
 assert.match(studio, /if\(state\.booksReadFailed \|\| !BOOKS_CATALOGUE\)/);
-assert.match(studio, /Saved\. These take effect on the next rebuild\./);
+// Saving now asks Netlify to rebuild, so Studio must report what actually
+// happened: published, or saved-but-not-published with the reason and the
+// manual way out. Neither message may go back to promising a vague "next
+// rebuild" — that was the wording that made saves look live when they were not.
+assert.match(studio, /Saved and publishing \\u2014 live in a minute or two\./);
+assert.match(studio, /Saved, but NOT published: /);
+assert.doesNotMatch(studio, /take effect on the next rebuild/);
 // Exercise the actual Save handler with fake UI/Firestore, without signing in or writing externally.
 const saveBlock = studio.slice(studio.indexOf('$("#saveBooks").addEventListener'), studio.indexOf('/* ---- Text rows'));
+const withBuyFields = books => books.map(b => ({ buy:"", price:"", ...b }));
 async function testStudioSave() {
   let handler, written;
   const ui = { "#saveBooks": { addEventListener: (_, fn) => { handler=fn; } }, "#booksMsg": {} };
@@ -104,9 +111,12 @@ async function testStudioSave() {
   vm.runInNewContext(saveBlock, { $: id=>ui[id], state, MODE:"firebase", MPCBooks:Books, BOOKS_CATALOGUE:Books, renderBookRows:()=>{}, Date });
   await handler();
   assert.deepEqual(copy(written.ref), {collection:"meta",id:"books"});
-  assert.deepEqual(copy(written.data.items), resolved);
+  // Each book now also carries a Buy link and a price. An unset one saves as an
+  // empty string rather than being dropped, so clearing a Buy link is a saved
+  // choice (the button disappears) and never a reason to fall back to a default.
+  assert.deepEqual(copy(written.data.items), withBuyFields(resolved));
   assert.equal(written.data.catalogueVersion, Books.VERSION);
-  assert.deepEqual(Books.resolve(written.data), resolved);
+  assert.deepEqual(Books.resolve(written.data), withBuyFields(resolved));
   state.booksList=[]; await handler();
   assert.deepEqual(Books.resolve(written.data), []);
   written=null; state.booksReadFailed=true; await handler();
