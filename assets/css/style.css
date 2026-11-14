@@ -234,23 +234,25 @@ h3{font-size:1.3rem}
 .site-foot{margin-top:clamp(22px,3vw,32px);border-top:1.5px solid var(--line-soft);
   padding:12px 0 16px}
 .foot-note{margin:0;font-size:.85rem;color:var(--ink-50);
-  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
-/* The credit is the last thing on the page, set right like a signature.
-   It is moved with order rather than in the markup because applyFootLinks()
-   in scripts/lib/bake.js anchors on .foot-links being the last child of
-   .foot-note, on every page, and would stop matching. Nothing in this span
-   is focusable, so the reading order the shuffle leaves behind costs
-   nothing. It is outside [data-foot-copy] on purpose too: Studio replaces
-   that span's innerHTML when a footer line is saved, and the credit would
-   go with it. */
-.foot-note .built-by{order:1;flex-basis:100%;text-align:right;color:var(--ink-50)}
-/* The disclaimer keeps a line of its own, under the copyright and hard left.
-   It needs saying: the credit used to sit between the two and force the
-   break, so moving the credit to the end left the copyright and the
-   disclaimer sharing a row, where space-between threw the disclaimer to the
-   right margin. This asks for the break directly instead of relying on a
-   neighbour to cause it. */
-.foot-note [data-foot-note]{flex-basis:100%}
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+/* One centred column, which is how the rest of this site composes and the
+   shape the footer kept fighting. Ranged left and right at once, it put the
+   copyright at one margin and the disclaimer at the other with a hand's width
+   of nothing between them, and the links and credit in a ragged stack down
+   the right. Centred, the four lines read as one block.
+
+   The credit is last, like a signature. It is ordered there rather than moved
+   in the markup because applyFootLinks() in scripts/lib/bake.js anchors on
+   .foot-links being the last child of .foot-note, on every page, and would
+   stop baking the social icons. Nothing in the span is focusable, so the
+   reading order the shuffle leaves behind costs nothing. It is outside
+   [data-foot-copy] on purpose too: Studio replaces that span's innerHTML when
+   a footer line is saved, and the credit would go with it. */
+.foot-note .built-by{order:1;color:var(--ink-50);margin-top:2px}
+/* Wide enough that the disclaimer holds one line on a desktop. At a tighter
+   measure it broke after "doctor," and left "midwife or health visitor."
+   alone on a second line, which centred reads as a stray fragment. */
+.foot-note [data-foot-note]{max-width:84ch}
 
 /* --- Article ------------------------------------------------------------- */
 
@@ -730,19 +732,10 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
    Studio and its innerHTML is replaced when a custom one is saved, so these sit
    in their own span rather than inside it — otherwise saving a footer note in
    Studio would silently delete them. */
-/* The links sit at the RIGHT-HAND end of the footer, which is where a reader
-   expects a site's secondary navigation. They rarely share a line with the two
-   sentences above them, so on the line of their own that they usually get,
-   margin-left:auto is what carries them across. On a phone they go back to the
-   left edge — see the 760px block — because a right-aligned block that has
-   wrapped onto two lines reads as an accident. */
+/* Centred with everything else in the footer, and wrapping onto a second
+   centred row on a phone rather than scrolling. */
 .foot-note .foot-links{display:flex;flex-wrap:wrap;gap:8px 14px;
-  flex:0 1 auto;min-width:0;margin-left:auto;justify-content:flex-end}
-/* Must sit AFTER the rule above, not up in the other 760px block: the two
-   selectors have the same weight, so whichever is written last wins. */
-@media (max-width:760px){
-  .foot-note .foot-links{margin-left:0;justify-content:flex-start}
-}
+  flex:0 1 auto;min-width:0;justify-content:center}
 .foot-note .foot-links a{color:var(--ink-70);text-decoration:underline;text-underline-offset:2px}
 .foot-note .foot-links a:hover{color:var(--blue)}
 
