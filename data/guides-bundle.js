@@ -920,7 +920,7 @@ var GUIDES = [
     "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
     "items": [
       "Under three months with 38°C or more",
-      "Three to six months with 39°C or more",
+      "Three to six months with 38.3°C or more",
       "A rash that does not fade under a glass",
       "Hard to wake, floppy or struggling to breathe",
       "A seizure, very few wet nappies or your instinct says something is wrong"
@@ -951,7 +951,7 @@ var GUIDES = [
       "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
       "items": [
         "Under three months with 38°C or more",
-        "Three to six months with 39°C or more",
+        "Three to six months with 38.3°C or more",
         "A rash that does not fade under a glass",
         "Hard to wake, floppy or struggling to breathe",
         "A seizure, very few wet nappies or your instinct says something is wrong"
@@ -970,7 +970,7 @@ var GUIDES = [
   "longform": [
     {
       "h": "The age rule comes first",
-      "t": "A temperature of 38°C or above in a baby under three months needs urgent medical advice. Do not wait until morning to see whether it settles.\n\nFor babies aged three to six months, 39°C or above is a reason to get urgent advice. At any age, how your baby looks and acts matters as much as the number."
+      "t": "A temperature of 38°C or above in a baby under three months needs urgent medical advice. Do not wait until morning to see whether it settles.\n\nFor babies aged three to six months, 38.3°C or above is a reason to get urgent advice. At any age, how your baby looks and acts matters as much as the number."
     },
     {
       "h": "How we check a temperature",
