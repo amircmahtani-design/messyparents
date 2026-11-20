@@ -917,7 +917,7 @@ var GUIDES = [
   "body": "",
   "callout": {
     "title": "Call your doctor immediately if",
-    "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
+    "lead": "A struggle to breathe, a floppy baby you cannot wake, or a rash that does not fade under a glass — call your local emergency number now.",
     "items": [
       "Under three months with 38°C or more",
       "Three to six months with 38.3°C or more",
@@ -941,14 +941,14 @@ var GUIDES = [
       "title": "What helped us",
       "items": [
         "Use a digital underarm thermometer",
-        "Offer small, frequent drinks",
+        "Offer her usual milk more often",
         "Keep clothing light and comfortable",
         "Ask before giving medicine"
       ]
     },
     "warn": {
       "title": "Call your doctor immediately if",
-      "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now.",
+      "lead": "A struggle to breathe, a floppy baby you cannot wake, or a rash that does not fade under a glass — call your local emergency number now.",
       "items": [
         "Under three months with 38°C or more",
         "Three to six months with 38.3°C or more",
@@ -978,7 +978,7 @@ var GUIDES = [
     },
     {
       "h": "Watch the baby between the spikes",
-      "t": "Are they looking at you, drinking and reacting normally? Or are they floppy, unusually quiet, hard to wake or struggling to breathe? Those changes matter.\n\nAt home, small frequent drinks and one comfortable light layer can help. A cool cloth may feel soothing, as it did for Ari, but it does not treat the fever.\n\nFor pain or discomfort, use only medicine suitable for your child and follow advice from your baby’s doctor, nurse or pharmacist. We are leaving exact dosing out because age, weight and the product all matter.\n\nTrust the part of you that knows your baby. If something looks wrong, ask for help quickly even if the thermometer has not reached a neat threshold."
+      "t": "Are they looking at you, drinking and reacting normally? Or are they floppy, unusually quiet, hard to wake or struggling to breathe? Those changes matter.\n\nAt home, offering her usual breast milk or formula more often, and one comfortable light layer, can help. A cool cloth may feel soothing, as it did for Ari, but it does not treat the fever.\n\nFor pain or discomfort, use only medicine suitable for your child and follow advice from your baby’s doctor, nurse or pharmacist. We are leaving exact dosing out because age, weight and the product all matter.\n\nTrust the part of you that knows your baby. If something looks wrong, ask for help quickly even if the thermometer has not reached a neat threshold."
     }
   ],
   "batch": "2"
@@ -10013,7 +10013,7 @@ var GUIDES = [
       "A rash with a temperature of 38°C or above, or any fever under three months",
       "Rapidly spreading swelling, hives, or any difficulty breathing"
     ],
-    "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+    "lead": "A struggle to breathe, a floppy baby you cannot wake, or a rash that does not fade under a glass — call your local emergency number now."
   },
   "panel": {
     "eyebrow": "Health • 2–12 months",
@@ -10043,7 +10043,7 @@ var GUIDES = [
         "A rash with a temperature of 38°C or above, or any fever under three months",
         "Rapidly spreading swelling, hives, or any difficulty breathing"
       ],
-      "lead": "A struggle to breathe, or a floppy baby you cannot wake — call your local emergency number now."
+      "lead": "A struggle to breathe, a floppy baby you cannot wake, or a rash that does not fade under a glass — call your local emergency number now."
     },
     "quick": "Take one clear photo each day and notice how she is behaving. A rash that does not fade under pressure needs urgent medical help."
   },

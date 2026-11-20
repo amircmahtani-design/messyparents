@@ -66,7 +66,8 @@ A sign is emergency-tier when it names:
 - a pause in breathing;
 - breathing that is visibly hard work — struggling, laboured, chest pulling in,
   nostrils flaring, grunting every breath, choking;
-- a baby who is floppy, unresponsive, or cannot be woken.
+- a baby who is floppy, unresponsive, or cannot be woken;
+- a rash that does not fade under a glass (NHS lists it under 999).
 
 Doctor-tier, deliberately: snoring, gasping or pauses described as a pattern
 across nights rather than an event; a sleepy feeder; pale or mottled alone;
@@ -80,6 +81,7 @@ wording, so the same signs always produce the same line:
   a pause alone → `a pause in breathing`; effort alone → `a struggle to
   breathe`; choking alone → `choking`
 - floppy / unresponsive / cannot be woken → `a floppy baby you cannot wake`
+- non-fading rash → `a rash that does not fade under a glass` (always last)
 
 Joined with commas and a final "or", sentence case, then
 `— call your local emergency number now.` For example:
