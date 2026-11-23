@@ -1213,7 +1213,7 @@ var GUIDES = [
     },
     {
       "h": "If one parent is breastfeeding",
-      "t": "The other person can still do the nappy, lifting, winding and settling. An expressed bottle may work for some families, but it is not the only way to share the load.\n\nIf you are doing nights alone, the shift may need to happen in daylight. A relative or friend holding the baby while you sleep can still be the thing that gets you through.\n\nWhen somebody offered help, we learned to say, “Yes, please,” instead of automatically being polite. We all need help. Taking it is not failing.\n\nReview the plan in daylight, not during an argument at three in the morning. If tiredness is making driving or baby care feel unsafe, ask for help now."
+      "t": "The other person can still do the nappy, lifting, burping and settling. An expressed bottle may work for some families, but it is not the only way to share the load.\n\nIf you are doing nights alone, the shift may need to happen in daylight. A relative or friend holding the baby while you sleep can still be the thing that gets you through.\n\nWhen somebody offered help, we learned to say, “Yes, please,” instead of automatically being polite. We all need help. Taking it is not failing.\n\nReview the plan in daylight, not during an argument at three in the morning. If tiredness is making driving or baby care feel unsafe, ask for help now."
     }
   ],
   "batch": "2"
@@ -4355,7 +4355,7 @@ var GUIDES = [
   "keywords": [
     "baby wind and gas",
     "newborn trapped wind",
-    "winding baby bottle",
+    "burping baby bottle",
     "baby gas pain"
   ],
   "body": "",
@@ -4411,7 +4411,7 @@ var GUIDES = [
     "preemie-growth-charts"
   ],
   "seo": {
-    "description": "Swallowed air and an immature gut make wind common; pacing, winding and gentle movement helped us more than rushing feeds."
+    "description": "Swallowed air and an immature gut make wind common; pacing, burping and gentle movement helped us more than rushing feeds."
   },
   "longform": [
     {
