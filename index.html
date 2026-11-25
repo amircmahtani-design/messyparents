@@ -149,7 +149,7 @@ h3{font-size:1.3rem}
 .hero{padding:0;position:relative}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);
   gap:clamp(6px,1.1vw,18px);align-items:start}
-.hero-copy{padding:clamp(2px,1.4vh,14px) 0 8px;min-width:0}
+.hero-copy{padding:clamp(2px,1.4vh,14px) 0 8px}
 .hero h1{margin-bottom:12px}
 .hero .lede{font-family:var(--hand);font-size:1.28rem;line-height:1.36;
   color:var(--ink-70);max-width:40ch}
@@ -243,9 +243,8 @@ h3{font-size:1.3rem}
 .site-foot{margin-top:clamp(22px,3vw,32px);border-top:1.5px solid var(--line-soft);
   padding:12px 0 16px}
 .foot-note{margin:0;font-size:.85rem;color:var(--ink-50);
-  display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
-.foot-note .built-by{order:1;color:var(--ink-50);margin-top:2px}
-.foot-note [data-foot-note]{max-width:84ch}
+  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.foot-note .built-by{flex-basis:100%;color:var(--ink-50)}
 .article{padding:14px 0 0}
 .article-inner{width:min(100%,700px)}
 .crumb{font-family:var(--hand);font-size:1.05rem;color:var(--ink-50);
@@ -270,7 +269,6 @@ h3{font-size:1.3rem}
   background:#fff6f1;padding:20px 22px;margin:28px 0}
 .callout h3{font-family:var(--display);color:var(--orange);font-size:1.35rem;margin:0 0 9px}
 .callout p:last-child,.callout ul:last-child{margin-bottom:0}
-.callout .g-lead{margin:0 0 10px;padding-left:14px;border-left:3px solid var(--orange)}
 .quiet{border-left:4px solid var(--yellow);padding:3px 0 3px 16px;margin:24px 0;
   font-family:var(--hand);font-size:1.18rem;color:var(--ink-70)}
 .related{margin-top:42px;padding-top:24px;border-top:1.6px solid var(--line-soft)}
@@ -279,7 +277,6 @@ h3{font-size:1.3rem}
 .page-head p{font-family:var(--hand);color:var(--ink-70);
   font-size:clamp(1.16rem,1.5vw,1.34rem);line-height:1.35;
   max-width:44ch;margin:8px 0 0}
-body[data-mpc-page="books"] .page-head p{max-width:70ch}
 .page-hero{display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);
   align-items:start;column-gap:clamp(10px,1.4vw,18px);
   padding:clamp(10px,2vw,22px) 0 0}
@@ -457,10 +454,7 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   .row{grid-template-columns:1fr;gap:8px}
   .row > .eyebrow{padding-top:0}
   .pills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .pill{width:100%;justify-content:flex-start;height:46px;padding:0 14px;font-size:.95rem;
-    min-width:0;overflow:hidden}
-  .pill > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .pills > .pill:last-child:nth-child(odd){grid-column:1 / -1}
+  .pill{width:100%;justify-content:flex-start;height:46px;padding:0 14px;font-size:.95rem}
   .pill--age{justify-content:center}
   .row-note{grid-column:1}
   .rows-hint{padding-left:0}
@@ -515,44 +509,17 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   background:linear-gradient(160deg,var(--blue-wash),var(--cream-soft))}
 .book-cover-empty span{font-family:var(--display);font-weight:700;font-size:1.02rem;
   line-height:1.2;color:var(--blue-dark)}
-.book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px;flex:1;
-  align-items:center;text-align:center}
-.book-summary{align-self:stretch;text-align:left}
-.book-buy{align-self:center;margin-top:auto;min-height:48px;padding:0 26px;border-radius:999px;
-  background:var(--blue);color:#fff;font-family:var(--body);font-weight:800;
-  font-size:.95rem;line-height:1;text-decoration:none;
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  transition:background .18s ease,transform .18s ease}
-@media (hover:hover) and (pointer:fine){
-  .book-buy:hover{background:var(--blue-dark);text-decoration:none}
-}
-.book-buy:active{transform:scale(.97)}
-.book-buy:focus-visible{outline:3px solid var(--blue-dark);outline-offset:3px}
-.book-buy-price{font-weight:700;opacity:.85}
-@media (prefers-reduced-motion:reduce){.book-buy{transition:none}.book-buy:active{transform:none}}
+.book-body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:7px}
 .book-card h2{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:0}
 .book-summary{margin:2px 0 0;font-family:var(--hand);font-size:1.13rem;
   line-height:1.4;color:var(--ink-70)}
-.book-card .status{align-self:center;font-size:.8rem;font-weight:800;
-  letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:5px 13px;
+.book-card .status{align-self:flex-start;font-size:.7rem;font-weight:800;
+  letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 11px;
   background:var(--yellow);color:#4a3a00}
-.book-card .status--out,
-.book-card .status--out-now,
-.book-card .status--available-now{background:var(--sage);color:#14320f}
-.book-card .status--coming-soon{background:var(--blue-band);color:#0b3d7a}
-.book-card .status--in-production{background:var(--yellow);color:#4a3a00}
-.book-card .status--in-progress{background:var(--tape-fill);color:#6b4e0f}
-.foot-note .foot-links{display:flex;flex-wrap:wrap;gap:8px 14px;
-  flex:0 1 auto;min-width:0;justify-content:center}
+.book-card .status--out{background:var(--sage);color:#14320f}
+.foot-note .foot-links{display:flex;gap:14px;flex:none}
 .foot-note .foot-links a{color:var(--ink-70);text-decoration:underline;text-underline-offset:2px}
 .foot-note .foot-links a:hover{color:var(--blue)}
-.foot-note .foot-links a.foot-ig,
-.foot-note .foot-links a.foot-fb{display:inline-flex;align-items:center;
-  text-decoration:none;line-height:1;padding:2px 0}
-.foot-note .foot-links a.foot-ig svg,
-.foot-note .foot-links a.foot-fb svg{display:block;transform:translateY(1px)}
-.foot-note .foot-links .foot-soc{display:inline-flex;align-items:center;
-  gap:14px;flex:0 0 auto}
 .browse-links{margin:26px 0 4px;padding-top:18px;border-top:1.5px solid var(--line-soft);
   font-size:.9rem;color:var(--ink-50);font-family:var(--body)}
 .browse-links p{margin:0 0 7px;line-height:1.9}
@@ -561,16 +528,45 @@ html.js .band-art img.is-in{animation:illus-in .42s cubic-bezier(.2,.7,.3,1) bot
   border:1.4px solid var(--line);border-radius:999px;padding:3px 11px;
   display:inline-block;margin:0 3px 3px 0;background:var(--card)}
 .browse-links a:hover{border-color:var(--blue);color:var(--blue)}
-body[data-mpc-page="editorial"] .article-body{
+body[data-mpc-page="editorial"] .article-body,
+body[data-longform] .article-body{
   font-family:var(--hand);font-size:clamp(1.2rem,1.45vw,1.34rem);
   line-height:1.75;color:var(--ink-hand);letter-spacing:.2px;
 }
-body[data-mpc-page="editorial"] .article-body h2{
+body[data-mpc-page="editorial"] .article-body h2,
+body[data-longform] .article-body h2{
   font-family:var(--hand);font-weight:400;letter-spacing:.3px;
   font-size:clamp(1.55rem,2.4vw,1.95rem);margin:36px 0 12px;
 }
-body[data-mpc-page="editorial"] .article-body strong{font-weight:400;color:var(--blue-ink)}
-body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
+body[data-mpc-page="editorial"] .article-body h3,
+body[data-longform] .article-body h3{
+  font-family:var(--hand);font-weight:400;letter-spacing:.3px;
+}
+body[data-mpc-page="editorial"] .article-body strong,
+body[data-longform] .article-body strong{font-weight:400;color:var(--blue-ink)}
+body[data-mpc-page="editorial"] .article-inner,
+body[data-longform] .article-inner{width:min(100%,960px)}
+body[data-longform] .article-inner{margin-inline:auto}
+.mpc-form{margin:18px 0 8px;max-width:44rem}
+.mpc-field{margin-bottom:14px}
+.mpc-form label{display:block;font-family:var(--hand);font-size:1.05rem;
+  color:var(--ink-70);margin-bottom:5px}
+.mpc-opt{color:var(--ink-50)}
+.mpc-form textarea,
+.mpc-form input[type="email"]{
+  width:100%;box-sizing:border-box;font-family:var(--body);font-size:1rem;
+  color:var(--ink);background:var(--cream-soft);
+  border:1.6px solid var(--line-soft);border-radius:10px;padding:10px 12px;
+}
+.mpc-form textarea{resize:vertical;min-height:120px;line-height:1.5}
+.mpc-form textarea:focus,
+.mpc-form input[type="email"]:focus{outline:none;border-color:var(--blue)}
+.mpc-send{font-family:var(--display);font-weight:700;font-size:1rem;
+  color:#fff;background:var(--blue);border:0;border-radius:999px;
+  padding:11px 26px;cursor:pointer;min-height:44px}
+.mpc-send:hover{filter:brightness(1.06)}
+.mpc-send:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.mpc-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 </style><!-- MPC:CSS:END -->
 <style>
   /* When the parent is searching, float the matches above the browse/age rows */
@@ -626,9 +622,9 @@ body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
 <meta name="twitter:title" content="The Messy Parents Collection — short answers for long nights">
 <meta name="twitter:description" content="Quick, reassuring guides on feeding, sleeping, development, health and staying sane.">
 <meta name="twitter:image" content="https://themessyparentscollection.com/assets/img/family.webp">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://themessyparentscollection.com/#organization","name":"The Messy Parents Collection","url":"https://themessyparentscollection.com/","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","logo":{"@type":"ImageObject","url":"https://themessyparentscollection.com/assets/img/logo.png","caption":"The Messy Parents Collection"},"sameAs":["https://www.instagram.com/themessyparentscollection/","https://www.facebook.com/themessyparentscollection/"]},{"@type":"WebSite","@id":"https://themessyparentscollection.com/#website","url":"https://themessyparentscollection.com/","name":"The Messy Parents Collection","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","inLanguage":"en","publisher":{"@id":"https://themessyparentscollection.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://themessyparentscollection.com/guides.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://themessyparentscollection.com/#organization","name":"The Messy Parents Collection","url":"https://themessyparentscollection.com/","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","logo":{"@type":"ImageObject","url":"https://themessyparentscollection.com/assets/img/logo.png","caption":"The Messy Parents Collection"}},{"@type":"WebSite","@id":"https://themessyparentscollection.com/#website","url":"https://themessyparentscollection.com/","name":"The Messy Parents Collection","description":"The things you're googling at 3am, answered in three minutes — by parents who were googling them last week.","inLanguage":"en","publisher":{"@id":"https://themessyparentscollection.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://themessyparentscollection.com/guides.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}]}</script>
 <!-- MPC:SEO:END -->
-<!-- MPC:FACETS:START --><script>window.MPC_FACETS={"topics":[{"id":"feeding","label":"Feeding"},{"id":"sleeping","label":"Sleeping"},{"id":"development","label":"Development"},{"id":"health","label":"Health"},{"id":"sanity","label":"Parent Sanity"}],"ages":["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months"],"icons":{"feeding":"<img src=\"/assets/img/icons/feeding.webp\" alt=\"\" aria-hidden=\"true\">","sleeping":"<img src=\"/assets/img/icons/sleeping.webp\" alt=\"\" aria-hidden=\"true\">","development":"<img src=\"/assets/img/icons/development.webp\" alt=\"\" aria-hidden=\"true\">","health":"<img src=\"/assets/img/icons/health.webp\" alt=\"\" aria-hidden=\"true\">","sanity":"<img src=\"/assets/img/icons/sanity.webp\" alt=\"\" aria-hidden=\"true\">"},"counts":{"topic":{"feeding":26,"sleeping":23,"development":21,"health":44,"sanity":22},"age":{"0–1 month":112,"2–3 months":120,"4–6 months":105,"7–9 months":53,"10–12 months":36}},"total":136};window.MPC_T={};</script><!-- MPC:FACETS:END -->
+<!-- MPC:FACETS:START --><script>window.MPC_FACETS={"topics":[{"id":"feeding","label":"Feeding"},{"id":"sleeping","label":"Sleeping"},{"id":"development","label":"Development"},{"id":"health","label":"Health"},{"id":"sanity","label":"Parent Sanity"}],"ages":["0–1 month","2–3 months","4–6 months","7–9 months","10–12 months"],"icons":{"feeding":"<img src=\"/assets/img/icons/feeding.webp\" alt=\"\" aria-hidden=\"true\">","sleeping":"<img src=\"/assets/img/icons/sleeping.webp\" alt=\"\" aria-hidden=\"true\">","development":"<img src=\"/assets/img/icons/development.webp\" alt=\"\" aria-hidden=\"true\">","health":"<img src=\"/assets/img/icons/health.webp\" alt=\"\" aria-hidden=\"true\">","sanity":"<img src=\"/assets/img/icons/sanity.webp\" alt=\"\" aria-hidden=\"true\">"},"counts":{"topic":{"feeding":8,"sleeping":8,"development":4,"health":8,"sanity":3},"age":{"0–1 month":22,"2–3 months":24,"4–6 months":18,"7–9 months":13,"10–12 months":8}},"total":31};window.MPC_T={};</script><!-- MPC:FACETS:END -->
 </head>
 <body data-mpc-page="home">
 <a class="skip" href="#main" data-mpc-text="skip">Skip to content</a>
@@ -737,14 +733,14 @@ body[data-mpc-page="editorial"] .article-inner{width:min(100%,960px)}
       <span data-foot-copy>&copy; <span id="year">2026</span> The Messy Parents Collection</span>
       <span class="built-by">Website made by Zenith Advisory LLC</span>
       <span data-foot-note>Written by parents, not doctors. Nothing here replaces advice from your own doctor, midwife or health visitor.</span>
-      <span class="foot-links"><a href="/about.html">About us</a><a href="/editorial.html">How these guides happen</a><a href="/privacy.html">Privacy</a><span class="foot-soc"><a class="foot-ig" href="https://www.instagram.com/themessyparentscollection/" target="_blank" rel="noopener noreferrer" aria-label="The Messy Parents Collection on Instagram (opens in a new tab)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a><a class="foot-fb" href="https://www.facebook.com/themessyparentscollection/" target="_blank" rel="noopener noreferrer" aria-label="The Messy Parents Collection on Facebook (opens in a new tab)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M15 7.6h-1.3a1.9 1.9 0 0 0-1.6 1.9V19"/><path d="M10.2 12.4h4.6"/></svg></a></span></span>
+      <span class="foot-links"><a href="/about.html">About us</a><a href="/editorial.html">How these guides happen</a><a href="/privacy.html">Privacy</a></span>
     </div>
   </div>
 </footer>
 
-<script src="assets/js/mpc-runtime.js?v=6fb65e3ad1" defer></script>
-<script src="assets/js/mpc-catalogue.js?v=5c1e28d958" defer></script>
+<script src="assets/js/mpc-runtime.js?v=ddb2e640fa" defer></script>
+<script src="assets/js/mpc-catalogue.js?v=b92087110c" defer></script>
 
-<script src="assets/js/home.js?v=93b8bfa9c1" defer></script>
+<script src="assets/js/home.js?v=1d46189c6f" defer></script>
 </body>
 </html>
