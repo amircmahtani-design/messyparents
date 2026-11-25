@@ -413,8 +413,73 @@
       }).join("") + "</div></section>";
   }
 
+  /* ---- read next -------------------------------------------------------
+     Three different guides for "Read next": never this guide, never one the
+     reader has already read (read = slugs, most recent last, kept by
+     guide.js in localStorage "mpc.read"). The guide's own related picks come
+     first; read ones are replaced by the closest unread guides (same topic
+     and age, then topic, then age, then anything, nearest after this guide in
+     the library's order). Only when nearly everything is read do read guides
+     return, the ones read longest ago first. */
+  function slugOf(g) { return (g && (g.slug || g.id)) || ""; }
+
+  function pickReadNext(g, byId, read) {
+    var all = [];
+    for (var id in byId) if (Object.prototype.hasOwnProperty.call(byId, id)) all.push(byId[id]);
+    var bySlug = {};
+    all.forEach(function (x) { bySlug[slugOf(x)] = x; });
+
+    var self = slugOf(g);
+    read = read || [];
+    var readAt = {};
+    read.forEach(function (s, i) { readAt[s] = i + 1; });   // 0 = never read
+
+    var out = [], seen = {};
+    seen[self] = true;
+    if (g.id) seen[g.id] = true;
+    function take(x) {
+      var s = slugOf(x);
+      if (!x || seen[s] || seen[x.id]) return;
+      seen[s] = true; seen[x.id] = true;
+      out.push(x);
+    }
+
+    /* 1. The guide's own picks that have not been read. */
+    (g.related || []).forEach(function (rid) {
+      var x = byId[rid] || bySlug[rid];
+      if (x && !readAt[slugOf(x)] && out.length < 3) take(x);
+    });
+    if (out.length >= 3) return out;
+
+    /* 2. The closest unread guides. */
+    var ages = g.ages || [];
+    var pos = -1;
+    for (var i = 0; i < all.length; i++) if (slugOf(all[i]) === self || all[i].id === g.id) { pos = i; break; }
+    function score(x) {
+      var sameTopic = x.topic && x.topic === g.topic;
+      var sameAge = (x.ages || []).some(function (a) { return ages.indexOf(a) !== -1; });
+      return (sameTopic ? 2 : 0) + (sameAge ? 1 : 0);
+    }
+    function dist(x) {
+      if (pos < 0) return 0;
+      var d = all.indexOf(x) - pos;
+      return (d + all.length) % all.length;   // guides after this one first, wrapping round
+    }
+    var pool = all.filter(function (x) { return !seen[slugOf(x)] && !seen[x.id]; });
+    pool.filter(function (x) { return !readAt[slugOf(x)]; })
+      .sort(function (a, b) { return (score(b) - score(a)) || (dist(a) - dist(b)); })
+      .forEach(function (x) { if (out.length < 3) take(x); });
+    if (out.length >= 3) return out;
+
+    /* 3. Everything has been read: the ones read longest ago. */
+    pool.filter(function (x) { return readAt[slugOf(x)]; })
+      .sort(function (a, b) { return readAt[slugOf(a)] - readAt[slugOf(b)]; })
+      .forEach(function (x) { if (out.length < 3) take(x); });
+    return out;
+  }
+
   return {
-    esc: esc, img: img, assetPath: assetPath,
+    esc: esc, pickReadNext: pickReadNext, img: img, assetPath: assetPath,
     guideUrl: guideUrl, hash: hash, guideHash: guideHash,
     panelMarkup: panelMarkup, cardHTML: cardHTML, relatedHTML: relatedHTML,
     prevNextHTML: prevNextHTML,

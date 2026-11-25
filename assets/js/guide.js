@@ -222,10 +222,64 @@
   function drawRelated(g, R, cfg, byId) {
     var host = document.querySelector(".gpage-related");
     if (!host) return;
-    var list = (g.related || []).map(function (id) { return byId[id]; })
-      .filter(Boolean);
+    var list = R.pickReadNext ? R.pickReadNext(g, byId, readList()) : [];
     var o = opts(cfg);
     host.innerHTML = list.length ? R.relatedHTML(g, list, o) : "";
+  }
+
+  /* READ NEXT: three different guides, none this one, none already read.
+     Read guides are remembered on the reader's device; the choosing is in
+     guide-render.js (pickReadNext), loaded only when a card needs swapping.
+     Previous / Next are not touched. */
+  var READ_KEY = "mpc.read";
+  var READ_MAX = 500;
+
+  function slugOf(g) { return (g && (g.slug || g.id)) || ""; }
+
+  function readList() {
+    try {
+      var a = JSON.parse(localStorage.getItem(READ_KEY) || "[]");
+      return Array.isArray(a) ? a.filter(function (x) { return typeof x === "string"; }) : [];
+    } catch (e) { return []; }
+  }
+
+  function markRead(slug) {
+    if (!slug) return;
+    var a = readList().filter(function (x) { return x !== slug; });
+    a.push(slug);
+    if (a.length > READ_MAX) a = a.slice(a.length - READ_MAX);
+    try { localStorage.setItem(READ_KEY, JSON.stringify(a)); } catch (e) { /* private mode */ }
+  }
+
+  /* On a pre-rendered page: look at the baked cards and only do anything if
+     one of them is already read, repeats, is this guide, or there are fewer
+     than three. */
+  function refreshReadNext() {
+    var host = document.querySelector(".gpage-related");
+    if (!host || !key) return;
+    var self = (location.pathname.match(/^\/guides\/([^\/]+)\/?$/) || [])[1] || key;
+    var read = readList().filter(function (s) { return s !== self; });
+    var hrefs = [].map.call(host.querySelectorAll("a.card"), function (a) {
+      return ((a.getAttribute("href") || "").match(/\/guides\/([^\/]+)\/?/) || [])[1] || "";
+    });
+    var uniq = hrefs.filter(function (s, i) { return s && s !== self && hrefs.indexOf(s) === i; });
+    var stale = uniq.length < 3 || uniq.length !== hrefs.length ||
+      uniq.some(function (s) { return read.indexOf(s) !== -1; });
+    if (!stale) return;
+
+    Promise.all([loadRenderer(), loadSettings(), fetchIndexMap()]).then(function (r) {
+      var R = r[0], cfg = r[1], byId = r[2];
+      var bySlug = {};
+      for (var id in byId) if (Object.prototype.hasOwnProperty.call(byId, id)) bySlug[slugOf(byId[id])] = byId[id];
+      var me = byId[key] || bySlug[self];
+      if (!me) return;
+      /* The baked cards are this guide's related picks, in order. */
+      var g = {
+        id: me.id, slug: me.slug, topic: me.topic, ages: me.ages,
+        related: uniq.map(function (s) { return (bySlug[s] && bySlug[s].id) || s; })
+      };
+      drawRelated(g, R, cfg, byId);
+    }).catch(function () { /* the baked cards stay */ });
   }
 
   /* ==========================================================================
@@ -411,6 +465,7 @@
           .then(function (r) {
             var R = r[0], cfg = r[1], byId = r[2];
             document.title = (g.title || "Guide") + " \u2014 The Messy Parents Collection";
+            markRead(slugOf(g));
             draw(g, R, cfg);
             drawRelated(g, R, cfg, byId);
           });
@@ -525,6 +580,12 @@
   }
 
   if (prerendered) {
+    /* Remember this guide as read, then fix "Read next" if it points at
+       something already read. Runs before the freshness check so a redraw
+       from that check uses the updated list. */
+    markRead((location.pathname.match(/^\/guides\/([^\/]+)\/?$/) || [])[1] || key);
+    if (MPC.idle) MPC.idle(refreshReadNext, 2000);
+    else setTimeout(refreshReadNext, 800);
     if (MPC.idle) MPC.idle(freshnessCheck, 4000);
     else setTimeout(freshnessCheck, 1200);
   } else {
